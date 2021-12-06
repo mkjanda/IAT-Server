@@ -1,3 +1,4 @@
+/* Must be run by a user that can add users and grant PRIVILEGES, such as root */
 CREATE DATABASE  IF NOT EXISTS `iatserver_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `iatserver_db`;
 -- MySQL dump 10.19  Distrib 10.3.31-MariaDB, for debian-linux-gnu (x86_64)
@@ -723,3 +724,6 @@ CREATE TABLE `users` (
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
 -- Dump completed on 2021-12-06  7:24:05
+/* manually added code */
+create user 'IATServer'@'localhost' identified by 'jESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEY';
+grant all on iatserver_db.* to 'IATServer'@'localhost';
