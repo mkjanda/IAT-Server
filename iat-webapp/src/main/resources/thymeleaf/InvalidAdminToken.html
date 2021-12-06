@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Invalid Test Token</title>
+        <link rel="stylesheet" href="/IAT/css/main.css" />
+        <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+            function restart() {
+                sessionStorage.clear();
+                location.assign(/*[[${restartLink}]]*/);
+            }
+
+            function returnToReferer() {
+                sessionStorage.clear();
+                location.assign(/*[[${referer}]]*/);
+            }
+            /*]]>*/</script>
+    </head>
+    <body>
+        <div th:replace="header :: header(caption=${errorMessage})"></div>
+        <div>
+            <div id="content">
+                <div th:if="${invalidTokenValue}">
+                    <div th:if="${(tokenType == 'VALUE') and (referer != '-')}">
+                        <p>The test token, <span class="hilight" th:text="${tokenName}"></span> was supplied with the invalid value,
+                            <span class="hilight" th:text="tokenValue}"></span>.
+                            Tokens are used to link IAT results to data collected on other sites. The token value must consist of 
+                            alpha-numeric and Uri-encoded characters. If you would like, you may return to the web page that directed 
+                            you here by clicking, <span class="hilightHover" th:text="${referer}" onclick="returnToReferer()"></span></p>
+                    </div>
+                    <div th:if="${(tokenType == 'VALUE') and (referer == '-')}">
+                        <p>The test token, <span class="hilight" th:text="${tokenName}"></span> was supplied with the invalid value,
+                            <span class="hilight" th:text="${tokenValue}"></span>.
+                            Tokens are used to link IAT results to data collected on other sites.
+                            The token value must consist of alpha-numeric and Uri-encoded characters.</p>
+                    </div>
+                    <div th:if="${(tokenType == 'BASE_64') and (referer != '-')}">
+                        <p>The test token, <span class="hilight" th:text="${tokenName}"></span> was supplied with the invalid value,
+                            <span class="hilight" th:text="${tokenValue}"></span>. Tokens are used to link IAT results 
+                            to data collected on other sites. The token value must consist of base 64 characters and their Uri-encoded equivalents. 
+                            If you would like, you may return to the web page that directed you here by clicking, 
+                            <span class="hilightHover" th:text="${referer}" onclick="returnToReferer()"></span></p>
+                    </div>
+                    <div th:if="${(tokenType == 'BASE_64') and (referer == '-')}">
+                        <p>The test token, <span class="hilight" th:text="${tokenName}"></span> was supplied with the invalid value, 
+                            <span class="hilight" th:text="${tokenValue}"></span>. Tokens are used to link IAT results 
+                            to data collected on other sites. The token value must consist of base 64 characters and their Uri-encoded equivalents.</p>
+                    </div>
+                </div>
+                <div th:if="${invalidTokenName}">
+                    <div th:if="${referer != '-'}">
+                        <p>Tokens are used to link IAT results to data collected on other sites. This test was designed to use such a token. However,
+                            the token name supplied, <span class="hilight" th:text="${suppliedTokenName}"></span> does not match the expected token name, 
+                            <span class="hilight" th:text="${tokenName}"></span>.
+                            If you would like, you may return to the web page that directed you here by clicking, 
+                            <span th:text="${referer}" onclick="returnToReferer()">here</span>.</p>
+                    </div>
+                    <div th:if="${referer == '-'}">
+                        <p>Tokens are used to link IAT results to data collected on other sites. This test was designed to use such a token. However,
+                            the token name supplied, <span class="hilight" th:text="${suppliedTokenName}"></span> does not match the expected token name, 
+                            <span class="hilight" th:text="${tokenName}"></span>.</p>
+                    </div>
+                </div>
+                <div th:if="${missingToken}">
+                    <div th:if="${referer != '-'}">
+                        <p>Tokens are used to link IAT results to data collected on other sites. This test was designed to use such a token. However,
+                            the token, <span class="hilight" th:text="${tokenName}"></span> was not included in the URL.
+                            If you would like, you may return to the web page that directed you here by clicking, 
+                            <span class="hilightHover" th:text="${referer}" onclick="returnToReferer()"></span>.</p>
+                    </div>
+                    <div th:if="${referer == '-'}">
+                        <p>Tokens are used to link IAT results to data collected on other sites. This test was designed to use such a token. However,
+                            the token, <span class="hilight" th:text="${tokenName}"></span> was not included in the URL.</p> 
+                    </div>
+                </div>
+                <p>If you cannot resolve the issue, you may contact the party that directed you to take this test. For their informational purposes, the name of
+                    the test is <span class="hilight" th:text="${testName}"></span>&quot;.</p>
+            </div>
+            <div id="logo">
+                <img src="/IAT/images/logo.png" />
+            </div>
+        </div>
+    </body>
+</html>

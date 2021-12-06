@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Test Administration Corrupted</title>
+        <meta charset="UTF-8">
+        <script type="text/javascript" th:inline="javascript">/*<![CDATA[*/
+            function restartClick() {
+                location.assign(/*[[${restartLink}]]*/);
+            }
+            function returnToReferer() {
+                location.assign(/*[[${referer}]]*/);
+            }
+            /*]]>*/</script>
+        <link rel="stylesheet" href="/IAT/css/main.css" />
+    </head>
+    <body>
+        <div th:replace="header :: header(caption='Test Administration Corrupted')"></div>
+        <div>
+            <div id="content">
+                <p>This test has entered a fail state and is unable to record result data. It might be because you either clicked the
+                    refresh or back button on your browser. Mobile devices are more idiosyncratic and could have refreshed your
+                    test page after it had lain dormant. At any rate, test administration cannot continue.</p>
+                <p>If you would like to restart the test, click <span class="hilightHover" onclick="restartClick()">here</span>. 
+                <th:block th:if="${referer != '-'}">If you would prefer to return to the site that directed you to the test:
+                    <span class="hilightHover" onclick="returnToReferer()" th:text="referer">here</span>.</th:block></p>
+            </div>
+            <div id="logo">
+                <img src="/IAT/images/logo.png" />
+            </div>
+        </div>
+    </body>
+</html>

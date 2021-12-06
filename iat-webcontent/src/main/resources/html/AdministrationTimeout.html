@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Administration Timeout</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href=https://use.typekit.net/xmu4wql.css" />
+    <link rel="stylesheet" href="/IAT/css/main.css" />
+    <script type="text/javascript">
+        function restart() {
+            sessionStorage.clear();
+            window.location.assign(window.location);
+        }
+
+        function returnToReferer() {
+            sessionStorage.clear();
+            location.assign(sessionStorage.getItem("HTTP_REFERER"));
+        }
+        function onLoad() {
+            require("knockout", function (ko) {
+                ko.components.register("header", { require: "modules/header" });
+                ko.components.register("administration-timeout", { require: "modules/administration-timeout" });
+                ko.applyBindings("header");
+                ko.applyBindings("administration-timeout");
+            });
+        }
+    </script>
+    <script type="text/javascript" src="/IAT/scripts/lib/require.js"></script>
+    <script type="text/javascript" src="/IAT/scripts/lib/rconfig.js"></script>
+</head>
+<body>
+    <header params="text : 'Administration Timeout'"></header>
+    <div>
+        <div id="content">
+            <administration-timeout></administration-timeout>
+        </div>
+        <div id="logo">
+            <img src="/IAT/images/logo.png" />
+        </div>
+    </div>
+</body>
+
+</html>
