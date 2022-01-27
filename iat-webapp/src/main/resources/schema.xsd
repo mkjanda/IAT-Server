@@ -1,11 +1,10 @@
 <?xml version="1.0" ?>
 <xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-           xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" 
-           jaxb:extensionBindingPrefixes="xjc"
-           xmlns:iat="http://www.iatsoftware.net/schema" targetNamespace="http://www.iatsoftware.net/schema" jaxb:version="2.1">
-    
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc"
+    xmlns:iat="http://www.iatsoftware.net/schema" targetNamespace="http://www.iatsoftware.net/schema" jaxb:version="2.1">
+
     <xs:annotation>
         <xs:appinfo>
             <jaxb:globalBindings>
@@ -36,7 +35,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="AcceptRequestPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -56,7 +55,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="AlterClientStatePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -72,7 +71,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="AlterResourcesPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -127,7 +126,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="BasicClientInfoPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -147,7 +146,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="ClientDataRequestPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -166,7 +165,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="ClientUsagePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -212,7 +211,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="CorruptedSaveFileReportPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -231,7 +230,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="DataRequestPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -251,7 +250,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="DatePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -271,7 +270,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="DeleteRequestPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -286,7 +285,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="UpdateNotificationPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -310,7 +309,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="PricingPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -321,7 +320,7 @@
             <xs:element name="ResourcePrice" type="iat:resource-price-impl" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="ProductRequestPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -351,7 +350,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="ProductRequestsPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -373,7 +372,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="PurchaseConfirmationPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -409,7 +408,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="PurchaseHistoryPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -420,7 +419,7 @@
             <xs:element name="Puchase" type="iat:purchase-history-entity-impl" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="PurchaseHistoryEntityPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -445,7 +444,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="PurchaseOrderPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -459,8 +458,8 @@
             <xs:element name="Total" type="xs:int" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="ResourcePricePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -480,7 +479,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="TestUsagePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -505,7 +504,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="TransactionPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -527,7 +526,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="UsageReportPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -549,7 +548,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="PurchaseInitiationPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -560,7 +559,7 @@
             <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="UpdateDownloadsRemainingPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -571,7 +570,7 @@
             <xs:extension base="xs:int" />
         </xs:simpleContent>
     </xs:complexType>
-    
+
     <xs:complexType name="UserDataPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -593,7 +592,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:element name="ClientManagementEnvelopePojo">
         <xs:annotation>
             <xs:appinfo>
@@ -611,7 +610,7 @@
             </xs:choice>
         </xs:complexType>
     </xs:element>
-    
+
     <xs:complexType name="code-file-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -619,7 +618,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="CodeFilePojo">
         <xs:annotation>
             <xs:appinfo>
@@ -633,7 +632,7 @@
         </xs:sequence>
         <xs:attribute name="ElementName" type="xs:string" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="GlobalVarNameTablePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -651,7 +650,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="processed-code-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -672,7 +671,7 @@
         </xs:sequence>
         <xs:attribute name="EntityName" type="xs:string" use="required" form="unqualified" />
     </xs:complexType>
-    
+
     <xs:complexType name="code-line-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -692,7 +691,7 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    
+
     <xs:complexType name="iat-result-set-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -715,8 +714,8 @@
         <xs:attribute name="NumResultSetElements" type="xs:int" form="unqualified" use="required" />
         <xs:attribute name="NumAfterSurveys" type="xs:int" form="unqualified" use="required" />
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="result-set-element-list-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -739,7 +738,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="result-set-element-v1-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -760,7 +759,7 @@
             <xs:element name="PresentationNum" type="xs:int" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="result-set-element-v2-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -782,7 +781,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="result-packet-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -790,7 +789,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="ResultRequest">
         <xs:annotation>
             <xs:appinfo>
@@ -803,7 +802,7 @@
             <xs:element name="AuthToken" type="xs:string" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="result-toc-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -822,7 +821,7 @@
         </xs:sequence>
         <xs:attribute name="NumEntries" type="xs:int" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="result-toc-entry-impl" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -845,7 +844,7 @@
             <xs:element name="DataLength" type="xs:int" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="ResultPacketPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -863,7 +862,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="misc-result-data-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -882,7 +881,7 @@
         </xs:sequence>
         <xs:attribute name="NumEntried" type="xs:int" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="result-set-descriptor-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -912,8 +911,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:simpleType name="ClientDataRequestType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="ClientUsage" />
@@ -921,7 +920,7 @@
             <xs:enumeration value="ClientKeys" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="ErrorType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="none" />
@@ -932,7 +931,7 @@
             <xs:enumeration value="terminateProcess" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="DeploymentStage">
         <xs:restriction base="xs:string">
             <xs:enumeration value="unset" />
@@ -967,7 +966,7 @@
             <xs:enumeration value="failed" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="ErrorReportResponseCode">
         <xs:restriction base="xs:string">
             <xs:enumeration value="success" />
@@ -976,7 +975,7 @@
             <xs:enumeration value="serverError" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="ActivationResult">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Unset" />
@@ -991,7 +990,7 @@
             <xs:enumeration value="Success" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="AjaxRequestType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="PublicKey" />
@@ -1001,8 +1000,8 @@
             <xs:enumeration value="VerifyUniqueResponse" />
         </xs:restriction>
     </xs:simpleType>
-    
-    
+
+
     <xs:simpleType name="TransactionType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Unset" />
@@ -1087,7 +1086,7 @@
             <xs:enumeration value="NoActivationsRemain" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="EnvelopeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="None" />
@@ -1108,7 +1107,7 @@
             <xs:enumeration value="UploadRequest" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="KeyType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="None" />
@@ -1116,7 +1115,7 @@
             <xs:enumeration value="Admin" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="ManifestEntityType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="File" />
@@ -1124,7 +1123,7 @@
             <xs:enumeration value="UpdateFile" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="IATEventType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="BeginIATBlock" />
@@ -1136,7 +1135,7 @@
             <xs:enumeration value="MockItemInstructionScreen" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="PacketType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="ItemSlide" />
@@ -1146,14 +1145,14 @@
             <xs:enumeration value="None" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="FileManifestType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="ItemSlides" />
             <xs:enumeration value="DeploymentFiles" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="CodeType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Constructor" />
@@ -1164,7 +1163,7 @@
             <xs:enumeration value="TOC" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="AjaxResponseType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Error" />
@@ -1172,15 +1171,15 @@
             <xs:enumeration value="XML" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="SurveyType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="BeforeSurvey" />
             <xs:enumeration value="AfterSurvey" />
         </xs:restriction>
     </xs:simpleType>
-    
-    
+
+
     <xs:simpleType name="ClientStateAlteration">
         <xs:restriction base="xs:string">
             <xs:enumeration value="None" />
@@ -1188,7 +1187,7 @@
             <xs:enumeration value="Delete" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="EMailRecipientType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Client" />
@@ -1196,7 +1195,7 @@
             <xs:enumeration value="User" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="HtmlSpanReplacementType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Title" />
@@ -1218,7 +1217,7 @@
             <xs:enumeration value="NumIATS" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="ResourceType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Administration" />
@@ -1226,14 +1225,14 @@
             <xs:enumeration value="IatWith10Mb" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="PacketPayload">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Envelope" />
             <xs:enumeration value="RawData" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="TokenType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="NONE" />
@@ -1243,7 +1242,7 @@
             <xs:enumeration value="BASE64_UTF8" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="ClientEventType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Create" />
@@ -1256,7 +1255,7 @@
             <xs:enumeration value="Detached" />
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:complexType name="ErrorReportResponse">
         <xs:annotation>
             <xs:appinfo>
@@ -1270,8 +1269,8 @@
         </xs:sequence>
         <xs:attribute name="Response" type="iat:ErrorReportResponseCode" use="required" form="unqualified" />
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="survey-response-set-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1291,7 +1290,7 @@
         <xs:attribute name="NumSurveyResults" type="xs:int" form="unqualified" use="required" />
         <xs:attribute name="SurveyName" type="xs:string" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="survey-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1337,7 +1336,7 @@
         </xs:sequence>
         <xs:attribute name="SurveyType" type="iat:SurveyType" use="required" form="unqualified" />
     </xs:complexType>
-    
+
     <xs:complexType name="TestResultsPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1350,7 +1349,7 @@
         </xs:sequence>
         <xs:attribute name="NumResultSets" type="xs:int" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="result-set-entry-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1358,7 +1357,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="ResultSetEntryPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1373,7 +1372,7 @@
         <xs:attribute name="Token" type="xs:string" form="unqualified" use="optional" />
         <xs:attribute name="ResultId" type="xs:long" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="layout-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1407,7 +1406,7 @@
             <xs:element name="PageColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="iat-event-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1418,7 +1417,7 @@
     <xs:complexType name="IATEventPojo" abstract="true">
         <xs:attribute name="EventType" type="iat:IATEventType" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="event-list-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1437,8 +1436,8 @@
         </xs:sequence>
         <xs:attribute name="NumEvents" type="xs:int" use="required" />
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="display-item-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1461,7 +1460,7 @@
             <xs:element name="Height" type="xs:int" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="instruction-screen-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1479,7 +1478,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="IATItemPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1507,7 +1506,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="KeyedInstructionScreenPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1524,7 +1523,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="mask-specifier-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1546,7 +1545,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="MockItemInstructionScreenPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1567,8 +1566,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="range-specifier-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1592,7 +1591,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="dynamic-specifier-impl" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -1616,7 +1615,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="true-false-specifier-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1634,7 +1633,7 @@
             <xs:extension base="iat:dynamic-specifier-impl" />
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="selection-specifier-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1663,7 +1662,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="BeginIATBlockPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1685,7 +1684,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="BeginInstructionBlockPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1701,7 +1700,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="EndIATBlockPojo">
         <xs:complexContent>
             <xs:extension base="iat:iat-event-impl">
@@ -1711,7 +1710,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="TextInstructionScreenPojo">
         <xs:complexContent>
             <xs:extension base="iat:instruction-screen-impl">
@@ -1721,7 +1720,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="config-file-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1772,7 +1771,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="activation-response-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1805,7 +1804,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="activation-request-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1831,8 +1830,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="AjaxRequestPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -1850,8 +1849,8 @@
         </xs:sequence>
         <xs:attribute name="RequestType" type="iat:AjaxRequestType" form="unqualified" use="required" />
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="enc-code-line-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1877,7 +1876,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="segment-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1899,7 +1898,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="AjaxResponsePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -1922,8 +1921,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="deployment-progress-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1951,7 +1950,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="directory-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1974,7 +1973,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="encrypted-des-cipher-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1997,7 +1996,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="update-file-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2019,7 +2018,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="file-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2034,10 +2033,15 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="iat:file-entity-impl" />
+            <xs:extension base="iat:file-entity-impl">
+                <xs:sequence>
+                    <xs:element name="MimeType" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="Addendum" type="xs:string" minOccurs="0" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="FileEntityPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -2050,9 +2054,8 @@
             <xs:element name="Size" type="xs:long" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="EntityType" type="iat:ManifestEntityType" form="unqualified" use="required" />
-        <xs:attribute name="MimeType" type="xs:string" form="unqualified" use="required" />
     </xs:complexType>
-    
+
     <xs:complexType name="file-entity-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2060,7 +2063,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="handshake-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2082,7 +2085,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="iat-list-entry-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2101,7 +2104,7 @@
             <xs:element name="UserInfo" type="iat:user-info-impl" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="iat-list-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2123,8 +2126,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="iat-report-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2152,7 +2155,7 @@
         </xs:sequence>
         <xs:attribute name="Deploying" type="xs:boolean" use="required" form="unqualified" />
     </xs:complexType>
-    
+
     <xs:complexType name="admin-listener-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2174,7 +2177,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="token-definition-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2197,7 +2200,64 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
+    <xs:complexType name="DeploymentUploadInfoPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.DeploymentUploadInfo" />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="DeploymentId" type="xs:long" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="Type" type="iat:FileManifestType" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="file-references-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.FileReferences" />
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="FileReferencesPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.FileReferences" />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="FileReference" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ImageUriOriginalString" type="xs:string" minOccurs="1" maxOccurs="1" />
+                        <xs:element name="ReferenceUriOriginalString" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ItemSlideManifestPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ItemSlideManifest" />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Manifest" type="iat:manifest-impl" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="FileReferences" type="iat:file-references-impl" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="manifest-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2205,7 +2265,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ManifestPojo" abstract="true">
+    <xs:complexType name="ManifestPojo">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Manifest" />
@@ -2213,24 +2273,27 @@
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="iat:message-impl">
-                <xs:sequence>
-                    <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="ManifestItems" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded" />
-                                <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded" />
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
+                <xs:group ref="iat:ManifestGroup" />
                 <xs:attribute name="Size" type="xs:long" form="unqualified" use="required" />
                 <xs:attribute name="Type" type="iat:FileManifestType" form="unqualified" use="required" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+    <xs:group name="ManifestGroup">
+        <xs:sequence>
+            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ManifestItems" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded" />
+                        <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:group>
+
+
     <xs:complexType name="packet-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2257,7 +2320,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="partially-encrypted-rsa-key-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2282,7 +2345,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="public-key-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2308,7 +2371,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="query-iat-exists-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2331,7 +2394,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="request-handshake-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2354,8 +2417,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="rsa-key-pair-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2378,7 +2441,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="server-report-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2408,7 +2471,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="int-element-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2428,7 +2491,7 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    
+
     <xs:complexType name="long-element-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2448,7 +2511,7 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    
+
     <xs:complexType name="decimal-element-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2468,7 +2531,7 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    
+
     <xs:complexType name="string-element-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2488,7 +2551,7 @@
             </xs:extension>
         </xs:simpleContent>
     </xs:complexType>
-    
+
     <xs:complexType name="transaction-request-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2519,7 +2582,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="upload-request-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2544,8 +2607,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="user-info-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2566,7 +2629,7 @@
             <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="ClientErrorReport" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -2584,7 +2647,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="client-exception-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2592,7 +2655,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="ActivationException" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -2605,10 +2668,10 @@
             <xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="1" />
             <xs:element name="Version" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="Exception" type="iat:exception-message-impl" minOccurs="1" maxOccurs="1" />
-            
+
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="ClientException" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -2646,7 +2709,7 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="client-activity-event-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2654,7 +2717,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="ClientActivityEventPojo">
         <xs:annotation>
             <xs:appinfo>
@@ -2681,7 +2744,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="server-exception-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2703,7 +2766,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="exception-message-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2711,7 +2774,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="ExceptionMessage">
         <xs:annotation>
             <xs:appinfo>
@@ -2728,7 +2791,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="inner-exception-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2736,7 +2799,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
+
     <xs:complexType name="InnerException">
         <xs:annotation>
             <xs:appinfo>
@@ -2752,7 +2815,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="message-base-impl" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -2777,8 +2840,8 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="XmlPacketPojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -2796,7 +2859,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <xs:complexType name="UniqueResponsePojo">
         <xs:annotation>
             <xs:appinfo>
@@ -2814,8 +2877,8 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
-    
+
+
     <xs:complexType name="decryptor-impl" abstract="true">
         <xs:annotation>
             <xs:appinfo>
@@ -2855,7 +2918,7 @@
             <xs:element name="Version" type="xs:string" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
-    
+
     <xs:complexType name="Envelope" abstract="true">
         <xs:annotation>
             <xs:appinfo>

@@ -22,6 +22,7 @@ import net.iatsoftware.iat.entities.EncCodeLine;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.RSAKeyData;
+import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestResultFragment;
@@ -168,4 +169,6 @@ public interface IATRepositoryManager {
     TestResource getTestResource(IAT test, String resourceName);
     void storeTestResource(TestResource resource);
     List<TestResource> getTestResourceLike(IAT test, String patt);
+    void addTestResource(TestResource tr);
+    void addResourceReference(ResourceReference rr);
 }

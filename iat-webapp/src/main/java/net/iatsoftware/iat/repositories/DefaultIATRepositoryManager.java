@@ -28,6 +28,7 @@ import net.iatsoftware.iat.entities.TestBackupFile;
 import net.iatsoftware.iat.entities.UniqueResponse;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.entities.ResultSet;
+import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.RSAKeyData;
 import net.iatsoftware.iat.entities.TestResultFragment;
@@ -115,7 +116,8 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     CorsOriginRepository corsOriginRepository;
     @Inject
     TestResourceRepository testResourceRepository;
-
+    @Inject
+    ResourceReferenceRepository resourceReferenceRepository;
 
     @Transactional
     @Override
@@ -1028,9 +1030,21 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
         return testResourceRepository.getLike(test, patt);
     }
 
+    @Transactional
+    public void addTestResource(TestResource tr) {
+        testResourceRepository.add(tr);
+    }
+
+    @Transactional
+    public void addResourceReference(ResourceReference rr) {
+        resourceReferenceRepository.add(rr);
+    }
+
     @Scheduled(initialDelay = 86_400_000L, fixedDelay = 86_400_000L)
     @Transactional
     public void cleanRSARepository() {
         rsaDataRepository.clean();
     }
+
+
 }

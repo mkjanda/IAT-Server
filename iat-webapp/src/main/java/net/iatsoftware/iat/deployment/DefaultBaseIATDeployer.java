@@ -17,7 +17,6 @@ import net.iatsoftware.iat.configfile.IATSurvey;
 import net.iatsoftware.iat.configfile.UniqueResponse;
 import net.iatsoftware.iat.dataservices.XsltService;
 import net.iatsoftware.iat.entities.DeploymentSession;
-import net.iatsoftware.iat.entities.DynamicSpecifier;
 import net.iatsoftware.iat.entities.ManifestFile;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
