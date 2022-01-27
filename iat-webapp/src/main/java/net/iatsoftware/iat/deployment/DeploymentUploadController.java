@@ -90,11 +90,7 @@ public class DeploymentUploadController {
                     byte[] fileData = new byte[(int) f.getSize()];
                     System.arraycopy(data, offset, fileData, 0, fileData.length);
                     TestResource tr;
-                    if (f.getAddendum() == null) {
-                        tr = new TestResource(test, f.getName(), f.getMimeType(), fileData);
-                    } else {
-                        tr = new TestResource(test, f.getName(), f.getMimeType(), fileData, f.getAddendum());
-                    }
+                    tr = new TestResource(test, f.getName(), f.getMimeType(), fileData);
                     repositoryManager.addTestResource(tr);
                 }
             } catch (org.hibernate.exception.ConstraintViolationException ex) {
@@ -111,7 +107,7 @@ public class DeploymentUploadController {
         };
     }
 
-    @PostMapping(value = "/ItemSlidesUpload", params = { "deploymentId", "sessionId"})
+    @PostMapping(value = "/ItemSlideFiles", params = { "deploymentId", "sessionId"})
     public Callable<ResponseEntity<Byte>> receiveItemSlideUpload(@RequestHeader("deploymentId") Long deploymentId,
             @RequestHeader("sessionId") String sessionId, @RequestBody byte[] data) {
         return () -> {
@@ -134,7 +130,7 @@ public class DeploymentUploadController {
                     }
                     repositoryManager.addTestResource(tr);
                     var references = manifest.getFileReferences().getFileReference().get(ctr++);
-                    for (var ref : references.getReferenceUriOriginalString()) {
+                    for (var ref : references.getReference()) {
                         repositoryManager.addResourceReference(new ResourceReference(tr.getResourceId(), ref));
                     }
                 }

@@ -2217,6 +2217,37 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="ItemSlideDataPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ItemSlideData" />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ResourceEntry" minOccurs="1" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                    <xs:attribute name="Size" form="unqualified" use="required" />
+                                </xs:extension>
+                            </xs:simpleContent>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Reference" minOccurs="1" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="ResourceName" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="ReferenceName" minOccurs="1" maxOccurs="unbounded" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
     <xs:complexType name="file-references-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2235,7 +2266,7 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="ImageUriOriginalString" type="xs:string" minOccurs="1" maxOccurs="1" />
-                        <xs:element name="ReferenceUriOriginalString" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                        <xs:element name="Reference" type="xs:int" minOccurs="1" maxOccurs="unbounded" />
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>

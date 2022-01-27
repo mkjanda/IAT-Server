@@ -13,18 +13,18 @@ import javax.persistence.Table;
 public class ResourceReference implements java.io.Serializable {
     private static final long serialVersionUID = 1;
     private Long id, resourceId;
-    private String referenceName;
+    private Integer referenceId;
 
     public ResourceReference(){}
 
-    public ResourceReference(Long resourceId, String referenceName) {
+    public ResourceReference(Long resourceId, int referenceId) {
         this.resourceId = resourceId;
-        this.referenceName = referenceName;
+        this.referenceId = referenceId;
     }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="reference_id")
+    @Column(name="id")
     public Long getId() {
         return id;
     }
@@ -42,11 +42,11 @@ public class ResourceReference implements java.io.Serializable {
     }
 
     @Basic
-    @Column(name="reference_name")
-    public String getReferenceName() {
-        return referenceName;
+    @Column(name="reference_id")
+    public int getReferenceName() {
+        return referenceId;
     }
-    public void setReferenceName(String val) {
-        referenceName = val;
+    public void setReferenceName(int val) {
+        referenceId = val;
     }
 }

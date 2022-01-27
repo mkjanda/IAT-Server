@@ -23,7 +23,6 @@ public class TestResource implements java.io.Serializable{
     private String resourceName;
     private long resourceId;
     private byte[] resource;
-    private byte[] addendum;
     private String mimeType;
     private Set<ResourceReference> resourceReferences;
 
@@ -93,15 +92,6 @@ public class TestResource implements java.io.Serializable{
     }
     public void setResource(byte []val) {
         this.resource = val;
-    }
-
-    @Lob
-    @Column(name="addendum", nullable=true)
-    public byte[] getAddendum() {
-        return this.addendum;
-    }
-    public void setAddendum(byte[] val) {
-        this.addendum = val;
     }
 
     @OneToMany(fetch=FetchType.LAZY)
