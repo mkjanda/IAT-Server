@@ -13,7 +13,7 @@ This is the server end of software that allows people to create Implicit Associa
   <h2 id='database-setup'>The Database</h2>
           <p>The <b>iat.sql</b> file in the root directory will create the database. Simply import it with <b>mysql -u root -p < iat.sql</b> It will setup the database iatserver_db and a user that has privlidges only on that database that's used by the software. You might wish to create a product user. That can be done wwith the following SQL statement.
  
-  ``` sql
+  ```sql
   insert into clients(product_key, activations_remaining, activations_consumed, contact_fname, 
     contact_lname, email, administrations, frozen, deleted, kill_filed, invalid_save_files, 
     isolate_users, downloads_consumed) values ('2L9JBMR74EYKHJ7RKWPE', 0, 0, 'Nikki', 'Lissome', 
@@ -23,7 +23,7 @@ This is the server end of software that allows people to create Implicit Associa
  <p>This is to accompany a user you can create for the test design software without registering it. In <b>%USER%\AppData\Local\IATSoftware</b> directory, create the following file:</p>
 
   <h2>IATDesign.xml</h2>
-``` xml
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 <IATDesign>
   <Version>1.1.1.43</Version>
