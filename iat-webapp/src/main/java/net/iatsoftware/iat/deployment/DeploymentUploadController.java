@@ -12,6 +12,7 @@ package net.iatsoftware.iat.deployment;
 
 import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.entities.DeploymentSession;
+import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
@@ -20,11 +21,13 @@ import net.iatsoftware.iat.events.ItemSlideManifestReceivedEvent;
 import net.iatsoftware.iat.events.ItemSlidesDeploymentCompleteEvent;
 import net.iatsoftware.iat.events.ManifestReceivedEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
-import net.iatsoftware.iat.generated.TransactionType;
+import net.iatsoftware.iat.generated.ManifestFileType;
 import net.iatsoftware.iat.messaging.Envelope;
+import net.iatsoftware.iat.messaging.File;
 import net.iatsoftware.iat.messaging.ItemSlideManifest;
 import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.WebSocketService;
@@ -56,8 +59,9 @@ public class DeploymentUploadController {
     interface Deployment {
         Long getStartTime();
         String getSessionId();
+        Manifest getManifest();
     }
-    interface DeploymentFiles extends Deployment {
+    interface TestResource extends Deployment {
         Manifest getManifest();
     }
     interface ItemSlides extends Deployment {
@@ -89,8 +93,7 @@ public class DeploymentUploadController {
                 for (var f : manifest.getFiles()) {
                     byte[] fileData = new byte[(int) f.getSize()];
                     System.arraycopy(data, offset, fileData, 0, fileData.length);
-                    TestResource tr;
-                    tr = new TestResource(test, f.getName(), f.getMimeType(), fileData);
+                    TestResource tr = new TestResource(test, f.getName(), f.getMimeType(), fileData);
                     repositoryManager.addTestResource(tr);
                 }
             } catch (org.hibernate.exception.ConstraintViolationException ex) {
@@ -129,8 +132,8 @@ public class DeploymentUploadController {
                         tr = new TestResource(test, f.getName(), f.getMimeType(), fileData, f.getAddendum());
                     }
                     repositoryManager.addTestResource(tr);
-                    var references = manifest.getFileReferences().getFileReference().get(ctr++);
-                    for (var ref : references.getReference()) {
+                    var references = manifest.getResourceReferences().getResourceReference().get(ctr++);
+                    for (var ref : references.getReferenceId()) {
                         repositoryManager.addResourceReference(new ResourceReference(tr.getResourceId(), ref));
                     }
                 }
@@ -162,6 +165,11 @@ public class DeploymentUploadController {
                 return evt.getManifest();
             }
         });
+       var ds = repositoryManager.getDeploymentSession(evt.getDeploymentID());
+       for (int ctr = 0; ctr < evt.getManifest().getFiles().size(); ctr++) {
+           var mf = new ManifestFile(ds.getTest(),  evt.getManifest().getFiles().get(ctr),  ctr, ManifestFileType.DEPLOYMENT_FILE);
+           repositoryManager.addManifestFile(mf);
+       }
         var trans = new TransactionRequest(TransactionType.DEPLOYMENT_FILE_MANIFEST_RECEIVED);
         trans.addLongValue("deploymentId", evt.getDeploymentID());
         trans.addStringValue("sessionId", evt.getSessionId());

@@ -12,11 +12,11 @@ package net.iatsoftware.iat.repositories;
 
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.ManifestFile;
-import net.iatsoftware.iat.generated.FileManifestType;
+import net.iatsoftware.iat.generated.DeploymentFileType;
 
 import java.util.List;
 
 public interface ManifestFileRepository extends GenericRepository<Long, ManifestFile> {
-    List<ManifestFile> getDeploymentManifest(DeploymentSession ds, FileManifestType fileType);
-    void deleteManifestFiles(DeploymentSession ds, FileManifestType fileType);
+    List<ManifestFile> getDeploymentManifest(DeploymentSession ds, DeploymentFileType fileType);
+    void deleteManifestFiles(DeploymentSession ds, DeploymentFileType fileType);
 }

@@ -10,7 +10,7 @@ package net.iatsoftware.iat.entities;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.generated.FileManifestType;
+import net.iatsoftware.iat.generated.DeploymentFileType;
 import net.iatsoftware.iat.messaging.File;
 
 import javax.persistence.Basic;
@@ -22,34 +22,31 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 
 @Entity
-@Table(name="manifest_files", indexes = {
-    @Index(name="files_deployment_session", columnList="SessionID")
-})
+@Table(name="manifest_files")
 public class ManifestFile implements java.io.Serializable {
     private static final long serialVersionUID = 1;
     private long id, fileSize;
     private int transmissionOrder;
     private String fileName, filePath;
     private String mimeType;
-    private DeploymentSession deploymentSession;
-    private FileManifestType fileType;
+    private IAT test;
+    private DeploymentFileType fileType;
     
     public ManifestFile() {}
     
-    public ManifestFile(DeploymentSession ds, File f, int transOrder, FileManifestType fileType) {
-        this.deploymentSession = ds;
+    public ManifestFile(IAT  iat, File f, int transOrder, DeploymentFileType fileType) {
         this.fileSize = f.getSize();
         this.fileName = f.getName();
         this.filePath = f.getPath();
         this.transmissionOrder = transOrder;
         this.fileType = fileType;
+        this.test = iat;
     }
     
     @Id
@@ -63,12 +60,12 @@ public class ManifestFile implements java.io.Serializable {
     }
     
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="SessionID", referencedColumnName="SessionID")
-    public DeploymentSession getDeploymentSession() {
-        return this.deploymentSession;
+    @JoinColumn(name="TestID", referencedColumnName="TestID")
+    public IAT getDeploymentSession() {
+        return this.test;
     }
-    public void setDeploymentSession(DeploymentSession val) {
-        this.deploymentSession = val;
+    public void setDeploymentSession(IAT val) {
+        this.test = val;
     }
     
     @Basic
@@ -118,10 +115,10 @@ public class ManifestFile implements java.io.Serializable {
     @Enumerated(EnumType.STRING)
     @Basic
     @Column(name="file_type")
-    public FileManifestType getFileType() {
+    public DeploymentFileType getFileType() {
         return this.fileType;
     }
-    public void setFileType(FileManifestType val) {
+    public void setFileType(DeploymentFileType val) {
         this.fileType = val;
     }
 }

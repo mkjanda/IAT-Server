@@ -3,9 +3,12 @@ package net.iatsoftware.iat.entities;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GenerationType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -13,13 +16,15 @@ import javax.persistence.Table;
 public class ResourceReference implements java.io.Serializable {
     private static final long serialVersionUID = 1;
     private Long id, resourceId;
-    private Integer referenceId;
+    private Long referenceId;
+    private IAT test;
 
     public ResourceReference(){}
 
-    public ResourceReference(Long resourceId, int referenceId) {
+    public ResourceReference(IAT test, Long resourceId, Long referenceId) {
         this.resourceId = resourceId;
         this.referenceId = referenceId;
+        this.test = test;
     }
 
     @Id
@@ -43,10 +48,19 @@ public class ResourceReference implements java.io.Serializable {
 
     @Basic
     @Column(name="reference_id")
-    public int getReferenceName() {
+    public Long getReferenceId() {
         return referenceId;
     }
-    public void setReferenceName(int val) {
+    public void setReferenceId(Long val) {
         referenceId = val;
+    }
+
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name="test_id", referencedColumnName="TestID")
+    public IAT getTest() {
+        return test;
+    }
+    public  void setTest(IAT test) {
+        this.test = test;
     }
 }

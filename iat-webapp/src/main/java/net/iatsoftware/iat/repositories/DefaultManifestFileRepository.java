@@ -12,7 +12,7 @@ package net.iatsoftware.iat.repositories;
 
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.ManifestFile;
-import net.iatsoftware.iat.generated.FileManifestType;
+import net.iatsoftware.iat.generated.DeploymentFileType;
 
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +25,7 @@ import javax.persistence.criteria.Root;
 
 @Repository
 public class DefaultManifestFileRepository extends GenericJpaRepository<Long, ManifestFile> implements ManifestFileRepository {
-    public List<ManifestFile> getDeploymentManifest(DeploymentSession ds, FileManifestType fileType) {
+    public List<ManifestFile> getDeploymentManifest(DeploymentSession ds, DeploymentFileType fileType) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<ManifestFile> query = cb.createQuery(ManifestFile.class);
         Root<ManifestFile> root = query.from(ManifestFile.class);
@@ -33,7 +33,7 @@ public class DefaultManifestFileRepository extends GenericJpaRepository<Long, Ma
         return this.entityManager.createQuery(query.where(pred).orderBy(cb.asc(root.get("transmissionOrder")))).getResultList();
     }
 
-    public void deleteManifestFiles(DeploymentSession ds, FileManifestType fileType) {
+    public void deleteManifestFiles(DeploymentSession ds, DeploymentFileType fileType) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaDelete<ManifestFile> ce = cb.createCriteriaDelete(ManifestFile.class);
         var root = ce.from(ManifestFile.class);

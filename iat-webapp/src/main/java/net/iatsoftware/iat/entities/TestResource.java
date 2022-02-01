@@ -1,49 +1,44 @@
 package net.iatsoftware.iat.entities;
 
-import java.util.Set;
+import java.util.List;
+import java.util.regex.Pattern;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Basic;
-import javax.persistence.Lob;
-import javax.persistence.Table;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;;
 
 @Entity
-@Table(name="test_resources")
+@Table(name="test_resources", uniqueConstraints = @UniqueConstraint(columnNames={"TestID", "name"}))
 public class TestResource implements java.io.Serializable{
     private static final long serialVersionUID = 1L;
     private IAT test;
-    private String resourceName;
-    private long resourceId;
+    private String name, path, mimeType;
+    private long resourceId, size;
     private byte[] resource;
-    private String mimeType;
-    private Set<ResourceReference> resourceReferences;
+    private List<ResourceReference> resourceReferences;
 
     public TestResource(){}
 
-    public TestResource(IAT test, String resourceName, String mimeType) {
+    public TestResource(IAT test, String path, String mimeType) {
         this.test = test;
-        this.resourceName = resourceName;
+        this.name = Pattern.compile("(^|/)(([/]+)$").matcher(path).group(1);
+        this.path = path;
         this.mimeType = mimeType;
     }
     
-    public TestResource(IAT test, String resourceName, String mimeType, byte[] resource) {
+    public TestResource(IAT test, String path, String mimeType, byte[] resource) {
         this.test = test;
-        this.resourceName = resourceName;
-        this.resource = resource;
-        this.mimeType = mimeType;
-    }
-
-    public TestResource(IAT test, String resourceName, String mimeType, byte[] resource, String addendum) {
-        this.test = test;
-        this.resourceName = resourceName;
+        this.name = Pattern.compile("(^|/)(([/]+)$").matcher(path).group(1);
+        this.path = path;
         this.resource = resource;
         this.mimeType = mimeType;
     }
@@ -68,12 +63,21 @@ public class TestResource implements java.io.Serializable{
     }
 
     @Basic
-    @Column(name="resource_name")
-    public String getResourceName() {
-        return resourceName;
+    @Column(name="name")
+    public String getName() {
+        return name;
     }
-    public void setResourceName(String val) {
-        resourceName = val;
+    public void setName(String val) {
+        name = val;
+    }
+
+    @Basic
+    @Column(name="path")
+    public String getPath() {
+        return path;
+    }
+    public void setPath(String val) {
+        path = val;
     }
 
     @Basic
@@ -94,9 +98,17 @@ public class TestResource implements java.io.Serializable{
         this.resource = val;
     }
 
-    @OneToMany(fetch=FetchType.LAZY)
-    @JoinColumn(name="resource_id")
-    public Set<ResourceReference> getReferences() {
+    @Basic
+    public long getSize() {
+        return this.size;
+    }
+    public void setSize(long val) {
+        this.size = val;
+    }
+
+    @OneToMany(fetch=FetchType.EAGER)
+    @JoinColumn(name="ResourceID")
+    public List<ResourceReference> getReferences() {
         return resourceReferences;
     }
 }

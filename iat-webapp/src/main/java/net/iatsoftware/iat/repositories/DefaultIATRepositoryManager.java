@@ -40,7 +40,7 @@ import net.iatsoftware.iat.entities.ManifestFile;
 import net.iatsoftware.iat.entities.OAuthAccess;
 import net.iatsoftware.iat.entities.SpecifierValue;
 import net.iatsoftware.iat.generated.CodeType;
-import net.iatsoftware.iat.generated.FileManifestType;
+import net.iatsoftware.iat.generated.DeploymentFileType;
 import net.iatsoftware.iat.generated.PacketType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.Manifest;
@@ -628,13 +628,20 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     public List<ItemSlide> getItemSlidesByTest(final IAT test) {
         return itemSlideRepository.getSlidesByTest(test);
     }
-
+/*
     @Transactional
     @Override
-    public Manifest getItemSlideManifest(final Client client, final String iatName) {
+    public ItemSlideManifest getItemSlideManifest(final Client client, final String iatName) {
         final IAT test = iatRepository.getIAT(client, iatName);
         return itemSlideRepository.getItemSlideManifest(test);
     }
+*/
+    @Transactional
+    public List<ResourceReference> getResourceReferences(final Client client, final String iatName) {
+        final IAT test = iatRepository.getIAT(client, iatName);
+        return  resourceReferenceRepository.getResourceReferences(test);
+    }
+
 
     @Transactional
     @Override
@@ -680,7 +687,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public void deleteManifestFiles(DeploymentSession ds, FileManifestType ft) {
+    public void deleteManifestFiles(DeploymentSession ds, DeploymentFileType ft) {
         manifestFileRepository.deleteManifestFiles(ds, ft);
     }
 
@@ -701,7 +708,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public List<ManifestFile> getDeploymentFileManifest(final Long deploymentID, final FileManifestType fileType) {
+    public List<ManifestFile> getDeploymentFileManifest(final Long deploymentID, final DeploymentFileType fileType) {
         final DeploymentSession sess = deploymentSessionRepository.get(deploymentID);
         return manifestFileRepository.getDeploymentManifest(sess, fileType);
     }

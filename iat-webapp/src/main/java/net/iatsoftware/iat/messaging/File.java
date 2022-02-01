@@ -5,23 +5,28 @@
  */
 package net.iatsoftware.iat.messaging;
 
+import net.iatsoftware.iat.generated.ManifestEntityType;
+import net.iatsoftware.iat.generated.ManifestFileType;
+
 /**
  *
  * @author Michael Janda
  */
-public class File extends net.iatsoftware.iat.generated.FilePojo {
+public class File extends net.iatsoftware.iat.generated.FilePojo implements java.io.Serializable {
+    private static final long serialVersionUID = 1;
+
     public File()
     {
         size = 0;
         name = "";
-        entityType = net.iatsoftware.iat.generated.ManifestEntityType.FILE;
+        this.entityType = ManifestEntityType.FILE;
     }
     
-    public File(String n, long s)
+    public File(String n, long s,  ManifestFileType t)
     {
         size = s;
         name = n;
-        entityType = net.iatsoftware.iat.generated.ManifestEntityType.FILE;
+        entityType = ManifestEntityType.FILE;
         path = "./" + n;
     }
 }

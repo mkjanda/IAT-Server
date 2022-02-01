@@ -34,7 +34,7 @@ import net.iatsoftware.iat.entities.ItemSlide;
 import net.iatsoftware.iat.entities.SpecifierValue;
 import net.iatsoftware.iat.generated.CodeType;
 import net.iatsoftware.iat.generated.TokenType;
-import net.iatsoftware.iat.generated.FileManifestType;
+import net.iatsoftware.iat.generated.DeploymentFileType;
 import net.iatsoftware.iat.generated.PacketType;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
 import net.iatsoftware.iat.messaging.IATList;
@@ -108,7 +108,6 @@ public interface IATRepositoryManager {
     Map<AdminTimer, List<TestResultFragment>> getCompletedResultSets();
     void storeResultSet(IAT test, String tocData, byte[] resultData, byte[] testeeToken);
     List<ItemSlide> getItemSlidesByTest(IAT test);
-    Manifest getItemSlideManifest(Client client, String iatName);
     DeploymentSession getDeploymentSession(Long id);
     void storeDeploymentSession(DeploymentSession ds);
     void storeManifestFile(ManifestFile mf);
@@ -117,7 +116,7 @@ public interface IATRepositoryManager {
     boolean deleteDeploymentSession(Long deploymentSessionID);
     void deleteDeploymentSession(DeploymentSession ds);
     byte[] getDeploymentPacketData(Long depoloymentID, PacketType packetType, int ordinal);
-    List<ManifestFile> getDeploymentFileManifest(Long deploymentID, FileManifestType fileType);
+    List<ManifestFile> getDeploymentFileManifest(Long deploymentID, DeploymentFileType fileType);
     void storeItemSlide(ItemSlide slide);
     void storeEncryptedCode(TestSegment ts, List<EncCodeLine> code);
     TestSegment getTestSegmentByID(Long id);
@@ -168,7 +167,7 @@ public interface IATRepositoryManager {
     TestSegment getTestSegment(IAT iat, String segmentName);
     TestResource getTestResource(IAT test, String resourceName);
     void storeTestResource(TestResource resource);
-    List<TestResource> getTestResourceLike(IAT test, String patt);
     void addTestResource(TestResource tr);
     void addResourceReference(ResourceReference rr);
+    List<ResourceReference> getResourceReferences(Client c, String iatName);
 }

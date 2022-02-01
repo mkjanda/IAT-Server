@@ -10,17 +10,24 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 
-
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
+
+import net.iatsoftware.iat.entities.IAT;
+import net.iatsoftware.iat.entities.TestResource;
+import net.iatsoftware.iat.generated.ManifestFileType;
+import net.iatsoftware.iat.generated.ResourceType;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileReader;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -38,23 +45,54 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
     int walkNdx;
 
     public Manifest() {
-        iatName="none";
+        iatName = "none";
     }
 
     public Manifest(String testName) {
         iatName = testName;
     }
-    
+
     public Manifest(java.io.File directory) {
         iatName = "none";
-        this.manifestItems = new ManifestItems();
+        this.testResources = new TestResources();
         java.io.File[] contents = directory.listFiles();
         for (java.io.File file : contents) {
-            File f = new File(file.getName(), file.length());
-            this.manifestItems.getFile().add(f);
+            File f = new File(file.getName(), file.length(), ManifestFileType.UPDATE_FILE);
         }
     }
+
+    public Manifest(java.io.File[] files) {
+
+    }
+
+    public Manifest(IAT test, List<TestResource> resources) {
+        this.iatName = test.getTestName();
+        this.testResources = new TestResources();
+        this.testResources.getFile()
+        resources.forEach((res) -> {
+            var file = new File();
+            file.setName(res.getName());
+            ResourceType.
+            if (res.getFileType())
+            file.setEntityType(res.);
+        })
+        Directory dir;
+        var patt = Pattern.compile("((^|/)(?segment<.+?>))/");
+        var  accumulator = new  BiFunction<List<List<String>>, List<String>, List<List<String>>>() {
+
+            public List<List<String>>  apply (List<List<String>> l1, List<String> l2)  {
+                for (int ctr = 0; ctr < l2.size(); ctr++) {
+                    if (ctr >= l1.size())
+                        l1.add(new ArrayList<String>());
+                    l1.get(ctr).add(l2.get(ctr));
+                }
+               return l1;
+            }
+        };
     
+
+    }
+
     private static java.io.File[] getDepreciatedUpdateDirectoryCandidates(java.io.File rootPath, String clientRelease) {
         java.io.File[] updateDirectories = rootPath.listFiles();
         final Pattern patt = Pattern.compile("([1-9][0-9]*)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)$");
@@ -84,41 +122,40 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
                 if (dirRevision > clientRevision)
                     return true;
                 return false;
-            }
-            catch (RuntimeException ex) {
+            } catch (RuntimeException ex) {
                 logger.error(ex);
                 return false;
             }
         }).toArray(java.io.File[]::new);
         Arrays.sort(filteredDirectories, (d1, d2) -> {
-                int version1, major1, minor1, revision1, version2, major2, minor2, revision2;
-                Matcher m1 = dirPattern.matcher(d1.getName());
-                if (!m1.matches())
-                    throw new RuntimeException("Invalid directory in update path: " + d1.getName());
-                version1 = Integer.parseInt(m1.group(1));
-                major1 = Integer.parseInt(m1.group(2));
-                minor1 = Integer.parseInt(m1.group(3));
-                revision1 = Integer.parseInt(m1.group(4));
-                Matcher m2 = dirPattern.matcher(d2.getName());
-                if (!m2.matches())
-                    throw new RuntimeException("Invalid directory in update path: " + d2.getName());
-                version2 = Integer.parseInt(m2.group(1));
-                major2 = Integer.parseInt(m2.group(2));
-                minor2 = Integer.parseInt(m2.group(3));
-                revision2 = Integer.parseInt(m2.group(4));
-                if (version2 != version1)
-                    return version2 - version1;
-                if (major2 != major1)
-                    return major2 - major1;
-                if (minor2 != minor1)
-                    return minor2 - minor1;
-                if (revision2 != revision1)
-                    return revision2 - revision1;
-                return 0;
+            int version1, major1, minor1, revision1, version2, major2, minor2, revision2;
+            Matcher m1 = dirPattern.matcher(d1.getName());
+            if (!m1.matches())
+                throw new RuntimeException("Invalid directory in update path: " + d1.getName());
+            version1 = Integer.parseInt(m1.group(1));
+            major1 = Integer.parseInt(m1.group(2));
+            minor1 = Integer.parseInt(m1.group(3));
+            revision1 = Integer.parseInt(m1.group(4));
+            Matcher m2 = dirPattern.matcher(d2.getName());
+            if (!m2.matches())
+                throw new RuntimeException("Invalid directory in update path: " + d2.getName());
+            version2 = Integer.parseInt(m2.group(1));
+            major2 = Integer.parseInt(m2.group(2));
+            minor2 = Integer.parseInt(m2.group(3));
+            revision2 = Integer.parseInt(m2.group(4));
+            if (version2 != version1)
+                return version2 - version1;
+            if (major2 != major1)
+                return major2 - major1;
+            if (minor2 != minor1)
+                return minor2 - minor1;
+            if (revision2 != revision1)
+                return revision2 - revision1;
+            return 0;
         });
         return filteredDirectories;
     }
-    
+
     private static java.io.File[] getUpdateDirectoryCandidates(java.io.File rootPath, String clientRelease) {
         java.io.File[] updateDirectories = rootPath.listFiles();
         final Pattern patt = Pattern.compile("([1-9][0-9]*)\\.([0-9]+)\\.([0-9]+)\\.([0-9]+)$");
@@ -130,57 +167,57 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
         final int clientMinor = Integer.parseInt(matcher.group(3));
         final int clientRevision = Integer.parseInt(matcher.group(4));
         java.io.File[] filteredDirectories = Arrays.stream(updateDirectories).filter((ud) -> {
-                int dirVersion, dirMajor, dirMinor, dirRevision;
-                Matcher dirMatcher = dirPattern.matcher(ud.getName());
-                if (!dirMatcher.matches())
-                    throw new RuntimeException("Invalid directory in update path: " + ud.getName());
-                dirVersion = Integer.parseInt(dirMatcher.group(1));
-                dirMajor = Integer.parseInt(dirMatcher.group(2));
-                dirMinor = Integer.parseInt(dirMatcher.group(3));
-                dirRevision = Integer.parseInt(dirMatcher.group(4));
-                if (dirVersion > clientVersion)
-                    return true;
-                else if (dirVersion < clientVersion)
-                    return false;
-                if (dirMajor > clientMajor) 
-                    return true;
-                else if (dirMajor < clientMajor)
-                    return false;
-                if (dirMinor > clientMinor)
-                    return true;
-                else if (dirMinor < clientMinor)
-                    return false;
-                return (dirRevision > clientRevision);
+            int dirVersion, dirMajor, dirMinor, dirRevision;
+            Matcher dirMatcher = dirPattern.matcher(ud.getName());
+            if (!dirMatcher.matches())
+                throw new RuntimeException("Invalid directory in update path: " + ud.getName());
+            dirVersion = Integer.parseInt(dirMatcher.group(1));
+            dirMajor = Integer.parseInt(dirMatcher.group(2));
+            dirMinor = Integer.parseInt(dirMatcher.group(3));
+            dirRevision = Integer.parseInt(dirMatcher.group(4));
+            if (dirVersion > clientVersion)
+                return true;
+            else if (dirVersion < clientVersion)
+                return false;
+            if (dirMajor > clientMajor)
+                return true;
+            else if (dirMajor < clientMajor)
+                return false;
+            if (dirMinor > clientMinor)
+                return true;
+            else if (dirMinor < clientMinor)
+                return false;
+            return (dirRevision > clientRevision);
         }).toArray(java.io.File[]::new);
         Arrays.sort(filteredDirectories, (d1, d2) -> {
-                int version1, major1, minor1, revision1, version2, major2, minor2, revision2;
-                Matcher m1 = dirPattern.matcher(d1.getName());
-                if (!m1.matches())
-                    throw new RuntimeException("Invalid directory in update path: " + d1.getName());
-                version1 = Integer.parseInt(m1.group(1));
-                major1 = Integer.parseInt(m1.group(2));
-                minor1 = Integer.parseInt(m1.group(3));
-                revision1 = Integer.parseInt(m1.group(4));
-                Matcher m2 = dirPattern.matcher(d2.getName());
-                if (!m2.matches())
-                    throw new RuntimeException("Invalid directory in update path: " + d2.getName());
-                version2 = Integer.parseInt(m2.group(1));
-                major2 = Integer.parseInt(m2.group(2));
-                minor2 = Integer.parseInt(m2.group(3));
-                revision2 = Integer.parseInt(m2.group(4));
-                if (version2 != version1)
-                    return version2 - version1;
-                if (major2 != major1)
-                    return major2 - major1;
-                if (minor2 != minor1)
-                    return minor2 - minor1;
-                if (revision2 != revision1)
-                    return revision2 - revision1;
-                return 0;
+            int version1, major1, minor1, revision1, version2, major2, minor2, revision2;
+            Matcher m1 = dirPattern.matcher(d1.getName());
+            if (!m1.matches())
+                throw new RuntimeException("Invalid directory in update path: " + d1.getName());
+            version1 = Integer.parseInt(m1.group(1));
+            major1 = Integer.parseInt(m1.group(2));
+            minor1 = Integer.parseInt(m1.group(3));
+            revision1 = Integer.parseInt(m1.group(4));
+            Matcher m2 = dirPattern.matcher(d2.getName());
+            if (!m2.matches())
+                throw new RuntimeException("Invalid directory in update path: " + d2.getName());
+            version2 = Integer.parseInt(m2.group(1));
+            major2 = Integer.parseInt(m2.group(2));
+            minor2 = Integer.parseInt(m2.group(3));
+            revision2 = Integer.parseInt(m2.group(4));
+            if (version2 != version1)
+                return version2 - version1;
+            if (major2 != major1)
+                return major2 - major1;
+            if (minor2 != minor1)
+                return minor2 - minor1;
+            if (revision2 != revision1)
+                return revision2 - revision1;
+            return 0;
         });
         return filteredDirectories;
     }
-    
+
     public static byte[] getUpdate(java.io.File rootPath, String clientRelease)
             throws java.io.IOException {
         final List<String> includedFiles = new ArrayList<>();
@@ -190,16 +227,17 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
         long nBytesRead, len;
         java.io.File[] updateDirectoryCandidates = Manifest.getUpdateDirectoryCandidates(rootPath, clientRelease);
         for (java.io.File dir : updateDirectoryCandidates) {
-            java.io.File[] files = Arrays.stream(dir.listFiles()).
-                filter(f -> !includedFiles.contains(f.getName()) && !f.getName().equals(NOTIFICATION_FILE) && !f.getName().equals(NOTIFICATION_FLAG_FILE)).
-                toArray(java.io.File[]::new);
+            java.io.File[] files = Arrays
+                    .stream(dir.listFiles()).filter(f -> !includedFiles.contains(f.getName())
+                            && !f.getName().equals(NOTIFICATION_FILE) && !f.getName().equals(NOTIFICATION_FLAG_FILE))
+                    .toArray(java.io.File[]::new);
             for (java.io.File file : files) {
                 includedFiles.add(file.getName());
                 len = file.length();
                 nBytesRead = 0;
                 try (FileInputStream fIn = new FileInputStream(file)) {
                     while (nBytesRead < len) {
-                        nBytes = fIn.read(buff, 0, (len - nBytesRead < 8192) ? (int)(len - nBytesRead) : 8192);
+                        nBytes = fIn.read(buff, 0, (len - nBytesRead < 8192) ? (int) (len - nBytesRead) : 8192);
                         nBytesRead += nBytes;
                         bOut.write(buff, 0, nBytes);
                     }
@@ -209,55 +247,72 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
         return bOut.toByteArray();
     }
 
-    public static byte[] getDepreciatedUpdate(java.io.File rootPath, String clientRelease) 
+    public static byte[] getDepreciatedUpdate(java.io.File rootPath, String clientRelease)
             throws java.io.IOException {
         final List<String> includedFiles = new ArrayList<>();
         byte[] buff = new byte[8192];
         ByteArrayOutputStream bOut = new ByteArrayOutputStream();
         int nBytes;
         long nBytesRead, len;
-        java.io.File[] updateDirectoryCandidates = Manifest.getDepreciatedUpdateDirectoryCandidates(rootPath, clientRelease);
+        java.io.File[] updateDirectoryCandidates = Manifest.getDepreciatedUpdateDirectoryCandidates(rootPath,
+                clientRelease);
         for (java.io.File dir : updateDirectoryCandidates) {
-            java.io.File[] files = Arrays.stream(dir.listFiles()).filter(f -> !includedFiles.contains(f.getName())).toArray(java.io.File[]::new);
+            java.io.File[] files = Arrays.stream(dir.listFiles()).filter(f -> !includedFiles.contains(f.getName()))
+                    .toArray(java.io.File[]::new);
             for (java.io.File file : files) {
                 includedFiles.add(file.getName());
                 len = file.length();
                 nBytesRead = 0;
                 try (FileInputStream fIn = new FileInputStream(file)) {
                     while (nBytesRead < len) {
-                        nBytes = fIn.read(buff, 0, (len - nBytesRead < 8192) ? (int)(len - nBytesRead) : 8192);
+                        nBytes = fIn.read(buff, 0, (len - nBytesRead < 8192) ? (int) (len - nBytesRead) : 8192);
                         nBytesRead += nBytes;
                         bOut.write(buff, 0, nBytes);
                     }
-                } 
+                }
             }
         }
         return bOut.toByteArray();
     }
-    
+
     public static Manifest getDepreciatedUpdateManifest(java.io.File rootPath, String clientRelease) {
         final Manifest updateManifest = new Manifest();
-        updateManifest.manifestItems = new ManifestItems();
-        java.io.File[] updateDirectoryCandidates = Manifest.getDepreciatedUpdateDirectoryCandidates(rootPath, clientRelease);
+        updateManifest.testResources = new TestResources();
+        java.io.File[] updateDirectoryCandidates = Manifest.getDepreciatedUpdateDirectoryCandidates(rootPath,
+                clientRelease);
         for (java.io.File dir : updateDirectoryCandidates) {
             java.io.File[] dirFiles = dir.listFiles();
-            Arrays.spliterator(dirFiles).forEachRemaining((f) -> { 
-                if (!updateManifest.contains(f.getName())) updateManifest.addFile(f.getName(), f.length()); });
-        }        
+            Arrays.spliterator(dirFiles).forEachRemaining((f) -> {
+                var file = new File();
+                file.setName(f.getName());
+                file.setPath(f.getAbsolutePath());
+                file.setResourceType(ResourceType.UPDATE_FILE);
+                file.setMimeType("update-file/octet-stream");
+                file.setSize(f.getTotalSpace());
+                if (!updateManifest.containsFileWithName(f.getName()))
+                    updateManifest.addFile(file);
+            });
+        }
         return updateManifest;
     }
-    
+
     public static Manifest getUpdateManifest(java.io.File rootPath, String clientRelease) {
         final Manifest updateManifest = new Manifest();
-        updateManifest.manifestItems = new ManifestItems();
+        updateManifest.testResources = new TestResources();
         java.io.File[] updateDirectoryCandidates = Manifest.getUpdateDirectoryCandidates(rootPath, clientRelease);
         for (java.io.File dir : updateDirectoryCandidates) {
             java.io.File[] dirFiles = dir.listFiles();
-            Arrays.spliterator(dirFiles).forEachRemaining((f) -> { 
-                if (!updateManifest.contains(f.getName()) && !f.getName().equals(NOTIFICATION_FILE) && !f.getName().equals(NOTIFICATION_FLAG_FILE))
-                    updateManifest.addFile(f.getName(), f.length()); 
+            Arrays.spliterator(dirFiles).forEachRemaining((f) -> {
+                var file = new File();
+                file.setName(f.getName());
+                file.setPath(f.getAbsolutePath());
+                file.setResourceType(ResourceType.UPDATE_FILE);
+                file.setMimeType("update-file/octet-stream");
+                file.setSize(f.getTotalSpace());
+                if (!updateManifest.containsFileWithName(f.getName()))
+                    updateManifest.addFile(file);
             });
-        }        
+        }
         return updateManifest;
     }
 
@@ -267,100 +322,94 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
         byte[] buff = new byte[8192];
         Pattern versionPattern = Pattern.compile("[0-9]+\\-[0-9]+\\-[0-9]+\\-[0-9]+");
         Arrays.stream(notificationDirectoryCandidates).sorted(
-            (a, b) -> {
-            Pattern segPattern = Pattern.compile("[0-9]+");
-            Matcher aMatcher = versionPattern.matcher(a.getName());
-            aMatcher.find();
-            String aVersion = aMatcher.group();
-            Matcher bMatcher = versionPattern.matcher(b.getName());
-            bMatcher.find();
-            String bVersion = bMatcher.group();
-            aMatcher = segPattern.matcher(aVersion);
-            bMatcher = segPattern.matcher(bVersion);
-            aMatcher.find();
-            bMatcher.find();
-            int aVer = Integer.parseInt(aMatcher.group());
-            int bVer = Integer.parseInt(bMatcher.group());
-            if (aVer != bVer)
-                return bVer - aVer;
-            aMatcher.find();
-            bMatcher.find();
-            aVer = Integer.parseInt(aMatcher.group());
-            bVer = Integer.parseInt(bMatcher.group());
-            if (aVer != bVer)
-                return bVer- aVer;
-            aMatcher.find();
-            bMatcher.find();
-            aVer = Integer.parseInt(aMatcher.group());
-            bVer = Integer.parseInt(bMatcher.group());
-            if (aVer != bVer)
-                return bVer - aVer;
-            aMatcher.find();
-            bMatcher.find();
-            aVer = Integer.parseInt(aMatcher.group());
-            bVer = Integer.parseInt(bMatcher.group());
-            return bVer - aVer;
-        }).forEach((dir) -> {
-            java.io.File[] dirFiles = dir.listFiles();
-            Matcher versionMatcher = versionPattern.matcher(dir.getName());
-            versionMatcher.find();
-            UpdateNotification.Notification notification = new UpdateNotification.Notification();
-            notification.setVersion(versionMatcher.group().replaceAll("\\-", "."));
-            notification.setFlags(BigInteger.ZERO);
-            Arrays.spliterator(dirFiles).forEachRemaining((f) -> {
-                if (f.getName().equals(NOTIFICATION_FILE)) {
-                        try (FileInputStream fIn = new FileInputStream(f)) {
-                        String notificationText = "";
-                        int nBytesRead = 0;
-                        int bytesRead = 0;
-                        while (nBytesRead < f.length()) {
-                            bytesRead = fIn.read(buff, 0, (f.length() > nBytesRead + 8192) ? 8192 : (int)(f.length() - nBytesRead));
-                            notificationText += new String(buff, 0, bytesRead, "UTF-8");
-                            nBytesRead += bytesRead;
+                (a, b) -> {
+                    Pattern segPattern = Pattern.compile("[0-9]+");
+                    Matcher aMatcher = versionPattern.matcher(a.getName());
+                    aMatcher.find();
+                    String aVersion = aMatcher.group();
+                    Matcher bMatcher = versionPattern.matcher(b.getName());
+                    bMatcher.find();
+                    String bVersion = bMatcher.group();
+                    aMatcher = segPattern.matcher(aVersion);
+                    bMatcher = segPattern.matcher(bVersion);
+                    aMatcher.find();
+                    bMatcher.find();
+                    int aVer = Integer.parseInt(aMatcher.group());
+                    int bVer = Integer.parseInt(bMatcher.group());
+                    if (aVer != bVer)
+                        return bVer - aVer;
+                    aMatcher.find();
+                    bMatcher.find();
+                    aVer = Integer.parseInt(aMatcher.group());
+                    bVer = Integer.parseInt(bMatcher.group());
+                    if (aVer != bVer)
+                        return bVer - aVer;
+                    aMatcher.find();
+                    bMatcher.find();
+                    aVer = Integer.parseInt(aMatcher.group());
+                    bVer = Integer.parseInt(bMatcher.group());
+                    if (aVer != bVer)
+                        return bVer - aVer;
+                    aMatcher.find();
+                    bMatcher.find();
+                    aVer = Integer.parseInt(aMatcher.group());
+                    bVer = Integer.parseInt(bMatcher.group());
+                    return bVer - aVer;
+                }).forEach((dir) -> {
+                    java.io.File[] dirFiles = dir.listFiles();
+                    Matcher versionMatcher = versionPattern.matcher(dir.getName());
+                    versionMatcher.find();
+                    UpdateNotification.Notification notification = new UpdateNotification.Notification();
+                    notification.setVersion(versionMatcher.group().replaceAll("\\-", "."));
+                    notification.setFlags(BigInteger.ZERO);
+                    Arrays.spliterator(dirFiles).forEachRemaining((f) -> {
+                        if (f.getName().equals(NOTIFICATION_FILE)) {
+                            try (FileInputStream fIn = new FileInputStream(f)) {
+                                String notificationText = "";
+                                int nBytesRead = 0;
+                                int bytesRead = 0;
+                                while (nBytesRead < f.length()) {
+                                    bytesRead = fIn.read(buff, 0,
+                                            (f.length() > nBytesRead + 8192) ? 8192 : (int) (f.length() - nBytesRead));
+                                    notificationText += new String(buff, 0, bytesRead, "UTF-8");
+                                    nBytesRead += bytesRead;
+                                }
+                                notification.setValue(notificationText);
+                                updateNotification.getNotification().add(notification);
+                            } catch (java.io.IOException ex) {
+                                logger.error("Error retrieving update notification for " + f.getName(), ex);
+                            }
                         }
-                        notification.setValue(notificationText);
-                        updateNotification.getNotification().add(notification);
-                    }
-                    catch (java.io.IOException ex) 
-                    {
-                        logger.error("Error retrieving update notification for " + f.getName(), ex);
-                    }
-                }
-                if (f.getName().equals(NOTIFICATION_FLAG_FILE)) {
-                    try (FileReader fileReader = new FileReader(f)) {
-                        try (BufferedReader bReader = new BufferedReader(fileReader)) {
-                            notification.setFlags(new BigInteger(bReader.readLine()));
+                        if (f.getName().equals(NOTIFICATION_FLAG_FILE)) {
+                            try (FileReader fileReader = new FileReader(f)) {
+                                try (BufferedReader bReader = new BufferedReader(fileReader)) {
+                                    notification.setFlags(new BigInteger(bReader.readLine()));
+                                } catch (java.io.IOException ex) {
+                                    logger.error("Error retrieving update notification for " + f.getName(), ex);
+                                }
+                            } catch (java.io.IOException ex) {
+                                logger.error("Error retrieving update notification for " + f.getName(), ex);
+                            }
                         }
-                        catch (java.io.IOException ex) {
-                            logger.error("Error retrieving update notification for " + f.getName(), ex);
-                        }
-                    }
-                    catch (java.io.IOException ex) {
-                        logger.error("Error retrieving update notification for " + f.getName(), ex);
-                    }
-                }
-            });
-        });
+                    });
+                });
         return updateNotification;
     }
 
-    private List<File> getFiles(Directory d) {
+    private List<File> getFiles(Directory dir) {
         List<File> fList = new ArrayList<>();
-        for (Directory fe : d.getDirectory()) {
-            fList.addAll(getFiles(fe));
-        }
-        for (File f : d.getFile()) {
-            fList.add(f);
-        }
+        for (var d : dir.getDirectory())
+            fList.addAll(getFiles(d));
+        fList.addAll(this.getFiles());
         return fList;
     }
 
     public List<File> getFiles() {
         List<File> fList = new ArrayList<File>();
-        for (Directory d : manifestItems.getDirectory()) {
+        for (Directory d : this.getTestResources().getDirectory()) {
             fList.addAll(getFiles(d));
         }
-        for (File f : manifestItems.getFile()) {
+        for (File f : this.getTestResources().getFile()) {
             fList.add(f);
         }
         return fList;
@@ -377,7 +426,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 
     public List<Directory> getDirectories() {
         List<Directory> dList = new ArrayList<>();
-        for (Directory dir : manifestItems.getDirectory()) {
+        for (Directory dir : this.getTestResources().getDirectory()) {
             dList.add(dir);
             dList.addAll(getSubDirectories(dir));
         }
@@ -386,12 +435,8 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 
     private void computeTotalSize() {
         size = 0;
-        for (Directory dir : manifestItems.getDirectory()) {
-            size += dir.getSize();
-        }
-        for (File file : manifestItems.getFile()) {
-            size += file.getSize();
-        }
+        for (var f : this.getFiles())
+            size += f.getSize();
     }
 
     @Override
@@ -400,18 +445,8 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
         return true;
     }
 
-    public boolean contains(String filename) {
-        for (File file : manifestItems.getFile()) {
-            if (file.getName().equals(filename)) {
-                return true;
-            }
-        }
-        for (Directory dir : manifestItems.getDirectory()) {
-            if (dir.contains(filename)) {
-                return true;
-            }
-        }
-        return false;
+    public boolean containsFileWithName(String filename) {
+        return getFiles().stream().anyMatch(f -> f.getName().equals(filename));
     }
 
     public long getTotalSize() {
@@ -419,10 +454,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
         return size;
     }
 
-    public void addFile(String fName, long length) {
-        File f = new File(fName, length);
-        if (this.manifestItems == null)
-            this.manifestItems = new ManifestItems();
-        this.manifestItems.getFile().add(f);
+    public void addFile(File f) {
+        this.getTestResources().getFile().add(f);
     }
 }

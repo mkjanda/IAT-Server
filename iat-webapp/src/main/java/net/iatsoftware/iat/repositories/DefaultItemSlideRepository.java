@@ -11,7 +11,8 @@ package net.iatsoftware.iat.repositories;
  */
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.ItemSlide;
-import net.iatsoftware.iat.generated.FileManifestType;
+import net.iatsoftware.iat.generated.DeploymentFileType;
+import net.iatsoftware.iat.generated.ManifestFileType;
 import net.iatsoftware.iat.messaging.Manifest;
 
 import org.apache.logging.log4j.Logger;
@@ -50,13 +51,12 @@ public class DefaultItemSlideRepository extends GenericJpaRepository<Long, ItemS
             CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
             CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
             Root<ItemSlide> root = query.from(ItemSlide.class);
-            Predicate pred = cb.equal(root.get("test"), test);
-            List<Tuple> slideInfo = this.entityManager.createQuery(query.where(pred).orderBy(cb.asc(root.get("slideNum"))).multiselect(root.get("fileName"), root.get("slideSize"))).getResultList();
+            Predicate pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("fileType", ManifestFileType)));
+            List<Tuple> slideInfo = this.entityManager.createQuery(query.where(pred).orderBy(cb.asc(root.get("slideNum"))).multiselect(root.get("fileName"), root.get("slideSize"), root.get(""))).getResultList();
             Manifest m = new Manifest();
             m.setIATName(test.getTestName());
-            m.setType(FileManifestType.ITEM_SLIDES);
             for (Tuple t : slideInfo) {
-                m.addFile(t.get(0, String.class), t.get(1, Long.class));
+                m.addFile(t.get(0, String.class), t.get(1, Long.class,  t.get(1, ManifestFileType.class)));
             }
             return m;
         }
