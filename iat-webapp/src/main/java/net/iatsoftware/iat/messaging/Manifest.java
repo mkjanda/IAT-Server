@@ -68,14 +68,6 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
     public Manifest(IAT test, List<TestResource> resources) {
         this.iatName = test.getTestName();
         this.testResources = new TestResources();
-        this.testResources.getFile()
-        resources.forEach((res) -> {
-            var file = new File();
-            file.setName(res.getName());
-            ResourceType.
-            if (res.getFileType())
-            file.setEntityType(res.);
-        })
         Directory dir;
         var patt = Pattern.compile("((^|/)(?segment<.+?>))/");
         var  accumulator = new  BiFunction<List<List<String>>, List<String>, List<List<String>>>() {
@@ -90,6 +82,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
             }
         };
     
+
 
     }
 
