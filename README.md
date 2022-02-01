@@ -19,3 +19,18 @@ This is the server end of software that allows people to create Implicit Associa
     isolate_users, downloads_consumed) values ('2L9JBMR74EYKHJ7RKWPE', 0, 0, 'Nikki', 'Lissome', 
     'nikki@bix.blue', 0, 0, 0, 0, 0, 0, 0);
 ```
+
+ <p>This is to accompany a user you can create for the test design software without registering it. In <b>%USER%\AppData\Local\IATSoftware</b> directory, create the following file:</p>
+
+  <h2>IATDesign.xml</h2>
+  ``` xml
+<?xml version="1.0" encoding="utf-8"?>
+<IATDesign>
+  <Version>1.1.1.43</Version>
+  <Version_1_1_confirmed>True</Version_1_1_confirmed>
+  <IATActivationKey>laH8pGseVWi++RPTwjWHQxTrCGMBI6ciMwCIWfEWM7qzt9iszRk30wZYdiZqwYPy</IATActivationKey>
+  <UserEMail>nikki@bix.blue</UserEMail>
+  <IATProductCode>2L9JBMR74EYKHJ7RKWPE</IATProductCode>
+  <ClientName>Ms Nikki Lissome</ClientName>
+</IATDesign>  
+```
