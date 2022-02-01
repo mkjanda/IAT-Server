@@ -11,7 +11,7 @@ This is the server end of software that allows people to create Implicit Associa
 </details>
   
   <h2 id='database-setup'>The Database</h2>
-          <p>The <b>iat.sql</b> file in the root directory will create the database. Simply import it with <b>mysql -u root -p < iat.sql</b> It will setup the database iatserver_db and a user that has privlidges only on that database. You might wish to create a user. That can be done wwith the following SQL statement.
+          <p>The <b>iat.sql</b> file in the root directory will create the database. Simply import it with <b>mysql -u root -p < iat.sql</b> It will setup the database iatserver_db and a user that has privlidges only on that database that's used by the software. You might wish to create a product user. That can be done wwith the following SQL statement.
  
   ``` sql
   insert into clients(product_key, activations_remaining, activations_consumed, contact_fname, 
