@@ -7,6 +7,7 @@ This is the server end of software that allows people to create Implicit Associa
   <summary>A few notes</summary>
   <ol>
     <li><a href='#database-setup'>Database Setup</a></li>
+    <li><a href="#build">Building the software</a></li>
   </ol>
 </details>
   
@@ -22,7 +23,8 @@ This is the server end of software that allows people to create Implicit Associa
 
  <p>This is to accompany a user you can create for the test design software without registering it. In <b>%USER%\AppData\Local\IATSoftware</b> directory, create the following file:</p>
 
-  <h2>IATDesign.xml</h2>
+<h3>IATDesign.xml</h3>
+
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
 <IATDesign>
@@ -32,5 +34,10 @@ This is the server end of software that allows people to create Implicit Associa
   <UserEMail>nikki@bix.blue</UserEMail>
   <IATProductCode>2L9JBMR74EYKHJ7RKWPE</IATProductCode>
   <ClientName>Ms Nikki Lissome</ClientName>
-</IATDesign>  
+</IATDesign>
 ```
+  
+  <h2 id='building-the-software'>Building It</h2>
+  
+  <p>There's not to much to be said. You'll need Apache Maven. If you want to set everything up inside Visual Studio Code, the project file is above. Otherwise, navigate to the root folder and type <b>mvn clean install</b>. Provided you have mvn on your path, that's it. Oh, Maven doesn't install, it just unzips. If I remember correctly, the file <b>mvn.cmd</b> has to be renamed <b>mvn.exe</b>.</p>
+    <p>You likely have no reason to care, but <b>NodeJS</b> will be installed during the build process. It was necessary to use a node module to compile the SCSS, a technology I can't recomment enough. It makes CSS at least sane. It reminds me of Javascript 10 years ago. I know there are packages that allow you to dynamically create CSS with Javascript these days but my point of view is that <b>Freemarker</b> has been around for a while and no one's actually used it for that.</p>
