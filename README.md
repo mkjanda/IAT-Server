@@ -17,5 +17,5 @@ This is the server end of software that allows people to create Implicit Associa
   insert into clients(product_key, activations_remaining, activations_consumed, contact_fname, 
     contact_lname, email, administrations, frozen, deleted, kill_filed, invalid_save_files, 
     isolate_users, downloads_consumed) values ('2L9JBMR74EYKHJ7RKWPE', 0, 0, 'Nikki', 'Lissome', 
-    'nikki@bix.blue', 0, 0, 0, 0, 0, 0, 0);</p>
+    'nikki@bix.blue', 0, 0, 0, 0, 0, 0, 0);
 ```
