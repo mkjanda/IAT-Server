@@ -23,7 +23,7 @@ This is the server end of software that allows people to create Implicit Associa
  <p>This is to accompany a user you can create for the test design software without registering it. In <b>%USER%\AppData\Local\IATSoftware</b> directory, create the following file:</p>
 
   <h2>IATDesign.xml</h2>
-  ``` xml
+``` xml
 <?xml version="1.0" encoding="utf-8"?>
 <IATDesign>
   <Version>1.1.1.43</Version>
