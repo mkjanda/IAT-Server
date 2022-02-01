@@ -12,6 +12,7 @@ package net.iatsoftware.iat.services;
 import net.iatsoftware.iat.config.MyBeanFactory;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.events.CommunicationEvent;
+import net.iatsoftware.iat.events.ItemSlideManifestReceivedEvent;
 import net.iatsoftware.iat.events.ManifestReceivedEvent;
 import net.iatsoftware.iat.events.RSAKeyReceivedEvent;
 import net.iatsoftware.iat.events.TokenDefinitionReceivedEvent;
@@ -87,6 +88,7 @@ public class DefaultWebSocketService implements WebSocketService {
                         } else if (env.getMessage() instanceof Manifest) {
                             transLogger.info(logMsgBase + "Manifest received message dispatching");
                             this.publisher.publishEvent(new ManifestReceivedEvent(e.getSessionId(), deploymentID, (Manifest) env.getMessage()));
+                            this.publisher.publishEvent(new ItemSlideManifestReceivedEvent(e.getSessionId(), deploymentID,  (Manifest)env.getMessage()));
                         } else if (env.getMessage() instanceof TransactionRequest) {
                             transLogger.info(logMsgBase + "Upload request message dispatching");
                             this.publisher.publishEvent(new CommunicationEvent(e.getSessionId(), env.getMessage()));

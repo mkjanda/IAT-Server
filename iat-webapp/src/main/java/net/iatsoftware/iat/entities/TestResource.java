@@ -41,6 +41,7 @@ public class TestResource implements java.io.Serializable{
         this.path = path;
         this.resource = resource;
         this.mimeType = mimeType;
+        this.size = resource.length;
     }
 
     @Id
@@ -99,6 +100,7 @@ public class TestResource implements java.io.Serializable{
     }
 
     @Basic
+    @Column(name="size")
     public long getSize() {
         return this.size;
     }

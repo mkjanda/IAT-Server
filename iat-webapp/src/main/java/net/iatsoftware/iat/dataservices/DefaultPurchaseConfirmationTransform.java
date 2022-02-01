@@ -9,6 +9,7 @@ package net.iatsoftware.iat.dataservices;
  *
  * @author Michael Janda too
  */
+/*
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.oxm.Marshaller;
@@ -63,3 +64,4 @@ public class DefaultPurchaseConfirmationTransform implements PurchaseConfirmatio
         }
     }
 }
+*/

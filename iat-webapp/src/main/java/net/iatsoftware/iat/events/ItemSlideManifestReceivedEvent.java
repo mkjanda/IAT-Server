@@ -1,17 +1,17 @@
 package net.iatsoftware.iat.events;
 
-import net.iatsoftware.iat.messaging.ItemSlideManifest;
+import net.iatsoftware.iat.messaging.Manifest;
 
 public class ItemSlideManifestReceivedEvent extends DeploymentTransactionEvent {
-    private final ItemSlideManifest manifest;
+    private final Manifest manifest;
     
-    public ItemSlideManifestReceivedEvent(String sessionId, Long deploymentID, ItemSlideManifest manifest)
+    public ItemSlideManifestReceivedEvent(String sessionId, Long deploymentID, Manifest manifest)
     {
         super(sessionId, deploymentID);
         this.manifest = manifest;
     }
     
-    public ItemSlideManifest getManifest() {
+    public Manifest getManifest() {
         return this.manifest;
     }
 }

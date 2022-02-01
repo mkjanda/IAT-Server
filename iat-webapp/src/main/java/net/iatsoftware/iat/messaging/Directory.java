@@ -9,8 +9,6 @@ package net.iatsoftware.iat.messaging;
  *
  * @author Michael Janda
  */
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.Unmarshaller;
 import net.iatsoftware.iat.generated.ManifestEntityType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -22,25 +20,12 @@ public class Directory extends net.iatsoftware.iat.generated.DirectoryPojo {
 
     public Directory() {
         name = "";
-        size = 0;
         entityType = ManifestEntityType.DIRECTORY;
     }
 
     public Directory(String n) {
         name = n;
-        size = 0;
         entityType = ManifestEntityType.DIRECTORY;
-    }
-
-    private long computeSize(FileEntity e) {
-        long sz = 0;
-        for (File f : file) {
-            return f.getSize();
-        }
-        for (Directory d : directory) {
-            sz += computeSize(d);
-        }
-        return sz;
     }
 
     public FileEntity walkManifest() {
@@ -51,15 +36,6 @@ public class Directory extends net.iatsoftware.iat.generated.DirectoryPojo {
         } else {
             return null;
         }
-    }
-
-    public boolean beforeMarshal(Marshaller m) {
-        size = computeSize(this);
-        return true;
-    }
-
-    public void afterUnmarshal(Unmarshaller u, Object o) {
-        size = computeSize(this);
     }
 
     public boolean contains(String fileName) {

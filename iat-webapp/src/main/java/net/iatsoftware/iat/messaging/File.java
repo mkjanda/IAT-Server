@@ -6,7 +6,6 @@
 package net.iatsoftware.iat.messaging;
 
 import net.iatsoftware.iat.generated.ManifestEntityType;
-import net.iatsoftware.iat.generated.ManifestFileType;
 
 /**
  *
@@ -22,11 +21,11 @@ public class File extends net.iatsoftware.iat.generated.FilePojo implements java
         this.entityType = ManifestEntityType.FILE;
     }
     
-    public File(String n, long s,  ManifestFileType t)
+    public File(String n, long s)
     {
         size = s;
         name = n;
         entityType = ManifestEntityType.FILE;
-        path = "./" + n;
+        path =  n;
     }
 }

@@ -17,10 +17,10 @@ import javax.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class IATListEntry extends net.iatsoftware.iat.generated.IATListEntryPojo {
-    public IATListEntry(){}
-    
-    public IATListEntry(String testName, User ui)
-    {
+    public IATListEntry() {
+    }
+
+    public IATListEntry(String testName, User ui) {
         iatName = testName;
         userInfo = ui;
     }

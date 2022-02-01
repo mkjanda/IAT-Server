@@ -36,12 +36,11 @@ import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.DynamicSpecifier;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.DeploymentSession;
-import net.iatsoftware.iat.entities.ManifestFile;
 import net.iatsoftware.iat.entities.OAuthAccess;
 import net.iatsoftware.iat.entities.SpecifierValue;
 import net.iatsoftware.iat.generated.CodeType;
-import net.iatsoftware.iat.generated.DeploymentFileType;
 import net.iatsoftware.iat.generated.PacketType;
+import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.messaging.ServerReport;
@@ -49,7 +48,6 @@ import net.iatsoftware.iat.messaging.IATReport;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
 import net.iatsoftware.iat.messaging.IATList;
 import net.iatsoftware.iat.messaging.IATListEntry;
-import net.iatsoftware.iat.entities.ItemSlide;
 import net.iatsoftware.iat.generated.KeyType;
 
 import org.springframework.stereotype.Service;
@@ -95,11 +93,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Inject
     DynamicSpecifierRepository dynamicSpecifierRepository;
     @Inject
-    ItemSlideRepository itemSlideRepository;
-    @Inject
     DeploymentSessionRepository deploymentSessionRepository;
-    @Inject
-    ManifestFileRepository manifestFileRepository;
     @Inject
     SpecifierValueRepository specifierValueRepository;
     @Inject
@@ -624,19 +618,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    @Override
-    public List<ItemSlide> getItemSlidesByTest(final IAT test) {
-        return itemSlideRepository.getSlidesByTest(test);
-    }
-/*
-    @Transactional
-    @Override
-    public ItemSlideManifest getItemSlideManifest(final Client client, final String iatName) {
-        final IAT test = iatRepository.getIAT(client, iatName);
-        return itemSlideRepository.getItemSlideManifest(test);
-    }
-*/
-    @Transactional
     public List<ResourceReference> getResourceReferences(final Client client, final String iatName) {
         final IAT test = iatRepository.getIAT(client, iatName);
         return  resourceReferenceRepository.getResourceReferences(test);
@@ -653,12 +634,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Override
     public void storeDeploymentSession(final DeploymentSession ds) {
         deploymentSessionRepository.add(ds);
-    }
-
-    @Transactional
-    @Override
-    public void storeManifestFile(final ManifestFile mf) {
-        manifestFileRepository.add(mf);
     }
 
     @Transactional
@@ -687,11 +662,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public void deleteManifestFiles(DeploymentSession ds, DeploymentFileType ft) {
-        manifestFileRepository.deleteManifestFiles(ds, ft);
-    }
-
-    @Transactional
     @Override
     public void deleteDeploymentSession(final DeploymentSession ds) {
         if (ds == null) {
@@ -704,19 +674,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Override
     public byte[] getDeploymentPacketData(final Long deploymentID, final PacketType packetType, final int ordinal) {
         return deploymentPacketRepository.getData(deploymentSessionRepository.get(deploymentID), packetType, ordinal);
-    }
-
-    @Transactional
-    @Override
-    public List<ManifestFile> getDeploymentFileManifest(final Long deploymentID, final DeploymentFileType fileType) {
-        final DeploymentSession sess = deploymentSessionRepository.get(deploymentID);
-        return manifestFileRepository.getDeploymentManifest(sess, fileType);
-    }
-
-    @Transactional
-    @Override
-    public void storeItemSlide(final ItemSlide slide) {
-        itemSlideRepository.add(slide);
     }
 
     @Transactional
@@ -1033,11 +990,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public List<TestResource> getTestResourceLike(IAT test, String patt) {
-        return testResourceRepository.getLike(test, patt);
-    }
-
-    @Transactional
     public void addTestResource(TestResource tr) {
         testResourceRepository.add(tr);
     }
@@ -1046,6 +998,17 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     public void addResourceReference(ResourceReference rr) {
         resourceReferenceRepository.add(rr);
     }
+
+    @Transactional
+    public Manifest getTestManifest(IAT test) {
+        return testResourceRepository.getTestManifest(test);
+    }
+
+    @Transactional
+    public List<TestResource> getTestResources(IAT test, ResourceType type) {
+        return testResourceRepository.getFromTest(test, type);
+    }
+
 
     @Scheduled(initialDelay = 86_400_000L, fixedDelay = 86_400_000L)
     @Transactional

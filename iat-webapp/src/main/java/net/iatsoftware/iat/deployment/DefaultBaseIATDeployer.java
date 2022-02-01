@@ -17,10 +17,10 @@ import net.iatsoftware.iat.configfile.IATSurvey;
 import net.iatsoftware.iat.configfile.UniqueResponse;
 import net.iatsoftware.iat.dataservices.XsltService;
 import net.iatsoftware.iat.entities.DeploymentSession;
-import net.iatsoftware.iat.entities.ManifestFile;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.TestSegment;
+import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.ManifestReceivedEvent;
@@ -55,7 +55,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.util.List;
 import javax.inject.Inject;
 import javax.xml.transform.stream.StreamSource;
 
@@ -154,13 +153,11 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
                         new Envelope(new TransactionRequest(TransactionType.INSUFFICIENT_DISK_SPACE))));
             }
             iatRepositoryManager.updateIAT(test);
-            DeploymentSession ds = iatRepositoryManager.getDeploymentSession(this.deploymentSessionId);
-            List<net.iatsoftware.iat.messaging.File> fList = evt.getManifest().getFiles();
-            for (int ctr = 0; ctr < fList.size(); ctr++) {
-                ManifestFile mf = new ManifestFile(ds, fList.get(ctr), ctr + 1, evt.getManifest().getType());
-                iatRepositoryManager.storeManifestFile(mf);
-            }
-        } catch (javax.persistence.NoResultException ex) {
+            var files = evt.getManifest().getFiles();
+            for (var file : files) {
+                iatRepositoryManager.storeTestResource(new TestResource(test, file.getPath(), file.getMimeType()));
+            }}
+         catch (javax.persistence.NoResultException ex) {
             criticalLogger.error("Error generating IAT", ex);
             this.eventPublisher.publishEvent(new DeploymentFailedEvent(evt.getSessionId(), this.deploymentSessionId,
                     new ServerException("Error recording file manifest.", ex)));
@@ -204,7 +201,9 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
             if (this.CF.getNumBeforeSurveys() + this.CF.getNumAfterSurveys() > 0) {
                 SurveySources = new StreamSource[this.CF.getNumBeforeSurveys() + this.CF.getNumAfterSurveys()];
                 for (int ctr = 0; ctr < SurveySources.length; ctr++) {
-                    var surveyConfig = new String(iatRepositoryManager.getTestResource(test, this.CF.getIATSurvey().get(ctr).getSurveyName()).getResource(),
+                    var surveyConfig = new String(
+                            iatRepositoryManager.getTestResource(test, this.CF.getIATSurvey().get(ctr).getSurveyName())
+                                    .getResource(),
                             StandardCharsets.UTF_16);
                     SurveySources[ctr] = new StreamSource(new StringReader(surveyConfig));
                 }

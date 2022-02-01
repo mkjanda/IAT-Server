@@ -6,8 +6,6 @@
 package net.iatsoftware.iat.config;
 
 import net.iatsoftware.iat.admin.AdminViewResolver;
-import net.iatsoftware.iat.dataservices.DefaultPurchaseConfirmationTransform;
-import net.iatsoftware.iat.dataservices.PurchaseConfirmationTransform;
 import net.iatsoftware.iat.events.WebSocketDataReceived;
 import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
@@ -17,9 +15,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
-import net.sf.saxon.s9api.Processor;
-import net.sf.saxon.s9api.XsltCompiler;
-import net.sf.saxon.s9api.XsltExecutable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,7 +38,6 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.http.MediaType;
@@ -96,7 +90,6 @@ import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
@@ -255,21 +248,6 @@ public class IATServer implements SchedulingConfigurer {
         Map<String, Boolean> properties = new HashMap<>();
         properties.put(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
         return jaxb2Marshaller;
-    }
-
-    @Bean
-    public PurchaseConfirmationTransform purchaseConfirmationTransform() {
-        Processor proc = new Processor(false);
-        XsltCompiler compiler = proc.newXsltCompiler();
-        DefaultResourceLoader rLoader = new DefaultResourceLoader();
-        try (InputStream inStream = rLoader.getResource("classpath:PurchaseConfirmationEMail.xslt").getInputStream()) {
-            StreamSource src = new StreamSource(inStream);
-            XsltExecutable exec = compiler.compile(src);
-            return new DefaultPurchaseConfirmationTransform(exec);
-        } catch (Exception ex) {
-            log.error("Error compiling purchase confirmation email transform", ex);
-            return null;
-        }
     }
 
     @Bean

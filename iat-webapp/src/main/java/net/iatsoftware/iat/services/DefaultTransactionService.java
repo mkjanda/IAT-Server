@@ -174,7 +174,7 @@ public class DefaultTransactionService implements TransactionService {
             TransactionRequest outTrans;
             byte[] randVal;
             String encStrVal;
-            IAT test;
+            IAT test = null;
             String iatName = (String) webSocketService.getSessionProperty(e.getSessionId(), "IATName");
             if ((inTrans.getTransaction() != TransactionType.REQUEST_RECONNECTION) && ((client == null)
                     || webSocketService.getSessionProperty(e.getSessionId(), "HandsShaken") == null)) {
@@ -482,7 +482,7 @@ public class DefaultTransactionService implements TransactionService {
                         return;
                     }
                     transLogger.info(logMsgBase + "Requesting item slide manifest (" + iatName + ")");
-                    Manifest itemSlideManifest = iatRepositoryManager.getItemSlideManifest(client, iatName);
+                    Manifest itemSlideManifest = iatRepositoryManager.getTestManifest(test);
                     sendMessage(e.getSessionId(), itemSlideManifest, false);
                     break;
 
