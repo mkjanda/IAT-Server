@@ -61,7 +61,7 @@ import javax.inject.Inject;
 
 @Service
 @Async("TaskScheduler")
-@PropertySource("classpath:email/email-debug-config.properties")
+@PropertySource("classpath:email/email-config.properties")
 public class DefaultTransactionService implements TransactionService {
 
     private static final Logger logger = LogManager.getLogger();

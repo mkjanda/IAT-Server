@@ -1009,6 +1009,10 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
         return testResourceRepository.getFromTest(test, type);
     }
 
+    @Transactional
+    public TestResource getTestResource(IAT test, Long resourceId) {
+        return testResourceRepository.get(test, resourceId);
+    }
 
     @Scheduled(initialDelay = 86_400_000L, fixedDelay = 86_400_000L)
     @Transactional

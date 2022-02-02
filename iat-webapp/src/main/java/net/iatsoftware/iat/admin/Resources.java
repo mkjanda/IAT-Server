@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.inject.Inject;
 
 @Controller
-@RequestMapping("/resources")
+@RequestMapping("/Admin/resources")
 public class Resources {
     public static final String HEADER = "HEADER";
     public static final String SCRIPT = "SCRIPT";
@@ -24,21 +24,17 @@ public class Resources {
 
     @Inject IATRepositoryManager repository;
 
-    @GetMapping("/script/{clientId}/{testName}/{testSegment}/{file}")
-    public ResponseEntity<String> getScript(@PathVariable(name="clientId") long clientId, @PathVariable("testName") String testName,
-            @PathVariable(name="testSegment") String testSegmentName, @PathVariable(name="file") String file) {
+    @GetMapping("/{clientId}/{testName}/{resourceId}")
+    public ResponseEntity<byte[]> getScript(@PathVariable(name="clientId") long clientId, @PathVariable("testName") String testName,
+            @PathVariable(name="resourceId") Long resourceId) {
+
         var iat = repository.getIATByNameAndClientID(testName, clientId);
-        var ts = repository.getTestSegment(iat, testSegmentName);
-        if (file.equals(HEADER)) {
-            return new ResponseEntity<>(ts.getHeaderScript(), HttpStatus.OK);
-        } else if (file.equals("SCRIPT")) {
-            return new ResponseEntity<>(ts.getScript(), HttpStatus.OK);
-        }
-        return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-    }
+        var res = repository.getTestResource(iat, resourceId);
+        return new ResponseEntity<>(res.getResource(), HttpStatus.OK);
+            }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler({Exception.class, javax.persistence.NoResultException.class,  javax.persistence.NonUniqueResultException.class})
     public void handleException(Exception ex) {
         logger.error(ex);
     }

@@ -181,7 +181,7 @@
                     displayDiv.appendChild(LoadingImagesProgressElement);
                 </xsl:text>
                 <xsl:for-each select="//IATDisplayItem">
-                    <xsl:variable name="imgSrc" select="concat('/IAT/resources/', //ClientID, '/', //IATName, Filename)" />
+                    <xsl:variable name="imgSrc" select="string-join(('/IAT/resources', //ClientID,  //IATName, ResourceID), '/')" />
                     <xsl:value-of select="concat('EventUtil.addHandler(imgTable[&quot;', $testURL, '/', Filename, '&quot;], &quot;load&quot;, OnImageLoad);&#x0A;')" />
                     <xsl:value-of select="concat('EventUtil.addHandler(imgTable[&quot;', $testURL, '/', Filename, '&quot;], &quot;error&quot;, OnImageLoadError);&#x0A;')"/>
                     <xsl:value-of select="concat('imgTable[&quot;', $testURL, '/', Filename, '&quot;].src = ', $imgSrc, ';')" />

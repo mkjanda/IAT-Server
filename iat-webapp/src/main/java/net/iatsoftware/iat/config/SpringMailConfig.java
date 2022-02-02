@@ -24,7 +24,7 @@ import java.util.Properties;
 
 @Order(4)
 @Configuration
-@PropertySource("classpath:email/email-debug-config.properties")
+@PropertySource("classpath:email/email-config.properties")
 public class SpringMailConfig implements ApplicationContextAware {
     
     private final String JAVA_MAIL_FILE = "classpath:email/java-mail-config.properties";

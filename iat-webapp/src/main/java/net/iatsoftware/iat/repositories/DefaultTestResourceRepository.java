@@ -65,4 +65,13 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
             var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceType"), type));
             return this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
         }
+
+        public TestResource get(IAT test, Long resourceId) 
+                throws javax.persistence.NoResultException, javax.persistence.NonUniqueResultException{
+            var cb = this.entityManager.getCriteriaBuilder();
+            var query = cb.createQuery(TestResource.class);
+            var root = query.from(TestResource.class);
+            var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceId"), resourceId));
+            return this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
+        }
 }

@@ -287,4 +287,6 @@ public interface IATRepositoryManager {
     List<TestResource> getTestResources(IAT test, ResourceType type);
 
     Manifest getTestManifest(IAT test);
+
+    TestResource getTestResource(IAT test, Long resourceId);
 }

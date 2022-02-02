@@ -56,7 +56,7 @@ import javax.xml.transform.stream.StreamResult;
 
 @Controller
 @RequestMapping("/ClientErrorReport")
-@PropertySource("classpath:email/email-debug-config.properties")
+@PropertySource("classpath:email/email-config.properties")
 @PropertySource("classpath:client-error-report.properties")
 public class ReportClientError {
 

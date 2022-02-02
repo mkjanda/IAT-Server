@@ -113,4 +113,7 @@ public class TestResource implements java.io.Serializable{
     public List<ResourceReference> getReferences() {
         return resourceReferences;
     }
+    public void setReferences(List<ResourceReference> val) {
+        this.resourceReferences = val;
+    }
 }
