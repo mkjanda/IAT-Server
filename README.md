@@ -49,18 +49,26 @@ This is the server end of software that allows people to create Implicit Associa
   
   <p>You'll find the file <b>iat-webapp-1.0.1.jar</b> in the <b>iat-webapp/target</b> directory. It's made with <b>Spring Boot</b> so everything's packaged there. It presumes a few things that likely won't be the case. First, that the directory <b>/var/log/iat</b> exists for keeping log files, that you have a user for sending automated emails with credentials:
     
-``` java
-package net.iatsoftware.iat.services;
+``` properties
+# change this
+mail.server.host=your-host
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
+#change if necessary
+mail.server.port=465
 
-public class MailAuthenticator extends Authenticator {
-    protected PasswordAuthentication getPasswordAuthentication()
-    {
-        return new PasswordAuthentication("YourEmailUser", "Password");
-    }
-}
+mail.server.protocol=smtp
+
+#change these 
+mail.server.username=your-user
+mail.server.password=your-password 
+
+mail.server.user-personal=IAT Software
+
+#may leave. sends to localhost so dkim signatures are not an issue
+mail.server.user-address=iatsoftware@iatsoftware.net
+
+mail.images.logo-classpath-location=classpath:email/images/logo.png
+mail.images.header-classpath-location=classpath:email/images/header.png
 ```
    <p>Further, it presumes an SMTP relay running on both <b>127.0.0.1:25</b> and <b>127.0.0.1:465</b>.</p>
   <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it.</p>
