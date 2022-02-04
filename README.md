@@ -11,7 +11,6 @@ This is the server end of software that allows people to create Implicit Associa
     <li><a href='#database-setup'>Database Setup</a></li>
     <li><a href="#build">Building the software</a></li>
     <li><a href="#running-it">Running</a></li>
-    <li><a href="#latest-working-release">Latest Functional Release</li>
   </ol>
 </details>
   
@@ -43,7 +42,7 @@ This is the server end of software that allows people to create Implicit Associa
   
   <h2 id='build'>Building It</h2>
   
-  <p>There's not to much to be said. You'll need Apache which you can downloaod here: https://maven.apache.org/download.cgi Maven. If you want to set everything up inside Visual Studio Code, the project file is above. Otherwise, navigate to the root folder and type <b>mvn clean install</b>. Provided you have mvn on your path, that's it. Oh, Maven doesn't install, it just unzips. If I remember correctly, the file <b>mvn.cmd</b> has to be renamed **mvn.exe**.</p>
+  <p>There's not to much to be said. You'll need Apache Maven which you can downloaod here: **https://maven.apache.org/download.cgi**. If you want to set everything up inside Visual Studio Code, the project file is above. Otherwise, navigate to the root folder and type <b>mvn clean install</b>. Provided you have mvn on your path, that's it. Oh, Maven doesn't install, it just unzips. If I remember correctly, the file <b>mvn.cmd</b> has to be renamed **mvn.exe**.</p>
     <p>You likely have no reason to care, but <b>NodeJS</b> will be installed during the build process. It was necessary to use a node module to compile the SCSS, a technology I can't recomment enough. It makes CSS at least sane. It reminds me of Javascript 10 years ago. I know there are packages that allow you to dynamically create CSS with Javascript these days but my point of view is that <b>Freemarker</b> has been around for a while and no one's actually used it for that.</p>
 
   <h2 id='running-it'>Running the Thing</h2>
@@ -72,7 +71,5 @@ mail.images.logo-classpath-location=classpath:email/images/logo.png
 mail.images.header-classpath-location=classpath:email/images/header.png
 ```
    <p>Further, it presumes an SMTP relay running on both <b>127.0.0.1:25</b> and <b>127.0.0.1:465</b>.</p>
-  <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it. Oh, you will need Java installed on your machine. Windows 10 ships Java. Vista, 7, and 8 do not include it. You can find it here: https://www.java.com/en/download/manual.jsp</p>
+  <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it. Oh, you will need Java installed on your machine. Windows 10 ships Java. Vista, 7, and 8 do not include it. You can find it here: **https://www.java.com/en/download/manual.jsp**</p>
   
-  <h2 i="latest-working-release">Getting a Release Functing Release Version</h2>
-  <p>Just visit my website, https://iatsoftware.net. You'll find comprehensive documentation there as well as a few sample tests. There are also naked pictures of your mom.</p>
