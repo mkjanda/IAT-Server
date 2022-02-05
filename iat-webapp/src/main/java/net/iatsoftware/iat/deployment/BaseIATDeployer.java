@@ -21,5 +21,4 @@ public interface BaseIATDeployer  {
     void generateTest(String sessionId);
     void setFailed(String sessId, ServerException ex);
     void setSuccess(String sessId);
-    boolean setElementDeployed(int elem);
 }

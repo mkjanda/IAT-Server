@@ -5,20 +5,16 @@
  */
 package net.iatsoftware.iat.events;
 
-/**
- *
- * @author Michael Janda
- */
-
 import net.iatsoftware.iat.messaging.Manifest;
 
+
 public class ManifestReceivedEvent extends DeploymentTransactionEvent {
-    private final Manifest manifest;
-    
+	private final Manifest manifest;
     public ManifestReceivedEvent(String sessionId, Long deploymentID, Manifest manifest)
     {
         super(sessionId, deploymentID);
-        this.manifest = manifest;
+		this.manifest = manifest;
+
     }
     
     public Manifest getManifest() {

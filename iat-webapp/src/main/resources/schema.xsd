@@ -1,5 +1,9 @@
 <?xml version="1.0"?>
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc" xmlns:iat="http://www.iatsoftware.net/schema" targetNamespace="http://www.iatsoftware.net/schema" jaxb:version="2.1">
+<xs:schema version="1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc"
+    xmlns:iat="http://www.iatsoftware.net/schema" targetNamespace="http://www.iatsoftware.net/schema" jaxb:version="2.1">
 
     <xs:annotation>
         <xs:appinfo>
@@ -1949,6 +1953,60 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <xs:complexType name="FileEntityPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.FileEntity"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Path" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="EntityType" type="iat:ManifestEntityType" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="file-entity-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.FileEntity"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="file-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.File"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="FilePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.File"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:file-entity-impl">
+                <xs:sequence>
+                    <xs:element name="MimeType" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Size" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ResourceType" type="iat:ResourceType" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ResourceReference" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="ResourceId" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                                <xs:element name="ReferenceId" type="xs:long" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
     <xs:complexType name="directory-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -1971,6 +2029,34 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
+
+    <xs:complexType name="manifest-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Manifest"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ManifestPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Manifest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:group ref="iat:ManifestGroup"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:group name="ManifestGroup">
+        <xs:sequence>
+            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
 
     <xs:complexType name="encrypted-des-cipher-impl">
         <xs:annotation>
@@ -2018,58 +2104,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="file-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.File"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="FilePojo" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.File"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:file-entity-impl">
-                <xs:sequence>
-                    <xs:element name="MimeType" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Size" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ResourceType" type="iat:ResourceType" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ResourceReference" minOccurs="0" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="ResourceId" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                                <xs:element name="ReferenceId" type="xs:long" minOccurs="0" maxOccurs="unbounded"/>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="FileEntityPojo" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.FileEntity"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="Path" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="EntityType" type="iat:ManifestEntityType" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="file-entity-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.FileEntity"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
 
     <xs:complexType name="handshake-impl">
         <xs:annotation>
@@ -2208,40 +2242,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="manifest-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.Manifest"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="ManifestPojo">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.Manifest"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:message-impl">
-                <xs:group ref="iat:ManifestGroup"/>
-                <xs:attribute name="Size" type="xs:long" form="unqualified" use="required"/>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:group name="ManifestGroup">
-        <xs:sequence>
-            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="TestResources" minOccurs="1" maxOccurs="1">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded"/>
-                        <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded"/>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:group>
 
 
     <xs:complexType name="packet-impl">

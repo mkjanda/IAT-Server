@@ -29,7 +29,6 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
 
     private ApplicationEventPublisher publisher = null;
 
-
     public DeploymentProgress() {
         this.activeElement = " ";
         sessionId = null;
@@ -42,14 +41,12 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
         this.publisher = publisher;
     }
 
-    public void setSuccess() 
-    {
+    public void setSuccess() {
         super.setStage(DeploymentStage.SUCCESS);
         if (this.sessionId != null)
             this.publisher.publishEvent(new WebSocketFinalDataSent(this.sessionId, new Envelope(this.makeClone())));
     }
-    
-    
+
     @Override
     public void setStage(DeploymentStage ds) {
         super.setStage(ds);
@@ -131,7 +128,7 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
             this.publisher.publishEvent(new WebSocketDataSent(this.sessionId, new Envelope(this.makeClone())));
         }
     }
-    
+
     @Override
     public void setServerException(ServerException ex) {
         this.stage = DeploymentStage.FAILED;
@@ -139,7 +136,7 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
             this.publisher.publishEvent(new WebSocketDataSent(this.sessionId, new Envelope(ex)));
         }
     }
-    
+
     private DeploymentProgress makeClone() {
         DeploymentProgress copy = new DeploymentProgress();
         copy.activeElement = this.activeElement;

@@ -15,11 +15,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
-import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.generated.ManifestEntityType;
 import net.iatsoftware.iat.generated.ResourceType;
 import org.apache.logging.log4j.LogManager;
@@ -48,22 +46,14 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 
 	public Manifest(String iatName, java.io.File directory) {
 		iatName = "none";
-		this.testResources = new TestResources();
 		for (FileEntity fe : accumulateManifest(directory)) {
 			if (fe.getEntityType().equals(ManifestEntityType.DIRECTORY))
-				testResources
-						.getDirectory()
-						.add((Directory) fe);
+				getDirectory().add((Directory) fe);
 			else
-				testResources.getFile().add((File) fe);
+				getFile().add((File) fe);
 		}
-		this.size = 0;
-		for (var dir : this.testResources.getDirectory())
-			this.size += calcSize(dir);
-		for (var file : this.testResources.getFile())
-			this.size += file.getSize();
 	}
-
+/*
 	private long calcSize(Directory directory) {
 		long size = 0;
 		for (var d : directory.getDirectory())
@@ -72,7 +62,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 			size += f.getSize();
 		return size;
 	}
-
+*/
 	public List<FileEntity> accumulateManifest(java.io.File directory) {
 		var l = new ArrayList<FileEntity>();
 		for (java.io.File f : directory.listFiles()) {
@@ -118,15 +108,6 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 	}
 
 	public Manifest(java.io.File[] files) {
-	}
-
-	public Manifest(IAT test, List<File> files) {
-		this.iatName = test.getTestName();
-		this.testResources = new TestResources();
-		for (var file : files) {
-			this.size += file.getSize();
-			this.testResources.getFile().add(file);
-		}
 	}
 
 	private static java.io.File[] getDepreciatedUpdateDirectoryCandidates(
@@ -357,16 +338,12 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 			java.io.File rootPath,
 			String clientRelease) {
 		final Manifest updateManifest = new Manifest();
-		updateManifest.testResources = new TestResources();
 		java.io.File[] updateDirectoryCandidates = Manifest.getDepreciatedUpdateDirectoryCandidates(
-				rootPath,
-				clientRelease);
+				rootPath, clientRelease);
 		for (java.io.File dir : updateDirectoryCandidates) {
 			java.io.File[] dirFiles = dir.listFiles();
-			Arrays
-					.spliterator(dirFiles)
-					.forEachRemaining(
-							f -> {
+			Arrays.spliterator(dirFiles).forEachRemaining(f -> 
+			{
 								var file = new File();
 								file.setName(f.getName());
 								file.setPath(f.getAbsolutePath());
@@ -384,7 +361,6 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 			java.io.File rootPath,
 			String clientRelease) {
 		final Manifest updateManifest = new Manifest();
-		updateManifest.testResources = new TestResources();
 		java.io.File[] updateDirectoryCandidates = Manifest.getUpdateDirectoryCandidates(
 				rootPath,
 				clientRelease);
@@ -525,10 +501,10 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 
 	public List<File> getFiles() {
 		List<File> fList = new ArrayList<File>();
-		for (Directory d : this.getTestResources().getDirectory()) {
+		for (Directory d : this.getDirectory()) {
 			fList.addAll(getFiles(d));
 		}
-		for (File f : this.getTestResources().getFile()) {
+		for (File f : this.getFile()) {
 			fList.add(f);
 		}
 		return fList;
@@ -545,35 +521,17 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 
 	public List<Directory> getDirectories() {
 		List<Directory> dList = new ArrayList<>();
-		for (Directory dir : this.getTestResources().getDirectory()) {
+		for (Directory dir : this.getDirectory()) {
 			dList.add(dir);
 			dList.addAll(getSubDirectories(dir));
 		}
 		return dList;
 	}
 
-	private void computeTotalSize() {
-		size = 0;
-		for (var f : this.getFiles())
-			size += f.getSize();
-	}
-
-	@Override
-	public boolean doBeforeMarshal(Marshaller m) {
-		computeTotalSize();
-		return true;
-	}
-
 	public boolean containsFileWithName(String filename) {
 		return getFiles().stream().anyMatch(f -> f.getName().equals(filename));
 	}
-
-	public long getTotalSize() {
-		computeTotalSize();
-		return size;
-	}
-
 	public void addFile(File f) {
-		this.getTestResources().getFile().add(f);
+		this.getFile().add(f);
 	}
 }

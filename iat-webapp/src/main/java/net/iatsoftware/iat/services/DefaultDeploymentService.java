@@ -11,7 +11,6 @@ package net.iatsoftware.iat.services;
  */
 import net.iatsoftware.iat.config.MyBeanFactory;
 import net.iatsoftware.iat.config.IatConfigurationProperties;
-import net.iatsoftware.iat.deployment.DefaultBaseIATDeployer;
 import net.iatsoftware.iat.deployment.IATDeployer;
 import net.iatsoftware.iat.deployment.IATRedeployer;
 import net.iatsoftware.iat.entities.Client;
@@ -22,10 +21,7 @@ import net.iatsoftware.iat.events.AbortDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentDescriptorMismatch;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
-import net.iatsoftware.iat.events.GenerateIATEvent;
-import net.iatsoftware.iat.events.ItemSlidesDeploymentCompleteEvent;
 import net.iatsoftware.iat.events.RSAKeyReceivedEvent;
-import net.iatsoftware.iat.events.TestDeploymentCompleteEvent;
 import net.iatsoftware.iat.events.TokenDefinitionReceivedEvent;
 import net.iatsoftware.iat.events.UploadRequestEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
@@ -138,17 +134,6 @@ public class DefaultDeploymentService implements DeploymentService {
     }
 
     @EventListener
-    public void onGenerateIatEvent(GenerateIATEvent e) {
-        try {
-            var deployer = IATDeploymentMap.get(IATDeploymentMap.keySet().stream()
-                    .filter(key -> key.getId() == e.getDeploymentID()).findFirst().get());
-            deployer.generateTest(e.getSessionId());
-        } catch (Exception ex) {
-            reportException("Error generating IAT", ex, e.getSessionId());
-        }
-    }
-
-    @EventListener
     public void onDeploymentFailed(DeploymentFailedEvent e) {
         try {
             var deployer = IATDeploymentMap.get(IATDeploymentMap.keySet().stream()
@@ -172,32 +157,6 @@ public class DefaultDeploymentService implements DeploymentService {
             IATDeploymentMap.remove(deploymentSession);
         } catch (Exception ex) {
             reportException("Error handling deployment descriptor mismatch", ex, e.getSessionId());
-        }
-    }
-
-    @EventListener
-    public void onTestDeployment(TestDeploymentCompleteEvent e) {
-        try {
-            var deployer = IATDeploymentMap.get(IATDeploymentMap.keySet().stream()
-                    .filter(key -> key.getId() == e.getDeploymentID()).findFirst().get());
-            if (deployer.setElementDeployed(DefaultBaseIATDeployer.TEST_DEPLOYED)) {
-                this.publisher.publishEvent(new DeploymentSuccessEvent(e.getSessionId(), e.getDeploymentID()));
-            }
-        } catch (Exception ex) {
-            reportException("Error finalizing test deployment", ex, e.getSessionId());
-        }
-    }
-
-    @EventListener
-    public void onItemSlidesDeployment(ItemSlidesDeploymentCompleteEvent e) {
-        try {
-            var deployer = IATDeploymentMap.get(IATDeploymentMap.keySet().stream()
-                    .filter(key -> key.getId() == e.getDeploymentID()).findFirst().get());
-            if (deployer.setElementDeployed(DefaultBaseIATDeployer.ITEM_SLIDES_DEPLOYED)) {
-                this.publisher.publishEvent(new DeploymentSuccessEvent(e.getSessionId(), e.getDeploymentID()));
-            }
-        } catch (Exception ex) {
-            reportException("Error finalizing item slide deployment", ex, e.getSessionId());
         }
     }
 

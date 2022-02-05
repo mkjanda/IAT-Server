@@ -20,18 +20,14 @@ import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.TestSegment;
-import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
-import net.iatsoftware.iat.events.DeploymentFailedEvent;
-import net.iatsoftware.iat.events.ManifestReceivedEvent;
+import net.iatsoftware.iat.events.TestResourcesRecordedEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
-import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.DeploymentStage;
+import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TokenType;
-import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.messaging.ServerException;
-import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.messaging.UploadRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.DeploymentService;
@@ -113,18 +109,18 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         }
     }
 
-    @Override
-    public boolean setElementDeployed(int elem) {
-        synchronized (this) {
-            if (elem == TEST_DEPLOYED) {
-                bTestDeployed = true;
-            }
-            if (elem == ITEM_SLIDES_DEPLOYED) {
-                bItemSlidesDeployed = true;
-            }
-            return (bTestDeployed && bItemSlidesDeployed) ? true : false;
-        }
-    }
+	@EventListener
+	public void testResourcesRecorded(TestResourcesRecordedEvent evt) {
+		if (evt.getDeploymentID() != this.deploymentSessionId)
+			return;
+		if (evt.getType() == ResourceType.DEPLOYMENT_FILE)
+			bTestDeployed = true;
+		if (evt.getType() == ResourceType.ITEM_SLIDE)
+			bItemSlidesDeployed = true;
+		if (bTestDeployed && bItemSlidesDeployed)
+			generateTest(evt.getSessionId());
+	}
+
 
     @Override
     public void requestUpload(String sessID) throws java.net.URISyntaxException {
@@ -138,30 +134,6 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         this.eventPublisher.publishEvent(new WebSocketDataSent(sessID, new Envelope(upReq)));
         logger.info("Upload request message processed");
         this.deploymentProgress = new DeploymentProgress(sessID, eventPublisher);
-    }
-
-    @EventListener
-    public void recordManifest(ManifestReceivedEvent evt) {
-        if (evt.getDeploymentID() != this.deploymentSessionId)
-            return;
-        try {
-            IAT test = iatRepositoryManager.getIAT(this.testId);
-            test.setTestSizeKB((int) (evt.getManifest().getSize() >> 10) + test.getTestSizeKB());
-            long freeKB = iatRepositoryManager.getFreeDiskSpaceKB(test.getClient());
-            if ((freeKB != -1L) && (test.getTestSizeKB() > freeKB)) {
-                this.eventPublisher.publishEvent(new WebSocketFinalDataSent(evt.getSessionId(),
-                        new Envelope(new TransactionRequest(TransactionType.INSUFFICIENT_DISK_SPACE))));
-            }
-            iatRepositoryManager.updateIAT(test);
-            var files = evt.getManifest().getFiles();
-            for (var file : files) {
-                iatRepositoryManager.storeTestResource(new TestResource(test, file.getPath(), file.getMimeType()));
-            }}
-         catch (javax.persistence.NoResultException ex) {
-            criticalLogger.error("Error generating IAT", ex);
-            this.eventPublisher.publishEvent(new DeploymentFailedEvent(evt.getSessionId(), this.deploymentSessionId,
-                    new ServerException("Error recording file manifest.", ex)));
-        }
     }
 
     @Override

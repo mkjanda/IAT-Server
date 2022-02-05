@@ -10,6 +10,7 @@ package net.iatsoftware.iat.events;
  * @author michael
  */
 public class ItemSlidesDeploymentCompleteEvent extends DeploymentTransactionEvent {
+	
     public ItemSlidesDeploymentCompleteEvent(String sessionId, Long deploymentId) {
         super(sessionId, deploymentId);
     }

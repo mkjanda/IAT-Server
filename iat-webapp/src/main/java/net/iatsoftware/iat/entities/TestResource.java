@@ -1,5 +1,6 @@
 package net.iatsoftware.iat.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.persistence.Basic;
@@ -24,7 +25,7 @@ public class TestResource implements java.io.Serializable{
     private String name, path, mimeType;
     private long resourceId, size;
     private byte[] resource;
-    private List<ResourceReference> resourceReferences;
+    private List<ResourceReference> resourceReferences = new ArrayList<>();
 
     public TestResource(){}
 
