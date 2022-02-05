@@ -11,6 +11,7 @@ This is the server end of software that allows people to create Implicit Associa
     <li><a href='#database-setup'>Database Setup</a></li>
     <li><a href="#build">Building the software</a></li>
     <li><a href="#running-it">Running</a></li>
+    <li><a href="#working-version">Obtaining a Working Version</a></li>
   </ol>
 </details>
   
@@ -71,5 +72,7 @@ mail.images.logo-classpath-location=classpath:email/images/logo.png
 mail.images.header-classpath-location=classpath:email/images/header.png
 ```
    <p>Further, it presumes an SMTP relay running on both <b>127.0.0.1:25</b> and <b>127.0.0.1:465</b>.</p>
-  <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it. Oh, you will need Java installed on your machine. Windows 10 ships Java. Vista, 7, and 8 do not include it. You can find it here: **https://www.java.com/en/download/manual.jsp**</p>
+  <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it. Oh, you will need Java installed on your machine. Windows 10 ships Java. Vista, 7, and 8 do not include it. You can find it here: https://www.java.com/en/download/manual.jsp</p>
   
+  <h2 id="working-version">Obtaining a Working Version</h2>
+  <p>Just visit https://iatsoftware.net and download it. There's an email verification step because I'm allowing random members of the general public to upload images to my server, but it only takes a second and I promise you'll never hear from me.</p>
