@@ -11,6 +11,7 @@ This is the server end of software that allows people to create Implicit Associa
     <li><a href='#database-setup'>Database Setup</a></li>
     <li><a href="#build">Building the software</a></li>
     <li><a href="#running-it">Running</a></li>
+    <li><a href="#setting-it-up-with-nginx">Setting it up with Nginx</a></li>
     <li><a href="#working-version">Obtaining a Working Version</a></li>
   </ol>
 </details>
@@ -73,6 +74,110 @@ mail.images.header-classpath-location=classpath:email/images/header.png
 ```
    <p>Further, it presumes an SMTP relay running on both <b>127.0.0.1:25</b> and <b>127.0.0.1:465</b>.</p>
   <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it. Oh, you will need Java installed on your machine. Windows 10 ships Java. Vista, 7, and 8 do not include it. You can find it here: https://www.java.com/en/download/manual.jsp</p>
-  
+      
+      <h2 id='setting-it-up-with-nginx'>Setting it up with Nginx</h2>
+      
+ ``` nginx
+map $http_origin $origin {
+	default $host;
+	~^http(s)?://((.+\.)+.+?)/$ $2;
+}
+
+#server {
+#	listen 80;
+#	server_name iatsoftware.net www.iatsoftware.net;
+##	return 301 https://$host$request_uri;
+#}
+
+server {
+#	listen 443 ssl;
+#	ssl on;
+#	ssl_certificate /etc/pki/tls/certs/iatsoftware.net-bundle-and-crt;
+#	ssl_certificate_key /etc/pki/tls/private/iatsoftware.net.key;	
+    listen 80;
+	server_name iatsoftware.net www.iatsoftware.net localhost 127.0.0.1;
+	root /var/www/iat;
+	client_max_body_size 50M;
+
+	access_log /var/log/nginx/iatsoftware.net-access.log;
+	error_log /var/log/nginx/iatsoftware.net-error.log;
+
+	location ~* ^/IAT/([1-9][0-9]*)/([a-zA-Z0-9\-_]+)/([A-Za-z0-9\-_]+\.(png|jpg|js|jpeg))$ {
+		add_header Cache-Control: no-store;	
+		rewrite ^/IAT/(.*) $1  break;
+		proxy_set_header origin $origin;
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $server_protocol;
+		proxy_redirect http://127.0.0.1:8081/Admin/TestResource/ https://$host/IAT/;
+		proxy_pass http://127.0.0.1:8081/Admin/TestResource/$1/$2/$3;
+	}
+
+	location ~* ^/IAT/itemslides/.+\.slides$ {
+		root /var/www/iat/itemslides;
+		rewrite /IAT/itemslides(.*) $1 break;
+	}
+
+	location  /IAT {
+		add_header Cache-Control: no-store;
+		rewrite ^/IAT /Admin break;
+		proxy_set_header origin $origin;
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $server_protocol;
+		proxy_redirect http://127.0.0.1/Admin $scheme://$host/IAT;
+		proxy_pass http://127.0.0.1:8081;
+	}
+
+	location /IAT/ {
+		add_header Cache-Control: no-store;
+		rewrite ^/IAT/(.+) /$1 break;
+		proxy_set_header origin $origin;
+		proxy_set_header X-Forwarded-Host $host;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header X-Forwarded-Proto $server_protocol;
+		proxy_redirect http://127.0.0.1:8081/(.+) $scheme://$host/IAT/$1;
+		proxy_pass http://127.0.0.1:8081;
+	}
+
+	location = /IAT/OAuth/RequestAuth {
+		proxy_redirect http://127.0.0.1:8081 $scheme://$host;
+		proxy_set_header Host 127.0.0.1;
+		proxy_pass http://127.0.0.1:8081;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+		proxy_set_header Access-Control-Allow-Origin *;
+		add_header Access-Control-Allow-Origin: *;
+	}	
+
+	location / {
+		proxy_redirect http://127.0.0.1:8082 $scheme://iatsoftware.net;
+		proxy_set_header Host $host;
+		proxy_pass http://127.0.0.1:8082;
+		proxy_set_header X-Real-IP $remote_addr;
+		proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	}
+
+    location = /IAT/DataTransaction {
+        if ($is_args = ?) {
+            return 405;
+        }
+        if ($request_method = POST) {
+            return 405;
+        }
+		
+        proxy_pass http://127.0.0.1:8081;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    } 
+}
+```
+      
+      
+      
   <h2 id="working-version">Obtaining a Working Version</h2>
   <p>Just visit https://iatsoftware.net and download it. There's an email verification step because I'm allowing random members of the general public to upload images to my server, but it only takes a second and I promise you'll never hear from me.</p>
