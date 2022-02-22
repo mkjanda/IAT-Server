@@ -74,9 +74,12 @@ mail.images.header-classpath-location=classpath:email/images/header.png
 ```
    <p>Further, it presumes an SMTP relay running on both <b>127.0.0.1:25</b> and <b>127.0.0.1:465</b>.</p>
   <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it. Oh, you will need Java installed on your machine. Windows 10 ships Java. Vista, 7, and 8 do not include it. You can find it here: https://www.java.com/en/download/manual.jsp</p>
-      
-      <h2 id='setting-it-up-with-nginx'>Setting it up with Nginx</h2>
-      
+	
+<h2 id='setting-it-up-with-nginx'>Setting it up with Nginx</h2>
+	
+<p>This is the nginx .conf file I use on the server. It's been modified to run on non-HTTPS connections and errors might have been introduced in the process.</p>
+
+	
  ``` nginx
 map $http_origin $origin {
 	default $host;
