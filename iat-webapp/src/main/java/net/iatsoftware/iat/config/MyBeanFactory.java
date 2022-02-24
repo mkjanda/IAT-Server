@@ -14,7 +14,6 @@ import net.iatsoftware.iat.admin.AjaxTextResult;
 import net.iatsoftware.iat.admin.CodeResult;
 import net.iatsoftware.iat.admin.IATResultRecorder;
 import net.iatsoftware.iat.admin.SurveyResultRecorder;
-import net.iatsoftware.iat.deployment.CodeFileEncryptor;
 import net.iatsoftware.iat.deployment.IATDeployer;
 import net.iatsoftware.iat.deployment.IATRedeployer;
 import net.iatsoftware.iat.deployment.ItemSlideRecorder;
@@ -46,7 +45,6 @@ public interface MyBeanFactory {
    IATReport IATReport();
    ServerReport serverReport();
    CodeResult codeResult(Long testSegmentID);
-   CodeFileEncryptor codeFileEncryptor();
    AjaxTextResult ajaxTextResult(Long segmentID);
    PacketQueue packetQueue(PacketType packetType, boolean closeOnComplete);
    ResultSetDescriptor resultSetDescriptor();

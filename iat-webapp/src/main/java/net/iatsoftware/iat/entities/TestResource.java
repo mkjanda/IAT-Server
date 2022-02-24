@@ -23,7 +23,8 @@ public class TestResource implements java.io.Serializable{
     private static final long serialVersionUID = 1L;
     private IAT test;
     private String name, path, mimeType;
-    private long resourceId, size;
+    private Long id, resourceId;
+	private Integer size;
     private byte[] resource;
     private List<ResourceReference> resourceReferences = new ArrayList<>();
 
@@ -31,14 +32,18 @@ public class TestResource implements java.io.Serializable{
 
     public TestResource(IAT test, String path, String mimeType) {
         this.test = test;
-        this.name = Pattern.compile("(^|/)(([/]+)$").matcher(path).group(1);
+		var matcher = Pattern.compile("(.*/)?([^/]+)").matcher(path);
+		matcher.find();
+		this.name = matcher.toMatchResult().group(2);
         this.path = path;
         this.mimeType = mimeType;
     }
     
     public TestResource(IAT test, String path, String mimeType, byte[] resource) {
         this.test = test;
-        this.name = Pattern.compile("(^|/)(([/]+)$").matcher(path).group(1);
+		var matcher = Pattern.compile("(.*/)?([^/]+)").matcher(path);
+		matcher.find();
+		this.name = matcher.toMatchResult().group(2);
         this.path = path;
         this.resource = resource;
         this.mimeType = mimeType;
@@ -47,12 +52,12 @@ public class TestResource implements java.io.Serializable{
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="ResourceID")
-    public long getResourceId() {
-        return resourceId;
+    @Column(name="id")
+    public long getId() {
+        return id;
     }
-    public void setResourceId(long val) {
-        resourceId = val;
+    public void setId(long val) {
+        id = val;
     }
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
@@ -100,12 +105,21 @@ public class TestResource implements java.io.Serializable{
         this.resource = val;
     }
 
+	@Basic
+	@Column(name="ResourceID", nullable=true)
+	public Long getResourceID() {
+		return resourceId;
+	}
+	public void setResourceId(Long val) {
+		this.resourceId = val;
+	}
+
     @Basic
     @Column(name="size")
-    public long getSize() {
+    public int getSize() {
         return this.size;
     }
-    public void setSize(long val) {
+    public void setSize(int val) {
         this.size = val;
     }
 

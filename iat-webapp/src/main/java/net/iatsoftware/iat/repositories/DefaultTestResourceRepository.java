@@ -16,62 +16,66 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 
 @Repository
-public class DefaultTestResourceRepository extends GenericJpaRepository<Long, TestResource> implements TestResourceRepository{
-    private static final Logger critical = LogManager.getLogger("critical");
+public class DefaultTestResourceRepository extends GenericJpaRepository<Long, TestResource>
+		implements TestResourceRepository {
+	private static final Logger critical = LogManager.getLogger("critical");
 
-    @Inject ResourceReferenceRepository resourceReferenceRepository;
+	@Inject
+	ResourceReferenceRepository resourceReferenceRepository;
 
-    public TestResource get(Long testId, String name) {
-        var cb = entityManager.getCriteriaBuilder();
-        var testQuery = cb.createQuery(IAT.class);
-        var root = testQuery.from(IAT.class);
-        var pred = cb.equal(root.get("TestID"), testId);
-        var test = this.entityManager.createQuery(testQuery.select(root).where(pred)).getSingleResult();
-        var resourceQuery = cb.createQuery(TestResource.class);
-        var resourceRoot = resourceQuery.from(TestResource.class);
-        pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("name"),name));
-        try {
-        return this.entityManager.createQuery(resourceQuery.select(resourceRoot).where(pred)).getSingleResult();
-        }
-        catch (javax.persistence.NoResultException ex) {
-            critical.error("Test resource (TestID: " + Long.toString(testId) + ", ResourceName: " + name + ") not found", ex);
-            return null;
-        }
-    }
+	public TestResource get(Long testId, String name) {
+		var cb = entityManager.getCriteriaBuilder();
+		var testQuery = cb.createQuery(IAT.class);
+		var root = testQuery.from(IAT.class);
+		var pred = cb.equal(root.get("TestID"), testId);
+		var test = this.entityManager.createQuery(testQuery.select(root).where(pred)).getSingleResult();
+		var resourceQuery = cb.createQuery(TestResource.class);
+		var resourceRoot = resourceQuery.from(TestResource.class);
+		pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("name"), name));
+		try {
+			return this.entityManager.createQuery(resourceQuery.select(resourceRoot).where(pred)).getSingleResult();
+		} catch (javax.persistence.NoResultException ex) {
+			critical.error(
+					"Test resource (TestID: " + Long.toString(testId) + ", ResourceName: " + name + ") not found", ex);
+			return null;
+		}
+	}
 
-    public Manifest getTestManifest(IAT test) {
-        var manifest = new Manifest();
-        var cb = this.entityManager.getCriteriaBuilder();
-        var query = cb.createQuery(TestResource.class);
-        var root = query.from(TestResource.class);
-        var resources = this.entityManager.createQuery(query.select(root).where(cb.equal(root.get("test"), test))).getResultList();
-        for (var res : resources) {
-            var file = new File();
-            file.setName(res.getName());
-            file.setPath(res.getPath());
-            file.setMimeType(res.getMimeType());
-            file.setSize(res.getSize());
-            file.setEntityType(ManifestEntityType.FILE);
-            file.getResourceReference().setResourceId(res.getResourceId());
-            file.getResourceReference().getReferenceId().addAll(res.getReferences().stream().map(ref -> ref.getId()).collect(Collectors.toList()));
-        }
-        return manifest;
-    }
+	public Manifest getTestManifest(IAT test) {
+		var manifest = new Manifest();
+		var cb = this.entityManager.getCriteriaBuilder();
+		var query = cb.createQuery(TestResource.class);
+		var root = query.from(TestResource.class);
+		var resources = this.entityManager.createQuery(query.select(root).where(cb.equal(root.get("test"), test)))
+				.getResultList();
+		for (var res : resources) {
+			var file = new File();
+			file.setName(res.getName());
+			file.setPath(res.getPath());
+			file.setMimeType(res.getMimeType());
+			file.setSize(res.getSize());
+			file.setEntityType(ManifestEntityType.FILE);
+			file.getResourceReference().setResourceId(res.getId());
+			file.getResourceReference().getReferenceId()
+					.addAll(res.getReferences().stream().map(ref -> ref.getId()).collect(Collectors.toList()));
+		}
+		return manifest;
+	}
 
-    public List<TestResource> getFromTest(IAT test, ResourceType type) {
-            var cb = this.entityManager.getCriteriaBuilder();
-            var query = cb.createQuery(TestResource.class);
-            var root = query.from(TestResource.class);
-            var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceType"), type));
-            return this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
-        }
+	public List<TestResource> getFromTest(IAT test, ResourceType type) {
+		var cb = this.entityManager.getCriteriaBuilder();
+		var query = cb.createQuery(TestResource.class);
+		var root = query.from(TestResource.class);
+		var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceType"), type));
+		return this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
+	}
 
-        public TestResource get(IAT test, Long resourceId) 
-                throws javax.persistence.NoResultException, javax.persistence.NonUniqueResultException{
-            var cb = this.entityManager.getCriteriaBuilder();
-            var query = cb.createQuery(TestResource.class);
-            var root = query.from(TestResource.class);
-            var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceId"), resourceId));
-            return this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
-        }
+	public TestResource get(IAT test, Long resourceId)
+			throws javax.persistence.NoResultException, javax.persistence.NonUniqueResultException {
+		var cb = this.entityManager.getCriteriaBuilder();
+		var query = cb.createQuery(TestResource.class);
+		var root = query.from(TestResource.class);
+		var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceId"), resourceId));
+		return this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
+	}
 }

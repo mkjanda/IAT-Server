@@ -14,7 +14,6 @@ import net.iatsoftware.iat.admin.AjaxTextResult;
 import net.iatsoftware.iat.admin.CodeResult;
 import net.iatsoftware.iat.admin.IATResultRecorder;
 import net.iatsoftware.iat.admin.SurveyResultRecorder;
-import net.iatsoftware.iat.deployment.CodeFileEncryptor;
 import net.iatsoftware.iat.deployment.ItemSlideRecorder;
 import net.iatsoftware.iat.deployment.IATDeployer;
 import net.iatsoftware.iat.deployment.IATRedeployer;
@@ -91,11 +90,6 @@ public class DefaultIATServerBeanFactory implements MyBeanFactory {
     @Override
     public CodeResult codeResult(Long testSegmentID) {
         return ctx.getBean(CodeResult.class, testSegmentID);
-    }
-    
-    @Override
-    public CodeFileEncryptor codeFileEncryptor() {
-        return ctx.getBean(CodeFileEncryptor.class);
     }
     
     @Override

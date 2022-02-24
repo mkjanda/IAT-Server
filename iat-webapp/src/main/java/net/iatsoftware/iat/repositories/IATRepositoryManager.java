@@ -276,7 +276,7 @@ public interface IATRepositoryManager {
 
     TestResource getTestResource(IAT test, String resourceName);
 
-    void storeTestResource(TestResource resource);
+    TestResource updateTestResource(TestResource resource);
 
     void addTestResource(TestResource tr);
 

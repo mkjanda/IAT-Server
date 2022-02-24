@@ -43,8 +43,6 @@ public class JSKeys implements java.io.Serializable {
 
     @Inject
     MyBeanFactory beanFactory;
-    @Inject
-    JSAES aes;
 
     public JSKeys() {
     }

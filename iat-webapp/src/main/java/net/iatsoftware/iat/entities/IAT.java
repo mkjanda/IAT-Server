@@ -336,7 +336,7 @@ public class IAT implements java.io.Serializable {
     }
 
     @OneToOne(optional=true)
-    @JoinColumn(name="TestID", referencedColumnName="TestID")
+    @JoinColumn(name="deployer_id", referencedColumnName="TestID")
     public DeploymentSession getDeploymentSession() {
         return this.deploymentSession;
     }

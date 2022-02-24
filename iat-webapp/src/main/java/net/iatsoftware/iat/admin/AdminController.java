@@ -32,7 +32,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import net.iatsoftware.iat.config.MyBeanFactory;
 import net.iatsoftware.iat.config.IatConfigurationProperties;
-import net.iatsoftware.iat.deployment.JSAES;
 import net.iatsoftware.iat.deployment.JSKeys;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.Client;
@@ -188,9 +187,6 @@ public class AdminController {
 
 	@Inject
 	MyBeanFactory beanFactory;
-
-	@Inject
-	JSAES aes;
 
 	@Inject
 	Unmarshaller unmarshaller;

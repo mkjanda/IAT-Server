@@ -121,7 +121,8 @@ public class DeploymentUploadController {
 
 	@EventListener
 	public void deploymentManifestReceived(ManifestReceivedEvent evt) {
-		if (evt.getManifest().getFiles().stream().noneMatch(f -> f.getResourceType().equals(ResourceType.DEPLOYMENT_FILE)))
+		if (evt.getManifest().getFiles().stream()
+				.noneMatch(f -> f.getResourceType().equals(ResourceType.DEPLOYMENT_FILE)))
 			return;
 		var ds = repositoryManager.getDeploymentSession(evt.getDeploymentID());
 		for (var file : evt.getManifest().getFiles().stream()
@@ -130,17 +131,20 @@ public class DeploymentUploadController {
 			var res = new TestResource(ds.getTest(), file.getPath(), file.getMimeType());
 			if (file.getResourceReference() != null) {
 				var resourceId = file.getResourceReference().getResourceId();
+				repositoryManager.addTestResource(res);
 				res.setResourceId(resourceId);
 				for (var referenceId : file.getResourceReference().getReferenceId()) {
-					var ref = new ResourceReference(ds.getTest(), resourceId, referenceId);
+					var ref = new ResourceReference(res, referenceId);
 					res.getReferences().add(ref);
 				}
+				res.setName(file.getName());
+				res.setSize(file.getSize());
+				repositoryManager.updateTestResource(res);
+			} else {
+				res.setName(file.getName());
+				res.setSize(file.getSize());
+				repositoryManager.addTestResource(res);
 			}
-			else
-				res.setResourceId(-1);
-			res.setName(file.getName());
-			res.setSize(file.getSize());
-			repositoryManager.addTestResource(res);
 		}
 		var trans = new TransactionRequest(TransactionType.DEPLOYMENT_FILE_MANIFEST_RECEIVED);
 		trans.addLongValue("DeploymentId", evt.getDeploymentID());
@@ -159,18 +163,19 @@ public class DeploymentUploadController {
 				.collect(Collectors.toList())) {
 			var res = new TestResource(ds.getTest(), file.getPath(), file.getMimeType());
 			if (file.getResourceReference() != null) {
-				var resourceId = file.getResourceReference().getResourceId();
-				res.setResourceId(resourceId);
+				repositoryManager.addTestResource(res);
 				for (var referenceId : file.getResourceReference().getReferenceId()) {
-					var ref = new ResourceReference(ds.getTest(), resourceId, referenceId);
+					var ref = new ResourceReference(res, referenceId);
 					res.getReferences().add(ref);
 				}
+				res.setName(file.getName());
+				res.setSize((int)file.getSize());
+				repositoryManager.updateTestResource(res);
+			} else {
+				res.setName(file.getName());
+				res.setSize((int)file.getSize());
+				repositoryManager.addTestResource(res);
 			}
-			else
-				res.setResourceId(-1);
-			res.setName(file.getName());
-			res.setSize(file.getSize());
-			repositoryManager.addTestResource(res);
 		}
 		var trans = new TransactionRequest(TransactionType.ITEM_SLIDE_MANIFEST_RECEIVED);
 		trans.addLongValue("DeploymentId", evt.getDeploymentID());

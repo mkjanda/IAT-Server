@@ -985,8 +985,8 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public void storeTestResource(TestResource resource) {
-        testResourceRepository.add(resource);
+    public TestResource updateTestResource(TestResource resource) {
+        return testResourceRepository.update(resource);
     }
 
     @Transactional

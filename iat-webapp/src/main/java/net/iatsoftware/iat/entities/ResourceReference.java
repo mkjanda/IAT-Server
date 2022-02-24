@@ -15,16 +15,15 @@ import javax.persistence.Table;
 @Table(name="resource_references")
 public class ResourceReference implements java.io.Serializable {
     private static final long serialVersionUID = 1;
-    private Long id, resourceId;
+    private Long id;
     private Long referenceId;
-    private IAT test;
+	private TestResource testResource;
 
     public ResourceReference(){}
 
-    public ResourceReference(IAT test, Long resourceId, Long referenceId) {
-        this.resourceId = resourceId;
+    public ResourceReference(TestResource testResource, Long referenceId) {
+        this.testResource = testResource;
         this.referenceId = referenceId;
-        this.test = test;
     }
 
     @Id
@@ -37,13 +36,13 @@ public class ResourceReference implements java.io.Serializable {
         this.id = id;
     }
 
-    @Basic
-    @Column(name="resource_id")
-    public Long getResourceId() {
-        return resourceId;
+	@ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name="resource_id", referencedColumnName="ResourceID")
+    public TestResource getResource() {
+        return this.testResource;
     }
-    public void setResourceId(Long val) {
-        resourceId = val;
+    public void setResource(TestResource val) {
+        this.testResource = val;
     }
 
     @Basic
@@ -53,14 +52,5 @@ public class ResourceReference implements java.io.Serializable {
     }
     public void setReferenceId(Long val) {
         referenceId = val;
-    }
-
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="test_id", referencedColumnName="TestID")
-    public IAT getTest() {
-        return test;
-    }
-    public  void setTest(IAT test) {
-        this.test = test;
     }
 }
