@@ -250,7 +250,7 @@ server {
 }
 ```
 
-	<h2 id="setting-it-up-to-run-as-a-service</h2>
+	<h2 id="setting-it-up-to-run-as-a-service<>Setting It Up to Run as a Service/h2>
 			<p>Here are instructions for Ubutu. Navigate to <b>/lib/systemd/system</b> and create the <b>iat-webapp.service</b> file and copy the following into it, changing your java path and the directory you put the app in.</h2>
 			
 			
