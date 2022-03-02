@@ -12,6 +12,7 @@ This is the server end of software that allows people to create Implicit Associa
     <li><a href="#build">Building the software</a></li>
     <li><a href="#running-it">Running</a></li>
     <li><a href="#setting-it-up-with-nginx">Setting it up with Nginx</a></li>
+	  <li><a href="#setting-it-up-as-a-service">Setting it up to run as a service</a></li>
     <li><a href="#working-version">Obtaining a Working Version</a></li>
   </ol>
 </details>
@@ -148,6 +149,7 @@ http {
 	This is the nginx .conf file I use on the server. It's been modified to run on non-HTTPS connections and errors might have been introduced in the process.
 	
 	
+	
  ``` nginx
 map $http_origin $origin {
 	default $host;
@@ -247,7 +249,41 @@ server {
     } 
 }
 ```
-      
+
+	<h2 id="setting-it-up-to-run-as-a-service</h2>
+			<p>Here are instructions for Ubutu. Navigate to <b>/lib/systemd/system</b> and create the <b>iat-webapp.service</b> file and copy the following into it, changing your java path and the directory you put the app in.</h2>
+			
+			
+			
+``` service
+			
+[Unit]
+Description=The IAT Administration and Manager
+After=syslog.target network.target
+Wants=mariadb.service postfix.service
+
+[Service]
+User=iat
+ExecStart=/usr/lib/jvm/default-java/bin/java -jar /var/www/iat/iat-webapp
+SuccessExitStart=143
+
+[Install]
+WantedBy=multi-user.target
+			
+```
+			
+			
+			
+From there it's a matter of the following typed at the command line.
+			
+			
+			
+
+``` bash
+systemctl dameon-reload
+systemctl enable iat-webapp.servoce
+systemctl start iat-webapp.service
+```
       
       
   <h2 id="working-version">Obtaining a Working Version</h2>
