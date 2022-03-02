@@ -153,7 +153,7 @@ map $http_origin $origin {
 	default $host;
 	~^http(s)?://((.+\.)+.+?)/$ $2;
 }
-```
+
 #server {
 #	listen 80;
 #	server_name iatsoftware.net www.iatsoftware.net;
