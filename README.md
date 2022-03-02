@@ -72,20 +72,88 @@ mail.server.user-address=iatsoftware@iatsoftware.net
 mail.images.logo-classpath-location=classpath:email/images/logo.png
 mail.images.header-classpath-location=classpath:email/images/header.png
 ```
+	  
    <p>Further, it presumes an SMTP relay running on both <b>127.0.0.1:25</b> and <b>127.0.0.1:465</b>.</p>
   <p>None of this should cause the software to abort. It runs on port 8081, which is modifiable in <b>iat-webapp/src/main/resources/application.properties</b>. Start it by executing it. Double-click it. Oh, you will need Java installed on your machine. Windows 10 ships Java. Vista, 7, and 8 do not include it. You can find it here: https://www.java.com/en/download/manual.jsp</p>
 	
 <h2 id='setting-it-up-with-nginx'>Setting it up with Nginx</h2>
-	
-<p>This is the nginx .conf file I use on the server. It's been modified to run on non-HTTPS connections and errors might have been introduced in the process.</p>
 
+	<p>If you're setting it up for your own computer, here's the <b>nginx.conf</b> I use to proxy back to virtual box on 192.158.56.101:</p>
+	
+	
+``` nginx
+
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+events {
+    worker_connections  1024;
+}
+
+http {
+	include       mime.types;
+    default_type  application/octet-stream;
+    sendfile        on;
+    #tcp_nopush     on;
+
+    #keepalive_timeout  0;
+    keepalive_timeout  65;
+
+    server {
+       listen  81;
+	client_max_body_size 50m;
+       server_name localhost;
+       location /bixblue {
+
+	server {
+        listen       80;
+        server_name  localhost;
+		client_max_body_size 50m;
+
+		location = /IAT/DataTransaction {
+        	if ($is_args = ?) {
+            	return 405;
+        	}
+        	if ($request_method = POST) {
+            	return 405;
+        	}
+        	proxy_pass http://192.168.56.101;
+        	proxy_set_header Host $host;
+        	proxy_set_header X-Real-IP $remote_addr;
+        	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        	proxy_http_version 1.1;
+        	proxy_set_header Upgrade $http_upgrade;
+        	proxy_set_header Connection "upgrade";
+    	}
+
+    	location / {
+			proxy_set_header X-Real-IP $remote_addr;
+			proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+			proxy_set_header Host $host;
+            proxy_redirect http://192.168.56.105 http://127.0.0.1;
+			proxy_pass http://192.168.56.105:80;
+    	}
+        error_page   500 502 503 504  /50x.html;
+        location = /50x.html {
+	        root   html;
+        }
+    }
+}
+	
+```
+	
+	<p>This is the nginx .conf file I use on the server. It's been modified to run on non-HTTPS connections and errors might have been introduced in the process.</p>
+	
 	
  ``` nginx
 map $http_origin $origin {
 	default $host;
 	~^http(s)?://((.+\.)+.+?)/$ $2;
 }
-
+```
 #server {
 #	listen 80;
 #	server_name iatsoftware.net www.iatsoftware.net;
@@ -98,7 +166,7 @@ server {
 #	ssl_certificate /etc/pki/tls/certs/iatsoftware.net-bundle-and-crt;
 #	ssl_certificate_key /etc/pki/tls/private/iatsoftware.net.key;	
     listen 80;
-	server_name iatsoftware.net www.iatsoftware.net localhost 127.0.0.1;
+	server_name YOUR_HOST localhost 127.0.0.1;
 	root /var/www/iat;
 	client_max_body_size 50M;
 
@@ -154,7 +222,7 @@ server {
 	}	
 
 	location / {
-		proxy_redirect http://127.0.0.1:8082 $scheme://iatsoftware.net;
+		proxy_redirect http://127.0.0.1:8082 $scheme://127.0.0.1;
 		proxy_set_header Host $host;
 		proxy_pass http://127.0.0.1:8082;
 		proxy_set_header X-Real-IP $remote_addr;
