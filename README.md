@@ -26,7 +26,7 @@ This is the server end of software that allows people to create Implicit Associa
     'nikki@bix.blue', 0, 0, 0, 0, 0, 0, 0);
 ```
 
- <p>This is to accompany a user you can create for the test design software without registering it. In <b>%USER%\AppData\Local\IATSoftware</b> directory, create the following file:</p>
+ This is to accompany a user you can create for the test design software without registering it. In <b>%USER%\AppData\Local\IATSoftware</b> directory, create the following file:
 
 <h3>IATDesign.xml</h3>
 
@@ -78,7 +78,7 @@ mail.images.header-classpath-location=classpath:email/images/header.png
 	
 <h2 id='setting-it-up-with-nginx'>Setting it up with Nginx</h2>
 
-	<p>If you're setting it up for your own computer, here's the <b>nginx.conf</b> I use to proxy back to virtual box on 192.158.56.101:</p>
+	If you're setting it up for your own computer, here's the <b>nginx.conf</b> I use to proxy back to virtual box on 192.158.56.101:
 	
 	
 ``` nginx
@@ -145,7 +145,7 @@ http {
 	
 ```
 	
-	<p>This is the nginx .conf file I use on the server. It's been modified to run on non-HTTPS connections and errors might have been introduced in the process.</p>
+	This is the nginx .conf file I use on the server. It's been modified to run on non-HTTPS connections and errors might have been introduced in the process.
 	
 	
  ``` nginx
