@@ -55,9 +55,8 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 			file.setMimeType(res.getMimeType());
 			file.setSize(res.getSize());
 			file.setEntityType(ManifestEntityType.FILE);
-			file.getResourceReference().setResourceId(res.getId());
-			file.getResourceReference().getReferenceId()
-					.addAll(res.getReferences().stream().map(ref -> ref.getId()).collect(Collectors.toList()));
+			file.setResourceId(res.getId());
+			file.getReferenceId().addAll(res.getReferences().stream().map(ref -> ref.getId()).collect(Collectors.toList()));
 		}
 		return manifest;
 	}

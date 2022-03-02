@@ -33,7 +33,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -57,8 +57,8 @@ public class DeploymentUploadController {
 
 	@PostMapping(value = "/DeploymentFiles", params = { "deploymentId", "sessionId" })
 	@ResponseBody
-	public Callable<ResponseEntity<Envelope>> receiveDeploymentUpload(@RequestHeader("deploymentId") Long deploymentId,
-			@RequestHeader("sessionId") String sessId, @RequestBody byte[] data) {
+	public Callable<ResponseEntity<Envelope>> receiveDeploymentUpload(@RequestParam("deploymentId") Long deploymentId,
+			@RequestParam("sessionId") String sessId, @RequestBody byte[] data) {
 		return () -> {
 			var ds = repositoryManager.getDeploymentSession(deploymentId);
 			var test = ds.getTest();
@@ -75,6 +75,7 @@ public class DeploymentUploadController {
 					TestResource tr = new TestResource(test, file.getPath(), file.getMimeType(), fileData);
 					repositoryManager.addTestResource(tr);
 				}
+
 			} catch (Exception ex) {
 				this.publisher.publishEvent(new DeploymentFailedEvent(sessId, deploymentId,
 						new ServerException("Error uploading file manifest.", ex)));
@@ -89,8 +90,8 @@ public class DeploymentUploadController {
 	}
 
 	@PostMapping(value = "/ItemSlideFiles", params = { "deploymentId", "sessionId" })
-	public Callable<ResponseEntity<Envelope>> receiveItemSlideUpload(@RequestHeader("deploymentId") Long deploymentId,
-			@RequestHeader("sessionId") String sessionId, @RequestBody byte[] data) {
+	public Callable<ResponseEntity<Envelope>> receiveItemSlideUpload(@RequestParam("deploymentId") Long deploymentId,
+			@RequestParam("sessionId") String sessionId, @RequestBody byte[] data) {
 		return () -> {
 			DeploymentSession ds = repositoryManager.getDeploymentSession(deploymentId);
 			var test = ds.getTest();
@@ -121,63 +122,24 @@ public class DeploymentUploadController {
 
 	@EventListener
 	public void deploymentManifestReceived(ManifestReceivedEvent evt) {
-		if (evt.getManifest().getFiles().stream()
-				.noneMatch(f -> f.getResourceType().equals(ResourceType.DEPLOYMENT_FILE)))
-			return;
 		var ds = repositoryManager.getDeploymentSession(evt.getDeploymentID());
-		for (var file : evt.getManifest().getFiles().stream()
-				.filter(f -> f.getResourceType().equals(ResourceType.DEPLOYMENT_FILE))
-				.collect(Collectors.toList())) {
+		for (var file : evt.getManifest().getFiles()) {
 			var res = new TestResource(ds.getTest(), file.getPath(), file.getMimeType());
-			if (file.getResourceReference() != null) {
-				var resourceId = file.getResourceReference().getResourceId();
-				repositoryManager.addTestResource(res);
-				res.setResourceId(resourceId);
-				for (var referenceId : file.getResourceReference().getReferenceId()) {
-					var ref = new ResourceReference(res, referenceId);
+			res.setResourceId(file.getResourceId());
+			res.setName(file.getName());
+			res.setSize((int) file.getSize());
+			res.setResourceType(file.getResourceType());
+			repositoryManager.addTestResource(res);
+			if (file.getReferenceId().size() > 0) {
+				file.getReferenceId().forEach((refId) -> {
+					var ref = new ResourceReference(res, refId);
+					repositoryManager.addResourceReference(ref);
 					res.getReferences().add(ref);
-				}
-				res.setName(file.getName());
-				res.setSize(file.getSize());
+				});
 				repositoryManager.updateTestResource(res);
-			} else {
-				res.setName(file.getName());
-				res.setSize(file.getSize());
-				repositoryManager.addTestResource(res);
 			}
 		}
 		var trans = new TransactionRequest(TransactionType.DEPLOYMENT_FILE_MANIFEST_RECEIVED);
-		trans.addLongValue("DeploymentId", evt.getDeploymentID());
-		trans.addStringValue("SessionId", evt.getSessionId());
-		this.publisher.publishEvent(new WebSocketDataSent(evt.getSessionId(), new Envelope(trans)));
-	}
-
-	@EventListener
-	public void itemSlideManifestReceivedEvent(ManifestReceivedEvent evt) {
-
-		if (evt.getManifest().getFiles().stream().noneMatch(f -> f.getResourceType().equals(ResourceType.ITEM_SLIDE)))
-			return;
-		var ds = repositoryManager.getDeploymentSession(evt.getDeploymentID());
-		for (var file : evt.getManifest().getFiles().stream()
-				.filter(f -> f.getResourceType().equals(ResourceType.ITEM_SLIDE))
-				.collect(Collectors.toList())) {
-			var res = new TestResource(ds.getTest(), file.getPath(), file.getMimeType());
-			if (file.getResourceReference() != null) {
-				repositoryManager.addTestResource(res);
-				for (var referenceId : file.getResourceReference().getReferenceId()) {
-					var ref = new ResourceReference(res, referenceId);
-					res.getReferences().add(ref);
-				}
-				res.setName(file.getName());
-				res.setSize((int)file.getSize());
-				repositoryManager.updateTestResource(res);
-			} else {
-				res.setName(file.getName());
-				res.setSize((int)file.getSize());
-				repositoryManager.addTestResource(res);
-			}
-		}
-		var trans = new TransactionRequest(TransactionType.ITEM_SLIDE_MANIFEST_RECEIVED);
 		trans.addLongValue("DeploymentId", evt.getDeploymentID());
 		trans.addStringValue("SessionId", evt.getSessionId());
 		this.publisher.publishEvent(new WebSocketDataSent(evt.getSessionId(), new Envelope(trans)));

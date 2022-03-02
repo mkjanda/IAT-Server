@@ -3,7 +3,6 @@ package net.iatsoftware.iat.entities;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GenerationType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -36,8 +35,8 @@ public class ResourceReference implements java.io.Serializable {
         this.id = id;
     }
 
-	@ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="resource_id", referencedColumnName="ResourceID")
+	@ManyToOne
+    @JoinColumn(name="resource_key", referencedColumnName="id")
     public TestResource getResource() {
         return this.testResource;
     }

@@ -1,11 +1,15 @@
 package net.iatsoftware.iat.entities;
 
+import net.iatsoftware.iat.generated.ResourceType;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
+import javax.persistence.EnumType;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,10 +22,11 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;;
 
 @Entity
-@Table(name="test_resources", uniqueConstraints = @UniqueConstraint(columnNames={"TestID", "name"}))
+@Table(name="test_resources", uniqueConstraints = @UniqueConstraint(columnNames={"TestID", "ResourceID", "resource_type"}))
 public class TestResource implements java.io.Serializable{
     private static final long serialVersionUID = 1L;
     private IAT test;
+    private ResourceType resourceType = ResourceType.DEPLOYMENT_FILE;
     private String name, path, mimeType;
     private Long id, resourceId;
 	private Integer size;
@@ -53,10 +58,10 @@ public class TestResource implements java.io.Serializable{
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="id")
-    public long getId() {
+    public Long getId() {
         return id;
     }
-    public void setId(long val) {
+    public void setId(Long val) {
         id = val;
     }
 
@@ -107,7 +112,7 @@ public class TestResource implements java.io.Serializable{
 
 	@Basic
 	@Column(name="ResourceID", nullable=true)
-	public Long getResourceID() {
+	public Long getResourceId() {
 		return resourceId;
 	}
 	public void setResourceId(Long val) {
@@ -124,11 +129,20 @@ public class TestResource implements java.io.Serializable{
     }
 
     @OneToMany(fetch=FetchType.EAGER)
-    @JoinColumn(name="ResourceID")
+    @JoinColumn(name="resource_key", referencedColumnName="id")
     public List<ResourceReference> getReferences() {
         return resourceReferences;
     }
     public void setReferences(List<ResourceReference> val) {
         this.resourceReferences = val;
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name="resource_type")
+    public ResourceType getResourceType() {
+        return resourceType;
+    }
+    public void setResourceType(ResourceType val) {
+        resourceType = val;
     }
 }

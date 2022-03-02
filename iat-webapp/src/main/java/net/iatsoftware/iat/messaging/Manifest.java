@@ -53,16 +53,17 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 				getFile().add((File) fe);
 		}
 	}
-/*
-	private long calcSize(Directory directory) {
-		long size = 0;
-		for (var d : directory.getDirectory())
-			size += calcSize(d);
-		for (var f : directory.getFile())
-			size += f.getSize();
-		return size;
-	}
-*/
+
+	/*
+	 * private long calcSize(Directory directory) {
+	 * long size = 0;
+	 * for (var d : directory.getDirectory())
+	 * size += calcSize(d);
+	 * for (var f : directory.getFile())
+	 * size += f.getSize();
+	 * return size;
+	 * }
+	 */
 	public List<FileEntity> accumulateManifest(java.io.File directory) {
 		var l = new ArrayList<FileEntity>();
 		for (java.io.File f : directory.listFiles()) {
@@ -79,7 +80,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 				file.setName(f.getName());
 				file.setEntityType(ManifestEntityType.UPDATE_FILE);
 				file.setResourceType(ResourceType.UPDATE_FILE);
-				file.setSize(f.getTotalSpace());
+				file.setSize((int)f.getTotalSpace());
 				l.add(file);
 			}
 		}
@@ -101,7 +102,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 				file.setName(fe.getName());
 				file.setEntityType(ManifestEntityType.UPDATE_FILE);
 				file.setResourceType(ResourceType.UPDATE_FILE);
-				file.setSize(fe.getTotalSpace());
+				file.setSize((int)fe.getTotalSpace());
 				directory.getFile().add(file);
 			}
 		}
@@ -342,17 +343,16 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 				rootPath, clientRelease);
 		for (java.io.File dir : updateDirectoryCandidates) {
 			java.io.File[] dirFiles = dir.listFiles();
-			Arrays.spliterator(dirFiles).forEachRemaining(f -> 
-			{
-								var file = new File();
-								file.setName(f.getName());
-								file.setPath(f.getAbsolutePath());
-								file.setResourceType(ResourceType.UPDATE_FILE);
-								file.setMimeType("update-file/octet-stream");
-								file.setSize(f.getTotalSpace());
-								if (!updateManifest.containsFileWithName(f.getName()))
-									updateManifest.addFile(file);
-							});
+			Arrays.spliterator(dirFiles).forEachRemaining(f -> {
+				var file = new File();
+				file.setName(f.getName());
+				file.setPath(f.getAbsolutePath());
+				file.setResourceType(ResourceType.UPDATE_FILE);
+				file.setMimeType("update-file/octet-stream");
+				file.setSize((int)f.getTotalSpace());
+				if (!updateManifest.containsFileWithName(f.getName()))
+					updateManifest.addFile(file);
+			});
 		}
 		return updateManifest;
 	}
@@ -375,7 +375,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 								file.setPath(f.getAbsolutePath());
 								file.setResourceType(ResourceType.UPDATE_FILE);
 								file.setMimeType("update-file/octet-stream");
-								file.setSize(f.getTotalSpace());
+								file.setSize((int)f.getTotalSpace());
 								if (!updateManifest.containsFileWithName(f.getName()))
 									updateManifest.addFile(file);
 							});
@@ -531,6 +531,7 @@ public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
 	public boolean containsFileWithName(String filename) {
 		return getFiles().stream().anyMatch(f -> f.getName().equals(filename));
 	}
+
 	public void addFile(File f) {
 		this.getFile().add(f);
 	}

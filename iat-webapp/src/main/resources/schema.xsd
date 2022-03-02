@@ -1148,8 +1148,9 @@
 
     <xs:simpleType name="ResourceType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="ItemSlide"/>
             <xs:enumeration value="DeploymentFile"/>
+            <xs:enumeration value="DeploymentImage" />
+            <xs:enumeration value="ItemSlide"/>
             <xs:enumeration value="UpdateFile"/>
         </xs:restriction>
     </xs:simpleType>
@@ -1991,16 +1992,10 @@
             <xs:extension base="iat:file-entity-impl">
                 <xs:sequence>
                     <xs:element name="MimeType" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Size" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Size" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="ResourceType" type="iat:ResourceType" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ResourceReference" minOccurs="0" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="ResourceId" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                                <xs:element name="ReferenceId" type="xs:long" minOccurs="0" maxOccurs="unbounded"/>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
+                    <xs:element name="ResourceId" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ReferenceId" type="xs:long" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

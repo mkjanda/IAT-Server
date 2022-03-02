@@ -21,7 +21,7 @@ public class File extends net.iatsoftware.iat.generated.FilePojo implements java
         this.entityType = ManifestEntityType.FILE;
     }
     
-    public File(String n, long s)
+    public File(String n, int s)
     {
         size = s;
         name = n;
