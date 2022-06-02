@@ -27,7 +27,7 @@ import net.iatsoftware.iat.generated.DeploymentStage;
 import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.UploadRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.DeploymentService;
@@ -152,7 +152,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         iatRepositoryManager.setTokenDefinition(this.testId, tokType, tokenName);
     }
 
-    public void setFailed(String sessId, ServerException serverEx) {
+    public void setFailed(String sessId, ServerExceptionMessage serverEx) {
         onFailure(sessId, serverEx);
     }
 
@@ -160,7 +160,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         onSuccess(sessId);
     }
 
-    protected abstract void onFailure(String sessId, ServerException ex);
+    protected abstract void onFailure(String sessId, ServerExceptionMessage ex);
 
     protected abstract void onSuccess(String sessId);
 

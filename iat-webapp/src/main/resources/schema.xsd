@@ -1948,7 +1948,7 @@
                     <xs:element name="ProgressMax" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="ProgressVal" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="LastUpdate" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ServerException" type="iat:server-exception-impl" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="ServerException" type="iat:server-exception-message-impl" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2690,17 +2690,17 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="server-exception-impl">
+    <xs:complexType name="server-exception-message-impl">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.ServerException"/>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ServerExceptionMessage"/>
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ServerExceptionPojo" abstract="true">
+    <xs:complexType name="ServerExceptionMessagePojo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.ServerException"/>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ServerExceptionMessage"/>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
@@ -2888,7 +2888,7 @@
                 <xs:element name="QueryIATExists" type="iat:query-iat-exists-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="TransactionRequest" type="iat:transaction-request-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="ServerReport" type="iat:server-report-impl" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="ServerException" type="iat:server-exception-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="ServerException" type="iat:server-exception-message-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="UploadRequest" type="iat:upload-request-impl" minOccurs="1" maxOccurs="1"/>
             </xs:choice>
         </xs:sequence>

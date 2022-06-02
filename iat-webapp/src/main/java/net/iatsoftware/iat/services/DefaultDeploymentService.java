@@ -21,6 +21,7 @@ import net.iatsoftware.iat.events.AbortDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentDescriptorMismatch;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
+import net.iatsoftware.iat.events.DeploymentCleanupEvent;
 import net.iatsoftware.iat.events.RSAKeyReceivedEvent;
 import net.iatsoftware.iat.events.TokenDefinitionReceivedEvent;
 import net.iatsoftware.iat.events.UploadRequestEvent;
@@ -28,7 +29,7 @@ import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
@@ -67,7 +68,6 @@ public class DefaultDeploymentService implements DeploymentService {
         IAT test = new IAT(c, u, testName, serverConfiguration.getAdminVersion().toString(),
                 serverConfiguration.getDataFormat(), Calendar.getInstance());
         DeploymentSession ds = new DeploymentSession(c, u, test, sessID);
-        iatRepositoryManager.addTest(test);
         iatRepositoryManager.storeDeploymentSession(ds);
         IATDeployer deployment = iatServerBeanFactory.IATDeployer(c.getClientId(), ds.getId(), test.getId(), sessID);
         IATDeploymentMap.put(ds, deployment);
@@ -84,10 +84,8 @@ public class DefaultDeploymentService implements DeploymentService {
                 serverConfiguration.getDataFormat(), oldTest.getUploadTimestamp());
         ds = new DeploymentSession(c, u, test, sessID);
         test.setNumAdministrations(oldTest.getNumAdministrations());
-        test.setDeploymentSession(ds);
         IATRedeployer redeployer = null;
         try {
-            iatRepositoryManager.addTest(test);
             iatRepositoryManager.storeDeploymentSession(ds);
             redeployer = iatServerBeanFactory.IATRedeployer(c.getClientId(), ds.getId(), test.getId(), oldTest.getId(),
                     sessID);
@@ -98,7 +96,7 @@ public class DefaultDeploymentService implements DeploymentService {
             iatRepositoryManager.copyRSAKey(test.getId(), oldTest.getId());
             return ds.getDeploymentStart();
         } catch (org.hibernate.exception.ConstraintViolationException ex) {
-            redeployer.setFailed(sessID, new ServerException("Constraint violation creating redeployer", ex));
+            redeployer.setFailed(sessID, new ServerExceptionMessage("Constraint violation creating redeployer", ex));
             throw ex;
         }
     }
@@ -106,7 +104,7 @@ public class DefaultDeploymentService implements DeploymentService {
     @Override
     public void completeDeployment(DeploymentSession ds) {
         IATDeploymentMap.remove(ds);
-        iatRepositoryManager.deleteDeploymentSession(ds);
+        iatRepositoryManager.finalizeDeployment(dsID);
     }
 
     @EventListener
@@ -135,16 +133,10 @@ public class DefaultDeploymentService implements DeploymentService {
 
     @EventListener
     public void onDeploymentFailed(DeploymentFailedEvent e) {
-        try {
-            var deployer = IATDeploymentMap.get(IATDeploymentMap.keySet().stream()
-                    .filter(key -> key.getId() == e.getDeploymentID()).findFirst().get());
-            if (deployer == null) {
-                return;
-            }
-            deployer.setFailed(e.getSessionId(), e.getFailureCause());
-        } catch (Exception ex) {
-            reportException("Error handling failed deployment", ex, e.getSessionId());
-        }
+            var test = iatRepositoryManager.getIAT(e.getTestId());
+            IATDeploymentMap.remove(test.getDeploymentSession());
+            iatRepositoryManager.deleteIAT(e.getTestId());
+            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(e.getFailureCause())));
     }
 
     @EventListener
@@ -163,13 +155,10 @@ public class DefaultDeploymentService implements DeploymentService {
     @EventListener
     public void onDeploymentSuccess(DeploymentSuccessEvent e) {
         try {
-            var deploymentSession = IATDeploymentMap.keySet().stream().filter(key -> key.getId() == e.getDeploymentID())
-                    .findFirst().get();
-            var deployer = IATDeploymentMap.get(deploymentSession);
-            deployer.setSuccess(e.getSessionId());
-            IATDeploymentMap.remove(deploymentSession);
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
-                    new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS))));
+            var test = iatRepositoryManager.getIAT(e.getTestId());
+            IATDeploymentMap.remove(test.getDeploymentSession());
+            iatRepositoryManager.deleteDeploymentSession(test);
+            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)));
         } catch (Exception ex) {
             reportException("Error processing \"Test Deployment Complete\" event", ex, e.getSessionId());
         }
@@ -205,17 +194,26 @@ public class DefaultDeploymentService implements DeploymentService {
         }
     }
 
+    @EventListener
+    public void onDeploymentCleanup(DeploymentCleanupEvent evt) {
+        var ds = iatRepositoryManager.getDeploymentSession(evt.getDeploymentSessionID());
+        iatRepositoryManager.deleteIAT(ds.getTest());
+        IATDeploymentMap.remove(ds);
+    }
+
     @Scheduled(initialDelay = 60_000L, fixedRate = 5_000)
     private void cleanupAbandonedDeployments() {
         long timeout = System.currentTimeMillis() - DeploymentSession.DEPLOYMENT_TIMEOUT;
         for (var ds : IATDeploymentMap.keySet().stream().filter(k -> k.getDeploymentStart().getTimeInMillis() < timeout)
-                .collect(Collectors.toList()))
+                .collect(Collectors.toList())) {
+            iatRepositoryManager.deleteIAT(ds.getTest().getId());
             IATDeploymentMap.remove(ds);
+        }
     }
 
     private void reportException(String msg, Exception ex, String sessId) {
         logger.error(msg, ex);
-        this.publisher.publishEvent(new WebSocketDataSent(sessId, new Envelope(new ServerException(msg, ex))));
+        this.publisher.publishEvent(new WebSocketDataSent(sessId, new Envelope(new ServerExceptionMessage(msg, ex))));
         this.publisher.publishEvent(new WebSocketFinalDataSent(sessId,
                 new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
     }

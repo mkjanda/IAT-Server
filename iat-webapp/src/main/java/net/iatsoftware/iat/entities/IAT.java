@@ -46,10 +46,10 @@ public class IAT implements java.io.Serializable {
     private boolean alternate = false, alternated = false, oauthSubpathRedirects = false, redeployed = false;
     private byte[] deploymentDescriptor, resultRetrievalToken;
     private String aesCode, redirectOnComplete;
+    private DeploymentSession deploymentSession;
     private Client client;
     private int resultFormat, numElements = -1;
     private User user;
-    private DeploymentSession deploymentSession;
     private UniqueResponseItem uniqueResponseItem;
     private String itemSlideDownloadKey = null, version;
     private TokenType tokenType = TokenType.NONE;
@@ -70,7 +70,7 @@ public class IAT implements java.io.Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "TestID")
+    @Column(name="TestID")
     public long getId() {
         return this.id;
     }
@@ -78,6 +78,17 @@ public class IAT implements java.io.Serializable {
     public void setId(long val) {
         this.id = val;
     }
+
+    @Column(name="TestID")
+    @OneToOne(mappedBy="SessionID", optional=true)
+    @JoinColumn(name="TestID", referencedColumnName="SessionID")
+    public DeploymentSession getDeploymentSession() {
+        return this.deploymentSession;
+    }
+    public void setDeploymentSession(DeploymentSession val) {
+        this.deploymentSession = val;
+    }
+
 
     @Basic
     @Column(name = "test_name")
@@ -335,14 +346,6 @@ public class IAT implements java.io.Serializable {
         resultRetrievalTokenAge = val;
     }
 
-    @OneToOne(optional=true)
-    @JoinColumn(name="deployer_id", referencedColumnName="TestID")
-    public DeploymentSession getDeploymentSession() {
-        return this.deploymentSession;
-    }
-    public void setDeploymentSession(DeploymentSession val) {
-        this.deploymentSession = val;
-    }
     @Basic
     @Column(name="redeployed")
     public boolean isRedeployed() {

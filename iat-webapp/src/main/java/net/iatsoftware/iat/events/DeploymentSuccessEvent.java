@@ -10,7 +10,13 @@ package net.iatsoftware.iat.events;
  * @author michael
  */
 public class DeploymentSuccessEvent extends DeploymentTransactionEvent {
-    public DeploymentSuccessEvent(String sessId, long deploymentId) {
+    private final Long testId;
+    public DeploymentSuccessEvent(String sessId, long deploymentId, Long testId) {
         super(sessId, deploymentId);
+        this.testId = testId;
+    }
+
+    public Long getTestId() {
+        return testId;
     }
 }

@@ -87,8 +87,8 @@ public class Envelope extends net.iatsoftware.iat.generated.Envelope {
             setRSAKeyPair((RSAKeyPair) msg);
         if (msg instanceof ServerReport)
             setServerReport((ServerReport) msg);
-        if (msg instanceof ServerException)
-            setServerException((ServerException) msg);
+        if (msg instanceof ServerExceptionMessage)
+            setServerException((ServerExceptionMessage) msg);
         if (msg instanceof UploadRequest)
             setUploadRequest((UploadRequest) msg);
     }

@@ -114,18 +114,14 @@ public class PartiallyEncryptedRSAKey extends net.iatsoftware.iat.generated.Part
         return cipher;
     }
 
-    private long readInt(ByteArrayInputStream bIn)
+    private BigInteger readBI(ByteArrayInputStream bIn, int len)
             throws java.io.IOException {
-        byte[] valBytes = new byte[4];
-        bIn.read(valBytes);
-        byte[] numBytes = new byte[5];
-        numBytes[0] = 0;
-        numBytes[1] = valBytes[3];
-        numBytes[2] = valBytes[2];
-        numBytes[3] = valBytes[1];
-        numBytes[4] = valBytes[0];
-        BigInteger bi = new BigInteger(numBytes);
-        return bi.longValue();
+        byte[] data = new byte[len];
+        bIn.read(data);
+        byte[] biBytes = new byte[len];
+        biBytes[0] = 0;
+        System.arraycopy(data, 0, biBytes, 1, data.length);
+        return new BigInteger(biBytes);
     }
 
     public void decryptPrivateKey(String password)
@@ -145,24 +141,14 @@ public class PartiallyEncryptedRSAKey extends net.iatsoftware.iat.generated.Part
         }
         byte[] decryptedKey = bOutStream.toByteArray();
         ByteArrayInputStream rsaKeyIn = new ByteArrayInputStream(decryptedKey);
-        int len = (int)readInt(rsaKeyIn);
-        byte[] privKeyModulus = new byte[len];
-        rsaKeyIn.read(privKeyModulus);
-        len = (int)readInt(rsaKeyIn);
+        int len = readBI(rsaKeyIn, 4).intValue();
+        BigInteger modulus = readBI(rsaKeyIn, len);
+        len = (int)readBI(rsaKeyIn, 4).longValue();
         rsaKeyIn.skip(len);
-        len = (int)readInt(rsaKeyIn);
-        byte[] privKeyExp = new byte[len];
-        rsaKeyIn.read(privKeyExp);
-        
-        byte[] zpPrivKeyModulus = new byte[privKeyModulus.length + 1];
-        zpPrivKeyModulus[0] = 0;
-        System.arraycopy(privKeyModulus, 0, zpPrivKeyModulus, 1, privKeyModulus.length);
+        len = readBI(rsaKeyIn, 4).intValue();
+        BigInteger privKeyExp = readBI(rsaKeyIn, len);
 
-        byte[] zpPrivKeyExp = new byte[privKeyExp.length + 1];
-        zpPrivKeyExp[0] = 0;
-        System.arraycopy(privKeyExp, 0, zpPrivKeyExp, 1, privKeyExp.length);
-        
-        RSAPrivateKeySpec rsaKeySpec = new RSAPrivateKeySpec(new BigInteger(zpPrivKeyModulus), new BigInteger(zpPrivKeyExp));
+        RSAPrivateKeySpec rsaKeySpec = new RSAPrivateKeySpec(modulus, privKeyExp);
         KeyFactory rsaKeyFact = KeyFactory.getInstance("RSA");
         PrivateKey rsaPrivateKey = rsaKeyFact.generatePrivate(rsaKeySpec);
         this.privateKeyCipher = Cipher.getInstance("RSA");
@@ -180,7 +166,7 @@ public class PartiallyEncryptedRSAKey extends net.iatsoftware.iat.generated.Part
             RSAPublicKeySpec pubKeySpec = new RSAPublicKeySpec(new BigInteger(this.getModulusBytes()), new BigInteger(this.getExponentBytes()));
             KeyFactory rsaKeyFact = KeyFactory.getInstance("RSA");
             PublicKey pubKey = rsaKeyFact.generatePublic(pubKeySpec);
-            Cipher encCipher = Cipher.getInstance("RSA");
+            Cipher encCipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             encCipher.init(Cipher.ENCRYPT_MODE, pubKey);
             byte[] encTestData = encCipher.doFinal(testData);
             byte[] decryptedTestData = this.privateKeyCipher.doFinal(encTestData);

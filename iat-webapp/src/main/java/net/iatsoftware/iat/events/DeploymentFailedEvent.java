@@ -10,17 +10,29 @@ package net.iatsoftware.iat.events;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 
 public class DeploymentFailedEvent extends DeploymentCompleteEvent {
-    private final ServerException failureCause;
+    private final ServerExceptionMessage failureCause;
+    private Long testId = -1L;
     
-    public DeploymentFailedEvent(String sess, long deploymentId, ServerException failureCause) {
+    public DeploymentFailedEvent(String sess, long deploymentId, ServerExceptionMessage failureCause) {
         super(sess, deploymentId, DeploymentCompleteEvent.EResult.failure);
         this.failureCause = failureCause;
     }
+
+    public DeploymentFailedEvent(String sess, long deploymentId, ServerExceptionMessage failureCause, Long testId) {
+        super(sess, deploymentId, DeploymentCompleteEvent.EResult.failure);
+        this.failureCause = failureCause;
+        this.testId = testId;
+    }
     
-    public ServerException getFailureCause() {
+    public Long getTestId() {
+        return this.testId;
+    }
+
+
+    public ServerExceptionMessage getFailureCause() {
         return this.failureCause;
     }
 }

@@ -9,7 +9,7 @@ package net.iatsoftware.iat.services;
  *
  * @author michael
  */
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -79,7 +79,7 @@ public class DefaultMailService implements MailService {
 
     @Override
     public void reportError(String subject, Exception ex) throws javax.mail.MessagingException {
-        ServerException sEx = new ServerException(subject, ex);
+        ServerExceptionMessage sEx = new ServerExceptionMessage(subject, ex);
         EmailParameters params = new EmailParameters("sysinfo", "Server Error",
                 "email/server-error-report.html");
         params.addParameter("exception", sEx);

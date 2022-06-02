@@ -12,7 +12,7 @@ package net.iatsoftware.iat.deployment;
 import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.DeploymentStage;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.Envelope;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -130,7 +130,7 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
     }
 
     @Override
-    public void setServerException(ServerException ex) {
+    public void setServerException(ServerExceptionMessage ex) {
         this.stage = DeploymentStage.FAILED;
         if (sessionId != null) {
             this.publisher.publishEvent(new WebSocketDataSent(this.sessionId, new Envelope(ex)));

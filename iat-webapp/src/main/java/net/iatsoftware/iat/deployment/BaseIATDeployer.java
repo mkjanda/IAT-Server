@@ -12,13 +12,13 @@ package net.iatsoftware.iat.deployment;
 
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.generated.TokenType;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 
 public interface BaseIATDeployer  {
     void requestUpload(String sessionId) throws java.net.URISyntaxException;
     void storeRSAKeys(PartiallyEncryptedRSAKey adminKey, PartiallyEncryptedRSAKey dataKey);
     void storeTokenDefinition(TokenType type, String tokenName);
     void generateTest(String sessionId);
-    void setFailed(String sessId, ServerException ex);
+    void setFailed(String sessId, ServerExceptionMessage ex);
     void setSuccess(String sessId);
 }

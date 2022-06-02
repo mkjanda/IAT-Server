@@ -6,6 +6,7 @@
 
 package net.iatsoftware.iat.messaging;
 
+import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
@@ -17,21 +18,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.inject.Inject;
+
 /**
  *
  * @author Michael Janda
  */
 
-@XmlRootElement(name="IATReport")
+@XmlRootElement(name = "IATReport")
 @XmlAccessorType(XmlAccessType.NONE)
 @Component
-@Scope(value="prototype")
+@Scope(value = "prototype")
 public class IATReport extends net.iatsoftware.iat.generated.IATReportPojo {
-    @Inject IATRepositoryManager iatRepositoryManager;
-    public IATReport(){}
-    
-    public void load(IAT test)
-    {
+    @Inject
+    IATRepositoryManager iatRepositoryManager;
+
+    public IATReport() {
+    }
+
+    public void load(IAT test) {
         DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
         iatName = test.getTestName();
         this.url = test.getURL();
@@ -39,7 +43,7 @@ public class IATReport extends net.iatsoftware.iat.generated.IATReportPojo {
         testSizeKB = test.getTestSizeKB();
         if (test.getLastDataRetrieval() == null)
             lastDataRetrieval = "never";
-        else 
+        else
             lastDataRetrieval = df.format(test.getLastDataRetrieval().getTime());
         if (test.getUser().getTitle() != null)
             authorTitle = test.getUser().getTitle();
@@ -48,7 +52,13 @@ public class IATReport extends net.iatsoftware.iat.generated.IATReportPojo {
         authorFName = test.getUser().getFName();
         authorLName = test.getUser().getLName();
         authorEMail = test.getUser().getEMail();
-        numResultSets = iatRepositoryManager.getNumResultSets(test);
-        deploying = test.getDeploymentSession() != null;
+        numResultSets = iatRepositoryManager.getNumResultSets(test); 
+        DeploymentSession ds = null;
+        try {
+            ds = iatRepositoryManager.getDeploymentSession(test);
+        } catch (javax.persistence.NoResultException ex) {
+            ds = null;
+        }
+        deploying = ds != null;
     }
 }

@@ -20,7 +20,6 @@ import net.iatsoftware.iat.entities.IAT;
 public interface IATRepository extends GenericRepository<Long, IAT> {
     boolean containsByProductKey(String productKey, String testName);
     void setDescriptor(Long testID, byte[] descrioptor);
-    IAT getIAT(Client c, String testName);
     boolean iatExists(Client c, String iatName);
     long getNumIATs(Client client);
     Long getConsumedDiskSpaceKB(Client client);
@@ -33,5 +32,5 @@ public interface IATRepository extends GenericRepository<Long, IAT> {
     Calendar getLastDataRetrievalDate(Client c);
     List<IAT> getExpiredTestResults(long timeout);
     boolean clientIdMatchesClientSecret(String id, String secret);
-    void finalizeDeployment(DeploymentSession ds);
+    IAT get(String testName, Long clientId);
 }

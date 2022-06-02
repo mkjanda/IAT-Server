@@ -21,7 +21,7 @@ import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.WebSocketService;
@@ -57,7 +57,7 @@ public class DeploymentUploadController {
 
 	@PostMapping(value = "/DeploymentFiles", params = { "deploymentId", "sessionId" })
 	@ResponseBody
-	public Callable<ResponseEntity<Envelope>> receiveDeploymentUpload(@RequestParam("deploymentId") Long deploymentId,
+	public Callable<ResponseEntity<Envelope>> receiveDeploymentUpload(@RequestParam("webSocketId") Long deploymentId,
 			@RequestParam("sessionId") String sessId, @RequestBody byte[] data) {
 		return () -> {
 			var ds = repositoryManager.getDeploymentSession(deploymentId);
@@ -78,9 +78,11 @@ public class DeploymentUploadController {
 
 			} catch (Exception ex) {
 				this.publisher.publishEvent(new DeploymentFailedEvent(sessId, deploymentId,
-						new ServerException("Error uploading file manifest.", ex)));
-				return new ResponseEntity<>(new Envelope(new ServerException("Error storing file manifest for (Client "
-						+ test.getClient() + ", Test " + test.getTestName() + ")", ex)), HttpStatus.OK);
+						new ServerExceptionMessage("Error uploading file manifest.", ex)));
+				return new ResponseEntity<>(
+						new Envelope(new ServerExceptionMessage("Error storing file manifest for (Client "
+								+ test.getClient() + ", Test " + test.getTestName() + ")", ex)),
+						HttpStatus.OK);
 			}
 			publisher
 					.publishEvent(new TestResourcesRecordedEvent(sessId, deploymentId, ResourceType.DEPLOYMENT_FILE));
@@ -110,9 +112,11 @@ public class DeploymentUploadController {
 				}
 			} catch (Exception ex) {
 				this.publisher.publishEvent(new DeploymentFailedEvent(sessionId, deploymentId,
-						new ServerException("Error uploading file manifest.", ex)));
-				return new ResponseEntity<>(new Envelope(new ServerException("Error storing file manifest for (Client "
-						+ test.getClient() + ", Test " + test.getTestName() + ")", ex)), HttpStatus.OK);
+						new ServerExceptionMessage("Error uploading file manifest.", ex)));
+				return new ResponseEntity<>(
+					new Envelope(new ServerExceptionMessage("Error storing file manifest for (Client "
+						+ test.getClient() + ", Test " + test.getTestName() + ")", ex)),
+						HttpStatus.OK);
 			}
 			publisher.publishEvent(new TestResourcesRecordedEvent(sessionId, deploymentId, ResourceType.ITEM_SLIDE));
 			return new ResponseEntity<>(new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)),

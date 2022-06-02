@@ -10,13 +10,13 @@ package net.iatsoftware.iat.deployment;
  * @author Michael Janda
  */
 import net.iatsoftware.iat.entities.IAT;
+import net.iatsoftware.iat.events.DeploymentSuccessEvent;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.TestDeploymentCompleteEvent;
-import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 
 import org.springframework.context.annotation.Scope;
@@ -38,29 +38,21 @@ public class DefaultIATRedeployer extends DefaultBaseIATDeployer implements IATR
     @Override
     protected void onSuccess(String sessionId) {
         iatRepositoryManager.reassociateResults(this.testId, this.oldTestID);
-        iatRepositoryManager.finalizeDeployment(this.deploymentSessionId);
         var test = this.iatRepositoryManager.getIAT(this.testId);
+        iatRepositoryManager.finalizeDeployment(deploymentSessionId);
         test.setRedeployed(true);
         iatRepositoryManager.updateIAT(test);
-        this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessionId,
-                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS))));
+        this.eventPublisher.publishEvent(new DeploymentSuccessEvent(sessionId, deploymentSessionId));
     }
 
     @Override
-    protected void onFailure(String sessionId, ServerException ex) {
-        try {
-            if (!this.iatRepositoryManager.deleteDeploymentSession(this.deploymentSessionId))
-                return;
-        } catch (org.springframework.orm.ObjectOptimisticLockingFailureException failureEx) {
-            this.eventPublisher.publishEvent(new WebSocketDataSent(sessionId,
-                    new Envelope(new ServerException("Foreign key constraint violation", failureEx))));
-        }
-        this.eventPublisher.publishEvent(new WebSocketDataSent(sessionId, new Envelope(ex)));
+    protected void onFailure(String sessionId, ServerExceptionMessage ex) {
+        this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, deploymentSessionId, ex, testId));
     }
 
     @Override
     public void onDescriptorMismatch(String sessionId) {
-        this.iatRepositoryManager.deleteDeploymentSession(this.deploymentSessionId);
+        this.iatRepositoryManager.deleteIAT(testId);
         this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessionId,
                 new Envelope(new TransactionRequest(TransactionType.DEPLOYMENT_DESCRIPTOR_MISMATCH))));
     }
@@ -99,7 +91,7 @@ public class DefaultIATRedeployer extends DefaultBaseIATDeployer implements IATR
             } catch (DeploymentTerminationException ex) {
                 criticalLogger.error("Error deploying IAT", ex);
                 this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId,
-                        new ServerException("Deployment Error", ex)));
+                        new ServerExceptionMessage("Deployment Error", ex)));
             }
         });
     }

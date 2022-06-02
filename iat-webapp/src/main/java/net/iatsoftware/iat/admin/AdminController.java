@@ -230,7 +230,7 @@ public class AdminController {
 			@RequestParam(name = "HTTP_REFERER", required = false, defaultValue = "-") String httpReferer,
 			@RequestParam Map<String, String> allParams, HttpServletRequest request) throws TokenException {
 		IATSession sess = sessionManager.createSession();
-		IAT test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientId);
+		var test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientId);
 		if (test == null) {
 			sessionManager.destroySession(sess.getId());
 			ModelAndView mv = new ModelAndView(SessionProperties.GENERAL_ERROR);

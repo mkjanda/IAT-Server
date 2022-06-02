@@ -10,9 +10,12 @@ package net.iatsoftware.iat.repositories;
  * @author Michael Janda
  */
 
+import net.iatsoftware.iat.messaging.ServerException;
 
 import org.springframework.stereotype.Repository;
 
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +24,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Predicate;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 
 import net.iatsoftware.iat.entities.Client;
@@ -31,9 +35,14 @@ import net.iatsoftware.iat.entities.IAT;
 public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         implements IATRepository {
 
+    private static final Logger logger = LogManager.getLogger();
+
     @Override
     public boolean containsByProductKey(String productKey, String iatName) {
-        TypedQuery<Boolean> existsQuery = this.entityManager.createQuery("select count(t) from test t where t.product_key = :prodKey and t.test_name = :testName", Boolean.class).setParameter("prodKey", productKey).setParameter("testName", iatName);
+        TypedQuery<Boolean> existsQuery = this.entityManager
+                .createQuery("select count(t) from test t where t.product_key = :prodKey and t.test_name = :testName",
+                        Boolean.class)
+                .setParameter("prodKey", productKey).setParameter("testName", iatName);
         return existsQuery.getSingleResult();
     }
 
@@ -44,14 +53,22 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         this.update(test);
     }
 
-    @Override
-    public IAT getIAT(Client client, String testName) {
-        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-        CriteriaQuery<IAT> query = cb.createQuery(IAT.class);
-        Root<IAT> root = query.from(IAT.class);
-        Predicate pred1 = cb.equal(root.get("client"), client);
-        Predicate pred2 = cb.equal(root.get("testName"), testName);
-        return this.entityManager.createQuery(query.where(pred1, pred2)).getSingleResult();
+    public IAT get(String testName, Long clientId) {
+        try {
+            CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+            var clientQuery = cb.createQuery(Client.class);
+            var clientRoot = clientQuery.from(Client.class);
+            var client = this.entityManager
+                    .createQuery(clientQuery.where(cb.equal(clientRoot.get("clientId"), clientId))).getSingleResult();
+            var iatQuery = cb.createQuery(IAT.class);
+            var iatRoot = iatQuery.from(IAT.class);
+            Predicate pred1 = cb.equal(iatRoot.get("client"), client);
+            Predicate pred2 = cb.equal(iatRoot.get("testName"), testName);
+            return this.entityManager.createQuery(iatQuery.where(pred1, pred2)).getSingleResult();
+        } catch (javax.persistence.NonUniqueResultException | javax.persistence.NoResultException ex) {
+            logger.error("No such IAT", ex);
+            return null;
+        }
     }
 
     @Override
@@ -61,7 +78,8 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         Root<IAT> root = query.from(IAT.class);
         Predicate pred1 = cb.equal(root.get("client"), client);
         Predicate pred2 = cb.equal(root.get("testName"), testName);
-        return (this.entityManager.createQuery(query.select(cb.count(root.get("id"))).where(pred1, pred2)).getSingleResult() > 0L);
+        return (this.entityManager.createQuery(query.select(cb.count(root.get("id"))).where(pred1, pred2))
+                .getSingleResult() > 0L);
     }
 
     @Override
@@ -87,7 +105,7 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
             return 0L;
         return result;
     }
-    
+
     @Override
     public int getResultDataFormat(IAT test) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
@@ -96,10 +114,9 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         Predicate pred = cb.equal(root.get("id"), test.getId());
         return this.entityManager.createQuery(query.select(root.get("resultFormat")).where(pred)).getSingleResult();
     }
-    
+
     @Override
-    public void creditAdministration(IAT test)
-    {
+    public void creditAdministration(IAT test) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaUpdate<IAT> update = cb.createCriteriaUpdate(IAT.class);
         Root<IAT> iat = update.from(IAT.class);
@@ -109,12 +126,11 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
     }
 
     @Override
-    public void debitAdministration(IAT test)
-    {
+    public void debitAdministration(IAT test) {
         test.setNumAdministrations(test.getNumAdministrations() + 1);
         update(test);
     }
-    
+
     @Override
     public List<IAT> getIATsByClient(Client c) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
@@ -123,7 +139,7 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         Predicate pred = cb.equal(root.get("client"), c);
         return this.entityManager.createQuery(query.where(pred)).getResultList();
     }
-    
+
     @Override
     public Long getDiskUsageByClient(Client c) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
@@ -134,7 +150,7 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         query.select(cb.sumAsLong(root.get("testSizeKB")));
         return this.entityManager.createQuery(query).getSingleResult();
     }
-    
+
     @Override
     public Calendar getLastIATUploadDate(Client c) {
         try {
@@ -142,9 +158,10 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
             CriteriaQuery<Calendar> query = cb.createQuery(Calendar.class);
             Root<IAT> root = query.from(IAT.class);
             Predicate pred = cb.equal(root.get("client"), c);
-            return this.entityManager.createQuery(query.select(cb.greatest(root.get("uploadTimestamp").as(Calendar.class))).where(pred)).getSingleResult();
-        }
-        catch (Exception ex) {
+            return this.entityManager
+                    .createQuery(query.select(cb.greatest(root.get("uploadTimestamp").as(Calendar.class))).where(pred))
+                    .getSingleResult();
+        } catch (Exception ex) {
             return null;
         }
     }
@@ -156,13 +173,15 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
             CriteriaQuery<Calendar> query = cb.createQuery(Calendar.class);
             Root<IAT> root = query.from(IAT.class);
             Predicate pred = cb.equal(root.get("client"), c);
-            return this.entityManager.createQuery(query.select(cb.greatest(root.get("lastDataRetrieval").as(Calendar.class))).where(pred)).getSingleResult();
-        }
-        catch (Exception ex) {
+            return this.entityManager
+                    .createQuery(
+                            query.select(cb.greatest(root.get("lastDataRetrieval").as(Calendar.class))).where(pred))
+                    .getSingleResult();
+        } catch (Exception ex) {
             return null;
         }
     }
-    
+
     @Override
     public List<IAT> getExpiredTestResults(long timeout) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
@@ -170,33 +189,18 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         Root<IAT> root = query.from(IAT.class);
         Calendar cal = Calendar.getInstance();
         cal.setTimeInMillis(new Date().getTime() - timeout);
-        Predicate pred = cb.and(cb.notEqual(root.get("resultRetrievalTokenAge"), 
+        Predicate pred = cb.and(cb.notEqual(root.get("resultRetrievalTokenAge"),
                 cb.nullLiteral(Calendar.class)), cb.lessThan(root.get("resultRetrievalTokenAge"), cal));
         return this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
     }
 
-    @Override 
+    @Override
     public boolean clientIdMatchesClientSecret(String id, String secret) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = cb.createQuery(Long.class);
         Root<IAT> root = query.from(IAT.class);
-        Predicate pred = cb.and(cb.equal(root.get("oauthClientId"), id), cb.equal(root.get("oauthClientSecret"), secret));
+        Predicate pred = cb.and(cb.equal(root.get("oauthClientId"), id),
+                cb.equal(root.get("oauthClientSecret"), secret));
         return this.entityManager.createQuery(query.select(cb.count(root)).where(pred)).getSingleResult() > 0;
-    }
-
-    public void finalizeDeployment(DeploymentSession ds) {
-        /*
-        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-        var query = cb.createQuery(IAT.class);
-        var root = query.from(IAT.class);
-        var pred = cb.equal(root.get("deploymentSession"), ds);
-        var deployedIAT = this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
-        var deletion = cb.createCriteriaDelete(IAT.class);
-        root = query.from(IAT.class);
-        pred = cb.and(cb.equal(root.get("client"), deployedIAT.getClient()), cb.equal(root.get("testName"), deployedIAT.getTestName()), cb.isNull(root.get("deploymentSession")));
-        this.entityManager.createQuery(deletion.where(pred)).executeUpdate();
-        deployedIAT.setDeploymentSession(null);
-        this.entityManager.merge(deployedIAT);
-        */
     }
 }

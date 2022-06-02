@@ -38,6 +38,7 @@ import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.OAuthAccess;
 import net.iatsoftware.iat.entities.SpecifierValue;
+import net.iatsoftware.iat.events.CommunicationEvent;
 import net.iatsoftware.iat.generated.CodeType;
 import net.iatsoftware.iat.generated.PacketType;
 import net.iatsoftware.iat.generated.ResourceType;
@@ -59,6 +60,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
+import javax.persistence.NonUniqueResultException;
+
 import java.util.Calendar;
 
 @Service
@@ -171,8 +174,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public IAT getIATByNameAndClientID(final String iatName, final long clientID) {
-        final Client c = clientRepository.get(clientID);
-        return iatRepository.getIAT(c, iatName);
+        return iatRepository.get(iatName, clientID);
     }
 
     @Transactional
@@ -451,7 +453,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public PartiallyEncryptedRSAKey getDataKey(final Long clientID, final String testName) {
-        final IAT test = iatRepository.getIAT(clientRepository.get(clientID), testName);
+        final IAT test = iatRepository.get(testName, clientID);
         if (test == null) {
             return null;
         }
@@ -461,14 +463,16 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public long getNumResults(final Long clientID, final String testName) {
-        final IAT test = iatRepository.getIAT(clientRepository.get(clientID), testName);
+        final IAT test = iatRepository.get(testName, clientID);
+        if (test == null)
+            return -1;
         return resultSetRepository.getNumResults(test);
     }
 
     @Transactional
     @Override
     public List<ResultSet> getResults(final Long clientID, final String testName) {
-        final IAT test = iatRepository.getIAT(clientRepository.get(clientID), testName);
+        final IAT test = iatRepository.get(testName, clientID);
         test.setLastDataRetrieval(Calendar.getInstance());
         iatRepository.update(test);
         return resultSetRepository.getResults(test);
@@ -477,23 +481,16 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public void deleteIATResults(final Long clientID, final String testName) {
-        final IAT test = iatRepository.getIAT(clientRepository.get(clientID), testName);
+        final IAT test = iatRepository.get(testName, clientID);
         resultSetRepository.deleteResults(test);
-    }
-
-    @Transactional
-    @Override
-    public void deleteIAT(final Long clientID, final String testName) {
-        final IAT test = iatRepository.getIAT(clientRepository.get(clientID), testName);
-        resultSetRepository.deleteResults(test);
-        iatRepository.delete(test);
     }
 
     @Transactional
     @Override
     public int getResultDataFormat(final String testName, final Long clientID) {
-        final Client c = clientRepository.get(clientID);
-        final IAT test = iatRepository.getIAT(c, testName);
+        final IAT test = iatRepository.get(testName, clientID);
+        if (test == null)
+            return 0;
         return test.getResultFormat();
     }
 
@@ -619,66 +616,52 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     public List<ResourceReference> getResourceReferences(final Client client, final String iatName) {
-        final IAT test = iatRepository.getIAT(client, iatName);
+        final IAT test = iatRepository.get(iatName, client.getClientId());
+        if (test == null)
+            return null;
         return  resourceReferenceRepository.getResourceReferences(test);
     }
 
 
     @Transactional
     @Override
-    public DeploymentSession getDeploymentSession(final Long id) {
-        return deploymentSessionRepository.get(id);
+    public DeploymentSession getDeploymentSession(IAT test) {
+        return deploymentSessionRepository.get(test);
     }
 
     @Transactional
     @Override
-    public void storeDeploymentSession(final DeploymentSession ds) {
+    public void storeDeploymentSession(DeploymentSession ds) {
         deploymentSessionRepository.add(ds);
     }
 
     @Transactional
     @Override
-    public void storeEncryptionKey(final PartiallyEncryptedRSAKey key) {
+    public void storeEncryptionKey(PartiallyEncryptedRSAKey key) {
         partiallyEncryptedRSAKeyRepository.add(key);
     }
 
     @Transactional
     @Override
-    public void updateEncryptionKey(final PartiallyEncryptedRSAKey key) {
+    public void updateEncryptionKey(PartiallyEncryptedRSAKey key) {
         partiallyEncryptedRSAKeyRepository.update(key);
     }
 
     @Transactional
-    @Override
-    public boolean deleteDeploymentSession(final Long deploymentID) {
-        return deploymentSessionRepository.deleteDeploymentSession(deploymentID) > 0;
-    }
-
-    @Transactional
-    public void finalizeDeployment(Long deploymentId) {
-        var ds = deploymentSessionRepository.get(deploymentId);
-        iatRepository.finalizeDeployment(ds);
-        deploymentSessionRepository.deleteById(deploymentId);
+    public void finalizeDeployment(Long dsId) {
+        var ds = deploymentSessionRepository.get(dsId);
+        deploymentSessionRepository.delete(ds);
     }
 
     @Transactional
     @Override
-    public void deleteDeploymentSession(final DeploymentSession ds) {
-        if (ds == null) {
-            return;
-        }
-        deploymentSessionRepository.deleteDeploymentSession(ds);
+    public byte[] getDeploymentPacketData(IAT test, PacketType packetType, int ordinal) {
+        return deploymentPacketRepository.getData(deploymentSessionRepository.get(test), packetType, ordinal);
     }
 
     @Transactional
     @Override
-    public byte[] getDeploymentPacketData(final Long deploymentID, final PacketType packetType, final int ordinal) {
-        return deploymentPacketRepository.getData(deploymentSessionRepository.get(deploymentID), packetType, ordinal);
-    }
-
-    @Transactional
-    @Override
-    public void storeEncryptedCode(TestSegment ts, final List<EncCodeLine> code) {
+    public void storeEncryptedCode(TestSegment ts, List<EncCodeLine> code) {
         ts = testSegmentRepository.update(ts);
         for (final EncCodeLine cl : code) {
             cl.setTestSegment(ts);
@@ -688,147 +671,125 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public TestSegment getTestSegmentByID(final Long id) {
+    public TestSegment getTestSegmentByID(Long id) {
         return testSegmentRepository.get(id);
     }
 
     @Transactional
     @Override
-    public void addTest(final IAT test) {
+    public void addTest(IAT test) {
         iatRepository.add(test);
     }
 
     @Transactional
     @Override
-    public User getUserByClientAndActivationKey(final Client c, final String activationKey)
+    public User getUserByClientAndActivationKey(Client c, String activationKey)
             throws javax.persistence.NonUniqueResultException {
         return userRepository.getUserByClientAndActivationKey(c, activationKey);
     }
 
     @Transactional
-    @Override
-    public void deleteIAT(final Long testID) {
+    public void deleteIAT(Long testID) {
         iatRepository.deleteById(testID);
     }
 
     @Transactional
-    @Override
-    public RSAKeyPair getRSAKeyPair(final Client c, final String testName) {
+    public RSAKeyPair getRSAKeyPair(Client c, String testName) {
         try {
-            final IAT test = iatRepository.getIAT(c, testName);
+            IAT test = iatRepository.get(testName, c.getClientId());
             return new RSAKeyPair(partiallyEncryptedRSAKeyRepository.getDataKey(test),
                     partiallyEncryptedRSAKeyRepository.getAdminKey(test));
-        } catch (final Exception ex) {
+        } catch (Exception ex) {
             log.error("Error retrieving encryption keys", ex);
             return null;
         }
     }
 
     @Transactional
-    @Override
-    public List<String> getTestElemNames(final IAT test) {
+    public List<String> getTestElemNames(IAT test) {
         return testSegmentRepository.getTestElemNames(test);
     }
 
     @Transactional
-    @Override
-    public void addSpecifierValue(final SpecifierValue sv) {
+    public void addSpecifierValue(SpecifierValue sv) {
         specifierValueRepository.add(sv);
         adminTimerRepository.update(sv.getAdmin());
     }
 
     @Transactional
-    @Override
-    public AdminTimer getAdminTimerById(final Long id) {
+    public AdminTimer getAdminTimerById(Long id) {
         return adminTimerRepository.get(id);
     }
 
     @Transactional
-    @Override
-    public UniqueResponse getUniqueResponse(final UniqueResponseItem uri, final String val) {
+    public UniqueResponse getUniqueResponse(UniqueResponseItem uri, String val) {
         return uniqueResponseRepository.getUniqueResponse(uri, val);
     }
 
     @Transactional
-    @Override
-    public void updateUniqueResponse(final UniqueResponse ur) {
+    public void updateUniqueResponse(UniqueResponse ur) {
         uniqueResponseRepository.update(ur);
     }
 
     @Transactional
-    @Override
     public RSAKeyData getRandomRSAData() {
         return rsaDataRepository.getRandomRSA();
     }
 
     @Transactional
-    @Override
     public List<SpecifierValue> getDynamicSpecifierValues(final Long adminID) {
         return specifierValueRepository.getByAdminID(adminTimerRepository.get(adminID));
     }
 
     @Transactional
-    @Override
-    public void addTestBackupFile(final String fName, final byte[] fileData, final Long testID,
-            final Long deploymentId) {
-        final IAT test = iatRepository.get(testID);
-        final DeploymentSession ds = deploymentSessionRepository.get(deploymentId);
-        final TestBackupFile tbf = new TestBackupFile(fName, fileData, test, ds);
+    public void addTestBackupFile(String fName, byte[] fileData, Long testID,
+            Long deploymentId) {
+        IAT test = iatRepository.get(testID);
+        DeploymentSession ds = deploymentSessionRepository.get(test);
+        TestBackupFile tbf = new TestBackupFile(fName, fileData, test, ds);
         testBackupFileRepository.add(tbf);
     }
 
     @Transactional
-    @Override
-    public void deleteTestBackupFiles(final IAT test) {
+    public void deleteTestBackupFiles(IAT test) {
         testBackupFileRepository.deleteTestBackup(test);
     }
 
     @Transactional
-    @Override
-    public void restoreTestBackup(final IAT test) throws java.net.URISyntaxException, java.io.IOException {
+    public void restoreTestBackup(IAT test) throws java.net.URISyntaxException, java.io.IOException {
         testBackupFileRepository.restoreTestBackup(test);
     }
 
     @Transactional
-    @Override
-    public void reassociateResults(final Long newTestID, final Long oldTestID) {
+    public void reassociateResults(Long newTestID, Long oldTestID) {
         resultSetRepository.reassociateResults(iatRepository.get(newTestID), iatRepository.get(oldTestID));
     }
 
     @Transactional
     @Override
-    public void copyRSAKey(final Long newTestID, final Long oldTestID) {
+    public void copyRSAKey(Long newTestID, Long oldTestID) {
         partiallyEncryptedRSAKeyRepository.copyRSAKeys(iatRepository.get(newTestID), iatRepository.get(oldTestID));
     }
 
-
     @Transactional
-    @Override
-    public boolean verifyUploadKey(final long deploymentID, final String key) {
-        return deploymentSessionRepository.verifyUploadKey(deploymentID, key);
-    }
-
-    @Transactional
-    @Override
-    public void updateDeploymentSession(final DeploymentSession ds) {
+    public void updateDeploymentSession(DeploymentSession ds) {
         deploymentSessionRepository.update(ds);
     }
 
     @Transactional
-    @Override
-    public void updateClient(final Client c) {
+    public void updateClient(Client c) {
         clientRepository.update(c);
     }
 
     @Transactional
     @Override
-    public void deleteAdminTimers(final Collection<AdminTimer> timers) {
+    public void deleteAdminTimers(Collection<AdminTimer> timers) {
         adminTimerRepository.deleteTimers(timers);
     }
 
     @Transactional
     @Override
-    public int getNumRemainingIATs(final Client c) {
+    public int getNumRemainingIATs(Client c) {
         if (c.getNumIATsAlotted() == null) {
             return -1;
         }
@@ -837,13 +798,13 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public AdminTimer updateTestAdmin(final AdminTimer admin) {
+    public AdminTimer updateTestAdmin(AdminTimer admin) {
         return adminTimerRepository.update(admin);
     }
 
     @Transactional
     @Override
-    public String createOAuthToken(final Client c, final IAT test) {
+    public String createOAuthToken(Client c, IAT test) {
         return oauthAccessRepository.createOAuth(c, test).getAuthToken();
     }
 
@@ -1018,6 +979,27 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     public void cleanRSARepository() {
         rsaDataRepository.clean();
+    }
+
+    @Transactional
+    public void deleteDeploymentSession(IAT test) {
+        var ds = deploymentSessionRepository.get(test);
+        deploymentSessionRepository.delete(ds);
+    }
+
+    @Transactional
+    public DeploymentSession getDeploymentSession(Long dsId) {
+        return deploymentSessionRepository.get(dsId);
+    }
+
+    @Transactional
+    public DeploymentSession getDeploymentSession(CommunicationEvent e) {
+        return deploymentSessionRepository.get(e);
+    }
+
+    @Transactional
+    public void deleteIAT(IAT test) {
+        iatRepository.delete(test);
     }
 
 

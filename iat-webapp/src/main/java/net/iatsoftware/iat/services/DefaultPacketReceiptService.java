@@ -15,7 +15,7 @@ import net.iatsoftware.iat.events.WebSocketDataReceived;
 import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.events.XmlPacketReceivedEvent;
 import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.XmlPacketReceiver;
 
 import org.springframework.context.ApplicationEventPublisher;
@@ -51,7 +51,7 @@ public class DefaultPacketReceiptService implements PacketReceiptService {
         }
         }
         catch (java.io.IOException ex) {
-            publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(new ServerException("Error processing inbound message", ex))));
+            publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(new ServerExceptionMessage("Error processing inbound message", ex))));
         }
     }
     

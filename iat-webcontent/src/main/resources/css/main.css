@@ -1,7 +1,7 @@
 @import url(https://use.typekit.net/xmu4wql.css);
 body {
   text-align: center;
-  background: #edf1fe;
+  background: rgb(237, 241, 254);
 }
 body div#caption {
   margin-top: 50px;
@@ -22,7 +22,7 @@ body div div#content p {
   font-family: oxtail, serif;
   font-size: 20px;
   line-height: 22px;
-  color: #8c3573;
+  color: rgb(140, 53, 115);
 }
 body div div#content p span.hilight {
   color: #C01352;
@@ -32,15 +32,15 @@ body div div#content p span.hilightHover {
   cursor: pointer;
 }
 body div div#content p span.hilightHover:hover {
-  color: #426972;
+  color: rgb(66, 105, 114);
 }
 body div div#content p span .attention, body div div#content p .error {
   font-family: coquette;
   font-weight: 900;
   font-size: 20px;
   vertical-align: baseline;
-  color: #a35776;
-  text-shadow: 1px 1px 0px #7b4368;
+  color: rgb(163, 87, 118);
+  text-shadow: 1px 1px 0px rgb(123, 67, 104);
 }
 body div div#logo {
   display: table-cell;
@@ -51,7 +51,7 @@ body p {
   font-family: oxtail, serif;
   font-size: 20px;
   line-height: 22px;
-  color: #8c3573;
+  color: rgb(140, 53, 115);
 }
 body p span.hilight {
   color: #C01352;
@@ -61,15 +61,15 @@ body p span.hilightHover {
   cursor: pointer;
 }
 body p span.hilightHover:hover {
-  color: #426972;
+  color: rgb(66, 105, 114);
 }
 body p span .attention, body p .error {
   font-family: coquette;
   font-weight: 900;
   font-size: 20px;
   vertical-align: baseline;
-  color: #a35776;
-  text-shadow: 1px 1px 0px #7b4368;
+  color: rgb(163, 87, 118);
+  text-shadow: 1px 1px 0px rgb(123, 67, 104);
 }
 
 /*# sourceMappingURL=main.css.map */

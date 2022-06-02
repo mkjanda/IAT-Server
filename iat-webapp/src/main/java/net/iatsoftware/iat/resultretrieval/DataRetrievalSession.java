@@ -20,7 +20,7 @@ import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.ServerException;
+import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.ServerReport;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
@@ -118,7 +118,7 @@ public class DataRetrievalSession {
         } catch (java.io.IOException ex) {
             log.error("Error generating item slide file for download", ex);
             this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
-                    new Envelope(new ServerException("Error generating item slide file for download", ex))));
+                    new Envelope(new ServerExceptionMessage("Error generating item slide file for download", ex))));
         }
     }
 
@@ -161,7 +161,7 @@ public class DataRetrievalSession {
         } catch (java.io.IOException ex) {
             log.error("Error preparing result file", ex);
             this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
-                    new Envelope(new ServerException("Error preparing result file", ex))));
+                    new Envelope(new ServerExceptionMessage("Error preparing result file", ex))));
         }
     }
 
