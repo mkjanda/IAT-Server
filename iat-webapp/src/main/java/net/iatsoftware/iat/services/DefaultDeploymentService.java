@@ -10,7 +10,6 @@ package net.iatsoftware.iat.services;
  * @author Michael Janda
  */
 import net.iatsoftware.iat.config.MyBeanFactory;
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.deployment.IATDeployer;
 import net.iatsoftware.iat.deployment.IATRedeployer;
 import net.iatsoftware.iat.entities.Client;
@@ -42,10 +41,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
-
+import javax.inject.Named;
 @Service
 @EnableAsync
 public class DefaultDeploymentService implements DeploymentService {
@@ -59,15 +59,18 @@ public class DefaultDeploymentService implements DeploymentService {
     @Inject
     ApplicationEventPublisher publisher;
     @Inject
-    IatConfigurationProperties serverConfiguration;
+    @Named("ServerConfiguration")
+    Properties serverConfiguration;
     @Inject
     WebSocketService webSocketService;
 
     @Override
     public Calendar beginNewDeployment(Client c, User u, String testName, String sessID) {
-        IAT test = new IAT(c, u, testName, serverConfiguration.getAdminVersion().toString(),
-                serverConfiguration.getDataFormat(), Calendar.getInstance());
+        IAT test = new IAT(c, u, testName, serverConfiguration.getProperty("admin-version"),
+                Integer.parseInt(serverConfiguration.getProperty("data-format-version")), 
+                Calendar.getInstance());
         DeploymentSession ds = new DeploymentSession(c, u, test, sessID);
+        iatRepositoryManager.addTest(test);
         iatRepositoryManager.storeDeploymentSession(ds);
         IATDeployer deployment = iatServerBeanFactory.IATDeployer(c.getClientId(), ds.getId(), test.getId(), sessID);
         IATDeploymentMap.put(ds, deployment);
@@ -80,9 +83,13 @@ public class DefaultDeploymentService implements DeploymentService {
     public Calendar beginNewRedeployment(Client c, User u, String testName, IAT oldTest, String sessID)
             throws java.io.IOException, java.net.URISyntaxException, java.nio.file.NoSuchFileException {
         DeploymentSession ds = null;
-        IAT test = new IAT(c, u, testName, serverConfiguration.getAdminVersion().toString(),
-                serverConfiguration.getDataFormat(), oldTest.getUploadTimestamp());
+        IAT test = new IAT(c, u, testName, serverConfiguration.getProperty("admin-version"),
+        Integer.parseInt(serverConfiguration.getProperty("data-format-version")), 
+                oldTest.getUploadTimestamp());
+        iatRepositoryManager.addTest(test);
         ds = new DeploymentSession(c, u, test, sessID);
+        ds.setTest(test);
+        iatRepositoryManager.storeDeploymentSession(ds);
         test.setNumAdministrations(oldTest.getNumAdministrations());
         IATRedeployer redeployer = null;
         try {
@@ -91,7 +98,7 @@ public class DefaultDeploymentService implements DeploymentService {
                     sessID);
 
             IATDeploymentMap.put(ds, redeployer);
-            webSocketService.setSessionProperty(sessID, "DeploymentID", ds.getId());
+            webSocketService.setSessionProperty(sessID, "DeploymentID", ds.getTest().getId());
             webSocketService.setSessionProperty(sessID, "ReplacementTest", test);
             iatRepositoryManager.copyRSAKey(test.getId(), oldTest.getId());
             return ds.getDeploymentStart();
@@ -104,7 +111,7 @@ public class DefaultDeploymentService implements DeploymentService {
     @Override
     public void completeDeployment(DeploymentSession ds) {
         IATDeploymentMap.remove(ds);
-        iatRepositoryManager.finalizeDeployment(dsID);
+        iatRepositoryManager.finalizeDeployment(ds.getId());
     }
 
     @EventListener
@@ -133,10 +140,10 @@ public class DefaultDeploymentService implements DeploymentService {
 
     @EventListener
     public void onDeploymentFailed(DeploymentFailedEvent e) {
-            var test = iatRepositoryManager.getIAT(e.getTestId());
-            IATDeploymentMap.remove(test.getDeploymentSession());
-            iatRepositoryManager.deleteIAT(e.getTestId());
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(e.getFailureCause())));
+        var test = iatRepositoryManager.getIAT(e.getTestId());
+        IATDeploymentMap.remove(iatRepositoryManager.getDeploymentSession(test));
+        iatRepositoryManager.deleteIAT(e.getTestId());
+        this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(e.getFailureCause())));
     }
 
     @EventListener
@@ -156,9 +163,9 @@ public class DefaultDeploymentService implements DeploymentService {
     public void onDeploymentSuccess(DeploymentSuccessEvent e) {
         try {
             var test = iatRepositoryManager.getIAT(e.getTestId());
-            IATDeploymentMap.remove(test.getDeploymentSession());
+            IATDeploymentMap.remove(iatRepositoryManager.getDeploymentSession(test));
             iatRepositoryManager.deleteDeploymentSession(test);
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)));
+            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS))));
         } catch (Exception ex) {
             reportException("Error processing \"Test Deployment Complete\" event", ex, e.getSessionId());
         }
@@ -197,7 +204,8 @@ public class DefaultDeploymentService implements DeploymentService {
     @EventListener
     public void onDeploymentCleanup(DeploymentCleanupEvent evt) {
         var ds = iatRepositoryManager.getDeploymentSession(evt.getDeploymentSessionID());
-        iatRepositoryManager.deleteIAT(ds.getTest());
+        
+        iatRepositoryManager.deleteIAT(ds.getId());
         IATDeploymentMap.remove(ds);
     }
 
@@ -206,7 +214,7 @@ public class DefaultDeploymentService implements DeploymentService {
         long timeout = System.currentTimeMillis() - DeploymentSession.DEPLOYMENT_TIMEOUT;
         for (var ds : IATDeploymentMap.keySet().stream().filter(k -> k.getDeploymentStart().getTimeInMillis() < timeout)
                 .collect(Collectors.toList())) {
-            iatRepositoryManager.deleteIAT(ds.getTest().getId());
+            iatRepositoryManager.deleteDeploymentSession(ds.getId());
             IATDeploymentMap.remove(ds);
         }
     }

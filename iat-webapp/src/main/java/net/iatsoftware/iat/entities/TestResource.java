@@ -19,32 +19,32 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;;
 
 @Entity
-@Table(name="test_resources", uniqueConstraints = @UniqueConstraint(columnNames={"TestID", "ResourceID", "resource_type"}))
+@Table(name="test_resources")
 public class TestResource implements java.io.Serializable{
     private static final long serialVersionUID = 1L;
     private IAT test;
     private ResourceType resourceType = ResourceType.DEPLOYMENT_FILE;
     private String name, path, mimeType;
-    private Long id, resourceId;
+    private Long id;
 	private Integer size;
     private byte[] resource;
     private List<ResourceReference> resourceReferences = new ArrayList<>();
 
     public TestResource(){}
 
-    public TestResource(IAT test, String path, String mimeType) {
+    public TestResource(IAT test, String path, String mimeType, ResourceType type) {
         this.test = test;
 		var matcher = Pattern.compile("(.*/)?([^/]+)").matcher(path);
 		matcher.find();
 		this.name = matcher.toMatchResult().group(2);
         this.path = path;
         this.mimeType = mimeType;
+        this.resourceType = type;
     }
     
-    public TestResource(IAT test, String path, String mimeType, byte[] resource) {
+    public TestResource(IAT test, String path, String mimeType, byte[] resource, ResourceType type) {
         this.test = test;
 		var matcher = Pattern.compile("(.*/)?([^/]+)").matcher(path);
 		matcher.find();
@@ -53,6 +53,7 @@ public class TestResource implements java.io.Serializable{
         this.resource = resource;
         this.mimeType = mimeType;
         this.size = resource.length;
+        this.resourceType = type;
     }
 
     @Id
@@ -66,7 +67,7 @@ public class TestResource implements java.io.Serializable{
     }
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="TestID", referencedColumnName="TestID")
+    @JoinColumn(name="TestID")
     public IAT getTest() {
         return test;
     }
@@ -102,22 +103,13 @@ public class TestResource implements java.io.Serializable{
     }
 
     @Lob
-    @Column(name="resource")
+    @Column(name="resource_data", nullable=true)
     public byte[] getResource() {
         return resource;
     }
     public void setResource(byte []val) {
         this.resource = val;
     }
-
-	@Basic
-	@Column(name="ResourceID", nullable=true)
-	public Long getResourceId() {
-		return resourceId;
-	}
-	public void setResourceId(Long val) {
-		this.resourceId = val;
-	}
 
     @Basic
     @Column(name="size")
@@ -129,7 +121,7 @@ public class TestResource implements java.io.Serializable{
     }
 
     @OneToMany(fetch=FetchType.EAGER)
-    @JoinColumn(name="resource_key", referencedColumnName="id")
+    @JoinColumn(name="resource_id", referencedColumnName="id")
     public List<ResourceReference> getReferences() {
         return resourceReferences;
     }

@@ -20,10 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.function.BinaryOperator;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.inject.Named;
 import javax.inject.Inject;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -31,7 +33,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import net.iatsoftware.iat.config.MyBeanFactory;
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.deployment.JSKeys;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.Client;
@@ -182,8 +183,9 @@ public class AdminController {
 	@Inject
 	SchedulingTaskExecutor scheduler;
 
+	@Named("ServerConfiguration")
 	@Inject
-	IatConfigurationProperties serverConfiguration;
+	Properties serverConfiguration;
 
 	@Inject
 	MyBeanFactory beanFactory;
@@ -754,7 +756,7 @@ public class AdminController {
 			params.setCorruptCookieName("corrupted");
 		}
 		params.setSessionId(sessId);
-		params.setServerPath(serverConfiguration.getPath());
+		params.setServerPath(serverConfiguration.getProperty("path"));
 		params.setClientId(Long.toString(test.getClient().getClientId()));
 		params.setIatName(test.getTestName());
 		params.setVersion(test.getVersion());

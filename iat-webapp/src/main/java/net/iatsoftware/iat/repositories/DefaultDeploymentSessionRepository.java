@@ -5,8 +5,6 @@
  */
 package net.iatsoftware.iat.repositories;
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
-
 /**
  *
  * @author Michael Janda
@@ -30,12 +28,10 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 @Repository
-public class DefaultDeploymentSessionRepository extends GenericJpaRepository<IAT, DeploymentSession>
+public class DefaultDeploymentSessionRepository extends GenericJpaRepository<Long, DeploymentSession>
         implements DeploymentSessionRepository {
     private static final Logger critical = LogManager.getLogger("critical");
 
-    @Inject
-    IatConfigurationProperties serverConfiguration;
     @Inject
     DeploymentService deploymentService;
     @Inject
@@ -51,9 +47,10 @@ public class DefaultDeploymentSessionRepository extends GenericJpaRepository<IAT
         Predicate pred = cb.lessThan(root.get("deploymentStart"), timeout);
         var sessions = this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
         for (var sess : sessions) {
-            repositoryManager.deleteIAT(sess.getTest().getId());
+            repositoryManager.deleteIAT(sess.getId());
         }
     }
+
 
 /*
     @Override
@@ -84,8 +81,8 @@ public class DefaultDeploymentSessionRepository extends GenericJpaRepository<IAT
         Predicate pred = cb.equal(root.get("id"), dsId);
         return this.entityManager.createQuery(deletion.where(pred)).executeUpdate();
     }
-
-    public DeploymentSession getDeploymentSession(IAT test) {
+*/
+    public DeploymentSession get(IAT test) {
         var cb = entityManager.getCriteriaBuilder();
         var query = cb.createQuery(DeploymentSession.class);
         var root = query.from(DeploymentSession.class);
@@ -96,7 +93,7 @@ public class DefaultDeploymentSessionRepository extends GenericJpaRepository<IAT
             return null;
         }
     }
-*/
+
     public DeploymentSession get(CommunicationEvent ce) {
         var cb = this.entityManager.getCriteriaBuilder();
         var query = cb.createQuery(DeploymentSession.class);
@@ -110,20 +107,4 @@ public class DefaultDeploymentSessionRepository extends GenericJpaRepository<IAT
         }
     }
 
-    public DeploymentSession get(Long dsId) {
-        try {
-        var cb = this.entityManager.getCriteriaBuilder();
-        var query = cb.createQuery(DeploymentSession.class);
-        var dRoot = query.from(DeploymentSession.class);
-        var sQuery = query.subquery(IAT.class);
-        var iRoot = sQuery.from(IAT.class);
-        var iPred = cb.equal(iRoot.get("id"), dsId);
-        var dPred = cb.equal(dRoot.get("test"), sQuery.select(iRoot).where(iPred));
-        return this.entityManager.createQuery(query.where(dPred)).getSingleResult();
-        }
-        catch (javax.persistence.NoResultException | javax.persistence.NonUniqueResultException ex) {
-            critical.error("Failed to retrieve deployment session.");;
-            return null;
-        }
-    }
 }

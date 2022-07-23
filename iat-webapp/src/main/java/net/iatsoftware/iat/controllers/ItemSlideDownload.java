@@ -10,7 +10,6 @@ package net.iatsoftware.iat.controllers;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
@@ -25,7 +24,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
+import java.net.URI;
+import java.util.Properties;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 @Controller
 @ClientControllerAnnotation
@@ -35,12 +37,12 @@ public class ItemSlideDownload {
     @Inject
     IATRepositoryManager iatRepositoryManager;
     @Inject
-    IatConfigurationProperties serverConfiguration;
+    @Named("ServerConfiguration")
+    Properties serverConfiguration;
 
     @RequestMapping(value = "", method = RequestMethod.GET, params = { "DownloadKey", "ClientID", "IATName" })
     public ResponseEntity<FileSystemResource> downloadSlides(@RequestParam("DownloadKey") String downloadKey,
             @RequestParam("ClientID") long clientID, @RequestParam("IATName") String iatName) {
-
         try {
             IAT test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientID);
             if (test.getItemSlideDownloadKey() == null)
@@ -48,10 +50,9 @@ public class ItemSlideDownload {
             if (!test.getItemSlideDownloadKey().equals(downloadKey))
                 return null;
             test.setItemSlideDownloadKey(null);
-            return new ResponseEntity<>(new FileSystemResource(
-                    new File(serverConfiguration.getItemSlideFileUri(downloadKey, clientID, iatName))
-                            .getAbsolutePath()),
-                    HttpStatus.OK);
+            var slideUri = new URI(String.format("%s/%s.%d.%s.slides", serverConfiguration.getProperty("item-slide-directory"),
+                downloadKey, clientID, iatName));
+            return new ResponseEntity<>(new FileSystemResource(new File(slideUri).getAbsolutePath()), HttpStatus.OK);
         } catch (java.net.URISyntaxException ex) {
             log.error(ex);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

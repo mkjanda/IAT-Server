@@ -14,10 +14,8 @@ import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.events.CommunicationEvent;
 
-public interface DeploymentSessionRepository extends GenericRepository<IAT, DeploymentSession> {
+public interface DeploymentSessionRepository extends GenericRepository<Long, DeploymentSession> {
 //    boolean verifyUploadKey(long deploymentID, String key);
-//    void deleteDeploymentSession(DeploymentSession ds);
-//    int deleteDeploymentSession(Long dsId);
-    DeploymentSession get(Long dsId);
+    DeploymentSession get(IAT test);    
     DeploymentSession get(CommunicationEvent ce);
 }

@@ -77,4 +77,17 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 		var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceId"), resourceId));
 		return this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
 	}
+
+	public void backupTest(IAT test) {
+		var cb = this.entityManager.getCriteriaBuilder();
+		var query = cb.createQuery(TestResource.class);
+		var root = query.from(TestResource.class);
+		var resources = this.entityManager.createQuery(query.select(root)
+			.where(cb.equal(root.get("test"), test))).getResultList();
+		resources.forEach(r -> {
+			var resource = new TestResource(test, r.getPath(), r.getMimeType(), r.getResource(), r.getResourceType());
+			resource.setReferences(r.getReferences());
+			add(resource);
+		});
+	}
 }

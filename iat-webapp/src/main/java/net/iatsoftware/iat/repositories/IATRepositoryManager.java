@@ -70,7 +70,7 @@ public interface IATRepositoryManager {
     void creditAdministration(IAT test);
     boolean debitAdministration(IAT test);
     List<Long> getTestElems(IAT test);
-    void updateIAT(IAT test);
+    IAT updateIAT(IAT test);
     IAT getIATByAdminID(Long adminID);
     UniqueResponseItem findUniqueResponseItem(IAT test, String surveyName);
     int getElementPositionInTest(IAT test, String elemName);
@@ -163,8 +163,10 @@ public interface IATRepositoryManager {
     List<TestResource> getTestResources(IAT test, ResourceType type);
     Manifest getTestManifest(IAT test);
     TestResource getTestResource(IAT test, Long resourceId);
+    void deleteDeploymentSession(Long id);
     DeploymentSession getDeploymentSession(IAT test);
     DeploymentSession getDeploymentSession(CommunicationEvent ce);
     DeploymentSession getDeploymentSession(Long dsId);
+    void backupTest(IAT test);
 //    void deleteIAT(String testName, Long clientId);
 }

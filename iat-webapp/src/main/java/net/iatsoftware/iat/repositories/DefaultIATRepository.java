@@ -10,7 +10,6 @@ package net.iatsoftware.iat.repositories;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.messaging.ServerException;
 
 import org.springframework.stereotype.Repository;
 
@@ -24,11 +23,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.CriteriaUpdate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Predicate;
-import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
 
 import net.iatsoftware.iat.entities.Client;
-import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
 
 @Repository

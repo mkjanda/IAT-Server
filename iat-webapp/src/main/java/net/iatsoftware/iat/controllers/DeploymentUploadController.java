@@ -10,7 +10,6 @@ package net.iatsoftware.iat.controllers;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.TestResource;
@@ -33,14 +32,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.lang.module.FindException;
+import java.util.Properties;
+import java.util.regex.Pattern;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 @Controller
 @RequestMapping("/DeploymentUpload")
@@ -49,16 +51,17 @@ public class DeploymentUploadController {
 	@Inject
 	IATRepositoryManager repositoryManager;
 	@Inject
-	IatConfigurationProperties serverConfiguration;
+	@Named("ServerConfiguration")
+	Properties serverConfiguration;
 	@Inject
 	ApplicationEventPublisher publisher;
 	@Inject
 	WebSocketService socketService;
 
-	@PostMapping(value = "/DeploymentFiles", params = { "deploymentId", "sessionId" })
+	@PostMapping(value = "/DeploymentFiles")
 	@ResponseBody
-	public Callable<ResponseEntity<Envelope>> receiveDeploymentUpload(@RequestParam("webSocketId") Long deploymentId,
-			@RequestParam("sessionId") String sessId, @RequestBody byte[] data) {
+	public Callable<ResponseEntity<Envelope>> receiveDeploymentUpload(@RequestHeader("deploymentId") Long deploymentId,
+			@RequestHeader("sessionId") String sessId, @RequestBody byte[] data) {
 		return () -> {
 			var ds = repositoryManager.getDeploymentSession(deploymentId);
 			var test = ds.getTest();
@@ -67,15 +70,18 @@ public class DeploymentUploadController {
 					throw new FindException("The supplied web socket session id mismatched.");
 				var manifest = repositoryManager.getTestManifest(test);
 				int offset = 0;
+				var testResources = repositoryManager.getTestResources(test, ResourceType.DEPLOYMENT_FILE);
+				testResources.addAll(repositoryManager.getTestResources(test, ResourceType.DEPLOYMENT_IMAGE));
 				for (var file : manifest.getFiles().stream()
-						.filter(f -> f.getResourceType().equals(ResourceType.DEPLOYMENT_FILE))
+						.filter(f -> f.getResourceType().equals(ResourceType.DEPLOYMENT_FILE) || 
+						f.getResourceType().equals(ResourceType.DEPLOYMENT_IMAGE))
 						.collect(Collectors.toList())) {
+					var resource = testResources.stream().filter(res -> res.getPath().equals(file.getPath())).findFirst();
 					byte[] fileData = new byte[(int) file.getSize()];
 					System.arraycopy(data, offset, fileData, 0, fileData.length);
-					TestResource tr = new TestResource(test, file.getPath(), file.getMimeType(), fileData);
-					repositoryManager.addTestResource(tr);
+					resource.get().setResource(fileData);
+					repositoryManager.updateTestResource(resource.get());
 				}
-
 			} catch (Exception ex) {
 				this.publisher.publishEvent(new DeploymentFailedEvent(sessId, deploymentId,
 						new ServerExceptionMessage("Error uploading file manifest.", ex)));
@@ -84,16 +90,15 @@ public class DeploymentUploadController {
 								+ test.getClient() + ", Test " + test.getTestName() + ")", ex)),
 						HttpStatus.OK);
 			}
-			publisher
-					.publishEvent(new TestResourcesRecordedEvent(sessId, deploymentId, ResourceType.DEPLOYMENT_FILE));
+			publisher.publishEvent(new TestResourcesRecordedEvent(sessId, deploymentId, ResourceType.DEPLOYMENT_FILE));
 			return new ResponseEntity<>(new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)),
 					HttpStatus.OK);
 		};
 	}
 
-	@PostMapping(value = "/ItemSlideFiles", params = { "deploymentId", "sessionId" })
-	public Callable<ResponseEntity<Envelope>> receiveItemSlideUpload(@RequestParam("deploymentId") Long deploymentId,
-			@RequestParam("sessionId") String sessionId, @RequestBody byte[] data) {
+	@PostMapping(value = "/ItemSlideFiles")
+	public Callable<ResponseEntity<Envelope>> receiveItemSlideUpload(@RequestHeader("deploymentId") Long deploymentId,
+			@RequestHeader("sessionId") String sessionId, @RequestBody byte[] data) {
 		return () -> {
 			DeploymentSession ds = repositoryManager.getDeploymentSession(deploymentId);
 			var test = ds.getTest();
@@ -102,13 +107,15 @@ public class DeploymentUploadController {
 					throw new FindException("The supplied web socket session id mismatched.");
 				var manifest = repositoryManager.getTestManifest(test);
 				int offset = 0;
+				var resources = repositoryManager.getTestResources(test, ResourceType.ITEM_SLIDE);
 				for (var file : manifest.getFiles().stream()
 						.filter(f -> f.getResourceType().equals(ResourceType.ITEM_SLIDE))
 						.collect(Collectors.toList())) {
 					byte[] fileData = new byte[(int) file.getSize()];
 					System.arraycopy(data, offset, fileData, 0, fileData.length);
-					TestResource tr = new TestResource(test, file.getPath(), file.getMimeType(), fileData);
-					repositoryManager.addTestResource(tr);
+					var resource = resources.stream().filter(r -> r.getPath().equals(file.getPath())).findFirst();
+					resource.get().setResource(fileData);
+					repositoryManager.updateTestResource(resource.get());
 				}
 			} catch (Exception ex) {
 				this.publisher.publishEvent(new DeploymentFailedEvent(sessionId, deploymentId,
@@ -128,8 +135,12 @@ public class DeploymentUploadController {
 	public void deploymentManifestReceived(ManifestReceivedEvent evt) {
 		var ds = repositoryManager.getDeploymentSession(evt.getDeploymentID());
 		for (var file : evt.getManifest().getFiles()) {
-			var res = new TestResource(ds.getTest(), file.getPath(), file.getMimeType());
-			res.setResourceId(file.getResourceId());
+			ResourceType rType;
+			if (Pattern.matches("^image/", file.getMimeType()))
+				rType = ResourceType.DEPLOYMENT_IMAGE;
+			else
+				rType = ResourceType.DEPLOYMENT_FILE;
+			var res = new TestResource(ds.getTest(), file.getPath(), file.getMimeType(), rType);
 			res.setName(file.getName());
 			res.setSize((int) file.getSize());
 			res.setResourceType(file.getResourceType());

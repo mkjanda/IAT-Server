@@ -14,7 +14,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import net.iatsoftware.iat.entities.Client;
-import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
 
 public interface IATRepository extends GenericRepository<Long, IAT> {

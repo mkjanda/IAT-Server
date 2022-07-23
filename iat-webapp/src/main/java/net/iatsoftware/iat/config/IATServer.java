@@ -100,6 +100,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.crypto.SecretKeyFactory;
 import javax.inject.Inject;
@@ -125,7 +126,7 @@ import javax.xml.transform.stream.StreamSource;
 @EnableWebSocket
 @EnableScheduling
 @EnableAutoConfiguration(exclude = { ThymeleafAutoConfiguration.class })
-@EnableConfigurationProperties({IATServer.class, IatConfigurationProperties.class})
+@EnableConfigurationProperties({IATServer.class })
 @PropertySources({ @PropertySource("application.properties"), @PropertySource("datasource.properties"), @PropertySource("iat.webapp.properties")})
 public class IATServer implements SchedulingConfigurer {
 
@@ -145,11 +146,18 @@ public class IATServer implements SchedulingConfigurer {
 
     private static final Logger log = LogManager.getLogger("critical");
 
-    @ConfigurationProperties("iat.webapp.datasource")
+    @ConfigurationProperties(prefix="datasource")
     @Bean
     public DataSource dataSource() {
         return new MysqlConnectionPoolDataSource();
     }
+
+    @ConfigurationProperties(prefix="iat.webapp")
+    @Bean("ServerConfiguration")
+    public Properties serverConfiguration() {
+        return new Properties();
+    }
+    
 
     @Bean
     public ServletWebServerFactory servletWebServerFactory() {
@@ -457,7 +465,7 @@ public class IATServer implements SchedulingConfigurer {
         }
     }
 
-    @Bean(name = "ExceptionMessageSource")
+    @Bean("ExceptionMessageSource")
     public MessageSource exceptionMessageSource() {
         ReloadableResourceBundleMessageSource msgSource = new ReloadableResourceBundleMessageSource();
         msgSource.setCacheSeconds(-1);

@@ -9,7 +9,6 @@ package net.iatsoftware.iat.resultdata;
  *
  * @author Michael Janda
  */
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.generated.TokenType;
@@ -39,8 +38,6 @@ public class ResultSetDescriptor extends net.iatsoftware.iat.generated.ResultSet
     private static final Base64.Encoder encoder = Base64.getEncoder();
     @Inject
     IATRepositoryManager iatRepositoryManager;
-    @Inject
-    IatConfigurationProperties serverConfiguration;
     @Inject
     Marshaller marshaller;
     @Inject

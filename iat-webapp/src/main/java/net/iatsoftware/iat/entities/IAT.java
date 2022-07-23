@@ -26,6 +26,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.FetchType;
@@ -46,7 +47,7 @@ public class IAT implements java.io.Serializable {
     private boolean alternate = false, alternated = false, oauthSubpathRedirects = false, redeployed = false;
     private byte[] deploymentDescriptor, resultRetrievalToken;
     private String aesCode, redirectOnComplete;
-    private DeploymentSession deploymentSession;
+    private DeploymentSession deploymentSession = null;
     private Client client;
     private int resultFormat, numElements = -1;
     private User user;
@@ -68,6 +69,7 @@ public class IAT implements java.io.Serializable {
         URL = "http://www.iatsoftware.net/IAT?IATName=" + testName + "&ClientID=" + c.getClientId();
     }
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="TestID")
@@ -78,17 +80,6 @@ public class IAT implements java.io.Serializable {
     public void setId(long val) {
         this.id = val;
     }
-
-    @Column(name="TestID")
-    @OneToOne(mappedBy="SessionID", optional=true)
-    @JoinColumn(name="TestID", referencedColumnName="SessionID")
-    public DeploymentSession getDeploymentSession() {
-        return this.deploymentSession;
-    }
-    public void setDeploymentSession(DeploymentSession val) {
-        this.deploymentSession = val;
-    }
-
 
     @Basic
     @Column(name = "test_name")
@@ -119,7 +110,14 @@ public class IAT implements java.io.Serializable {
         this.user = val;
     }
     
-    
+    @OneToOne(fetch=FetchType.EAGER, optional=true, mappedBy="TestID")
+    public DeploymentSession getDeploymentSession() {
+        return this.deploymentSession;
+    }
+    public void setDeploymentSession(DeploymentSession ds) {
+        this.deploymentSession = ds;
+    }
+
     @Basic
     @Column(name = "num_administrations")
     public int getNumAdministrations() {
@@ -175,6 +173,7 @@ public class IAT implements java.io.Serializable {
     public boolean isAlternate() {
         return this.alternate;
     }
+
 
     public void setAlternate(boolean val) {
         this.alternate = val;

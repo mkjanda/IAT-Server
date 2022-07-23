@@ -15,7 +15,6 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;    
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.ClientExceptionReport;
 import net.iatsoftware.iat.entities.CorsOrigin;
@@ -60,7 +59,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
-import javax.persistence.NonUniqueResultException;
 
 import java.util.Calendar;
 
@@ -103,8 +101,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     RSADataRepository rsaDataRepository;
     @Inject
     TestBackupFileRepository testBackupFileRepository;
-    @Inject
-    IatConfigurationProperties serverConfiguration;
     @Inject
     OAuthAccessRepository oauthAccessRepository;
     @Inject
@@ -345,8 +341,8 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void updateIAT(final IAT test) {
-        iatRepository.update(test);
+    public IAT updateIAT(final IAT test) {
+        return iatRepository.update(test);
     }
 
     @Transactional
@@ -625,8 +621,13 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public DeploymentSession getDeploymentSession(IAT test) {
-        return deploymentSessionRepository.get(test);
+    public DeploymentSession getDeploymentSession(Long id) {
+        try {
+            return deploymentSessionRepository.get(id);
+        }
+        catch (javax.persistence.NoResultException ex) {
+            return null;
+        }
     }
 
     @Transactional
@@ -656,7 +657,12 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public byte[] getDeploymentPacketData(IAT test, PacketType packetType, int ordinal) {
-        return deploymentPacketRepository.getData(deploymentSessionRepository.get(test), packetType, ordinal);
+        try {
+            return deploymentPacketRepository.getData(deploymentSessionRepository.get(test.getId()), packetType, ordinal);
+        }
+        catch (javax.persistence.NoResultException ex) {
+            return null;
+        }
     }
 
     @Transactional
@@ -744,11 +750,16 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     public void addTestBackupFile(String fName, byte[] fileData, Long testID,
             Long deploymentId) {
+        try {
         IAT test = iatRepository.get(testID);
-        DeploymentSession ds = deploymentSessionRepository.get(test);
+        DeploymentSession ds = deploymentSessionRepository.get(test.getId());
         TestBackupFile tbf = new TestBackupFile(fName, fileData, test, ds);
         testBackupFileRepository.add(tbf);
-    }
+        }
+        catch (javax.persistence.NoResultException ex) {
+
+        }
+    }    
 
     @Transactional
     public void deleteTestBackupFiles(IAT test) {
@@ -982,14 +993,18 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public void deleteDeploymentSession(IAT test) {
-        var ds = deploymentSessionRepository.get(test);
-        deploymentSessionRepository.delete(ds);
+    public void deleteDeploymentSession(Long id) {
+        deploymentSessionRepository.deleteById(id);
     }
 
     @Transactional
-    public DeploymentSession getDeploymentSession(Long dsId) {
-        return deploymentSessionRepository.get(dsId);
+    public void deleteDeploymentSession(IAT test) {
+        deploymentSessionRepository.delete(test.getDeploymentSession());
+    }
+
+    @Transactional
+    public DeploymentSession getDeploymentSession(IAT test) {
+        return deploymentSessionRepository.get(test);
     }
 
     @Transactional
@@ -1000,6 +1015,11 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     public void deleteIAT(IAT test) {
         iatRepository.delete(test);
+    }
+
+    @Transactional
+    public void backupTest(IAT test) {
+        testResourceRepository.backupTest(test);
     }
 
 

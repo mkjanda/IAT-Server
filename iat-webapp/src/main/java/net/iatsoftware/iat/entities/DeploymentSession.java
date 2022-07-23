@@ -15,6 +15,8 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapsId;
@@ -22,7 +24,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 
 @Entity
@@ -32,6 +33,7 @@ public class DeploymentSession implements java.io.Serializable {
     public static final long DEPLOYMENT_TIMEOUT = 300_000L;
     private String sessID;
     private IAT test;
+    private Long id;
     private Calendar deploymentStart = Calendar.getInstance();
     private String deploymentUploadKey = null, itemSlideUploadKey = null, reconnectionKey = null;
 
@@ -43,32 +45,15 @@ public class DeploymentSession implements java.io.Serializable {
     }
     
     @Id
-    @OneToOne(optional=false, fetch=FetchType.EAGER)
-    @MapsId
-    @JoinColumn(name="SessionID", referencedColumnName="TestID")
-    public IAT getTest() {
-        return this.test;
-    }
-    public void setTest(IAT val) {
-        this.test = val;
-    }
-
-    @Transient
-    public Long getId() {
-        return getTest().getId();
-    }
-    
-
-    /*
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name="SessionID")
+    @JoinColumn(name="SessionID")
     public Long getId() {
         return this.id;
     }
     public void setId(Long val) {
         this.id = val;
     }
-    */
+
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="deployment_start")
     public Calendar getDeploymentStart() {
@@ -77,16 +62,7 @@ public class DeploymentSession implements java.io.Serializable {
     public void setDeploymentStart(Calendar val) {
         this.deploymentStart = val;
     }
-/*    
-    @OneToOne(optional=false)
-    @JoinColumn(name="TestID", referencedColumnName="TestID")
-    public IAT getTest() {
-        return this.test;
-    }
-    public void setTest(IAT val) {
-        this.test = val;
-    }
-  */  
+
     @Basic
     @Column(name="deployment_upload_key")
     public String getDeploymentUploadKey() {
@@ -121,5 +97,14 @@ public class DeploymentSession implements java.io.Serializable {
     }
     public void setWebSocketId(String val) {
         this.sessID = val;
+    }
+
+    @OneToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name="TestID", referencedColumnName = "TestID")
+    public IAT getTest() {
+        return this.test;
+    }
+    public void setTest(IAT val) {
+        test = val;
     }
 }

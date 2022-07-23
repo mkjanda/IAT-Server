@@ -11,7 +11,6 @@ package net.iatsoftware.iat.controllers;
  */
 
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.messaging.UpdateNotification;
 
@@ -26,7 +25,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.io.File;
+import java.net.URI;
+import java.util.Properties;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 @Controller
 @ClientControllerAnnotation
@@ -34,9 +37,24 @@ import javax.inject.Inject;
 public class ClientSoftwareUpdate {
 
     private static final Logger logger = LogManager.getLogger();
+	private static final Logger critical = LogManager.getLogger("critical");
 
     @Inject
-    IatConfigurationProperties serverConfiguration;
+    @Named("ServerConfiguration")
+    Properties serverConfiguration;
+
+	private URI updateUri = null;
+
+    @PostConstruct
+	public void postConstruct() {
+		try {
+			updateUri = new URI(serverConfiguration.getProperty("client-software-updates"));
+		}
+		catch (java.net.URISyntaxException ex) {
+			critical.error("Cannot instantiate URI", ex);
+		}
+	}
+
 
     @GetMapping(value = "/Manifest", produces = "text/xml")
     @ResponseBody
@@ -45,8 +63,7 @@ public class ClientSoftwareUpdate {
             throws java.net.URISyntaxException {
         logger.info("Retrieving update manifest");
         return new ResponseEntity<>(
-                Manifest.getUpdateManifest(new File(serverConfiguration.getClientSoftwareUpdatesUri()),
-                        clientVersion.replace("-", ".")),
+                Manifest.getUpdateManifest(new File(updateUri), clientVersion.replace("-", ".")),
                 HttpStatus.OK);
     }
 
@@ -54,8 +71,7 @@ public class ClientSoftwareUpdate {
     @ResponseBody
     public byte[] getDownload(@RequestParam(value = "Version", required = false, defaultValue = "1-0-0-0") String version)
             throws java.io.IOException, java.net.URISyntaxException {
-        return Manifest.getUpdate(new File(serverConfiguration.getClientSoftwareUpdatesUri()),
-                version.replace("-", "."));
+        return Manifest.getUpdate(new File(updateUri), version.replace("-", "."));
     }
 
 
@@ -63,8 +79,7 @@ public class ClientSoftwareUpdate {
     @ResponseBody
     public ResponseEntity<UpdateNotification> getUpdateNotifications(@RequestParam(name = "Version") String version) throws java.net.URISyntaxException {
         return new ResponseEntity<>(
-                Manifest.getUpdateNotification(new File(serverConfiguration.getClientSoftwareUpdatesUri()),
-                        version.replace("-", ".")),
+                Manifest.getUpdateNotification(new File(updateUri), version.replace("-", ".")),
                 HttpStatus.OK);
     }
 }

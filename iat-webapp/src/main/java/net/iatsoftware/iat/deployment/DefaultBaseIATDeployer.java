@@ -10,7 +10,6 @@ package net.iatsoftware.iat.deployment;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.config.MyBeanFactory;
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.configfile.IATSurvey;
@@ -51,7 +50,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Properties;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.transform.stream.StreamSource;
 
 @Component
@@ -73,7 +74,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     protected Long testId;
     protected DeploymentProgress deploymentProgress = null;
     protected boolean complete = false;
-    protected Long deploymentSessionId = -1L;
+    protected long deploymentSessionId = -1L;
 
     @Inject
     protected Unmarshaller unmarshaller;
@@ -94,7 +95,9 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     @Inject
     protected DeploymentService deploymentService;
     @Inject
-    protected IatConfigurationProperties serverConfiguration;
+    @Named("ServerConfiguration")
+    protected Properties serverConfiguration;
+
 
     public DefaultBaseIATDeployer(Long clientID, Long deploymentID, Long testID, String sessionId) {
         try {
@@ -109,7 +112,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         }
     }
 
-	@EventListener
+	@EventListener(classes = { TestResourcesRecordedEvent.class })
 	public void testResourcesRecorded(TestResourcesRecordedEvent evt) {
 		if (evt.getDeploymentID() != this.deploymentSessionId)
 			return;

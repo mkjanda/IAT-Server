@@ -9,7 +9,7 @@ package net.iatsoftware.iat.controllers;
  *
  * @author michael
  */
-import net.iatsoftware.iat.config.IatConfigurationProperties;
+
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.messaging.ResultRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
@@ -31,7 +31,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
+import java.util.Properties;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 @Controller
 @ClientControllerAnnotation
@@ -41,7 +43,8 @@ public class ResultRetrievalController {
     @Inject
     IATRepositoryManager repositoryManager;
     @Inject
-    IatConfigurationProperties configuration;
+    @Named("ServerConfiguration")
+    Properties serverConfiguration;
 
     private static final Base64.Decoder decoder = Base64.getDecoder();
     private static final Logger logger = LogManager.getLogger();
@@ -60,7 +63,8 @@ public class ResultRetrievalController {
                 return new ResponseEntity<>((FileSystemResource) null, HttpStatus.BAD_REQUEST);
             }
         }
-        URI resultFileURI = configuration.getResultFileUri(test.getTestName(),request.getClientId());
+        URI resultFileURI = new URI(String.format("%s/%s-%d", serverConfiguration.getProperty("result-data"), 
+            test.getTestName(), request.getClientId()));
         return new ResponseEntity<>(new FileSystemResource(Paths.get(resultFileURI)), HttpStatus.OK);
     }
 
@@ -69,7 +73,7 @@ public class ResultRetrievalController {
         List<IAT> expiredIATResults = repositoryManager.getExpiredTestResults(300_000L);
         for (IAT test : expiredIATResults) {
             try {
-                Files.delete(Paths.get(configuration.getResultFileUri(test.getTestName(), test.getClient().getClientId())));
+                Files.delete(Paths.get(new URI(String.format("%s/%s-%d", test.getTestName(), test.getClient().getClientId()))));
                 test.setResultRetrievalToken(null);
                 test.setResultRetrievalTokenAge(null);
                 repositoryManager.updateIAT(test);

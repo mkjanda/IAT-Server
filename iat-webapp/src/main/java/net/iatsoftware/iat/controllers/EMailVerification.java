@@ -5,7 +5,6 @@
  */
 package net.iatsoftware.iat.controllers;
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
@@ -24,8 +23,6 @@ public class EMailVerification {
 
     @Inject
     IATRepositoryManager iatRepositoryManager;
-    @Inject
-    IatConfigurationProperties serverConfiguration;
 
     @RequestMapping(name = "", params = {"VerificationKey"}, method = RequestMethod.GET)
     public String doEMailVerification(Model model, @RequestParam("VerificationKey") String verificationKey) {

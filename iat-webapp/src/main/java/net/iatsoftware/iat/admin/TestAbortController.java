@@ -10,15 +10,15 @@ package net.iatsoftware.iat.admin;
  * @author michael
  */
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Properties;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -26,8 +26,9 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/AbortTest")
 public class TestAbortController {
 
+    @Named("ServerConfiguration")
     @Inject
-    IatConfigurationProperties serverConfiguration;
+    Properties serverConfiguration;
     @Inject
     IATSessionManager sessionManager;
 
@@ -40,7 +41,7 @@ public class TestAbortController {
         ModelAndView mv = new ModelAndView("AbortTest");
         mv.addObject("IATName", IATName);
         mv.addObject("ClientID", clientID.toString());
-        mv.addObject("AppPath", serverConfiguration.getPath());
+        mv.addObject("AppPath", serverConfiguration.getProperty("path"));
         if (!token.isEmpty()) {
             mv.addObject("TesteeToken", token);
         }

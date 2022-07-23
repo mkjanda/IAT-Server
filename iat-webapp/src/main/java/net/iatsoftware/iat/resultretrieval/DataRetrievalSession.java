@@ -10,7 +10,6 @@ package net.iatsoftware.iat.resultretrieval;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.config.MyBeanFactory;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.ResultSet;
@@ -41,12 +40,15 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.StringReader;
+import java.net.URI;
 import java.text.DateFormat;
 import java.util.Base64;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Properties;
 import java.util.Random;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -72,7 +74,8 @@ public class DataRetrievalSession {
     @Inject
     ApplicationEventPublisher publisher;
     @Inject
-    IatConfigurationProperties serverConfiguration;
+    @Named("ServerConfiguration")
+    Properties serverConfiguration;
 
     @EventListener
     public void onDataRequest(DataRequestEvent event) {
@@ -101,8 +104,9 @@ public class DataRetrievalSession {
             byte[] randData = new byte[40];
             rand.nextBytes(randData);
             String fPrefix = encoder.encodeToString(randData).replace("=", "").replace("/", "").replace("+", "");
-            final File slideFile = new File(serverConfiguration.getItemSlideFileUri(fPrefix,
-                    test.getClient().getClientId(), test.getTestName()));
+            final File slideFile = new File(new URI(String.format("%s/%s.%d.%s.slides", 
+                serverConfiguration.getProperty("item-slide-directory"), fPrefix,
+                    test.getClient().getClientId(), test.getTestName())));
             ItemSlidePacketQueue pQueue = new ItemSlidePacketQueue(slideFile);
             PacketDataSource dataSource = beanFactory.itemSlideDataSource(test);
             pQueue.queueData(dataSource);
@@ -115,7 +119,7 @@ public class DataRetrievalSession {
             this.scheduler.schedule(() -> {
                 slideFile.delete();
             }, new java.util.Date(System.currentTimeMillis() + 600_000L));
-        } catch (java.io.IOException ex) {
+        } catch (java.io.IOException | java.net.URISyntaxException ex) {
             log.error("Error generating item slide file for download", ex);
             this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
                     new Envelope(new ServerExceptionMessage("Error generating item slide file for download", ex))));
@@ -147,8 +151,8 @@ public class DataRetrievalSession {
             }
             byte[] authTokenData = new byte[64];
             rand.nextBytes(authTokenData);
-            File resultFile = new File(
-                    serverConfiguration.getResultFileUri(test.getTestName(), test.getClient().getClientId()));
+            File resultFile = new File(new URI(String.format("%s/%s-%d", serverConfiguration.getProperty("result-data"), 
+                test.getTestName(), test.getClient().getClientId())));
             StreamResult sResult = new StreamResult(resultFile);
             marshaller.marshal(testResults, sResult);
             test.setResultRetrievalToken(authTokenData);

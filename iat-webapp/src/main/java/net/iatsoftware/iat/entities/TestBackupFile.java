@@ -21,6 +21,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.MapsId;
 import javax.persistence.Table;
 
 @Entity
@@ -70,7 +71,8 @@ public class TestBackupFile implements java.io.Serializable {
     }
     
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="DeploymentSessionID", referencedColumnName="SessionID")
+    @MapsId
+    @JoinColumn(name="DeploymentSessionID")
     public DeploymentSession getDeploymentSession() {
         return this.deploymentSession;
     }

@@ -25,7 +25,6 @@ import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
-import net.iatsoftware.iat.messaging.ServerException;
 import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.TokenDefinition;
 
@@ -102,8 +101,6 @@ public class DefaultWebSocketService implements WebSocketService {
                     } else {
                         this.publisher.publishEvent(new CommunicationEvent(e.getSessionId(), env.getMessage()));
                     }
-                } catch (ServerException ex) {
-                    
                 } catch (Exception ex) {
                     OutboundWebsocketTransmission outTrans = outboundTransmissions.get(e.getSessionId());
                     logger.error("Error processing server-side inbound transmission", ex);

@@ -12,4 +12,5 @@ public interface TestResourceRepository extends GenericRepository<Long, TestReso
     List<TestResource> getFromTest(IAT test, ResourceType type);
     TestResource get(IAT test, Long resourceId);
     Manifest  getTestManifest(IAT test);
+    void backupTest(IAT test);
 }

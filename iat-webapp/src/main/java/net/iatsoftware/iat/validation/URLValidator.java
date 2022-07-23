@@ -11,32 +11,34 @@ package net.iatsoftware.iat.validation;
  */
 
 
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 
+import java.util.Properties;
 import java.util.regex.Pattern;
+
+import javax.inject.Named;
 import javax.inject.Inject;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class URLValidator implements ConstraintValidator<URL, CharSequence> {
-    @Inject IatConfigurationProperties serverConfiguration;
+    @Named("ServerConfiguration")
+    @Inject Properties serverConfiguration;
     
     @Override
     public void initialize(URL annotation) {}
     
     @Override
     public boolean isValid(CharSequence value, ConstraintValidatorContext ctx) {
-        if (serverConfiguration.isOauthHttpsEnabled()) {
+        if (Boolean.parseBoolean(serverConfiguration.getProperty("oauth-https-enabled"))) {
             Pattern p = Pattern.compile("^https://.+");
             if (!p.matcher(value).matches())
                 return false;
             return true;
-        } else if (!serverConfiguration.isOauthHttpsEnabled()) {
+        } else {
             Pattern p = Pattern.compile("^http://.+");
             if (!p.matcher(value).matches())
                 return false;
             return true;
         }
-        return false;
     }
 }

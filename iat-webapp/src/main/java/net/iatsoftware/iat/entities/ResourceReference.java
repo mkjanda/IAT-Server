@@ -1,8 +1,8 @@
 package net.iatsoftware.iat.entities;
 
-import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GenerationType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,14 +15,12 @@ import javax.persistence.Table;
 public class ResourceReference implements java.io.Serializable {
     private static final long serialVersionUID = 1;
     private Long id;
-    private Long referenceId;
 	private TestResource testResource;
 
     public ResourceReference(){}
 
     public ResourceReference(TestResource testResource, Long referenceId) {
         this.testResource = testResource;
-        this.referenceId = referenceId;
     }
 
     @Id
@@ -35,21 +33,12 @@ public class ResourceReference implements java.io.Serializable {
         this.id = id;
     }
 
-	@ManyToOne
-    @JoinColumn(name="resource_key", referencedColumnName="id")
+	@ManyToOne(optional=false, fetch=FetchType.EAGER)
+    @JoinColumn(name="resource_id", referencedColumnName="id")
     public TestResource getResource() {
         return this.testResource;
     }
     public void setResource(TestResource val) {
         this.testResource = val;
-    }
-
-    @Basic
-    @Column(name="reference_id")
-    public Long getReferenceId() {
-        return referenceId;
-    }
-    public void setReferenceId(Long val) {
-        referenceId = val;
     }
 }

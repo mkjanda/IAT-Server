@@ -11,7 +11,6 @@ package net.iatsoftware.iat.services;
  */
 
 import net.iatsoftware.iat.config.MyBeanFactory;
-import net.iatsoftware.iat.config.IatConfigurationProperties;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.events.AbortDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentCleanupEvent;
@@ -23,7 +22,6 @@ import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.messaging.Message;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
-import net.iatsoftware.iat.messaging.ServerException;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.messaging.Handshake;
@@ -57,16 +55,17 @@ import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.Base64;
 import java.util.Calendar;
-import java.util.Formatter;
+import java.util.function.Predicate;
 import java.util.List;
+import java.util.Properties;
 import javax.crypto.Cipher;
+import javax.inject.Named;
 import javax.inject.Inject;
 
 @Service
 @Async("TaskScheduler")
 @PropertySource("classpath:email/email-config.properties")
 public class DefaultTransactionService implements TransactionService {
-    private static final Formatter formatter = new Formatter();
     private static final Logger logger = LogManager.getLogger();
     private static final Logger transLogger = LogManager.getLogger("transactions");
     private static final Logger critical = LogManager.getLogger("critical");
@@ -77,7 +76,8 @@ public class DefaultTransactionService implements TransactionService {
     @Inject
     DeploymentService deploymentService;
     @Inject
-    IatConfigurationProperties serverConfiguration;
+    @Named("ServerConfiguration")
+    Properties serverConfiguration;
     @Inject
     ApplicationEventPublisher publisher;
     @Inject
@@ -157,27 +157,16 @@ public class DefaultTransactionService implements TransactionService {
             } else if (msg instanceof ActivationRequest) {
                 activateProduct(e);
             }
-        }
-        catch (ServerException serverEx) {
-            critical.error(serverEx.getExceptionMessage().getExceptionMessage());
-            var ds = iatRepositoryManager.getDeploymentSession(e);
-            if (ds != null) {
-                this.publisher.publishEvent(new DeploymentCleanupEvent(ds.getId(), serverEx));
-            }
-            this.publisher.publishEvent(new WebSocketDataSent(e.getSessionId(), new Envelope(serverEx.getExceptionMessage())));
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), 
-                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
-
         } catch (Exception ex) {
             critical.error("Error occurred processing the transaction", ex);
             var ds = iatRepositoryManager.getDeploymentSession(e);
             if (ds != null) {
-                this.publisher.publishEvent(new DeploymentCleanupEvent(ds.getId(), ex));
+                this.publisher.publishEvent(new DeploymentCleanupEvent(ds.getTest().getId(), ex));
             }
-            this.publisher.publishEvent(new WebSocketDataSent(e.getSessionId(), 
-                new Envelope(new ServerExceptionMessage("Error processing transaction request", ex))));
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(), 
-                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
+            this.publisher.publishEvent(new WebSocketDataSent(e.getSessionId(),
+                    new Envelope(new ServerExceptionMessage("Error processing transaction request", ex))));
+            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
+                    new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
         }
     }
 
@@ -195,7 +184,7 @@ public class DefaultTransactionService implements TransactionService {
             TransactionRequest outTrans;
             byte[] randVal;
             String encStrVal;
-            var test = (IAT)webSocketService.getSessionProperty(e.getSessionId(), "IAT");
+            var test = (IAT) webSocketService.getSessionProperty(e.getSessionId(), "IAT");
             String iatName = (String) webSocketService.getSessionProperty(e.getSessionId(), "IATName");
             if ((inTrans.getTransaction() != TransactionType.REQUEST_RECONNECTION) && ((client == null)
                     || webSocketService.getSessionProperty(e.getSessionId(), "HandsShaken") == null)) {
@@ -260,14 +249,14 @@ public class DefaultTransactionService implements TransactionService {
                             return;
                         }
                     } catch (javax.persistence.NoResultException ex) {
-                        List<User> clientsUsers = client.getUsers().stream().filter(u -> !u.isEMailVerified())
-                                .collect(Collectors.toList());
-                        if (clientsUsers.isEmpty()) {
+                        Predicate<User> emailNotVerified = u2 -> !u2.isEMailVerified();
+                        var clientsUsers = client.getUsers().stream().filter(emailNotVerified);
+                        if (!clientsUsers.findFirst().isPresent()) {
                             sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.TRANSACTION_FAIL),
                                     true);
                             return;
                         }
-                        user = clientsUsers.get(0);
+                        user = clientsUsers.findFirst().get();
                         user.setEMail(inTrans.getStringValue("email"));
                         iatRepositoryManager.updateUser(user);
                     }
@@ -295,7 +284,7 @@ public class DefaultTransactionService implements TransactionService {
                         var ds = iatRepositoryManager.getDeploymentSession(test);
                         if (ds != null) {
                             outTrans = new TransactionRequest(TransactionType.TEST_BEING_DEPLOYED);
-                            outTrans.addLongValue("DeploymentId", ds.getId());
+                            outTrans.addLongValue("DeploymentId", ds.getTest().getId());
                             sendMessage(e.getSessionId(), outTrans, false);
                         } else {
                             transLogger.info(String.format("%s IAT exists (%s)", logMsgBase, inTrans.getIATName()));
@@ -392,8 +381,8 @@ public class DefaultTransactionService implements TransactionService {
 
                 case REQUEST_SERVER_REPORT:
                     transLogger.info(logMsgBase + "Request server report");
-                    this.publisher.publishEvent(new DataRequestEvent(e.getSessionId(), client.getClientId(), "",
-                            DataRequestEventType.retrieveServerReport));
+                    this.publisher.publishEvent(new DataRequestEvent(e.getSessionId(), client.getClientId(), test.getTestName(),
+                        DataRequestEventType.retrieveServerReport));
                     break;
 
                 case REQUEST_ENCRYPTION_KEY:
@@ -547,7 +536,6 @@ public class DefaultTransactionService implements TransactionService {
     private void closeSocket(String webSessionId) {
         webSocketService.unregisterWebSocket(webSessionId);
     }
-
 
     private String encryptValue(PartiallyEncryptedRSAKey key, byte[] val) {
         try {
