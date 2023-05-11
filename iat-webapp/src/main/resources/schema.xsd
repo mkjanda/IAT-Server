@@ -1,0 +1,3159 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc"
+    xmlns:iat="http://www.iatsoftware.net/schema" targetNamespace="http://www.iatsoftware.net/schema" 
+    jaxb:version="2.1">
+
+    <xs:annotation>
+        <xs:appinfo>
+            <jaxb:globalBindings>
+                <xjc:typeSubstitution type="complex"/>
+            </jaxb:globalBindings>
+        </xs:appinfo>
+    </xs:annotation>
+
+    <xs:complexType name="AcceptConfirmationPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.AcceptConfirmation"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DownloadPassword" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="accept-confirmation-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.AcceptConfirmation"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="AcceptRequestPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.AcceptRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="RequestID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumActivations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumDownloads" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DiskAlottmentMB" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumIATs" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="AlterClientStatePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftare.iat.messaging.AlterClientState"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Alteration" type="iat:ClientStateAlteration" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="AlterResourcesPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.AlterResources"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Activations" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice>
+                                    <xs:element name="Activations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element name="ActivationsInc" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Administrations" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice>
+                                    <xs:element name="Administrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element name="AdministrationsInc" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="DiskAlottmentMB" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice>
+                                    <xs:element name="DiskAlottment" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element name="DiskAlottmentInc" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="NumIATs" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:choice>
+                                    <xs:element name="NumIATs" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                    <xs:element name="NumIATsInc" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                                </xs:choice>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BasicClientInfoPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.BasicClientInfo"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="FirstName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LastName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ClientID" type="xs:integer" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DownloadPassword" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="AdministrationsRemaining" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ClientDataRequestPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientDataRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ClientID" type="xs:long" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="FName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="LName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="Organization" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ClientUsagePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientUsage"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="UserData" type="iat:user-data-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="TestUsage" type="iat:test-usage-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="ClientID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Frozen" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Deleted" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ContactFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ContactLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RegistrationDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LastIATUploadDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LastIATAdministrationDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LastDataRetrievalDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DiskAlottmentMB" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumIATsAlotted" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Administrations" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="AdministrationsRemaining" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="TotalDiskUsageMB" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumIATs" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ActivationsRemaining" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ActivationsConsumed" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DownloadsRemaining" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DownloadsConsumed" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DownloadPassword" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProductUse" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="client-usage-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ClientUsage"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="CorruptedSaveFileReportPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.CorruptedSaveFileReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ClientId" type="xs:long" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="ProductCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="UserName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="UserEmail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ReportTime" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DataRequestPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.DataRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="FName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="LName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="EMail" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="Phone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="StartDate" type="iat:date-impl" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="EndDate" type="iat:date-impl" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="DatePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Date"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Month" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Day" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Year" type="xs:int" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="date-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Date"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="DeleteRequestPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.DeleteRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="RequestID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="UpdateNotificationPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.UpdateNotification"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Notification" minOccurs="0" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:simpleContent>
+                                <xs:extension base="xs:string">
+                                    <xs:attribute name="Version" type="xs:string" use="required" form="unqualified"/>
+                                    <xs:attribute name="Flags" type="xs:unsignedLong" use="required" form="unqualified"/>
+                                </xs:extension>
+                            </xs:simpleContent>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="PricingPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.clientmanater.messsaging.Pricing"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ResourcePrice" type="iat:resource-price-impl" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ProductRequestPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ProductRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="RequestID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="FName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="LName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Organization" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Phone" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Address1" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Address2" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="City" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Province" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PostalCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Country" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="RegistrationTimestamp" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="product-request-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ProductRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="ProductRequestsPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ProductRequests"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ProductRequest" type="iat:product-request-impl" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="product-requests-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ProductRequests"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="PurchaseConfirmationPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.dataservices.PurchaseConfirmation"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="FirstName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="LastName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="CardholderFirstName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="CardholderLastName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="DownloadPassword" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Resource" minOccurs="1" maxOccurs="3">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Quantity" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="Price" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                    <xs:attribute name="Type" type="iat:ResourceType" form="unqualified" use="required"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Total" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Card" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="CreditCard" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="EndingCardDigits" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="CardExpMonth" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="CardExpYear" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PurchaseHistoryPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.PurchaseHistory"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Puchase" type="iat:purchase-history-entity-impl" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="PurchaseHistoryEntityPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.PurchaseHistory"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AdministrationsTotal" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumTests" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestsTotal" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="DiskSpace" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="DiskSpaceTotal" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PurchaseTime" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Total" type="xs:int" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="purchase-history-entity-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.PurchaseHistory"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="PurchaseOrderPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.PurchaseOrder"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="NumTests" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="DiskSpace" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Total" type="xs:int" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="ResourcePricePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.ResourcePrice"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Resource" type="iat:ResourceType" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Quantity" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Price" type="xs:int" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="resource-price-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.ResourcePrice"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="TestUsagePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.TestUsage"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorTitle" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestSizeKB" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="UploadTimestamp" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="LastDataRetrieval" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="test-usage-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.TestUsage"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="TransactionPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Transaction"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Transaction" type="iat:TransactionType" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="transaction-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Transaction"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="UsageReportPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.UsageReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ClientUsage" type="iat:client-usage-impl" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="usage-report-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.UsageReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="PurchaseInitiationPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.PurchaseInitiation"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="UpdateDownloadsRemainingPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.UpdateDownloadsRemaining"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:int"/>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="UserDataPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.UserData"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Title" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="FName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="LName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ActivationDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="user-data-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.UserData"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:element name="ClientManagementEnvelopePojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientManagementEnvelope"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:choice>
+                <xs:sequence>
+                    <xs:element name="AcceptConfirmation" type="iat:accept-confirmation-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProductRequests" type="iat:product-requests-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Transaction" type="iat:transaction-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="UsageReport" type="iat:usage-report-impl" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="code-file-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.deployment.CodeFile"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="CodeFilePojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.deployment.CodeFile"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="GlobalVarDecl" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="GlobalCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ProcessedCode" type="iat:processed-code-impl" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="ElementName" type="xs:string" form="unqualified" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="GlobalVarNameTablePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.deployment.GlobalVarNameTable"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="VarTableEntry" minOccurs="1" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="OrigName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="NewName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="processed-code-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.deployment.ProcessedCode"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ProcessedCodePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.deployment.ProcessedCode"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Constructor" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Declaration" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="CodeLine" type="iat:code-line-impl" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="EntityName" type="xs:string" use="required" form="unqualified"/>
+    </xs:complexType>
+
+    <xs:complexType name="code-line-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.deployment.CodeLine"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="CodeLinePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.deployment.CodeLine"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="Name" type="xs:string" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="iat-result-set-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.IATResultSet"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATResultSetPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.IATResultSet"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="BeforeSurveyResponseSet" type="iat:survey-response-set-impl" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="IATResultSetElementList" type="iat:result-set-element-list-impl" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="AfterSurveyResponseSet" type="iat:survey-response-set-impl" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="NumBeforeSurveys" type="xs:int" form="unqualified" use="required"/>
+        <xs:attribute name="NumResultSetElements" type="xs:int" form="unqualified" use="required"/>
+        <xs:attribute name="NumAfterSurveys" type="xs:int" form="unqualified" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="result-set-element-list-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.ResultSetElementList"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATResultSetElementListPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultSetElementList"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="IATResultSetElement" type="iat:result-set-element-v2-impl" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:sequence>
+                <xs:attribute name="NumElements" type="xs:int" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="result-set-element-v1-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.IATResultSetElementV1"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATResultSetElementV1Pojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.IATResultSetElementV1"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="BlockNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ItemNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ResponseTime" type="xs:long" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PresentationNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="result-set-element-v2-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.IATResultSetElementV2"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATResultSetElementV2Pojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.IATResultSetElementV2"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:result-set-element-v1-impl">
+                <xs:sequence>
+                    <xs:element name="Error" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="result-packet-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.ResultPacket"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="ResultRequest">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ResultRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ClientId" type="xs:long" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthToken" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="result-toc-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.ResultTOC"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ResultTOCPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultTOC"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ResultTOCEntry" type="iat:result-toc-entry-impl" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="NumEntries" type="xs:int" form="unqualified" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="result-toc-entry-impl" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.ResultTOCEntry"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ResultTOCEntryPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultTOCEntry"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="KeyOffset" type="xs:long" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="KeyLength" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="IVOffset" type="xs:long" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="IVLength" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="DataOffset" type="xs:long" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="DataLength" type="xs:int" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ResultPacketPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultPacket"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:packet-impl">
+                <xs:sequence>
+                    <xs:element name="TableOfContents" type="iat:result-toc-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Token" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute name="ResultID" type="xs:long" form="unqualified" use="required"/>
+                <xs:attribute name="Timestamp" type="xs:string" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="misc-result-data-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.MiscResultSetData"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="MiscResultSetDataPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.MiscResultSetData"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="TestAuthor" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="NumEntried" type="xs:int" form="unqualified" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="result-set-descriptor-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.ResultSetDescriptor"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ResultSetDescriptorPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultSetDescriptor"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="TestAuthor" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ConfigFile" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="BeforeSurvey" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="AfterSurvey" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="NumResults" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RSAKey" type="iat:partially-encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="TokenType" type="iat:TokenType" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="TokenName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute name="DataVersion" type="xs:int" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:simpleType name="ClientDataRequestType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ClientUsage"/>
+            <xs:enumeration value="TestUsage"/>
+            <xs:enumeration value="ClientKeys"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ErrorType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="none"/>
+            <xs:enumeration value="fatal"/>
+            <xs:enumeration value="exception"/>
+            <xs:enumeration value="message"/>
+            <xs:enumeration value="errorReport"/>
+            <xs:enumeration value="terminateProcess"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="DeploymentStage">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="unset"/>
+            <xs:enumeration value="compilingXSLT"/>
+            <xs:enumeration value="processingFileManifest"/>
+            <xs:enumeration value="creatingBackup"/>
+            <xs:enumeration value="restoringBackup"/>
+            <xs:enumeration value="initializingDeployment"/>
+            <xs:enumeration value="finalizingDeployment"/>
+            <xs:enumeration value="generatingIAT"/>
+            <xs:enumeration value="generatingSurvey"/>
+            <xs:enumeration value="processingUniqueSurveyResponses"/>
+            <xs:enumeration value="recordingProcessedJS"/>
+            <xs:enumeration value="processingScript"/>
+            <xs:enumeration value="generatingAES"/>
+            <xs:enumeration value="timerExpired"/>
+            <xs:enumeration value="unchanged"/>
+            <xs:enumeration value="terminated"/>
+            <xs:enumeration value="cannotBackup"/>
+            <xs:enumeration value="aborted"/>
+            <xs:enumeration value="cleaningUp"/>
+            <xs:enumeration value="cleanupComplete"/>
+            <xs:enumeration value="cleanupFailed"/>
+            <xs:enumeration value="cannotRestoreBackup"/>
+            <xs:enumeration value="backupRestored"/>
+            <xs:enumeration value="destroyingBackup"/>
+            <xs:enumeration value="comparingDescriptors"/>
+            <xs:enumeration value="xsltFailure"/>
+            <xs:enumeration value="failAndTerminate"/>
+            <xs:enumeration value="mismatchedDeploymentDescriptors"/>
+            <xs:enumeration value="success"/>
+            <xs:enumeration value="failed"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ErrorReportResponseCode">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="success"/>
+            <xs:enumeration value="invalidHandshake"/>
+            <xs:enumeration value="killFiled"/>
+            <xs:enumeration value="serverError"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ActivationResult">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Unset"/>
+            <xs:enumeration value="NoSuchClient"/>
+            <xs:enumeration value="InvalidRequest"/>
+            <xs:enumeration value="ServerFailure"/>
+            <xs:enumeration value="NoActivationsRemaining"/>
+            <xs:enumeration value="InvalidProductCode"/>
+            <xs:enumeration value="ClientFrozen"/>
+            <xs:enumeration value="ClientDeleted"/>
+            <xs:enumeration value="InconsistentUserData"/>
+            <xs:enumeration value="Success"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AjaxRequestType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="PublicKey"/>
+            <xs:enumeration value="JSON"/>
+            <xs:enumeration value="File"/>
+            <xs:enumeration value="Code"/>
+            <xs:enumeration value="VerifyUniqueResponse"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="TransactionType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Unset"/>
+            <xs:enumeration value="RequestResults"/>
+            <xs:enumeration value="RetrieveItemSlides"/>
+            <xs:enumeration value="RequestTransmission"/>
+            <xs:enumeration value="AbortTransaction"/>
+            <xs:enumeration value="RetrieveResults"/>
+            <xs:enumeration value="DoIATDeploy"/>
+            <xs:enumeration value="RequestActivation"/>
+            <xs:enumeration value="VerifyIATDeployment"/>
+            <xs:enumeration value="DeleteIAT"/>
+            <xs:enumeration value="DeleteIATData"/>
+            <xs:enumeration value="TransactionSuccess"/>
+            <xs:enumeration value="TransactionFail"/>
+            <xs:enumeration value="InsufficientDiskSpace"/>
+            <xs:enumeration value="InsufficientIATS"/>
+            <xs:enumeration value="IATExists"/>
+            <xs:enumeration value="RequestPacket"/>
+            <xs:enumeration value="RequestEncryptionKey"/>
+            <xs:enumeration value="RequestRetrievalReady"/>
+            <xs:enumeration value="EstablishEncryption"/>
+            <xs:enumeration value="RequestAdminPasswordVerification"/>
+            <xs:enumeration value="RequestDataPasswordVerification"/>
+            <xs:enumeration value="VerifyPassword"/>
+            <xs:enumeration value="NoSuchIAT"/>
+            <xs:enumeration value="ClientFrozen"/>
+            <xs:enumeration value="ClientDeleted"/>
+            <xs:enumeration value="RequestResultDescriptor"/>
+            <xs:enumeration value="RequestIATList"/>
+            <xs:enumeration value="RequestItemSlideManifest"/>
+            <xs:enumeration value="ActivationConfirmation"/>
+            <xs:enumeration value="RequestEMailVerification"/>
+            <xs:enumeration value="RequestNewVerificationEMail"/>
+            <xs:enumeration value="RequestRSAKey"/>
+            <xs:enumeration value="RetrieveSurveys"/>
+            <xs:enumeration value="RequestRemainingResources"/>
+            <xs:enumeration value="QueryDeploymentProgress"/>
+            <xs:enumeration value="IATBeingDeployed"/>
+            <xs:enumeration value="IATDeployHaltFailed"/>
+            <xs:enumeration value="NoSuchClient"/>
+            <xs:enumeration value="EMailAlreadyVerified"/>
+            <xs:enumeration value="RequestServerReport"/>
+            <xs:enumeration value="RetrieveIATItemSize"/>
+            <xs:enumeration value="RequestLegacyIATData"/>
+            <xs:enumeration value="LegacyData"/>
+            <xs:enumeration value="MismatchedDataFormat"/>
+            <xs:enumeration value="RequestConnection"/>
+            <xs:enumeration value="RequestIATUpload"/>
+            <xs:enumeration value="PasswordValid"/>
+            <xs:enumeration value="PasswordInvalid"/>
+            <xs:enumeration value="RequestItemSlides"/>
+            <xs:enumeration value="CannotRestoreBackup"/>
+            <xs:enumeration value="BackupRestored"/>
+            <xs:enumeration value="RequestIATRedeploy"/>
+            <xs:enumeration value="RequestReconnection"/>
+            <xs:enumeration value="RetrieveProductRequests"/>
+            <xs:enumeration value="Success"/>
+            <xs:enumeration value="Fail"/>
+            <xs:enumeration value="QueryRemainingIATS"/>
+            <xs:enumeration value="RemainingIATS"/>
+            <xs:enumeration value="RequestDataUpload"/>
+            <xs:enumeration value="TestBeingDeployed"/>
+            <xs:enumeration value="HaltTestDeployment"/>
+            <xs:enumeration value="DeploymentHalted"/>
+            <xs:enumeration value="ItemSlideDownloadReady"/>
+            <xs:enumeration value="DeploymentDescriptorMismatch"/>
+            <xs:enumeration value="CannotCreateBackup"/>
+            <xs:enumeration value="EncryptionKeysReceived"/>
+            <xs:enumeration value="DeploymentFileManifestReceived"/>
+            <xs:enumeration value="TokenDefinitionReceived"/>
+            <xs:enumeration value="ItemSlideManifestReceived"/>
+            <xs:enumeration value="AbortDeployment"/>
+            <xs:enumeration value="QueryPublicityIAT"/>
+            <xs:enumeration value="PublicityIAT"/>
+            <xs:enumeration value="UpdateUserInformation"/>
+            <xs:enumeration value="ServerError"/>
+            <xs:enumeration value="EmailVerificationMismatch"/>
+            <xs:enumeration value="TestFilesMissing"/>
+            <xs:enumeration value="DeploymentAbortFailed"/>
+            <xs:enumeration value="ResultsReady"/>
+            <xs:enumeration value="NoActivationsRemain"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="EnvelopeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="ActivationRequest"/>
+            <xs:enumeration value="ActivationResponse"/>
+            <xs:enumeration value="AdminListener"/>
+            <xs:enumeration value="ConfigFile"/>
+            <xs:enumeration value="DeploymentProgress"/>
+            <xs:enumeration value="Handshake"/>
+            <xs:enumeration value="Manifest"/>
+            <xs:enumeration value="ResultPacket"/>
+            <xs:enumeration value="Packet"/>
+            <xs:enumeration value="ResultSetDescriptor"/>
+            <xs:enumeration value="TransactionRequest"/>
+            <xs:enumeration value="RSAKeyPair"/>
+            <xs:enumeration value="ServerReport"/>
+            <xs:enumeration value="ServerException"/>
+            <xs:enumeration value="UploadRequest"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="KeyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="Data"/>
+            <xs:enumeration value="Admin"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ManifestEntityType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="File"/>
+            <xs:enumeration value="Directory"/>
+            <xs:enumeration value="UpdateFile"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="IATEventType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BeginIATBlock"/>
+            <xs:enumeration value="EndIATBlock"/>
+            <xs:enumeration value="IATItem"/>
+            <xs:enumeration value="BeginInstructionBlock"/>
+            <xs:enumeration value="TextInstructionScreen"/>
+            <xs:enumeration value="KeyedInstructionScreen"/>
+            <xs:enumeration value="MockItemInstructionScreen"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="PacketType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ItemSlide"/>
+            <xs:enumeration value="DeploymentData"/>
+            <xs:enumeration value="ResultSetDescriptor"/>
+            <xs:enumeration value="ResultData"/>
+            <xs:enumeration value="None"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ResourceType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="deploymentFile"/>
+            <xs:enumeration value="deploymentImage" />
+            <xs:enumeration value="itemSlide"/>
+            <xs:enumeration value="updateFile"/>
+            <xs:enumeration value="html" />
+            <xs:enumeration value="javascript" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="CodeType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Constructor"/>
+            <xs:enumeration value="Declaration"/>
+            <xs:enumeration value="Code"/>
+            <xs:enumeration value="GlobalDeclaration"/>
+            <xs:enumeration value="GlobalCode"/>
+            <xs:enumeration value="TOC"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="AjaxResponseType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Error"/>
+            <xs:enumeration value="Text"/>
+            <xs:enumeration value="XML"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="SurveyType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="BeforeSurvey"/>
+            <xs:enumeration value="AfterSurvey"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="ClientStateAlteration">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="Freeze"/>
+            <xs:enumeration value="Delete"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="EMailRecipientType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Client"/>
+            <xs:enumeration value="Applicant"/>
+            <xs:enumeration value="User"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="HtmlSpanReplacementType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Title"/>
+            <xs:enumeration value="FName"/>
+            <xs:enumeration value="LName"/>
+            <xs:enumeration value="ClientName"/>
+            <xs:enumeration value="ClientId"/>
+            <xs:enumeration value="DownloadPassword"/>
+            <xs:enumeration value="ProductKey"/>
+            <xs:enumeration value="ActivationsConsumed"/>
+            <xs:enumeration value="ActivationsRemaining"/>
+            <xs:enumeration value="AdministrationsConsumed"/>
+            <xs:enumeration value="AdministrationsRemaining"/>
+            <xs:enumeration value="DownloadsConsumed"/>
+            <xs:enumeration value="DownloadsRemaining"/>
+            <xs:enumeration value="DiskSpaceAlottmentMB"/>
+            <xs:enumeration value="DiskSpaceConsumed"/>
+            <xs:enumeration value="NumIATSAlotted"/>
+            <xs:enumeration value="NumIATS"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <!--
+            <xs:simpleType name="ResourceType">
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="Administration" />
+                    <xs:enumeration value="DiskSpace" />
+                    <xs:enumeration value="IatWith10Mb" />
+                </xs:restriction>
+            </xs:simpleType>
+        -->
+    <xs:simpleType name="PacketPayload">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Envelope"/>
+            <xs:enumeration value="RawData"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="TokenType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NONE"/>
+            <xs:enumeration value="VALUE"/>
+            <xs:enumeration value="HEX"/>
+            <xs:enumeration value="BASE64"/>
+            <xs:enumeration value="BASE64_UTF8"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ClientEventType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Create"/>
+            <xs:enumeration value="Delete"/>
+            <xs:enumeration value="Open"/>
+            <xs:enumeration value="Close"/>
+            <xs:enumeration value="Display"/>
+            <xs:enumeration value="ImageLoad"/>
+            <xs:enumeration value="Attached"/>
+            <xs:enumeration value="Detached"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="ErrorReportResponse">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ErrorReportResponse"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Caption" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Message" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Redirect" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="Response" type="iat:ErrorReportResponseCode" use="required" form="unqualified"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="survey-response-set-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.SurveyResponseSet"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="SurveyResponseSetPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.SurveyResponseSet"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="SurveyResults" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="NumSurveyResults" type="xs:int" form="unqualified" use="required"/>
+        <xs:attribute name="SurveyName" type="xs:string" form="unqualified" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="survey-summary-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.IATSurveySummary"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATSurveySummaryPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.IATSurveySummary"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="FileNameBase" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumItems" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="IsBeforeSurvey" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AlternationSet" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ResponseTypes" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ResponseType" minOccurs="0" maxOccurs="unbounded">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="None"/>
+                                    <xs:enumeration value="Boolean"/>
+                                    <xs:enumeration value="Likert"/>
+                                    <xs:enumeration value="Date"/>
+                                    <xs:enumeration value="Multiple"/>
+                                    <xs:enumeration value="WeightedMultiple"/>
+                                    <xs:enumeration value="RegEx"/>
+                                    <xs:enumeration value="MultiBoolean"/>
+                                    <xs:enumeration value="FixedDig"/>
+                                    <xs:enumeration value="BoundedNum"/>
+                                    <xs:enumeration value="Likert"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="Code" type="xs:string" minOccurs="0" maxOccurs="1" />
+                        <xs:element name="ScriptId" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="SurveyType" type="iat:SurveyType" use="required" form="unqualified"/>
+    </xs:complexType>
+
+    <xs:complexType name="TestResultsPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.TestResults"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Descriptor" type="iat:result-set-descriptor-impl" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ResultSet" type="iat:result-set-entry-impl" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="NumResultSets" type="xs:int" form="unqualified" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="result-set-entry-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.ResultSetEntry"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="ResultSetEntryPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultSetEntry"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="TOC" type="iat:result-toc-impl" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ResultData" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AdminTime" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="Token" type="xs:string" form="unqualified" use="optional"/>
+        <xs:attribute name="ResultId" type="xs:long" form="unqualified" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="layout-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.IATLayout"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATLayoutPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.IATLayout"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="InteriorWidth" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="InteriorHeight" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="BorderWidth" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ResponseWidth" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ResponseHeight" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="BorderColorR" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="BorderColorG" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="BorderColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="BackColorR" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="BackColorG" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="BackColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="OutlineColorR" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="OutlineColorG" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="OutlineColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PageColorR" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PageColorG" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PageColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="survey-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.Survey" />
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="Survey">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.Survey" />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyFormat">
+                <xs:sequence>
+                    <xs:element name="IAT" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="Code" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="FileName" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="InitialPosition" type="xs:int" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="AlternationGroup" type="xs:int" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="ScriptId" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="SurveyItem" minOccurs="0" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:complexContent>
+                                <xs:extension base="iat:SurveyFormat">
+                                    <xs:sequence>
+                                        <xs:element name="Text" minOccurs="0" maxOccurs="1" />
+                                        <xs:element name="Response" minOccurs="0" maxOccurs="1">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:choice>
+                                                        <xs:element name="Instruction" type="iat:SurveyResponse" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="Boolean" type="iat:SurveyBoolean" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="BoundedNumber" type="iat:SurveyBoundedNumber" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="BoundedLength" type="iat:SurveyBoundedLength" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="Date" type="iat:SurveyDate" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="WeightedMultiple" type="iat:SurveyWeightedMultiple" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="RegularExpression" type="iat:SurveyRegularExpression" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="FixedDigit" type="iat:SurveyFixedDigit" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="MultiBoolean" type="iat:SurveyMultiBoolean" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="MultipleResponse" type="iat:SurveyMultipleResponse" minOccurs="0" maxOccurs="1" />
+                                                        <xs:element name="LikertResponse" type="iat:SurveyLikertResponse" minOccurs="0" maxOccurs="1" />
+                                                    </xs:choice>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="MimeType" type="xs:string" minOccurs="0" maxOccurs="1" />
+                                        <xs:element name="ImageData" type="xs:base64Binary" minOccurs="0" maxOccurs="1" />
+                                    </xs:sequence>
+                                    <xs:attribute name="Optional" type="xs:boolean" use="required" />
+                                    <xs:attribute name="Image" type="xs:boolean" use="optional" />
+                                </xs:extension>
+                            </xs:complexContent>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="Type" type="xs:string" use="required" />
+                <xs:attribute name="TimeoutMillis" type="xs:long" use="required" />
+                <xs:attribute name="UploadTimeMillis" type="xs:long" use="required" />
+                <xs:attribute name="UniqueResponseItem" type="xs:int" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyMultiBoolean">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="NumValues" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="MinSelections" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="MaxSelections" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="Labels" minOccurs="1" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Label" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyMultipleResponse">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="NumChoice" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="Choices" minOccurs="1" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyLikertResponse">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="NumChoice" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="IsReverseScored" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="ChoiceDescriptions" minOccurs="1" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyBoolean">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="TrueStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="FalseStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyWeightedMultiple">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="WeightedChoices">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="WeightedChoice" minOccurs="1" maxOccurs="unbounded">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="1" />
+                                            <xs:element name="Weight" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="NumChoices" type="xs:integer" use="required" />
+                <xs:attribute name="Scored" type="xs:boolean" use="optional" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyRegularExpression">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="Expression" type="xs:string" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyFixedDigit">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="NumDigs" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyBoundedNumber">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="MinLength" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="MaxLength" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="SurveyDate">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="StartDate" minOccurs="1" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Year" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="Month" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="Day" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                            </xs:sequence>
+                            <xs:attribute name="HasValue" type="xs:boolean" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="EndDate" minOccurs="1" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Year" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="Month" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                                <xs:element name="Day" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                            </xs:sequence>
+                            <xs:attribute name="HasValue" type="xs:boolean" use="required" />
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyBoundedLength">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyResponse">
+                <xs:sequence>
+                    <xs:element name="MinLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="MaxLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyResponse">
+        <xs:complexContent>
+            <xs:extension base="iat:SurveyFormat">
+                <xs:attribute name="Type" type="xs:string" use="required" />
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="SurveyFormat">
+        <xs:sequence>
+            <xs:element name="Font" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="FontSize" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ColorR" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ColorG" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ColorB" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Bold" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Italic" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="iat-event-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.IATEvent"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATEventPojo" abstract="true">
+        <xs:attribute name="EventType" type="iat:IATEventType" form="unqualified" use="required"/>
+    </xs:complexType>
+
+    <xs:complexType name="event-list-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.IATEventList"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATEventList">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.IATEventList"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Event" type="iat:iat-event-impl" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+        <xs:attribute name="NumEvents" type="xs:int" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="display-item-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.DisplayItem"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="DisplayItemPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.DisplayItem"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ResourceID" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Filename" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="X" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Y" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Width" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Height" type="xs:int" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="instruction-screen-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.IATInstructionScreen"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATInstructionScreenPojo" abstract="true">
+        <xs:complexContent>
+            <xs:extension base="iat:iat-event-impl">
+                <xs:sequence>
+                    <xs:element name="ContinueASCIIKeyCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ContinueInstructionsID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="IATItemPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <xs:jaxb implClass="net.iatsoftware.iat.configfile.IATItem"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:iat-event-impl">
+                <xs:sequence>
+                    <xs:element name="ItemNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="BlockNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="StimulusDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="OriginatingBlock" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="KeyedDir" minOccurs="1" maxOccurs="1">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="Left"/>
+                                <xs:enumeration value="Right"/>
+                                <xs:enumeration value="DynamicLeft"/>
+                                <xs:enumeration value="DynamicRight"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="KeyedInstructionScreenPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.KeyedInstructionScreen"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:instruction-screen-impl">
+                <xs:sequence>
+                    <xs:element name="LeftResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="mask-specifier-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.MaskSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="MaskSpecifierPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.MaskSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:dynamic-specifier-impl">
+                <xs:sequence>
+                    <xs:element name="Mask" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="MockItemInstructionScreenPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.MockItemInstructionScreen"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:instruction-screen-impl">
+                <xs:sequence>
+                    <xs:element name="LeftResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="StimulusDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ErrorMarkIsDisplayed" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="OutlineLeftResponse" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="OutlineRightResponse" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="range-specifier-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.RangeSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="RangeSpecifierPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.RangeSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:dynamic-specifier-impl">
+                <xs:sequence>
+                    <xs:element name="Cutoff" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ReverseScored" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="CutoffExcludes" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="dynamic-specifier-impl" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.DynamicSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="DynamicSpecifierPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.DynamicSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="TestSpecifierID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ItemNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="true-false-specifier-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.TrueFalseSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="TrueFalseSpecifierPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.TrueFalseSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:dynamic-specifier-impl"/>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="selection-specifier-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.SelectionSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="SelectionSpecifierPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.SelectionSpecifier"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:dynamic-specifier-impl">
+                <xs:sequence>
+                    <xs:element name="KeySpecifiers" minOccurs="1" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="KeySpecifier" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                            <xs:attribute name="NumKeySpecifiers" type="xs:int" form="unqualified" use="required"/>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BeginIATBlockPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.BeginIATBlock"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:iat-event-impl">
+                <xs:sequence>
+                    <xs:element name="NumPresentations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="AlternatedWith" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="BlockNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumItems" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="PracticeBlock" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LeftResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="BeginInstructionBlockPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.BeginInstructionBlock"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:iat-event-impl">
+                <xs:sequence>
+                    <xs:element name="NumInstructionScreens" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="AlternatedWith" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="EndIATBlockPojo">
+        <xs:complexContent>
+            <xs:extension base="iat:iat-event-impl">
+                <xs:sequence>
+                    <xs:element name="DummyValue" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="TextInstructionScreenPojo">
+        <xs:complexContent>
+            <xs:extension base="iat:instruction-screen-impl">
+                <xs:sequence>
+                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="config-file-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.ConfigFile"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ConfigFilePojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.ConfigFile"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ServerDomain" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ServerPath" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ServerPort" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="UplooadTimeMillis" type="xs:long"/>
+                    <xs:element name="ClientID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumIATItems" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Is7Block" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RedirectOnComplete" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LeftResponseASCIIKeyCodeUpper" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponseASCIIKeyCodeUpper" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LeftResponseASCIIKeyCodeLower" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponseASCIIKeyCodeLower" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ErrorMarkID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LeftKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Layout" type="iat:layout-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="EventList" type="iat:event-list-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DisplayItemList" minOccurs="1" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="IATDisplayItem" type="iat:display-item-impl" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                    <xs:element name="Code" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="ScriptId" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="PrefixSelfAlternatingSurveys" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DynamicSpecifiers" type="iat:dynamic-specifier-impl" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="Survey" type="iat:survey-impl" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+                <xs:attribute name="NumBeforeSurveys" type="xs:int" form="unqualified" use="required"/>
+                <xs:attribute name="NumAfterSurveys" type="xs:int" form="unqualified" use="required"/>
+                <xs:attribute name="HasUniqueResponse" type="xs:boolean" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="activation-response-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ActivationResponse"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ActivationResponsePojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ActivationResponse"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ActivationResult" type="iat:ActivationResult" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="VerificationCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ClientName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ClientEMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Phone" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Address1" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Address2" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="City" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Province" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="PostalCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Country" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="activation-request-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ActivationRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ActivationRequestPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ActivationRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Title" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="FName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="AjaxRequestPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.AjaxRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Request" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="RequestData" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ClientID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Host" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="RootContext" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestSegmentID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="RequestType" type="iat:AjaxRequestType" form="unqualified" use="required"/>
+    </xs:complexType>
+
+
+    <xs:complexType name="enc-code-line-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.CodeLine"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="EncCodeLinePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.CodeLine"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Segment" type="iat:segment-impl" minOccurs="4" maxOccurs="4"/>
+                </xs:sequence>
+                <xs:attribute name="ANDX" type="xs:int" form="unqualified" use="required"/>
+                <xs:attribute name="BNDX" type="xs:int" form="unqualified" use="required"/>
+                <xs:attribute name="CL" type="xs:int" form="unqualified" use="required"/>
+                <xs:attribute name="Type" type="iat:CodeType" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="segment-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Segment"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="SegmentPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Segment"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="SegmentPart" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="AjaxResponsePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.AjaxResponse"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Response" minOccurs="0" maxOccurs="1" type="xs:string"/>
+                    <xs:element name="ProcessedCode" minOccurs="0" maxOccurs="1">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Line" type="iat:enc-code-line-impl" minOccurs="1" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="ResponseType" type="iat:AjaxResponseType" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="deployment-progress-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.deployment.DeploymentProgress"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="DeploymentProgressPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.deployment.DeploymentProgress"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Stage" type="iat:DeploymentStage" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ActiveElement" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProgressMin" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProgressMax" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProgressVal" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LastUpdate" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ServerException" type="iat:server-exception-message-impl" minOccurs="0" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="FileEntityPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.FileEntity"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Path" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="EntityType" type="iat:ManifestEntityType" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="file-entity-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.FileEntity"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="file-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.File"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="FilePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.File"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:file-entity-impl">
+                <xs:sequence>
+                    <xs:element name="MimeType" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Size" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ResourceType" type="iat:ResourceType" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ResourceId" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ReferenceId" type="xs:int" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="directory-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Directory"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="DirectoryPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Directory"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:file-entity-impl">
+                <xs:sequence>
+                    <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="manifest-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Manifest"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ManifestPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Manifest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:group ref="iat:ManifestGroup"/>
+                    <xs:element name="ClientId" type="xs:long" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:group name="ManifestGroup">
+        <xs:sequence>
+            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:group>
+
+    <xs:complexType name="encrypted-des-cipher-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.EncryptedDESCipher"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="EncryptedDESCipherPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.EncryptedDESCipher"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Cipher" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="IV" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="update-file-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.messaging.UpdateFile"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="UpdateFilePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.messaging.UpdateFile"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:file-entity-impl">
+                <xs:sequence>
+                    <xs:element name="SourcePath" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Size" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="handshake-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Handshake"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="HandshakePojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Handshake"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="iat-list-entry-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.IATListEntry"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATListEntryPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.IATListEntry"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="UserInfo" type="iat:user-info-impl" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="iat-list-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.IATList"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATListPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.IATList"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="IAT" type="iat:iat-list-entry-impl" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="iat-report-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.IATReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IATReportPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.IATReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="URL" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumResultSets" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestSizeKB" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="LastDataRetrieval" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorTitle" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorEMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="Deploying" type="xs:boolean" use="required" form="unqualified"/>
+    </xs:complexType>
+
+    <xs:complexType name="admin-listener-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.AdminListener"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="AdminListenerPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.AdminListener"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="IATSESSIONID" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="token-definition-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.TokenDefinition"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="TokenDefinitionPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.TokenDefinition"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="TokenType" type="iat:TokenType" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="TokenName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+
+    <xs:complexType name="packet-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Packet"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="PacketPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Packet"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Data" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute name="IsNullPacket" type="xs:boolean" form="unqualified" use="required"/>
+                <xs:attribute name="IsErrorPacket" type="xs:boolean" form="unqualified" use="required"/>
+                <xs:attribute name="IsLastPacket" type="xs:boolean" form="unqualified" use="required"/>
+                <xs:attribute name="Length" type="xs:long" form="unqualified" use="required"/>
+                <xs:attribute name="Type" type="iat:PacketType" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="partially-encrypted-rsa-key-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="PartiallyEncryptedRSAKeyPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.PartiallyEncryptedRSAKey"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="KeyType" type="iat:KeyType" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Modulus" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Exponent" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="EncryptedKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="public-key-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftare.iat.resultdata.PublicKey"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="PublicKeyPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.PublicKey"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ClientID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Modulus" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Exponent" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="query-iat-exists-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.QueryIATExists"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="QueryIATExistsPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.QueryIATExists"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="request-handshake-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messsaging.RequestHandshake"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="RequestHandshakePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.RequestHandshake"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="UserKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="rsa-key-pair-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.RSAKeyPair"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="RSAKeyPairPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.RSAKeyPair"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="DataKey" type="iat:partially-encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="AdminKey" type="iat:partially-encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="server-report-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ServerReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ServerReportPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ServerReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ContactFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ContactLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Organization" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumIATsAlotted" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumAdministrationsRemaining" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DiskAlottmentMB" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DiskAlottmentRemainingKB" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="IATReport" type="iat:iat-report-impl" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="int-element-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.IntElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="IntElement">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.IntElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:int">
+                <xs:attribute name="name" type="xs:string" use="required" form="unqualified"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="long-element-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.LongElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="LongElement">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.LongElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:long">
+                <xs:attribute name="name" type="xs:string" use="required" form="unqualified"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="decimal-element-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.DecimalElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="DecimalElement">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.DecimalElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:decimal">
+                <xs:attribute name="name" type="xs:string" use="required" form="unqualified"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="string-element-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.StringElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="StringElement">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.StringElement"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:simpleContent>
+            <xs:extension base="xs:string">
+                <xs:attribute name="name" type="xs:string" use="required" form="unqualified"/>
+            </xs:extension>
+        </xs:simpleContent>
+    </xs:complexType>
+
+    <xs:complexType name="transaction-request-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.TransactionRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="TransactionRequestPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.TransactionRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="Transaction" type="iat:TransactionType" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ClientID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ActivationKey" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="IntValue" type="iat:int-element-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="LongValue" type="iat:long-element-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="DecimalValue" type="iat:decimal-element-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="StringValue" type="iat:string-element-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="LastTransaction" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="upload-request-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.UploadRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="UploadRequestPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.UploadRequest"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="DeploymentID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DataUploadKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ItemSlideUploadKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ReconnectionKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="user-info-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.entities.User"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="UserInfoPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.User"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Title" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="FName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="LName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ClientErrorReport" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientErrorReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:client-exception-impl">
+                <xs:sequence>
+                    <xs:element name="UserName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="UserEmail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Timestamp" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ClientID" type="xs:long" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="client-exception-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ClientException"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="ActivationException" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ActivationException"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ProductKey" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ActivationKey" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Version" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Exception" type="iat:exception-message-impl" minOccurs="1" maxOccurs="1"/>
+
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ClientException" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientException"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ClientMessage" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ProductCode" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ActivationKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="UserEmail" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Version" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="SaveFileVersion" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TimeOpened" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ErrorCount" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ErrorsReported" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="HistoryEntry" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="TimeOpened" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="ErrorCount" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="ErrorsReported" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="SaveFileVersion" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Exception" type="iat:exception-message-impl" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="EventLog" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Event" type="iat:client-activity-event-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="client-activity-event-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ClientActivityEvent"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="ClientActivityEventPojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientActivityEvent"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="LogMessage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                    <xs:element name="Parameter" minOccurs="0" maxOccurs="unbounded">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                                <xs:element name="Value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
+                </xs:sequence>
+                <xs:attribute name="Id" type="xs:string" form="unqualified" use="required"/>
+                <xs:attribute name="EventType" type="iat:ClientEventType" form="unqualified" use="required"/>
+                <xs:attribute name="TargetType" type="xs:string" form="unqualified" use="required"/>
+                <xs:attribute name="Time" type="xs:string" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="server-exception-message-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ServerExceptionMessage"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ServerExceptionMessagePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ServerExceptionMessage"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:exception-message-impl">
+                <xs:sequence>
+                    <xs:element name="ServerMessage" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="exception-message-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.ExceptionMessage"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="ExceptionMessage">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.ExceptionMessage"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ExceptionMessage" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="StackTraceElement" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="InnerException" type="iat:inner-exception-impl" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="inner-exception-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.InnerException"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+    <xs:complexType name="InnerException">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.InnerException"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="ExceptionMessage" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="StackTraceElement" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="message-base-impl" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.MessageBase"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="MessagePojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Message"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-base-impl"/>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="message-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.Message"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+
+
+    <xs:complexType name="XmlPacketPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.XmlPacket"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="StringData" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                </xs:sequence>
+                <xs:attribute name="LastPacket" type="xs:boolean" form="unqualified" use="required"/>
+                <xs:attribute name="Length" type="xs:int" form="unqualified" use="required"/>
+                <xs:attribute name="Ordinal" type="xs:int" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="UniqueResponsePojo">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.UniqueResponse"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="iat:message-impl">
+                <xs:sequence>
+                    <xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ItemNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:sequence>
+                <xs:attribute name="Additive" type="xs:boolean" form="unqualified" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+
+    <xs:complexType name="decryptor-impl" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.resultdata.Decryptor"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="server-configuration-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.config.ServerConfiguration"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="ServerConfigurationPojo" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.config.DefaultServerConfiguration"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="AesCoreFilename" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ErrorReportEmail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="DataFormatVersion" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Host" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Path" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="StaticContentPath" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="SecureStaticContentPath" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="HttpsEnabled" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="IatsUri" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="IatDeploymentUri" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ItemSlideUri" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ClientSoftwareUri" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="ClientSoftwareUpdatesUri" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="InitialPublicityAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="InitialPooledAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Version" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Envelope" abstract="true">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.Envelope"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:choice>
+                <xs:element name="AdminListener" type="iat:admin-listener-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="ResultSetDescriptor" type="iat:result-set-descriptor-impl" minOccurs="1" 
+                    maxOccurs="1"/>
+                <xs:element name="ConfigFile" type="iat:config-file-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="ActivationResponse" type="iat:activation-response-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="ActivationRequest" type="iat:activation-request-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="DeploymentProgress" type="iat:deployment-progress-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="Handshake" type="iat:handshake-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="IATList" type="iat:iat-list-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="Manifest" type="iat:manifest-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="Packet" type="iat:packet-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="TokenDefinition" type="iat:token-definition-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="ResultPacket" type="iat:result-packet-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="RSAKeyPair" type="iat:rsa-key-pair-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="QueryIATExists" type="iat:query-iat-exists-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="TransactionRequest" type="iat:transaction-request-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="ServerReport" type="iat:server-report-impl" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="ServerException" type="iat:server-exception-message-impl" minOccurs="1" 
+                    maxOccurs="1"/>
+                <xs:element name="UploadRequest" type="iat:upload-request-impl" minOccurs="1" maxOccurs="1"/>
+            </xs:choice>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

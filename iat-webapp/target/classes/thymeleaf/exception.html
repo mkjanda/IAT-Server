@@ -1,0 +1,23 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Exception Template</title>
+        <meta charset="UTF-8">
+    </head>
+    <body>
+        <th:block th:fragment="exception(ex)">
+            <div class="exception">
+            <p th:text="${ex.exceptionMessage}"></p>
+            <p>Caused by:</p>
+            <th:block th:each="std : ${ex.stackTraceElement">
+                <p th:text="${stl}"></p>
+            </th:block>
+            <th:block th:each="innerEx : ${ex.innerException}">
+                <p>Caused by:</p>
+                <th:block th:each="stl : ${innerEx.stackTraceElement})">
+                    <p th:text="${stl}"></p>
+                </th:block>
+            </th:block>
+            </div>
+        </th:block>
+    </body>
+</html>

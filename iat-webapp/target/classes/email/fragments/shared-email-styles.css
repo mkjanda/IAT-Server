@@ -1,0 +1,31 @@
+@import url(http://use.typekit.net/sra2zjj.css);
+
+body div.logo img {
+    position: relative;
+    left: 200px;
+}
+
+body div#content {
+    padding: 20px;
+}
+
+body div#content p {
+    font-family: oxtail, serif;
+    font-size: 14px;
+}
+
+body div#content p.line {
+	margin: 0px;
+	padding: 0px;
+}
+
+body div.signature {
+    text-align: right;
+}
+
+body div.signature div {
+    width: 200px;
+    text-align: left;
+    font-family: coquette, serif;
+    font-size: 14px;
+}

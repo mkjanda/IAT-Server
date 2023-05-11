@@ -1,0 +1,35 @@
+<html>
+<head>
+<title th:remove="all">Oauth Error Report Email</title>
+<style type="text/css" th:insert="email/shared-email-styles.css :: sharedCss"></style>
+<style type="text/css">
+	body div#content div.exception {
+		margin-left: 50px;
+	}
+	body div#content div.exception div.stackTrace {
+		margin-left: 50px;
+	}
+	body div#content div.exception div.stackTrace p {
+		margin: 0px;
+		padding: 0px;
+		font-size: 10px;
+	}
+</style>
+</head>
+<body>
+	<div id="content">
+		<p class="line" th:text="'Client: ' + ${errorReport.clientName}"></p>
+		<p class="line" th:text="'Email: ' + ${errorReport.clientEmail}"></p>
+		<p class="line" th:text="'Client ID: ' + ${errorReport.clientId}"></p>
+		<br />
+		<p th:text="${errorReport.exceptionCaption}"></p>
+		<br />
+		<div class="exception">
+			<p class="line" th:text="${errorReport.exceptionMessage}"></p>
+			<div class="stackTrace" th:each="stl : ${errorReport.stackTrace}">
+				<p th:text="${stl}"></p>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

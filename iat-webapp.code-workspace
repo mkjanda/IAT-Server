@@ -1,0 +1,68 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"sqltools.connections": [
+			{
+				"connectString": "jdbc:mysql://localhost:3306/iatserver_db?user=IATServer&password=jESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEY",
+				"connectionTimeout": 10,
+				"database": "iatserver_db",
+				"driver": "MariaDB",
+				"group": "IAT",
+				"mysqlOptions": {
+					"authProtocol": "default"
+				},
+				"name": "IAT Server",
+				"password": "jESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEYjESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEY",
+				"port": 3306,
+				"previewLimit": 50,
+				"server": "localhost",
+				"username": "IATServer"
+			}
+		],
+		"sqltools.dependencyManager": {
+			"packageManager": "npm",
+			"installArgs": [
+				"install"
+			],
+			"runScriptArgs": [
+				"run"
+			],
+			"autoAccept": false
+		},
+		"maven.executable.preferMavenWrapper": false,
+		"database.connections": [
+			{
+				"connectString": "jdbc:mysql://localhost:3306/iatserver_db?user=IATServer&password=jESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEY",
+				"connectionTimeout": 10,
+				"database": "iatserver_db",
+				"driver": "MariaDB",
+				"group": "IAT",
+				"mysqlOptions": {
+					"authProtocol": "default"
+				},
+				"name": "IAT Server",
+				"password": "jESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEYjESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEY",
+				"port": 3306,
+				"previewLimit": 50,
+				"server": "localhost",
+				"username": "IATServer"
+			}
+		],
+		"dartsass.targetDirectory": "../css",
+		"java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m",
+		"java.format.settings.url": "eclipse-formatter.xml",
+		"workbench.iconTheme": "material-icon-theme",
+		"workbench.colorTheme": "Tokyo Right",
+		"workbench.preferredDarkColorTheme": "Material Theme Darker",
+		"editor.semanticHighlighting.enabled": true,
+		"editor.fontFamily": "'Consolas', 'monospace', monospace",
+		"editor.fontSize": 16,
+		"java.compile.nullAnalysis.mode": "automatic",
+		"compile-hero.disable-compile-files-on-did-save-code": false
+	}
+}
