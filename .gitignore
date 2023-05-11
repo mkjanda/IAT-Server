@@ -25,3 +25,5 @@ replay_pid*
 
 iat-webcontent/node/
 IAT-Server/
+/target/
+.git/
