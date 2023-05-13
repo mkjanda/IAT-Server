@@ -182,12 +182,10 @@
                     displayDiv.appendChild(LoadingImagesProgressElement);
                 </xsl:text>
                 <xsl:for-each select="//IATDisplayItem">
-                    <xsl:variable name="imgSrc" select="string-join(('/IAT/resources/image/', //ClientID,  //IATName, //ID), '/')" />
-                    <xsl:value-of select="concat('EventUtil.addHandler(imgTable[&quot;', $testURL, '/', Filename, '&quot;], &quot;load&quot;,
-                        OnImageLoad);&#x0A;')" />
-                    <xsl:value-of select="concat('EventUtil.addHandler(imgTable[&quot;', $testURL, '/', Filename, '&quot;], &quot;error&quot;, 
-                        OnImageLoadError);&#x0A;')"/>
-                    <xsl:value-of select="concat('imgTable[&quot;', $testURL, '/', Filename, '&quot;].src = ', $imgSrc, ';')" />
+                    <xsl:variable name="imgSrc" select="string-join(('/IAT/resource', $root/ClientID,  $root/IATName, ResourceId), '/')" />
+                    <xsl:value-of select="concat('imgTable[&quot;', $imgSrc, '&quot;].load = OnImageLoad;&#x0A;')" />
+                    <xsl:value-of select="concat('imgTable[&quot;', $imgSrc, '&quot;].onerror = OnImageLoadError;&#x0A;')"/>
+                    <xsl:value-of select="concat('imgTable[&quot;', $imgSrc, '&quot;].src = ', $imgSrc, ';&#x0A;')" />
                 </xsl:for-each>
             </xsl:variable>
             <xsl:element name="FunctionBody">
@@ -489,10 +487,6 @@
                         <xsl:copy-of select="child::*" />
                     </xsl:element>
                 </xsl:for-each>
-            </xsl:element>
-            <xsl:element name="GlobalCode">
-                <xsl:attribute name="CodePrefix" select="$globalCodePrefix" />
-                <xsl:copy-of select="$GlobalCode"/>
             </xsl:element>
         </xsl:element>
     </xsl:template>

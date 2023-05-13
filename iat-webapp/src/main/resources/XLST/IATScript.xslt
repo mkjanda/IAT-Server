@@ -2184,7 +2184,7 @@
         <xsl:for-each select="Code">
             <xsl:element name="CodeLine">
                 <xsl:attribute name="Type" select="'FunctionCode'"/>
-                <xsl:value-of select=".&#x0A;"/>
+                <xsl:value-of select="concat(., '&#x0A;')"/>
             </xsl:element>
         </xsl:for-each>
     </xsl:template>

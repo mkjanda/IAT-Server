@@ -1643,7 +1643,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="ID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="ResourceID" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ResourceId" type="xs:int" minOccurs="0" maxOccurs="1" />
             <xs:element name="Filename" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="X" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Y" type="xs:int" minOccurs="1" maxOccurs="1"/>
@@ -2115,11 +2115,12 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="IAT" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ClientId" type="xs:long" minOccurs="0" maxOccurs="1" />
 			<xs:element name="FileName" type="xs:string" minOccurs="1" maxOccurs="1" />
 			<xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1" />
 			<xs:element name="InitialPosition" type="xs:int" minOccurs="1" maxOccurs="1" />
 			<xs:element name="AlternationGroup" type="xs:int" minOccurs="1" maxOccurs="1" />
-            <xs:element name="ScriptId" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ScriptId" type="xs:int" minOccurs="0" maxOccurs="1" />
 			<xs:group ref="iat:SurveyItemType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="TimeoutMillis" type="xs:long" use="required" form="unqualified" />
@@ -2207,7 +2208,7 @@
                     <xs:element name="ServerPath" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="ServerPort" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="ClientID" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="ScriptId" type="xs:int" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="ScriptId" type="xs:int" minOccurs="0" maxOccurs="1" />
                     <xs:element name="NumIATItems" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="IsSevenBlock" type="xs:boolean" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RedirectOnComplete" type="xs:string" minOccurs="1" maxOccurs="1" />

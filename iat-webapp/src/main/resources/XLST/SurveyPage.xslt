@@ -444,7 +444,7 @@ body {
         <script type="text/javascript" src="/IAT/scripts/MiscUtils.js" />
         <xsl:element name="script">
           <xsl:attribute name="type" select="'text/javascript'" />
-          <xsl:attribute name="src" select="string-join(('/IAT/resources/script', @ClientID, @IAT, @Index), '/')" />
+          <xsl:attribute name="src" select="string-join(('/IAT/resources/script', ClientID, IAT, ScriptId), '/')" />
         </xsl:element>
         
       </head>

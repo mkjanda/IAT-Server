@@ -13,7 +13,6 @@ package net.iatsoftware.iat.deployment;
 import net.iatsoftware.iat.config.MyBeanFactory;
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.configfile.Survey;
-import net.iatsoftware.iat.configfile.UniqueResponse;
 import net.iatsoftware.iat.dataservices.XsltService;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
@@ -44,7 +43,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.concurrent.Future;
@@ -59,7 +57,6 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     public static final int ITEM_SLIDES_DEPLOYED = 2;
     protected static final Logger logger = LogManager.getLogger();
     protected static final Logger criticalLogger = LogManager.getLogger("critical");
-    private boolean bItemSlidesDeployed = false, bTestDeployed = false;
     protected Long clientID = 1L, testId = -1L, deploymentSessionId = -1L;
     protected String sessionId = null;
     protected ConfigFile CF;

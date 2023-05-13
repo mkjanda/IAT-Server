@@ -97,7 +97,7 @@
                 
                 <xsl:element name="script">
                     <xsl:attribute name="type" select="'text/javascript'" />
-                    <xsl:attribute name="src" select="string-join(('/IAT/resources/script', @ClientID, @IAT, @Index), '/')" />
+                    <xsl:attribute name="src" select="string-join(('/IAT/resources/script', ClientID, IATName, ScriptId), '/')" />
                     <xsl:value-of select="' '" />
                 </xsl:element>
             </head>
