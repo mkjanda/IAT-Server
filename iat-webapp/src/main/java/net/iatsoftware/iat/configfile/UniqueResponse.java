@@ -16,5 +16,5 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="UniqueResponse")
 @XmlAccessorType(XmlAccessType.NONE)
-public class UniqueResponse extends net.iatsoftware.iat.generated.UniqueResponsePojo {
+public class UniqueResponse extends net.iatsoftware.iat.generated.UniqueResponse {
 }

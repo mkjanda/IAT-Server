@@ -1,0 +1,40 @@
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:remove="all">Server Error Report</title>
+        <meta charset="UTF-8" />
+        <style th:insert="email/fragments/shared-email-styles.css"></style>
+    </head>
+    <body>
+        <th:block th:fragment="exception(ex)">
+            <tr>
+                <td colspan="2" style="margin: 0px; padding: 3px 0px; font-family: myriad, calibri, sans-serif; font-size: 14px;" th:text="${ex.exceptionMessage}"></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="margin: 0px; padding: 3px 0px; font-family: myriad, calibri, sans-serif; font-size: 14px;">Caused by:</td>
+            </tr>
+            <th:block th:each="std : ${ex.stackTraceElement">
+                <tr>
+                    <td></td>
+                    <td style="margin: 0px; padding: 3px 0px; font-family: myriad, calibri, sans-serif; font-size: 12px; line-height: 14px;" th:text="${stl}"></td>
+                </tr>
+            </th:block>
+            <th:block th:each="innerEx : ${ex.innerException}">
+                <tr>
+                    <td colspan="2" style="margin: 0px; padding: 3px 0px; font-family: myriad, calibri, sans-serif; font-size: 14px;">Caused by:</td>
+                </tr>
+                <th:block th:each="stl : ${innerEx.stackTraceElement})">
+                    <tr>
+                        <td></td>
+                        <td style="margin: 0px; padding: 3px 0px; font-family: myriad, calibri, sans-serif; font-size: 12px; line-height: 14px;" th:text="${stl}"></td>
+                    </tr>
+                </th:block>
+            </th:block>
+        </th:block>
+        <p style="font-family: myriad-pro, calibri, sans-serif; font-size: 14px;">Server Error</p>
+        <p style="font-family: myriad-pro, calibri, sans-serif; font-size: 14px;" th:text="${exception.serverMessage}">Server Error</p>
+        <table style="width: 1200px">
+            <tr><td style="width: 30px;"></td><td style="width: 1150px;"></td></tr>
+            <th:block th:replace="::exception(ex=${exception})"></th:block>
+        </table>
+    </body>
+</html>

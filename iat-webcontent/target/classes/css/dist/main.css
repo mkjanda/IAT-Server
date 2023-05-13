@@ -1,0 +1,91 @@
+@import url(https://use.typekit.net/xmu4wql.css);
+body {
+  text-align: center;
+  background: #edf1fe;
+}
+
+body div#caption {
+  margin-top: 50px;
+  margin-bottom: 35px;
+}
+
+body div {
+  width: 1200px;
+  margin: 0px auto;
+}
+
+body div div#content {
+  text-align: left;
+  max-width: 700px;
+  display: table-cell;
+  vertical-align: top;
+  padding-top: 30px;
+}
+
+body div div#content p {
+  font-family: oxtail, serif;
+  font-size: 20px;
+  line-height: 22px;
+  color: #8c3573;
+}
+
+body div div#content p span.hilight {
+  color: #c01352;
+}
+
+body div div#content p span.hilightHover {
+  color: #c01352;
+  cursor: pointer;
+}
+
+body div div#content p span.hilightHover:hover {
+  color: #426972;
+}
+
+body div div#content p span .attention,
+body div div#content p .error {
+  font-family: coquette;
+  font-weight: 900;
+  font-size: 20px;
+  vertical-align: baseline;
+  color: #a35776;
+  text-shadow: 1px 1px 0px #7b4368;
+}
+
+body div div#logo {
+  display: table-cell;
+  vertical-align: top;
+  width: 500px;
+}
+
+body p {
+  font-family: oxtail, serif;
+  font-size: 20px;
+  line-height: 22px;
+  color: #8c3573;
+}
+
+body p span.hilight {
+  color: #c01352;
+}
+
+body p span.hilightHover {
+  color: #c01352;
+  cursor: pointer;
+}
+
+body p span.hilightHover:hover {
+  color: #426972;
+}
+
+body p span .attention,
+body p .error {
+  font-family: coquette;
+  font-weight: 900;
+  font-size: 20px;
+  vertical-align: baseline;
+  color: #a35776;
+  text-shadow: 1px 1px 0px #7b4368;
+}
+
+/*# sourceMappingURL=main.css.map */

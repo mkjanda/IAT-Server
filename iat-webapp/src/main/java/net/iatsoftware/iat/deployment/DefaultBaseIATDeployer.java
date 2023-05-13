@@ -267,7 +267,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     private void generateSurvey(Survey survey)
             throws DeploymentTerminationException {
         deploymentProgress.setStage(DeploymentStage.GENERATING_SURVEY);
-        deploymentProgress.setActiveElement(survey.getSurveyName());
+        deploymentProgress.setActiveElement(String.format("Survey #%d", this.CF.getSurvey().indexOf(survey)));
         try {
             var bOut = new ByteArrayOutputStream();
             marshaller.marshal(survey, new StreamResult(bOut));
@@ -292,29 +292,15 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         }
     }
 
-    private void processUniqueResponses(IAT test) throws DeploymentTerminationException {
-        UniqueResponse unique = null;
-        deploymentProgress.setStage(DeploymentStage.PROCESSING_UNIQUE_SURVEY_RESPONSES);
-        this.CF.getIAT
-        String uniqueRespString = new String(
-                iatRepositoryManager.getTestResource(test, "UniqueResponse", ResourceType.DEPLOYMENT_FILE)
-                        .getResourceBytes(),
-                StandardCharsets.UTF_16);
-        var sSource = new StreamSource(new StringReader(uniqueRespString));
-        try {
-            unique = (UniqueResponse) unmarshaller.unmarshal(sSource);
-        } catch (java.io.IOException ex) {
-            throw new DeploymentTerminationException("Error unmarshalling unique response file during test deployment",
-                    ex);
-        }
+    private void processUniqueResponses(IAT test) {
         UniqueResponseItem uri = new UniqueResponseItem();
-        uri.setAdditive(unique.isAdditive());
-        uri.setItemNum(unique.getItemNum());
-        uri.setSurveyName(unique.getSurveyName());
+        uri.setAdditive(CF.getUniqueResponse().isAdditive());
+        uri.setItemNum(CF.getUniqueResponse().getItemNum());
+        uri.setSurveyName(CF.getUniqueResponse().getSurveyName());
         uri.setTest(test);
         iatRepositoryManager.addUniqueResponseItem(uri);
-        if (!unique.isAdditive())
-            iatRepositoryManager.addUniqueResponses(uri, unique.getValue());
+        if (!CF.getUniqueResponse().isAdditive())
+            iatRepositoryManager.addUniqueResponses(uri, CF.getUniqueResponse().getValue());
         this.deploymentProgress.incProgress();
     }
 
@@ -326,8 +312,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         var source = new StreamSource(new ByteArrayInputStream(iatResource.getResourceBytes()));
         this.CF = (ConfigFile)this.unmarshaller.unmarshal(source);
         int numStages = (1 + this.CF.getSurvey().size());
-        if (CF.isHasUniqueResponse())
-            numStages++;
+        processUniqueResponses(test);
         this.deploymentProgress.setProgressRange(0, numStages);
             test.setRedirectOnComplete(CF.getRedirectOnComplete());
             test.setAlternated(true);
@@ -337,9 +322,6 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
             for (var survey : this.CF.getSurvey()) {
                 generateSurvey(survey);
                 this.deploymentProgress.incProgress();
-            }
-            if (CF.isHasUniqueResponse()) {
-                processUniqueResponses(test);
             }
             deploymentProgress.setStage(DeploymentStage.FINALIZING_DEPLOYMENT);
             test.setDeploymentDescriptor(DeploymentDescriptor.digest());

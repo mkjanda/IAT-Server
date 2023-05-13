@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="ConfigFile")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ConfigFile extends net.iatsoftware.iat.generated.ConfigFilePojo {
+public class ConfigFile extends net.iatsoftware.iat.generated.ConfigFile {
     private int numPresentations = -1;
     
     public int getNumPresentations()

@@ -1,0 +1,23 @@
+{
+  "groups": [
+    {
+      "name": "",
+      "type": "net.iatsoftware.iat.config.IATServer",
+      "sourceType": "net.iatsoftware.iat.config.IATServer"
+    },
+    {
+      "name": "datasource",
+      "type": "javax.sql.DataSource",
+      "sourceType": "net.iatsoftware.iat.config.IATServer",
+      "sourceMethod": "dataSource()"
+    },
+    {
+      "name": "iat.webapp",
+      "type": "java.util.Properties",
+      "sourceType": "net.iatsoftware.iat.config.IATServer",
+      "sourceMethod": "serverConfiguration()"
+    }
+  ],
+  "properties": [],
+  "hints": []
+}

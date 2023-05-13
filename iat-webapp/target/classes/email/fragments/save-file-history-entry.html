@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:replace="all">TODO supply a title</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    </head>
+    <body>
+        <td width="400" th:fragment="save-file-history-entry (entry)">
+            <p style="margin: 0px; padding: 3px 0px; font-family: myriad-pro, calibri, sans-serif; font-size: 14px; line-height: 14px;" th:text="${'Time opened: ' + entry.timeOpened}"></p>
+            <p style="margin: 0px; padding: 3px 0px; font-family: myriad-pro, calibri, sans-serif; font-size: 14px; line-height: 14px;" th:text="${'Product key: ' + entry.productKey}"></p>
+            <p style="margin: 0px; padding: 3px 0px; font-family: myriad-pro, calibri, sans-serif; font-size: 14px; line-height: 14px;" th:text="${'Error count: ' + entry.errorCount}"></p>
+            <p style="margin: 0px; padding: 3px 0px; font-family: myriad-pro, calibri, sans-serif; font-size: 14px; line-height: 14px;" th:text="${'Errors reported: ' + entry.errorsReported}"></p>
+            <p style="margin: 0px; padding: 3px 0px; font-family: myriad-pro, calibri, sans-serif; font-size: 14px; line-height: 14px;" th:text="${'Version: ' + entry.saveFileVersion}"></p>
+            <br />
+        </td>
+    </body>
+</html>
