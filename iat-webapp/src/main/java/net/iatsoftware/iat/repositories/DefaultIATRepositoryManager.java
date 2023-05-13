@@ -24,7 +24,6 @@ import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestBackupFile;
-import net.iatsoftware.iat.entities.JavaScript;
 import net.iatsoftware.iat.entities.UniqueResponse;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.entities.ResultSet;
@@ -111,9 +110,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     TestResourceRepository testResourceRepository;
     @Inject
     ResourceReferenceRepository resourceReferenceRepository;
-    @Inject
-    JavaScriptRepository javaScriptRepository;
-
 
     @Transactional
     @Override
@@ -1021,16 +1017,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     public void deleteIAT(IAT test) {
         iatRepository.delete(test);
-    }
-
-    @Transactional
-    public void addJavaScript(JavaScript script) {
-        javaScriptRepository.add(script);
-    }
-
-    @Transactional
-    public String getJavaScript(Client client, IAT test, int index) {
-        return javaScriptRepository.getScript(test, index);
     }
 
     @Scheduled(initialDelay = 5_000L, fixedDelay = 5_000L)

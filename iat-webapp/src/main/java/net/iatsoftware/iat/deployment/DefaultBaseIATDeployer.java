@@ -17,7 +17,6 @@ import net.iatsoftware.iat.configfile.UniqueResponse;
 import net.iatsoftware.iat.dataservices.XsltService;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.JavaScript;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestResource;
@@ -125,16 +124,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         this.deploymentProgress = new DeploymentProgress(sessId, eventPublisher);
     }
 
-    protected abstract void generateTest();
-
-    public void setRecorded(ResourceType type) {
-        if (type == ResourceType.DEPLOYMENT_FILE)
-            bTestDeployed = true;
-        if (type == ResourceType.ITEM_SLIDE)
-            bItemSlidesDeployed = true;
-        if (bItemSlidesDeployed && bTestDeployed)
-            generateTest();
-    }
+    public abstract void generateTest();
 
     @Override
     public void requestUpload(String sessID) throws java.net.URISyntaxException {
@@ -245,14 +235,17 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         deploymentProgress.setActiveElement(test.getTestName());
         try {
             var iatConfiguration = iatRepositoryManager.getTestResource(test, 0L);
+            var testResource = new TestResource(test, "text/javascript", ResourceType.JAVASCRIPT);
+            iatRepositoryManager.addTestResource(testResource);
+            CF.setScriptId(testResource.getResourceId());
             var jsBytes1 = transformAndMungeCode(iatConfiguration.getResourceBytes(), compiledXSLT.getIATHeaderX());
             var jsBytes2 = transformAndMungeCode(iatConfiguration.getResourceBytes(), compiledXSLT.getIATScriptX());
             var jsBytes = new byte[jsBytes1.length + jsBytes2.length + 1];
             System.arraycopy(jsBytes1, 0, jsBytes, 0, jsBytes1.length);
             jsBytes[jsBytes1.length] = "\n".getBytes(java.nio.charset.StandardCharsets.UTF_8)[0];
             System.arraycopy(jsBytes2, 0, jsBytes, jsBytes1.length + 1, jsBytes2.length);
-            var js = new JavaScript(test, 0, new String(jsBytes, java.nio.charset.StandardCharsets.UTF_8));
-            iatRepositoryManager.addJavaScript(js);
+            testResource.setResourceBytes(jsBytes);
+            iatRepositoryManager.updateTestResource(testResource);
             var bOut = new ByteArrayOutputStream();
             marshaller.marshal(this.CF, new StreamResult(bOut));
             var htmlBytes = transform(bOut.toByteArray(), compiledXSLT.getIATPageX());
@@ -272,15 +265,16 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
             var bOut = new ByteArrayOutputStream();
             marshaller.marshal(survey, new StreamResult(bOut));
             var surveyBytes = bOut.toByteArray();
-
+            var testResource = new TestResource(test, "text/javascript", ResourceType.JAVASCRIPT);
+            survey.setScriptId(testResource.getResourceId());
             var surveyPageBytes = transformAndMungeCode(surveyBytes, compiledXSLT.getSurveyHeaderX());
             var surveyScriptBytes = transformAndMungeCode(surveyBytes, compiledXSLT.getSurveyScriptX());
             var surveyJSBytes = new byte[surveyPageBytes.length + 1 + surveyScriptBytes.length];
             System.arraycopy(surveyPageBytes, 0, surveyJSBytes, 0, surveyPageBytes.length);
             surveyJSBytes[surveyPageBytes.length] = 10;
             System.arraycopy(surveyScriptBytes, 0, surveyJSBytes, surveyPageBytes.length + 1, surveyScriptBytes.length);
-            iatRepositoryManager.addJavaScript(new JavaScript(this.test, this.CF.getSurvey().indexOf(survey) + 1, 
-                new String(surveyJSBytes, StandardCharsets.UTF_8)));
+            testResource.setResourceBytes(surveyJSBytes);
+            iatRepositoryManager.updateTestResource(testResource);
 
             var surveyHTMLBytes = transformAndMungeCode(surveyBytes, compiledXSLT.getSurveyPageX());
             var ts = new TestSegment(this.test, survey.getSurveyName(), new String(surveyHTMLBytes, StandardCharsets.UTF_8),

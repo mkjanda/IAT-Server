@@ -2,11 +2,8 @@ package net.iatsoftware.iat.entities;
 
 import net.iatsoftware.iat.generated.ResourceType;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -27,11 +24,10 @@ import javax.persistence.Table;
 public class TestResource implements java.io.Serializable{
     private static final long serialVersionUID = 1L;
     private IAT test;
-    private ResourceType resourceType = ResourceType.DEPLOYMENT_FILE;
-    private String name, path, mimeType;
+    private ResourceType resourceType = null;
+    private String mimeType;
     private Long id;
-    private Integer resourceId;
-	private Integer size;
+    private Integer resourceId = -1, size;
     private byte[] resource;
     private List<ResourceReference> resourceReferences = new ArrayList<>();
 
@@ -39,54 +35,27 @@ public class TestResource implements java.io.Serializable{
 
     public TestResource(IAT test, Integer resourceId, String mimeType, byte[] resource, ResourceType type) {
         this.test = test;
-        this.path = "";
-        URLEncoder.encode(this.name = test.getTestName(), StandardCharsets.UTF_8);
         this.mimeType = mimeType;
         this.resourceType = type;
         this.resource = resource;
         this.size = resource.length;
         this.resourceId = resourceId;
+    }
+
+    public TestResource(IAT test, String mimeType, byte[] resource, ResourceType type) {
+        this.test = test;
+        this.mimeType = mimeType;
+        this.resourceType = type;
+        this.resource = resource;
+        this.size = resource.length;
+    }
+
+    public TestResource(IAT test, String mimeType, ResourceType type) {
+        this.test = test;
+        this.resource = null;
+        this.resourceType = type;
     }
     
-    public TestResource(IAT test, String path, String mimeType, byte[] resource, ResourceType type) {
-        this.test = test;
-        path = URLEncoder.encode(path, StandardCharsets.UTF_8);
-		var matcher = Pattern.compile("(.*/)?([^/]+)").matcher(path);
-		matcher.find();
-		this.name = matcher.toMatchResult().group(2);
-        this.path = path;
-        this.resource = resource;
-        this.mimeType = mimeType;
-        this.size = resource.length;
-        this.resourceType = type;
-        this.resourceId = 0;
-    }
-
-    public TestResource(IAT test, Integer resourceId, String path, String mimeType, int size, ResourceType type) {
-        this.test = test;
-        path = URLEncoder.encode(path, StandardCharsets.UTF_8);
-		var matcher = Pattern.compile("(.*/)?([^/]+)").matcher(path);
-		matcher.find();
-		this.name = matcher.toMatchResult().group(2);
-        this.path = path;
-        this.mimeType = mimeType;
-        this.size = size;
-        this.resourceType = type;
-        this.resourceId = resourceId;
-    }
-
-    public TestResource(IAT test, Integer resourceId, String path, String mimeType, byte[] resourceBytes, ResourceType type) {
-        this.test = test;
-        path = URLEncoder.encode(path, StandardCharsets.UTF_8);
-		var matcher = Pattern.compile("(.*/)?([^/]+)").matcher(path);
-		matcher.find();
-		this.name = matcher.toMatchResult().group(2);
-        this.path = path;
-        this.mimeType = mimeType;
-        this.size = resourceBytes.length;
-        this.resourceType = type;
-        this.resourceId = resourceId;
-    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -108,24 +77,6 @@ public class TestResource implements java.io.Serializable{
     }
 
     @Basic
-    @Column(name="name")
-    public String getName() {
-        return name;
-    }
-    public void setName(String val) {
-        name = val;
-    }
-
-    @Basic
-    @Column(name="path")
-    public String getPath() {
-        return path;
-    }
-    public void setPath(String val) {
-        path = val;
-    }
-
-    @Basic
     @Column(name="mimetype")
     public String getMimeType() {
         return this.mimeType;
@@ -135,11 +86,13 @@ public class TestResource implements java.io.Serializable{
     }
 
     @Lob
-    @Column(name="resource_data", nullable=true)
+    @Column(name="resource", nullable=true)
     public byte[] getResourceBytes() {
         return resource;
     }
     public void setResourceBytes(byte []val) {
+        if (this.resource != null)
+            this.size = this.resource.length;
         this.resource = val;
     }
 
@@ -153,7 +106,7 @@ public class TestResource implements java.io.Serializable{
     }
 
     @Basic
-    @Column(name="resource_id")
+    @Column(name="discriminator")
     public Integer getResourceId() {
         return resourceId;
     }

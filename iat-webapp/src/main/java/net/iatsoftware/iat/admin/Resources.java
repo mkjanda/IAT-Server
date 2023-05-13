@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import javax.inject.Inject;
 
 @Controller
-@RequestMapping("/Admin/resources")
+@RequestMapping("/resources")
 public class Resources {
     public static final String HEADER = "HEADER";
     public static final String SCRIPT = "SCRIPT";

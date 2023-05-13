@@ -18,6 +18,7 @@ import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.events.AbortDeploymentEvent;
+import net.iatsoftware.iat.events.BeginDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentDescriptorMismatch;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
@@ -157,11 +158,11 @@ public class DefaultDeploymentService implements DeploymentService {
     }
 
     @EventListener
-    public void onResourcesStored(TestResourcesRecordedEvent evt) {
-        var deployer = IATDeploymentMap.get(evt.getDeploymentID());
+    public void beginDeployment(BeginDeploymentEvent evt) {
+        var deployer = IATDeploymentMap.get(evt.getDeploymentSessionID());
         if (deployer == null)
             return;
-        deployer.setRecorded(evt.getType());
+        deployer.generateTest();
     }
 
     @EventListener

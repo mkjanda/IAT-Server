@@ -19,7 +19,6 @@ public interface BaseIATDeployer  {
     void requestUpload(String sessionId) throws java.net.URISyntaxException;
     void storeRSAKeys(PartiallyEncryptedRSAKey adminKey, PartiallyEncryptedRSAKey dataKey);
     void storeTokenDefinition(TokenType type, String tokenName);
-    void setRecorded(ResourceType type);
     void setFailed(String sessId, ServerExceptionMessage ex);
     void setSuccess(String sessId);
     void abort();
@@ -28,4 +27,5 @@ public interface BaseIATDeployer  {
     void setTestId(Long id);
     void setDeploymentId(Long id);
     void setSessionId(String sessId);
+    void generateTest();
 }

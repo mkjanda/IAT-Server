@@ -17,8 +17,6 @@ import net.iatsoftware.iat.events.CommunicationEvent;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Calendar;
-import javax.persistence.criteria.CriteriaBuilder;
 
 @Repository
 public class DefaultDeploymentSessionRepository extends GenericJpaRepository<Long, DeploymentSession>

@@ -4,8 +4,6 @@ import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.generated.ResourceType;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,7 +12,6 @@ import javax.inject.Inject;
 @Repository
 public class DefaultTestResourceRepository extends GenericJpaRepository<Long, TestResource>
 		implements TestResourceRepository {
-	private static final Logger critical = LogManager.getLogger("critical");
 
 	@Inject
 	ResourceReferenceRepository resourceReferenceRepository;
@@ -43,6 +40,24 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 		var root = query.from(TestResource.class);
 		var pred = cb.equal(root.get("test"), test);
 		return this.entityManager.createQuery(query.where(pred).orderBy(cb.asc(root.get("resourceId")))).getResultList();
+	}
 
+	public void add(TestResource res) {
+		if (res.getResourceId() != -1) {
+			super.add(res);
+			return;
+		}
+		var cb = this.entityManager.getCriteriaBuilder();
+		var query = cb.createQuery(Integer.class);
+		var root = query.from(TestResource.class);
+		var resourceIds = this.entityManager.createQuery(query.select(root.get("resourceId"))
+			.where(cb.equal(root.get("test"), res.getTest())).orderBy(cb.asc(root.get("resourceId"))))
+			.getResultList();
+		if (!resourceIds.contains(resourceIds.size() - 1)) {
+			res.setResourceId(resourceIds.size() - 1);
+		} else {
+			res.setResourceId(resourceIds.stream().reduce(-1, (a, b) -> (a + 1 == b) ? b : a));
+		}
+		super.add(res);
 	}
 }

@@ -14,8 +14,8 @@ import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.TestResource;
+import net.iatsoftware.iat.events.BeginDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
-import net.iatsoftware.iat.events.TestResourcesRecordedEvent;
 import net.iatsoftware.iat.events.ManifestReceivedEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.generated.ResourceType;
@@ -42,6 +42,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.lang.module.FindException;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -76,21 +78,28 @@ public class DeploymentUploadController {
 	@ResponseBody
 	public ResponseEntity<Envelope> receiveDeploymentUpload(@RequestHeader("deploymentId") Long deploymentId,
 			@RequestHeader("sessionId") String sessId, @RequestBody byte[] data) {
-		var map = manifests.get(deploymentId).get(MANIFEST);
+		var manifest = (Manifest)manifests.get(deploymentId).get(MANIFEST);
 		var ds = repositoryManager.getDeploymentSession(deploymentId);
 		var test = ds.getTest();
 		try {
 			if (!ds.getWebSocketId().equals(sessId))
 				throw new FindException("The supplied web socket session id mismatched.");
-			int offset = 0;
-			repositoryManager.getTestResources(test, ResourceType.DEPLOYMENT_FILE).stream()
-					.sorted((r1, r2) -> (int) (r1.getId() - r2.getId())).forEach(r -> {
-						byte[] fileData = new byte[(int) r.getSize()];
-						System.arraycopy(data, offset, fileData, 0, fileData.length);
-						r.setResourceBytes(fileData);
-						r.setSize(fileData.length);
-						repositoryManager.updateTestResource(r);
-					});
+			var offset = 0;
+			var fSize = manifest.getFiles().stream().filter(f -> f.getResourceType().equals(ResourceType.TEST_CONFIGURATION)).findFirst().get().getSize();
+			byte []fData = new byte[fSize];
+			System.arraycopy(data, offset, fData, 0, fSize);
+			offset += fSize;
+			var testResource = new TestResource(test, 0, "text/xml", fData, ResourceType.TEST_CONFIGURATION);
+			this.publisher.publishEvent(new BeginDeploymentEvent(ds.getId()));
+			var images = manifest.getFiles().stream().filter(f -> f.getResourceType().equals(ResourceType.IMAGE)).collect(Collectors.toList());
+			for (var img : images) {
+				fSize = img.getSize();
+				fData = new byte[fSize];
+				System.arraycopy(data, offset, fData, 0, fSize);
+				offset += fSize;
+				testResource = new TestResource(test, img.getMimeType(), fData, ResourceType.IMAGE);
+				repositoryManager.addTestResource(testResource);
+			};
 		} catch (javax.persistence.NoResultException | javax.persistence.NonUniqueResultException ex) {
 			this.publisher.publishEvent(new DeploymentFailedEvent(sessId, deploymentId,
 					new ServerExceptionMessage("Error uploading file manifest.", ex)));
@@ -99,37 +108,38 @@ public class DeploymentUploadController {
 							+ test.getClient() + ", Test " + test.getTestName() + ")", ex)),
 							HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		publisher.publishEvent(new TestResourcesRecordedEvent(sessId, deploymentId, ResourceType.DEPLOYMENT_FILE));
 		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 
 	@PostMapping(value = "/ItemSlideFiles")
 	public ResponseEntity<Envelope> receiveItemSlideUpload(@RequestHeader("deploymentId") Long deploymentId,
-			@RequestHeader("sessionId") String sessionId, @RequestBody byte[] data) {
-		DeploymentSession ds = repositoryManager.getDeploymentSession(deploymentId);
-		var test = ds.getTest();
-		try {
-			if (!ds.getWebSocketId().equals(sessionId))
-				throw new FindException("The supplied web socket session id mismatched.");
-			int offset = 0;
-			repositoryManager.getTestResources(test, ResourceType.ITEM_SLIDE).stream()
-					.sorted((r1, r2) -> (int) (r1.getId() - r2.getId())).forEach(r -> {
-						byte[] fileData = new byte[(int) r.getSize()];
-						System.arraycopy(data, offset, fileData, 0, fileData.length);
-						r.setResourceBytes(fileData);
-						r.setSize(fileData.length);
-						repositoryManager.updateTestResource(r);
-					});
-		} catch (javax.persistence.NoResultException | javax.persistence.NonUniqueResultException ex) {
-			this.publisher.publishEvent(new DeploymentFailedEvent(sessionId, deploymentId,
+		@RequestHeader("sessionId") String sessId, @RequestBody byte[] data) {
+			var manifest = (Manifest)manifests.get(deploymentId).get(MANIFEST);
+			var ds = repositoryManager.getDeploymentSession(deploymentId);
+			var test = ds.getTest();
+			try {
+				if (!ds.getWebSocketId().equals(sessId))
+					throw new FindException("The supplied web socket session id mismatched.");
+				var offset = 0;
+				var slides = manifest.getFiles().stream().filter(f -> f.getResourceType()
+					.equals(ResourceType.ITEM_SLIDE)).collect(Collectors.toList());
+				for (var slide : slides) {
+					var fSize = slide.getSize();
+					var fData = new byte[fSize];
+					System.arraycopy(data, offset, fData, 0, fSize);
+					offset += fSize;
+					var testResource = new TestResource(test, slide.getMimeType(), fData, ResourceType.ITEM_SLIDE);
+					repositoryManager.addTestResource(testResource);
+				};
+			} catch (javax.persistence.NoResultException | javax.persistence.NonUniqueResultException ex) {
+				this.publisher.publishEvent(new DeploymentFailedEvent(sessId, deploymentId,
 					new ServerExceptionMessage("Error uploading file manifest.", ex)));
-			return new ResponseEntity<>(
+				return new ResponseEntity<>(
 					new Envelope(new ServerExceptionMessage("Error storing file manifest for (Client "
-							+ test.getClient() + ", Test " + test.getTestName() + ")", ex)),
-					HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		publisher.publishEvent(new TestResourcesRecordedEvent(sessionId, deploymentId, ResourceType.ITEM_SLIDE));
-		return new ResponseEntity<>(null, HttpStatus.OK);
+						+ test.getClient() + ", Test " + test.getTestName() + ")", ex)),
+						HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+			return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 
 	@EventListener

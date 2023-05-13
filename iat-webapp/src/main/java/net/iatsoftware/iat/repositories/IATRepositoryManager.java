@@ -20,7 +20,6 @@ import net.iatsoftware.iat.entities.EncCodeLine;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.RSAKeyData;
-import net.iatsoftware.iat.entities.JavaScript;
 import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.entities.TestSegment;
@@ -166,7 +165,4 @@ public interface IATRepositoryManager {
     DeploymentSession getDeploymentSession(IAT test);
     DeploymentSession getDeploymentSession(CommunicationEvent ce);
     DeploymentSession getDeploymentSession(Long dsId);
-    void addJavaScript(JavaScript script);
-    String getJavaScript(Client client, IAT tests, int index);
-//    void deleteIAT(String testName, Long clientId);
 }
