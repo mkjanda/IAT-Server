@@ -385,7 +385,7 @@ public class DefaultTransactionService implements TransactionService {
                 case REQUEST_SERVER_REPORT:
                     transLogger.info(logMsgBase + "Request server report");
                     this.publisher.publishEvent(
-                            new DataRequestEvent(e.getSessionId(), client.getClientId(), test.getTestName(),
+                            new DataRequestEvent(e.getSessionId(), client.getClientId(), "",
                                     DataRequestEventType.retrieveServerReport));
                     break;
 
@@ -458,7 +458,7 @@ public class DefaultTransactionService implements TransactionService {
                         return;
                     }
                     transLogger.info(logMsgBase + "Deleting IAT (" + test.getTestName());
-                    iatRepositoryManager.deleteIAT(test);
+                    iatRepositoryManager.deleteIAT(test.getId());
                     sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.TRANSACTION_SUCCESS), true);
                     break;
 

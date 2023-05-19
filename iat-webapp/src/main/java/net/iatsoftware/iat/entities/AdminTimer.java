@@ -102,7 +102,7 @@ public class AdminTimer implements java.io.Serializable {
     }
 
     @Basic
-    @Column(name="session_id")
+    @Column(name="iatsessionid")
     public String getIATSESSIONID() {
         return sessId;
     }

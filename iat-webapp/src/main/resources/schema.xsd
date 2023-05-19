@@ -2231,6 +2231,7 @@
                     <xs:element name="PrefixSelfAlternatingSurveys" type="xs:boolean" minOccurs="1" maxOccurs="1" />
                     <xs:element name="DynamicSpecifier" type="iat:dynamic-specifier-impl" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="Survey" type="iat:survey-impl" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="SurveyB64Xml" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="UniqueResponse" type="iat:unique-response-impl" />
                     <xs:element name="Layout" type="iat:layout-impl" minOccurs="1" maxOccurs="1" />
                     <xs:element name="IATEventList" type="iat:event-list-impl" minOccurs="1" maxOccurs="1" />

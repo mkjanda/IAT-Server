@@ -7,15 +7,13 @@
 
   <xsl:variable name="itemTypeValues" >
     <ResponseTypes>
-      <ResponseType>Instruction</ResponseType>
+      <ResponseType>Boolean</ResponseType>
       <ResponseType>Bounded Length</ResponseType>
       <ResponseType>Bounded Number</ResponseType>
       <ResponseType>Date</ResponseType>
       <ResponseType>Fixed Digit</ResponseType>
-      <ResponseType>Fixed Length</ResponseType>
       <ResponseType>Instruction</ResponseType>
       <ResponseType>Likert</ResponseType>
-      <ResponseType>Maximum Length</ResponseType>
       <ResponseType>Multiple Selection</ResponseType>
       <ResponseType>Multiple Choice</ResponseType>
       <ResponseType>Regular Expression</ResponseType>
@@ -25,13 +23,13 @@
 
   <xsl:template match="Survey" >
     <xsl:variable name="surveyItemTypes" >
-      <xsl:if test="count(SurveyItem[Response/@Type ne 'Instruction']/Response/@Type) eq 0" >
+      <xsl:if test="count(SurveyItem/child::*[@Type ne 'Instruction']) eq 0" >
         <xsl:value-of select="0" />
       </xsl:if>
-      <xsl:if test="count(SurveyItem[Response/@Type ne 'Instruction']/Response/@Type) ne 0" >
-        <xsl:for-each select="SurveyItem[Response/@Type ne 'Instruction']/Response/@Type" >
-          <xsl:variable name="type" select = "." />
-          <xsl:value-of select="count($itemTypeValues/ResponseTypes/ResponseType[. eq $type]/preceding-sibling::*)" />
+      <xsl:if test="count(SurveyItem/child::*[@Type ne 'Instruction']) ne 0" >
+        <xsl:for-each select="SurveyItem/child::*[@Type ne 'Instruction']" >
+          <xsl:variable name="type" select = "@Type" />
+          <xsl:value-of select="count($itemTypeValues/ResponseTypes/ResponseType[. eq $type]/preceding-sibling::ResponseType)" />
         </xsl:for-each>
       </xsl:if>
     </xsl:variable>

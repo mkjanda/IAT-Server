@@ -72,7 +72,7 @@ public class DefaultMailService implements MailService {
                     logger.error("Error embedding inline image " + trip.getFirst() + " in email", ex);
                 }
             });
-            mailSender.send(message);
+ //           mailSender.send(message);
         } catch (java.io.UnsupportedEncodingException ex) {
         }
     }

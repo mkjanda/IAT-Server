@@ -53,10 +53,10 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 		var resourceIds = this.entityManager.createQuery(query.select(root.get("resourceId"))
 			.where(cb.equal(root.get("test"), res.getTest())).orderBy(cb.asc(root.get("resourceId"))))
 			.getResultList();
-		if (!resourceIds.contains(resourceIds.size() - 1)) {
-			res.setResourceId(resourceIds.size() - 1);
+		if (!resourceIds.contains(resourceIds.size() + 1)) {
+			res.setResourceId(resourceIds.size() + 1);
 		} else {
-			res.setResourceId(resourceIds.stream().reduce(-1, (a, b) -> (a + 1 == b) ? b : a));
+			res.setResourceId(resourceIds.stream().reduce(0, (a, b) -> (a + 1 == b) ? b : a));
 		}
 		super.add(res);
 	}

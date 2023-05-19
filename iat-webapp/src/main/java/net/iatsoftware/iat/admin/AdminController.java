@@ -118,7 +118,7 @@ public class AdminController {
 		}
 
 		public String getCaption() {
-			return AdminController.tokenNotSuppliedCaption;
+			return tokenNotSuppliedCaption;
 		}
 	}
 
@@ -134,7 +134,7 @@ public class AdminController {
 
 		@Override
 		public String getCaption() {
-			return AdminController.invalidTokenNameCaption;
+			return invalidTokenNameCaption;
 		}
 
 		public String getSuppliedTokenName() {
@@ -164,9 +164,9 @@ public class AdminController {
 		@Override
 		public String getCaption() {
 			if (valueError == EXCESSIVE_DATA) {
-				return AdminController.excessiveTokenDataCaption;
+				return excessiveTokenDataCaption;
 			} else if (valueError == MALFORMED_DATA) {
-				return AdminController.malformedTokenDataCaption;
+				return malformedTokenDataCaption;
 			}
 			return "";
 		}
@@ -215,16 +215,16 @@ public class AdminController {
 	private String webappPath;
 
 	@Value("${iat.webapp.invalid-token-name-caption}")
-	public static String invalidTokenNameCaption;
+	public String invalidTokenNameCaption;
 
 	@Value("${iat.webapp.token-not-supplied-caption}")
-	public static String tokenNotSuppliedCaption;
+	public String tokenNotSuppliedCaption;
 
 	@Value("${iat.webapp.excessive-token-data-caption}")
-	public static String excessiveTokenDataCaption;
+	public String excessiveTokenDataCaption;
 
-	@Value("${iat.webwep.malformed-token-data-caption}")
-	public static String malformedTokenDataCaption;
+	@Value("${iat.webapp.malformed-token-data-caption}")
+	public String malformedTokenDataCaption;
 
 	@GetMapping(value = "", params = { "IATName", "ClientID" }, produces="text/html")
 	public ModelAndView startIATAdmin(@RequestParam(name = "IATName") String iatName,

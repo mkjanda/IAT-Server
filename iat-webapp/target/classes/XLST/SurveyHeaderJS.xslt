@@ -95,10 +95,7 @@
                 <xsl:element name="Param">event</xsl:element>
             </xsl:element>
             <xsl:element name="FunctionBody">
-                <xsl:element name="Code">if (event.state.url === '-')</xsl:element>
-                <xsl:element name="Code">window.location.assign("");</xsl:element>
-                <xsl:element name="Code">else</xsl:element>
-                <xsl:element name="Code">window.location.assign(event.state.url);</xsl:element>
+                <xsl:element name="Code">window.location.assign("https://iatsoftware.net");</xsl:element>
             </xsl:element>
         </xsl:element>
 

@@ -83,7 +83,6 @@ public class DeploymentUploadController {
 		if (uploadContents.equals("configuration")) {
 			socketService.setSessionProperty(sessId, "CF",
 					(ConfigFile) marshaller.unmarshal(new StreamSource(new ByteArrayInputStream(data))));
-			this.publisher.publishEvent(new BeginDeploymentEvent(deploymentSession.getId()));
 		} else {
 			var offset = 0;
 			var manifest = (Manifest) manifests.get(deploymentId).get(MANIFEST);
@@ -103,10 +102,9 @@ public class DeploymentUploadController {
 					configFile.getDisplayItemList().getIATDisplayItem().stream()
 							.filter(di -> di.getFilename().equals(img.getName()))
 							.forEach(di -> di.setResourceId(testResource.getResourceId()));
-				}
+				} else if (rType == ResourceType.TEST_CONFIGURATION)
+					this.publisher.publishEvent(new BeginDeploymentEvent(deploymentSession.getId()));
 			}
-			;
-
 		}
 		return new ResponseEntity<>(new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)),
 				HttpStatus.OK);
