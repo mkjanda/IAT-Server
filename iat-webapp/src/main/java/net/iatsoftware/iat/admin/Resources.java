@@ -29,7 +29,6 @@ public class Resources {
     @GetMapping("/{clientId}/{testName}/{resourceId}")
     public ResponseEntity<byte[]> getScript(@PathVariable(name="clientId") long clientId, @PathVariable("testName") String testName,
             @PathVariable(name="resourceId") Long resourceId) {
-
         var iat = repository.getIATByNameAndClientID(testName, clientId);
         var res = repository.getTestResource(iat, resourceId);
         var headers = new HttpHeaders();
@@ -37,8 +36,19 @@ public class Resources {
         return new ResponseEntity<>(res.getResourceBytes(), headers, HttpStatus.OK);
     }
 
+    @GetMapping("/{clientId}/{testName}/{resourceId}/img")
+    public ResponseEntity<byte[]> getImage(@PathVariable(name="clientId") long clientId, @PathVariable("testName") String testName,
+            @PathVariable(name="resourceId") int resourceId) {
+        var iat = repository.getIATByNameAndClientID(testName, clientId);
+        var res = repository.getTestImage(iat, resourceId);
+        var headers = new HttpHeaders();
+        headers.setContentType(MediaType.valueOf(res.getMimeType()));
+        return new ResponseEntity<>(res.getResourceBytes(), headers, HttpStatus.OK);
+    }
+
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    @ExceptionHandler({Exception.class, javax.persistence.NoResultException.class,  javax.persistence.NonUniqueResultException.class})
+    @ExceptionHandler({Exception.class, jakarta.persistence.NoResultException.class,  jakarta.persistence.NonUniqueResultException.class})
     public void handleException(Exception ex) {
         logger.error(ex);
     }

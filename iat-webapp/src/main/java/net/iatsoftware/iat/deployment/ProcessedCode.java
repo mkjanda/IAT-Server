@@ -10,9 +10,9 @@ package net.iatsoftware.iat.deployment;
  * @author Michael Janda
  */
 
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlType(name="ProcessedCode")
 @XmlAccessorType(XmlAccessType.NONE)

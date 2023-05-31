@@ -93,11 +93,21 @@
                 </title>
                 
                 
-                <script type="text/javascript" src="/IAT/scripts/MiscUtils.js" />
-                
                 <xsl:element name="script">
                     <xsl:attribute name="type" select="'text/javascript'" />
-                    <xsl:attribute name="src" select="string-join(('/IAT/resources/script', ClientID, IATName, ScriptId), '/')" />
+                    <xsl:attribute name="src" select="'/IAT/scripts/MiscUtils.js'" />
+                    <xsl:value-of select="' '" />
+                </xsl:element>
+
+                <xsl:element name="script">
+                    <xsl:attribute name="type" select="'text/javascript'" />
+                    <xsl:attribute name="src" select="'/IAT/scripts/SubFunct.js'" />
+                    <xsl:value-of select="' '" />
+                </xsl:element>
+
+                <xsl:element name="script">
+                    <xsl:attribute name="type" select="'text/javascript'" />
+                    <xsl:attribute name="src" select="string-join(('/IAT/resource', ClientID, IATName, ScriptId), '/')" />
                     <xsl:value-of select="' '" />
                 </xsl:element>
             </head>

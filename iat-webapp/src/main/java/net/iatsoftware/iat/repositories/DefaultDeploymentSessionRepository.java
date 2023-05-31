@@ -76,7 +76,7 @@ public class DefaultDeploymentSessionRepository extends GenericJpaRepository<Lon
         try {
             return this.entityManager.createQuery(query.select(root).where(cb.equal(root.get("test"), test))).getSingleResult();
         }
-        catch (javax.persistence.NonUniqueResultException | javax.persistence.NoResultException ex) {
+        catch (jakarta.persistence.NonUniqueResultException | jakarta.persistence.NoResultException ex) {
             return null;
         }
     }
@@ -89,7 +89,7 @@ public class DefaultDeploymentSessionRepository extends GenericJpaRepository<Lon
         try {
             return this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
         }
-        catch (javax.persistence.NoResultException | javax.persistence.NonUniqueResultException ex) {
+        catch (jakarta.persistence.NoResultException | jakarta.persistence.NonUniqueResultException ex) {
             return null;
         }
     }

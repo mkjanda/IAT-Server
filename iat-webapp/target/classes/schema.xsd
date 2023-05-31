@@ -1,18 +1,9 @@
 <?xml version="1.0"?>
 <xs:schema version="1.0"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
-    xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc"
+    xmlns:jaxb="https://jakarta.ee/xml/ns/jaxb"
     xmlns:iat="http://www.iatsoftware.net/schema" targetNamespace="http://www.iatsoftware.net/schema" 
-    jaxb:version="2.1">
-
-    <xs:annotation>
-        <xs:appinfo>
-            <jaxb:globalBindings>
-                <xjc:typeSubstitution type="complex"/>
-            </jaxb:globalBindings>
-        </xs:appinfo>
-    </xs:annotation>
+    jaxb:version="3.0">
 
     <xs:complexType name="AcceptConfirmationPojo" abstract="true">
         <xs:annotation>
@@ -1604,7 +1595,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATEventPojo" abstract="true">
+    <xs:complexType name="IATEvent" abstract="true">
         <xs:attribute name="EventType" type="iat:IATEventType" form="unqualified" use="required"/>
     </xs:complexType>
 
@@ -1622,7 +1613,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Event" type="iat:iat-event-impl" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:group ref="iat:IATEvent" minOccurs="1" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="NumEvents" type="xs:int" use="required"/>
     </xs:complexType>
@@ -1670,7 +1661,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="IATItemPojo">
+    <xs:complexType name="IATItem">
         <xs:annotation>
             <xs:appinfo>
                 <xs:jaxb implClass="net.iatsoftware.iat.configfile.IATItem"/>
@@ -1698,7 +1689,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="KeyedInstructionScreenPojo">
+    <xs:complexType name="KeyedInstructionScreen">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.KeyedInstructionScreen"/>
@@ -1737,7 +1728,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="MockItemInstructionScreenPojo">
+    <xs:complexType name="MockItemInstructionScreen">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.MockItemInstructionScreen"/>
@@ -2127,9 +2118,19 @@
 		<xs:attribute name="UniqueResponse" type="xs:int" use="required" form="unqualified" />
 	</xs:complexType>
 
+    <xs:group name="IATEvent">
+        <xs:sequence>
+            <xs:element name="BeginIATBlock" type="iat:BeginIATBlock" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="BeginInstructionBlock" type="iat:BeginInstructionBlock" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="EndIATBlock" type="iat:EndIATBlock" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="IATItem" type="iat:IATItem" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="KeyedInstructionScreen" type="iat:KeyedInstructionScreen" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="TextInstructionScreen" type="iat:TextInstructionScreen" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="MockItemInstructionScreenInstructionSccreen" type="iat:MockItemInstructionScreen" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:group>
 
-
-    <xs:complexType name="BeginIATBlockPojo">
+    <xs:complexType name="BeginIATBlock">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.BeginIATBlock"/>
@@ -2151,7 +2152,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="BeginInstructionBlockPojo">
+    <xs:complexType name="BeginInstructionBlock">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.BeginInstructionBlock"/>
@@ -2167,7 +2168,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="EndIATBlockPojo">
+    <xs:complexType name="EndIATBlock">
         <xs:complexContent>
             <xs:extension base="iat:iat-event-impl">
                 <xs:sequence>
@@ -2177,7 +2178,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="TextInstructionScreenPojo">
+    <xs:complexType name="TextInstructionScreen">
         <xs:complexContent>
             <xs:extension base="iat:instruction-screen-impl">
                 <xs:sequence>

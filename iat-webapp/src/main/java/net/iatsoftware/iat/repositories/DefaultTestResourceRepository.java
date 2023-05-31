@@ -25,12 +25,12 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 	}
 
 	public TestResource get(IAT test, Long resourceId)
-			throws javax.persistence.NoResultException, javax.persistence.NonUniqueResultException {
+			throws jakarta.persistence.NoResultException, jakarta.persistence.NonUniqueResultException {
 		var cb = this.entityManager.getCriteriaBuilder();
 		var query = cb.createQuery(TestResource.class);
 		var root = query.from(TestResource.class);
 		var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceId"), resourceId),
-			cb.notEqual(root.get("resourceType"), ResourceType.ITEM_SLIDE));
+				cb.notEqual(root.get("resourceType"), ResourceType.ITEM_SLIDE));
 		return this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
 	}
 
@@ -39,25 +39,39 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 		var query = cb.createQuery(TestResource.class);
 		var root = query.from(TestResource.class);
 		var pred = cb.equal(root.get("test"), test);
-		return this.entityManager.createQuery(query.where(pred).orderBy(cb.asc(root.get("resourceId")))).getResultList();
+		return this.entityManager.createQuery(query.where(pred).orderBy(cb.asc(root.get("resourceId"))))
+				.getResultList();
 	}
 
 	public void add(TestResource res) {
-		if (res.getResourceId() != -1) {
-			super.add(res);
-			return;
+		if (res.getResourceId() != null) {
+			if (res.getResourceId() != 0) 
+				throw new jakarta.persistence.PersistenceException("Non-null test resource added");
+			else {
+				super.add(res);
+				return;
+			}
 		}
 		var cb = this.entityManager.getCriteriaBuilder();
 		var query = cb.createQuery(Integer.class);
 		var root = query.from(TestResource.class);
-		var resourceIds = this.entityManager.createQuery(query.select(root.get("resourceId"))
-			.where(cb.equal(root.get("test"), res.getTest())).orderBy(cb.asc(root.get("resourceId"))))
-			.getResultList();
-		if (!resourceIds.contains(resourceIds.size() + 1)) {
-			res.setResourceId(resourceIds.size() + 1);
-		} else {
-			res.setResourceId(resourceIds.stream().reduce(0, (a, b) -> (a + 1 == b) ? b : a));
+
+		synchronized (this) {
+			var resourceIds = this.entityManager.createQuery(query.select(root.get("resourceId"))
+					.where(cb.equal(root.get("test"), res.getTest())).orderBy(cb.asc(root.get("resourceId"))))
+					.getResultList();
+
+			res.setResourceId(resourceIds.stream().reduce(0, (a, b) -> (a < b) ? a : a + 1));
+			super.add(res);
 		}
-		super.add(res);
+	}
+
+	public TestResource getTestImage(IAT test, int index) {
+		var cb = entityManager.getCriteriaBuilder();
+		var query = cb.createQuery(TestResource.class);
+		var root = query.from(TestResource.class);
+		var pred = cb.equal(root.get("test"), test);
+		return this.entityManager.createQuery(query.select(root).where(pred).orderBy(cb.asc(root.get("resourceId"))))
+				.getResultList().get(index - 1);
 	}
 }

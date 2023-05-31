@@ -17,9 +17,9 @@ import net.iatsoftware.iat.messaging.Envelope;
 
 import org.springframework.context.ApplicationEventPublisher;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name = "DeploymentProgress")
 @XmlAccessorType(XmlAccessType.NONE)
@@ -51,9 +51,9 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
     public void setStage(DeploymentStage ds) {
         super.setStage(ds);
         this.activeElement = " ";
-        this.progressMin = -1;
-        this.progressMax = -1;
-        this.progressVal = -1;
+        this.progressMin = 0;
+        this.progressMax = 0;
+        this.progressVal = 0;
         this.lastUpdate = false;
         if (sessionId != null) {
             this.publisher.publishEvent(new WebSocketDataSent(this.sessionId, new Envelope(this.makeClone())));
@@ -75,9 +75,9 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
     public void setStage(DeploymentStage ds, String activeElement) {
         super.setStage(ds);
         this.activeElement = activeElement;
-        this.progressMin = -1;
-        this.progressMax = -1;
-        this.progressVal = -1;
+        this.progressMin = 0;
+        this.progressMax = 0;
+        this.progressVal = 0;
         this.lastUpdate = false;
         if (sessionId != null) {
             this.publisher.publishEvent(new WebSocketDataSent(this.sessionId, new Envelope(this.makeClone())));
@@ -104,9 +104,9 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.Deployment
     @Override
     public void setActiveElement(String activeItem) {
         this.activeElement = activeItem;
-        this.progressMin = -1;
-        this.progressMax = -1;
-        this.progressVal = -1;
+        this.progressMin = 0;
+        this.progressMax = 0;
+        this.progressVal = 0;
         this.lastUpdate = false;
         if (sessionId != null) {
             this.publisher.publishEvent(new WebSocketDataSent(this.sessionId, new Envelope(this.makeClone())));

@@ -21,8 +21,8 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESKeySpec;
 import javax.crypto.spec.IvParameterSpec;
-import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.Unmarshaller;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.transform.stream.StreamSource;
 
 public abstract class AbstractResultData {
@@ -94,7 +94,7 @@ public abstract class AbstractResultData {
         }
     }
 
-    public void buildToc(String toc) throws java.io.IOException, javax.xml.bind.JAXBException {
+    public void buildToc(String toc) throws java.io.IOException, jakarta.xml.bind.JAXBException {
         StringReader sr = new StringReader(toc);
         StreamSource src = new StreamSource(sr);
         Unmarshaller unmarshaller = JAXBContext.newInstance(ResultTOC.class).createUnmarshaller();

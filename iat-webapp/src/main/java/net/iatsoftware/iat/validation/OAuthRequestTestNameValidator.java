@@ -15,8 +15,8 @@ import net.iatsoftware.iat.forms.RegisterTestForRestfulForm;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class OAuthRequestTestNameValidator implements ConstraintValidator<OAuthRequestTestNameValid, RegisterTestForRestfulForm> {
     

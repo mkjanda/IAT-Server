@@ -21,11 +21,11 @@ import java.util.Base64;
 import java.util.Calendar;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 
 
 @Repository
@@ -95,7 +95,7 @@ public class DefaultOAuthAccessRepository extends GenericJpaRepository<Long, OAu
         try {
             oAuth = this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
         }
-        catch (javax.persistence.NoResultException ex) {
+        catch (jakarta.persistence.NoResultException ex) {
             return OAuthAccess.AUTH_TOKEN_NOT_FOUND;
         }
         if (oAuth.isAuthTokenConsumed())
@@ -128,7 +128,7 @@ public class DefaultOAuthAccessRepository extends GenericJpaRepository<Long, OAu
             oAuth = this.update(oAuth);
             return oAuth;
         }
-        catch (javax.persistence.NoResultException ex) {
+        catch (jakarta.persistence.NoResultException ex) {
             return null;
         }
     }
@@ -143,7 +143,7 @@ public class DefaultOAuthAccessRepository extends GenericJpaRepository<Long, OAu
         try {
             oAuth = this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
         }
-        catch (javax.persistence.NoResultException ex) {
+        catch (jakarta.persistence.NoResultException ex) {
             return null;
         }
         return oAuth;
@@ -166,7 +166,7 @@ public class DefaultOAuthAccessRepository extends GenericJpaRepository<Long, OAu
         try {
             oAuth = this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
         }
-        catch (javax.persistence.NoResultException ex) {
+        catch (jakarta.persistence.NoResultException ex) {
             return OAuthAccess.NO_SUCH_REFRESH_TOKEN;
         }
         if ((oAuth.getClient().getClientId() != clientID) || (!oAuth.getTest().getTestName().equals(testName)) || 
@@ -187,7 +187,7 @@ public class DefaultOAuthAccessRepository extends GenericJpaRepository<Long, OAu
         try {
             oAuth = this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
         }
-        catch (javax.persistence.NoResultException | javax.persistence.NonUniqueResultException ex) {
+        catch (jakarta.persistence.NoResultException | jakarta.persistence.NonUniqueResultException ex) {
             return null;
         }
         byte []data = new byte[30];

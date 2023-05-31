@@ -16,9 +16,9 @@ import net.iatsoftware.iat.generated.EnvelopeType;
 import net.iatsoftware.iat.resultdata.ResultPacket;
 import net.iatsoftware.iat.resultdata.ResultSetDescriptor;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name = "Envelope")
 @XmlAccessorType(XmlAccessType.NONE)

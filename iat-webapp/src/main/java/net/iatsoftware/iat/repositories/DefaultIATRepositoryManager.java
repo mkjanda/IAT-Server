@@ -151,7 +151,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void addTestSegment(final TestSegment ts) {
+    public void addTestSegment(TestSegment ts) {
         testSegmentRepository.add(ts);
     }
 
@@ -236,7 +236,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
             iat.setTestName(iatName);
             iatRepository.add(iat);
             return iat.getId();
-        } catch (javax.xml.bind.JAXBException ex) {
+        } catch (jakarta.xml.bind.JAXBException ex) {
             critical.error("Unable to create JAXBContext", ex);
             return -1L;
         }
@@ -628,7 +628,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     public DeploymentSession getDeploymentSession(Long id) {
         try {
             return deploymentSessionRepository.get(id);
-        } catch (javax.persistence.NoResultException ex) {
+        } catch (jakarta.persistence.NoResultException ex) {
             return null;
         }
     }
@@ -663,7 +663,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
         try {
             return deploymentPacketRepository.getData(deploymentSessionRepository.get(test.getId()), packetType,
                     ordinal);
-        } catch (javax.persistence.NoResultException ex) {
+        } catch (jakarta.persistence.NoResultException ex) {
             return null;
         }
     }
@@ -698,7 +698,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public User getUserByClientAndActivationKey(Client c, String activationKey)
-            throws javax.persistence.NonUniqueResultException {
+            throws jakarta.persistence.NonUniqueResultException {
         return userRepository.getUserByClientAndActivationKey(c, activationKey);
     }
 
@@ -763,7 +763,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
             DeploymentSession ds = deploymentSessionRepository.get(test.getId());
             TestBackupFile tbf = new TestBackupFile(fName, fileData, test, ds);
             testBackupFileRepository.add(tbf);
-        } catch (javax.persistence.NoResultException ex) {
+        } catch (jakarta.persistence.NoResultException ex) {
 
         }
     }
@@ -942,7 +942,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public User getUserByClientAndEmail(final Client c, final String email) throws javax.persistence.NoResultException {
+    public User getUserByClientAndEmail(final Client c, final String email) throws jakarta.persistence.NoResultException {
         return this.userRepository.getUserByClientAndEmail(c, email);
     }
 
@@ -1017,6 +1017,11 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     public void deleteIAT(IAT test) {
         iatRepository.delete(test);
+    }
+
+    @Transactional
+    public TestResource getTestImage(IAT test, int index) {
+        return testResourceRepository.getTestImage(test, index);
     }
 
     @Scheduled(initialDelay = 5_000L, fixedDelay = 5_000L)

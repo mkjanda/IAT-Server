@@ -7,7 +7,7 @@
 
   <xsl:template match="ConfigFile" >
     <xsl:variable name="presentationsList" >
-      <xsl:for-each select="//IATEvent[@EventType eq 'BeginIATBlock']" >
+      <xsl:for-each select="//BeginIATBlock" >
         <xsl:value-of select="NumPresentations" />
       </xsl:for-each>
     </xsl:variable>

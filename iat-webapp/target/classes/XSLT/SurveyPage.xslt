@@ -355,6 +355,10 @@ body {
 
                     </xsl:text>
 				</style>
+				<xsl:element name="script">
+					<xsl:attribute name="type" select="'text/javascript'" />
+					<xsl:attribute name="src" select="string-join(('IAT/resource', ClientId, IAT, '1'), '/')" />
+				</xsl:element>
 			</head>
 			<body class="oneColFixCtrHdr" id="body">
 				<div id="container">

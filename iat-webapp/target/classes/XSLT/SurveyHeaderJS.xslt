@@ -168,7 +168,7 @@
                     AbortTest();
                     return;
                     }
-                    window.history.pushState(backUrlObj, "IAT Software", window.location);
+                    window.history.pushState({}, "IAT Software", '/');
                     EventUtil.addHandler(window, "popeventstate", onPopEventState);
                     sessionStorage.setItem("LocalAdminPhase", adminPhase.toString());
                     sessionStorage.setItem("LastAdminPhase", CookieUtil.get("LastAdminPhase"));

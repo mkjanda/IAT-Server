@@ -39,36 +39,36 @@ public class DefaultIATDeployer extends DefaultBaseIATDeployer implements IATDep
         try {
             this.iatRepositoryManager.deleteIAT(this.testId);
         } catch (org.springframework.orm.ObjectOptimisticLockingFailureException failureEx) {
-            this.eventPublisher.publishEvent(new WebSocketDataSent(sessionId, new Envelope(new ServerExceptionMessage("Error halting deployment", failureEx))));
+            this.eventPublisher.publishEvent(new WebSocketDataSent(sessionId,
+                    new Envelope(new ServerExceptionMessage("Error halting deployment", failureEx))));
+        } catch (Exception ex2) {
         }
-        catch (Exception ex2) {}
         if (ex != null) {
             criticalLogger.error("Error deploying iat {}", ex);
             this.eventPublisher.publishEvent(new WebSocketDataSent(sessionId, new Envelope(ex)));
-        } 
-        this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessionId, new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
+        }
+        this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessionId,
+                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
     }
 
     @Override
     protected void onSuccess(String sessId) {
         this.iatRepositoryManager.finalizeDeployment(deploymentSessionId);
-        this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessId, new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS))));
+        this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessId,
+                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS))));
     }
 
     @Override
     public void generateTest() {
-        generationFuture = this.scheduler.submit(() -> {
-            try {
-                IAT test = iatRepositoryManager.getIAT(this.testId);
-                doDeploy(test);
-                this.eventPublisher.publishEvent(new TestDeploymentCompleteEvent(sessionId, this.deploymentSessionId));
-            } catch (DeploymentTerminationException ex) {
-                criticalLogger.error("Error generating IAT", ex);
-                this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId, new ServerExceptionMessage("Deployment Error", ex)));
-            } catch (Exception ex) {
-                criticalLogger.error("Error generating IAT", ex);
-                this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId, new ServerExceptionMessage("Deployment Error", ex)));
-            }
-        });
+        try {
+            IAT test = iatRepositoryManager.getIAT(this.testId);
+            doDeploy(test);
+        } catch (DeploymentTerminationException ex) {
+            criticalLogger.error("Error generating IAT", ex);
+        } catch (Exception ex) {
+            criticalLogger.error("Error generating IAT", ex);
+            this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId,
+                    new ServerExceptionMessage("Deployment Error", ex)));
+        }
     }
 }

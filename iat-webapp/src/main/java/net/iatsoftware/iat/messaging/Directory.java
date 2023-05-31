@@ -10,8 +10,8 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 import net.iatsoftware.iat.generated.ManifestEntityType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
 public class Directory extends net.iatsoftware.iat.generated.DirectoryPojo {

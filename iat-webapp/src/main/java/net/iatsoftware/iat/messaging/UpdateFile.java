@@ -12,9 +12,9 @@ package net.iatsoftware.iat.messaging;
 
 import net.iatsoftware.iat.generated.ManifestEntityType;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="UpdateFile")
 @XmlAccessorType(XmlAccessType.NONE)

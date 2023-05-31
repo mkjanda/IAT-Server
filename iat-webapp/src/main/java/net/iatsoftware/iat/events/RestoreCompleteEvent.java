@@ -10,7 +10,7 @@ package net.iatsoftware.iat.events;
  * @author Michael Janda
  */
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 
 public class RestoreCompleteEvent extends DeploymentEvent {
     

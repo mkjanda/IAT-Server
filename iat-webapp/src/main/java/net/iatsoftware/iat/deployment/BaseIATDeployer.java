@@ -11,7 +11,6 @@ package net.iatsoftware.iat.deployment;
  */
 
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
-import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 

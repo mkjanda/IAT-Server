@@ -73,39 +73,49 @@ public class DeploymentUploadController {
 	private static Logger transactions = LogManager.getLogger("transactions");
 	private static Logger critical = LogManager.getLogger("critical");
 
-	@PostMapping("/{upload}")
+	@PostMapping("/DeploymentFiles/{upload}")
 	public ResponseEntity<Envelope> deploymentUpload(@RequestHeader("deploymentId") Long deploymentId,
 			@RequestHeader("sessionId") String sessId, @PathVariable("upload") String uploadContents,
 			@RequestBody byte[] data) throws java.io.IOException {
 		var deploymentSession = repositoryManager.getDeploymentSession(deploymentId);
 		if (!deploymentSession.getWebSocketId().equals(sessId))
 			throw new FindException("The supplied web socket session id mismatched.");
+		var manifest = (Manifest) manifests.get(deploymentId).get(MANIFEST);
+		var test = deploymentSession.getTest();
 		if (uploadContents.equals("configuration")) {
-			socketService.setSessionProperty(sessId, "CF",
-					(ConfigFile) marshaller.unmarshal(new StreamSource(new ByteArrayInputStream(data))));
+			try {
+				var cf = (ConfigFile) marshaller.unmarshal(new StreamSource(new ByteArrayInputStream(data))); 
+				socketService.setSessionProperty(sessId, "configuration", cf);
+				cf.setIATName(test.getTestName());
+				
+				var testResource = new TestResource(test, 0, "text/xml", data,
+						ResourceType.TEST_CONFIGURATION);
+				repositoryManager.addTestResource(testResource);
+			} catch (java.io.IOException ex) {
+				critical.error("Error unmarshalling config file.", ex);
+			}
 		} else {
 			var offset = 0;
-			var manifest = (Manifest) manifests.get(deploymentId).get(MANIFEST);
-			var test = deploymentSession.getTest();
-			var rType = uploadContents.equals("test") ? ResourceType.IMAGE : ResourceType.ITEM_SLIDE;
+			var rType = uploadContents.equals("images") ? ResourceType.IMAGE : ResourceType.ITEM_SLIDE;
 			var images = manifest.getFiles().stream().filter(f -> f.getResourceType().equals(rType))
 					.collect(Collectors.toList());
+			var configFile = (ConfigFile) socketService.getSessionProperty(sessId, "configuration");
 			for (var img : images) {
 				var fSize = img.getSize();
 				var fData = new byte[fSize];
 				System.arraycopy(data, offset, fData, 0, fSize);
 				offset += fSize;
-				var testResource = new TestResource(test, img.getMimeType(), fData, ResourceType.IMAGE);
+				var testResource = new TestResource(test, img.getMimeType(), fData, rType);
 				repositoryManager.addTestResource(testResource);
 				if (rType == ResourceType.IMAGE) {
-					var configFile = (ConfigFile) socketService.getSessionProperty(sessId, "configuration");
 					configFile.getDisplayItemList().getIATDisplayItem().stream()
 							.filter(di -> di.getFilename().equals(img.getName()))
 							.forEach(di -> di.setResourceId(testResource.getResourceId()));
-				} else if (rType == ResourceType.TEST_CONFIGURATION)
-					this.publisher.publishEvent(new BeginDeploymentEvent(deploymentSession.getId()));
+				}
 			}
 		}
+		if (uploadContents.equals("images"))
+			this.publisher.publishEvent(new BeginDeploymentEvent(deploymentSession.getId()));
 		return new ResponseEntity<>(new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)),
 				HttpStatus.OK);
 	}

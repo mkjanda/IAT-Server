@@ -10,8 +10,8 @@ package net.iatsoftware.iat.configfile;
  * @author Michael Janda
  */
 
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public abstract class IATEvent extends net.iatsoftware.iat.generated.IATEventPojo {}
+public abstract class IATEvent extends net.iatsoftware.iat.generated.IATEvent{}

@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package net.iatsoftware.iat.config;
+package net.iatsoftware.iat;
 
 import net.iatsoftware.iat.admin.AdminViewResolver;
+import net.iatsoftware.iat.config.IATDeployerFactory;
 import net.iatsoftware.iat.deployment.DefaultIATDeployer;
 import net.iatsoftware.iat.deployment.DefaultIATRedeployer;
 import net.iatsoftware.iat.deployment.IATDeployer;
@@ -35,6 +36,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
@@ -87,11 +89,11 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.spring5.view.ThymeleafViewResolver;
+import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -111,8 +113,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.crypto.SecretKeyFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.persistence.SharedCacheMode;
-import javax.persistence.ValidationMode;
+import jakarta.persistence.SharedCacheMode;
+import jakarta.persistence.ValidationMode;
 import javax.sql.DataSource;
 import javax.xml.transform.stream.StreamSource;
 
@@ -122,12 +124,7 @@ import javax.xml.transform.stream.StreamSource;
  */
 @Order(1)
 @SpringBootApplication
-
 @ConfigurationProperties
-@ComponentScan(basePackages = "net.iatsoftware.iat", useDefaultFilters = false, includeFilters = @ComponentScan.Filter({
-        Controller.class }))
-@ComponentScan(basePackages = "net.iatsoftware.iat", excludeFilters = @ComponentScan.Filter(Controller.class))
-@EnableJpaRepositories(basePackages = "net.iatsoftware.iat", includeFilters = @ComponentScan.Filter(Repository.class), bootstrapMode = BootstrapMode.DEFERRED)
 @EnableAsync(order = 1)
 @EnableTransactionManagement(order = 2)
 @EnableWebSocket
@@ -161,9 +158,10 @@ public class IATServer implements SchedulingConfigurer {
         return new MysqlConnectionPoolDataSource();
     }
 
+    @Primary
     @ConfigurationProperties(prefix = "iat.webapp")
     @Bean("ServerConfiguration")
-    public Properties serverConfiguration() {
+    public Properties notServerConfiguration() {
         return new Properties();
     }
 
@@ -262,7 +260,7 @@ public class IATServer implements SchedulingConfigurer {
         Jaxb2Marshaller jaxb2Marshaller = new Jaxb2Marshaller();
         jaxb2Marshaller.setPackagesToScan("net.iatsoftware.iat");
         Map<String, Boolean> properties = new HashMap<>();
-        properties.put(javax.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        properties.put(jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
         return jaxb2Marshaller;
     }
 
@@ -394,6 +392,7 @@ public class IATServer implements SchedulingConfigurer {
         };
     }
 
+    @Primary
     @Bean("aesJs")
     public String aesJs() {
         try {
@@ -422,10 +421,11 @@ public class IATServer implements SchedulingConfigurer {
         return frb;
     }
 
+    @Primary
     @Bean("entityManagerFactory")
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         Map<String, Object> properties = new HashMap<>();
-        properties.put("javax.persistence.schema-generation.database.action", "none");
+        properties.put("jakarta.persistence.schema-generation.database.action", "none");
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
         adapter.setGenerateDdl(false);
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
@@ -438,11 +438,13 @@ public class IATServer implements SchedulingConfigurer {
         return factory;
     }
 
+    @Primary
     @Bean("transactionManager")
     public PlatformTransactionManager transactionManager() {
         return new JpaTransactionManager(entityManagerFactory().getObject());
     }
 
+    @Primary
     @Bean("TaskScheduler")
     public ThreadPoolTaskScheduler taskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
@@ -474,6 +476,7 @@ public class IATServer implements SchedulingConfigurer {
         }
     }
 
+    @Primary
     @Bean("ExceptionMessageSource")
     public MessageSource exceptionMessageSource() {
         ReloadableResourceBundleMessageSource msgSource = new ReloadableResourceBundleMessageSource();

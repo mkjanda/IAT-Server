@@ -20,6 +20,9 @@ import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
+import net.iatsoftware.iat.events.AbortDeploymentEvent;
+import net.iatsoftware.iat.events.DeploymentFailedEvent;
+import net.iatsoftware.iat.events.TestDeploymentCompleteEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.generated.DeploymentStage;
 import net.iatsoftware.iat.generated.ResourceType;
@@ -29,6 +32,8 @@ import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.UploadRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.DeploymentService;
+import net.iatsoftware.iat.services.MailService;
+import net.iatsoftware.iat.services.WebSocketService;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
@@ -71,6 +76,8 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     protected IAT test;
 
     @Inject
+    protected WebSocketService socketService;
+    @Inject
     protected IATRepositoryManager iatRepositoryManager;
     @Inject
     protected MyBeanFactory beanFactory;
@@ -91,6 +98,8 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     @Inject
     @Named("ServerConfiguration")
     protected Properties serverConfiguration;
+    @Inject
+    protected MailService mailService;
 
     public DefaultBaseIATDeployer(Long clientId, Long deploymentId, Long testId, String sessId) {
         try {
@@ -174,26 +183,32 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     protected abstract void onFailure(String sessId, ServerExceptionMessage ex);
 
     protected abstract void onSuccess(String sessId);
-/* 
-    protected void loadTransformSources(IAT test) throws DeploymentTerminationException {
-        try {
-            this.IATSource = iatRepositoryManager.getTestResource(test, 0L).getResourceBytes();
-            var cfString = new String(this.IATSource, StandardCharsets.UTF_16);
-            this.CF = (ConfigFile) unmarshaller.unmarshal(new StreamSource(new StringReader(cfString)));
-            if (this.CF.getSurvey().size() > 0) {
-                SurveySources = new byte[this.CF.getSurvey().size()][];
-                for (int ctr = 1; ctr <= SurveySources.length; ctr++) {
-                    this.SurveySources[ctr] = iatRepositoryManager
-                            .getTestResource(test, (long)ctr).getResourceBytes();
-                }
-            } else {
-                SurveySources = null;
-            }
-        } catch (java.io.IOException ex) {
-            throw new DeploymentTerminationException("Error loading transform sources during test deployment", ex);
-        }
-    }
-*/
+
+    /*
+     * protected void loadTransformSources(IAT test) throws
+     * DeploymentTerminationException {
+     * try {
+     * this.IATSource = iatRepositoryManager.getTestResource(test,
+     * 0L).getResourceBytes();
+     * var cfString = new String(this.IATSource, StandardCharsets.UTF_16);
+     * this.CF = (ConfigFile) unmarshaller.unmarshal(new StreamSource(new
+     * StringReader(cfString)));
+     * if (this.CF.getSurvey().size() > 0) {
+     * SurveySources = new byte[this.CF.getSurvey().size()][];
+     * for (int ctr = 1; ctr <= SurveySources.length; ctr++) {
+     * this.SurveySources[ctr] = iatRepositoryManager
+     * .getTestResource(test, (long)ctr).getResourceBytes();
+     * }
+     * } else {
+     * SurveySources = null;
+     * }
+     * } catch (java.io.IOException ex) {
+     * throw new
+     * DeploymentTerminationException("Error loading transform sources during test deployment"
+     * , ex);
+     * }
+     * }
+     */
     protected void digestTestSegment(StreamSource src, XsltExecutable digestTransX)
             throws DeploymentTerminationException {
         try {
@@ -231,23 +246,24 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         deploymentProgress.setStage(DeploymentStage.GENERATING_IAT);
         deploymentProgress.setActiveElement(test.getTestName());
         try {
-            var iatConfiguration = iatRepositoryManager.getTestResource(test, 0L);
             var testResource = new TestResource(test, "text/javascript", ResourceType.JAVASCRIPT);
             iatRepositoryManager.addTestResource(testResource);
-            CF.setScriptId(testResource.getResourceId());
-            var jsBytes1 = transformAndMungeCode(iatConfiguration.getResourceBytes(), compiledXSLT.getIATHeaderX());
-            var jsBytes2 = transformAndMungeCode(iatConfiguration.getResourceBytes(), compiledXSLT.getIATScriptX());
+            var bOut = new ByteArrayOutputStream();
+            marshaller.marshal(this.CF, new StreamResult(bOut));
+            var jsBytes1 = transformAndMungeCode(bOut.toByteArray(), compiledXSLT.getIATHeaderX());
+            var jsBytes2 = transformAndMungeCode(bOut.toByteArray(), compiledXSLT.getIATScriptX());
             var jsBytes = new byte[jsBytes1.length + jsBytes2.length + 1];
             System.arraycopy(jsBytes1, 0, jsBytes, 0, jsBytes1.length);
             jsBytes[jsBytes1.length] = "\n".getBytes(java.nio.charset.StandardCharsets.UTF_8)[0];
             System.arraycopy(jsBytes2, 0, jsBytes, jsBytes1.length + 1, jsBytes2.length);
             testResource.setResourceBytes(jsBytes);
             iatRepositoryManager.updateTestResource(testResource);
-            var bOut = new ByteArrayOutputStream();
+            CF.setScriptId(testResource.getResourceId());
+            bOut = new ByteArrayOutputStream();
             marshaller.marshal(this.CF, new StreamResult(bOut));
             var htmlBytes = transform(bOut.toByteArray(), compiledXSLT.getIATPageX());
-            var iatTS = new TestSegment(this.test, test.getTestName(), new String(htmlBytes, StandardCharsets.UTF_8), 
-                0, this.CF.getNumBeforeSurveys());
+            var iatTS = new TestSegment(this.test, test.getTestName(), new String(htmlBytes, StandardCharsets.UTF_8),
+                    0, this.CF.getNumBeforeSurveys());
             iatRepositoryManager.addTestSegment(iatTS);
         } catch (net.sf.saxon.s9api.SaxonApiException | java.io.IOException ex) {
             throw new DeploymentTerminationException("XSLT Error while generating files for an IAT", ex);
@@ -274,8 +290,9 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
             iatRepositoryManager.updateTestResource(testResource);
 
             var surveyHTMLBytes = transformAndMungeCode(surveyBytes, compiledXSLT.getSurveyPageX());
-            var ts = new TestSegment(this.test, survey.getSurveyName(), new String(surveyHTMLBytes, StandardCharsets.UTF_8),
-                survey.getAlternationGroup(), survey.getInitialPosition());
+            var ts = new TestSegment(this.test, survey.getSurveyName(),
+                    new String(surveyHTMLBytes, StandardCharsets.UTF_8),
+                    survey.getAlternationGroup(), survey.getInitialPosition());
             ts.setIat(false);
             iatRepositoryManager.addTestSegment(ts);
         } catch (net.sf.saxon.s9api.SaxonApiException | java.io.IOException ex) {
@@ -295,32 +312,38 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         this.deploymentProgress.incProgress();
     }
 
-    protected void doDeploy(IAT test) throws DeploymentTerminationException {
-        try {
-            this.deploymentProgress = new DeploymentProgress(sessionId, eventPublisher);
-        this.deploymentProgress.setStage(DeploymentStage.INITIALIZING_DEPLOYMENT);
-        var iatResource = iatRepositoryManager.getTestResource(this.test, 0L);
-        var source = new StreamSource(new ByteArrayInputStream(iatResource.getResourceBytes()));
-        this.CF = (ConfigFile)this.unmarshaller.unmarshal(source);
-        int numStages = (1 + this.CF.getSurvey().size());
-        processUniqueResponses(test);
-        this.deploymentProgress.setProgressRange(0, numStages);
-            test.setRedirectOnComplete(CF.getRedirectOnComplete());
-            test.setAlternated(true);
-            test.setNumElements(numStages);
-            generateIAT();
-            this.deploymentProgress.incProgress();
-            for (var survey : this.CF.getSurvey()) {
-                generateSurvey(survey);
+    protected void doDeploy(IAT iat) throws DeploymentTerminationException {
+        this.test = iat;
+        this.scheduler.submit(() -> {
+            try {
+                this.deploymentProgress = new DeploymentProgress(sessionId, eventPublisher);
+                this.deploymentProgress.setStage(DeploymentStage.INITIALIZING_DEPLOYMENT);
+                this.CF = (ConfigFile) socketService.getSessionProperty(this.sessionId, "configuration");
+                this.CF.setIATName(this.test.getTestName());
+                int numStages = (1 + this.CF.getNumAfterSurveys() + CF.getNumBeforeSurveys());
+                processUniqueResponses(test);
+                this.deploymentProgress.setProgressRange(0, numStages);
+                test.setRedirectOnComplete(CF.getRedirectOnComplete());
+                test.setAlternated(true);
+                test.setNumElements(numStages);
+                generateIAT();
                 this.deploymentProgress.incProgress();
+                if (this.CF.getSurvey() != null) {
+                    for (var survey : this.CF.getSurvey()) {
+                        generateSurvey(survey);
+                        this.deploymentProgress.incProgress();
+                    }
+                }
+                deploymentProgress.setStage(DeploymentStage.FINALIZING_DEPLOYMENT);
+                test.setDeploymentDescriptor(DeploymentDescriptor.digest());
+                iatRepositoryManager.updateIAT(test);
+                this.eventPublisher.publishEvent(new TestDeploymentCompleteEvent(sessionId, this.deploymentSessionId));
+            } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException | DeploymentTerminationException ex) {
+                logger.error("deployment error", ex);
+                criticalLogger.error("Error reporting deployment error", ex);
+                this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId, 
+                    new ServerExceptionMessage("Deployment Error", ex), test.getId()));
             }
-            deploymentProgress.setStage(DeploymentStage.FINALIZING_DEPLOYMENT);
-            test.setDeploymentDescriptor(DeploymentDescriptor.digest());
-            iatRepositoryManager.updateIAT(test);
-        } catch (java.io.IOException ex) {
-            criticalLogger.error(ex);
-        } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException ex) {
-            throw new DeploymentTerminationException("Null pointer", ex);
-        }
+        });
     }
 }

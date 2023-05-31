@@ -1,0 +1,211 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>IATHeaderJS.xslt</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced; white-space: pre-wrap;}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST1 {font-family: Monospaced; font-weight: bold}
+.xml-attribute {color: #009900}
+.xml-comment {color: #969696}
+.xml-tag {color: #0000e6}
+.xml-value {color: #ce7b00}
+.ST0 {color: #00007c; font-family: Monospaced; font-weight: bold}
+.pi-content {color: #00007c}
+-->
+</style>
+</head>
+<body>
+<table width="100%"><tr><td align="center">/home/michael/IATHeaderJS.xslt</td></tr></table>
+<pre>
+<pre style="font-family:Consolas;font-size:15px;color:black;background:white;"><span style="color:blue;">class</span>&nbsp;<span style="color:#2b91af;">CActivation</span>
+{
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">class</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;:&nbsp;<span style="color:#2b91af;">Enumeration</span>
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;ProductKey&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Field</span>(1,&nbsp;<span style="color:#a31515;">&quot;IATProductCode&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;Version&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Field</span>(2,&nbsp;<span style="color:#a31515;">&quot;Version&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;VerificationCode&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Field</span>(3,&nbsp;<span style="color:#a31515;">&quot;VerificationCode&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;UserEmail&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Field</span>(4,&nbsp;<span style="color:#a31515;">&quot;UserEMail&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;ActivationKey&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Field</span>(5,&nbsp;<span style="color:#a31515;">&quot;IATActivationKey&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;UserName&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Field</span>(6,&nbsp;<span style="color:#a31515;">&quot;ClientName&quot;</span>);
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">IEnumerable</span>&lt;<span style="color:#2b91af;">Field</span>&gt;&nbsp;All&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Field</span>[]&nbsp;{&nbsp;ProductKey,&nbsp;Version,&nbsp;VerificationCode,&nbsp;UserEmail,&nbsp;ActivationKey,&nbsp;UserName&nbsp;};
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">Field</span>&nbsp;<span style="color:#74531f;">Parse</span>(<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">str</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;All.<span style="color:#74531f;">Where</span>(<span style="color:#1f377f;">field</span>&nbsp;=&gt;&nbsp;<span style="color:#1f377f;">field</span>.Name&nbsp;==&nbsp;<span style="color:#1f377f;">str</span>).<span style="color:#74531f;">FirstOrDefault</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:#2b91af;">Field</span>(<span style="color:blue;">int</span>&nbsp;<span style="color:#1f377f;">n</span>,&nbsp;<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">name</span>)&nbsp;:&nbsp;<span style="color:blue;">base</span>(<span style="color:#1f377f;">n</span>,&nbsp;<span style="color:#1f377f;">name</span>)&nbsp;{&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">enum</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>&nbsp;{&nbsp;NotActivated,&nbsp;EMailNotVerified,&nbsp;Activated&nbsp;};
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">int</span>[]&nbsp;ProductKeyModuli&nbsp;=&nbsp;{&nbsp;22,&nbsp;6,&nbsp;17,&nbsp;30,&nbsp;5,&nbsp;15,&nbsp;24,&nbsp;2,&nbsp;19,&nbsp;35,&nbsp;27,&nbsp;2,&nbsp;19,&nbsp;23,&nbsp;25,&nbsp;20,&nbsp;12,&nbsp;4,&nbsp;19,&nbsp;31&nbsp;};
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">byte</span>[]&nbsp;DESData&nbsp;=&nbsp;{&nbsp;0xAD,&nbsp;0x81,&nbsp;0x56,&nbsp;0x1F,&nbsp;0x59,&nbsp;0xE1,&nbsp;0x33,&nbsp;0x85&nbsp;};
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">byte</span>[]&nbsp;IVData&nbsp;=&nbsp;{&nbsp;0x01,&nbsp;0x03,&nbsp;0x05,&nbsp;0x03,&nbsp;0x01,&nbsp;0x09,&nbsp;0x07,&nbsp;0x05&nbsp;};
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">DESCryptoServiceProvider</span>&nbsp;DESCrypt&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">DESCryptoServiceProvider</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:#2b91af;">XDocument</span>&nbsp;ActivationDocument;
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:#2b91af;">Dictionary</span>&lt;<span style="color:#2b91af;">String</span>,&nbsp;<span style="color:#2b91af;">String</span>&gt;&nbsp;ActivationFileContents&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">Dictionary</span>&lt;<span style="color:#2b91af;">String</span>,&nbsp;<span style="color:#2b91af;">String</span>&gt;();
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">CActivation</span>&nbsp;Activation&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">CActivation</span>();
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">CActivation</span>()
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(ActivationDataExistsInRegistry)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#74531f;">CopyActivationDataFromRegistry</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:#2b91af;">CActivation</span>()
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(ActivationDataExists)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ActivationDocument&nbsp;=&nbsp;<span style="color:#2b91af;">XDocument</span>.<span style="color:#74531f;">Load</span>(ActivationFilePath);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">else</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ActivationDocument&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">XDocument</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">XElement</span>(<span style="color:#a31515;">&quot;IATDesign&quot;</span>));
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">int</span>&nbsp;<span style="color:#74531f;">FromBase36</span>(<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">str</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">int</span>&nbsp;<span style="color:#1f377f;">n</span>&nbsp;=&nbsp;0;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">for</span>&nbsp;(<span style="color:blue;">int</span>&nbsp;<span style="color:#1f377f;">ctr</span>&nbsp;=&nbsp;<span style="color:#1f377f;">str</span>.Length&nbsp;-&nbsp;1;&nbsp;<span style="color:#1f377f;">ctr</span>&nbsp;&gt;=&nbsp;0;&nbsp;<span style="color:#1f377f;">ctr</span>--)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;((<span style="color:#1f377f;">str</span>[<span style="color:#1f377f;">ctr</span>]&nbsp;&gt;=&nbsp;<span style="color:#a31515;">&#39;0&#39;</span>)&nbsp;&amp;&amp;&nbsp;(<span style="color:#1f377f;">str</span>[<span style="color:#1f377f;">ctr</span>]&nbsp;&lt;=&nbsp;<span style="color:#a31515;">&#39;9&#39;</span>))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">n</span>&nbsp;+=&nbsp;(<span style="color:blue;">int</span>)<span style="color:#2b91af;">Math</span>.<span style="color:#74531f;">Pow</span>(36,&nbsp;(<span style="color:#1f377f;">str</span>.Length&nbsp;-&nbsp;<span style="color:#1f377f;">ctr</span>&nbsp;-&nbsp;1))&nbsp;*&nbsp;(<span style="color:blue;">int</span>)(<span style="color:#1f377f;">str</span>[<span style="color:#1f377f;">ctr</span>]&nbsp;-&nbsp;<span style="color:#a31515;">&#39;0&#39;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">else</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">n</span>&nbsp;+=&nbsp;(<span style="color:blue;">int</span>)<span style="color:#2b91af;">Math</span>.<span style="color:#74531f;">Pow</span>(36,&nbsp;(<span style="color:#1f377f;">str</span>.Length&nbsp;-&nbsp;<span style="color:#1f377f;">ctr</span>&nbsp;-&nbsp;1))&nbsp;*&nbsp;(<span style="color:blue;">int</span>)(<span style="color:#1f377f;">str</span>[<span style="color:#1f377f;">ctr</span>]&nbsp;-&nbsp;<span style="color:#a31515;">&#39;A&#39;</span>&nbsp;+&nbsp;10);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#1f377f;">n</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;<span style="color:#74531f;">IsActivatedCode</span>(<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">productKey</span>,&nbsp;<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">ActivationKey</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">for</span>&nbsp;(<span style="color:blue;">int</span>&nbsp;<span style="color:#1f377f;">ctr</span>&nbsp;=&nbsp;0;&nbsp;<span style="color:#1f377f;">ctr</span>&nbsp;&lt;&nbsp;<span style="color:#1f377f;">productKey</span>.Length;&nbsp;<span style="color:#1f377f;">ctr</span>&nbsp;+=&nbsp;4)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">int</span>&nbsp;<span style="color:#1f377f;">n</span>&nbsp;=&nbsp;<span style="color:#74531f;">FromBase36</span>(<span style="color:#1f377f;">ActivationKey</span>.<span style="color:#74531f;">Substring</span>(<span style="color:#1f377f;">ctr</span>,&nbsp;4));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">int</span>&nbsp;<span style="color:#1f377f;">m</span>&nbsp;=&nbsp;<span style="color:#74531f;">FromBase36</span>(<span style="color:#1f377f;">productKey</span>.<span style="color:#74531f;">Substring</span>(<span style="color:#1f377f;">ctr</span>&nbsp;&gt;&gt;&nbsp;1,&nbsp;2));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(<span style="color:#1f377f;">n</span>&nbsp;%&nbsp;<span style="color:#1f377f;">m</span>&nbsp;!=&nbsp;ProductKeyModuli[<span style="color:#1f377f;">ctr</span>&nbsp;&gt;&gt;&nbsp;2])
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:blue;">false</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:blue;">true</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>&nbsp;Activated
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">get</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(Activation[<span style="color:#2b91af;">Field</span>.ProductKey]&nbsp;==&nbsp;<span style="color:blue;">null</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>.NotActivated;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(Activation[<span style="color:#2b91af;">Field</span>.ActivationKey]&nbsp;!=&nbsp;<span style="color:blue;">null</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(<span style="color:#74531f;">IsActivatedCode</span>(Activation[<span style="color:#2b91af;">Field</span>.ProductKey],&nbsp;Activation[<span style="color:#2b91af;">Field</span>.ActivationKey]))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>.Activated;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">else</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>.NotActivated;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">EMailConfirmation</span>&nbsp;<span style="color:#1f377f;">emailConfirm</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">EMailConfirmation</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">Task</span>&lt;<span style="color:#2b91af;">EMailConfirmation</span>.<span style="color:#2b91af;">EConfirmResult</span>&gt;&nbsp;<span style="color:#1f377f;">emailConfirmationCheck</span>&nbsp;=&nbsp;<span style="color:#2b91af;">Task</span>&lt;<span style="color:#2b91af;">EMailConfirmation</span>.<span style="color:#2b91af;">EConfirmResult</span>&gt;.<span style="color:#74531f;">Run</span>(()&nbsp;=&gt;&nbsp;<span style="color:#1f377f;">emailConfirm</span>.<span style="color:#74531f;">ConfirmEMailVerification</span>());
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">emailConfirmationCheck</span>.<span style="color:#74531f;">Wait</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(<span style="color:#1f377f;">emailConfirmationCheck</span>.IsFaulted)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>.EMailNotVerified;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">else</span>&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(<span style="color:#1f377f;">emailConfirmationCheck</span>.Result&nbsp;!=&nbsp;<span style="color:#2b91af;">EMailConfirmation</span>.<span style="color:#2b91af;">EConfirmResult</span>.success)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>.EMailNotVerified;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">EActivationStatus</span>.Activated;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:#2b91af;">String</span>&nbsp;<span style="color:blue;">this</span>[<span style="color:#2b91af;">Field</span>&nbsp;<span style="color:#1f377f;">key</span>]
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">get</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">value</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;((<span style="color:#1f377f;">value</span>&nbsp;=&nbsp;ActivationDocument.Root.<span style="color:#74531f;">Elements</span>().<span style="color:#74531f;">Where</span>(<span style="color:#1f377f;">elem</span>&nbsp;=&gt;&nbsp;<span style="color:#1f377f;">elem</span>.Name&nbsp;<span style="color:#74531f;">==</span>&nbsp;<span style="color:#1f377f;">key</span>.Name).<span style="color:#74531f;">Select</span>(<span style="color:#1f377f;">elem</span>&nbsp;=&gt;&nbsp;<span style="color:#1f377f;">elem</span>.Value).<span style="color:#74531f;">FirstOrDefault</span>())&nbsp;==&nbsp;<span style="color:blue;">null</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:blue;">null</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">MemoryStream</span>&nbsp;<span style="color:#1f377f;">memStream</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">MemoryStream</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">CryptoStream</span>&nbsp;<span style="color:#1f377f;">cStream</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">CryptoStream</span>(<span style="color:#1f377f;">memStream</span>,&nbsp;DESCrypt.<span style="color:#74531f;">CreateDecryptor</span>(DESData,&nbsp;IVData),&nbsp;<span style="color:#2b91af;">CryptoStreamMode</span>.Write);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">cStream</span>.<span style="color:#74531f;">Write</span>(<span style="color:#2b91af;">Convert</span>.<span style="color:#74531f;">FromBase64String</span>(<span style="color:#1f377f;">value</span>),&nbsp;0,&nbsp;<span style="color:#2b91af;">Convert</span>.<span style="color:#74531f;">FromBase64String</span>(<span style="color:#1f377f;">value</span>).Length);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">cStream</span>.<span style="color:#74531f;">FlushFinalBlock</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">result</span>&nbsp;=&nbsp;System.Text.<span style="color:#2b91af;">Encoding</span>.UTF8.<span style="color:#74531f;">GetString</span>(<span style="color:#1f377f;">memStream</span>.<span style="color:#74531f;">ToArray</span>());
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">cStream</span>.<span style="color:#74531f;">Dispose</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">memStream</span>.<span style="color:#74531f;">Dispose</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#1f377f;">result</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">set</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(<span style="color:blue;">value</span>&nbsp;==&nbsp;<span style="color:blue;">null</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">MemoryStream</span>&nbsp;<span style="color:#1f377f;">memStream</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">MemoryStream</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">CryptoStream</span>&nbsp;<span style="color:#1f377f;">cStream</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">CryptoStream</span>(<span style="color:#1f377f;">memStream</span>,&nbsp;DESCrypt.<span style="color:#74531f;">CreateEncryptor</span>(DESData,&nbsp;IVData),&nbsp;<span style="color:#2b91af;">CryptoStreamMode</span>.Write);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">cStream</span>.<span style="color:#74531f;">Write</span>(System.Text.<span style="color:#2b91af;">Encoding</span>.UTF8.<span style="color:#74531f;">GetBytes</span>(<span style="color:blue;">value</span>),&nbsp;0,&nbsp;System.Text.<span style="color:#2b91af;">Encoding</span>.UTF8.<span style="color:#74531f;">GetBytes</span>(<span style="color:blue;">value</span>).Length);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">cStream</span>.<span style="color:#74531f;">FlushFinalBlock</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">encValue</span>&nbsp;=&nbsp;<span style="color:#2b91af;">Convert</span>.<span style="color:#74531f;">ToBase64String</span>(<span style="color:#1f377f;">memStream</span>.<span style="color:#74531f;">ToArray</span>());
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">cStream</span>.<span style="color:#74531f;">Dispose</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">memStream</span>.<span style="color:#74531f;">Dispose</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(ActivationDocument.Root.<span style="color:#74531f;">Elements</span>().<span style="color:#74531f;">Select</span>(<span style="color:#1f377f;">elem</span>&nbsp;=&gt;&nbsp;<span style="color:#1f377f;">elem</span>.Name).<span style="color:#74531f;">Contains</span>(<span style="color:#1f377f;">key</span>.Name))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ActivationDocument.Root.<span style="color:#74531f;">Element</span>(<span style="color:#1f377f;">key</span>.Name).<span style="color:#74531f;">SetValue</span>(<span style="color:#1f377f;">encValue</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">else</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ActivationDocument.Root.<span style="color:#74531f;">Add</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">XElement</span>(<span style="color:#1f377f;">key</span>.Name,&nbsp;<span style="color:#1f377f;">encValue</span>));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ActivationDocument.<span style="color:#74531f;">Save</span>(ActivationFilePath);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">String</span>&nbsp;ActivationFileDirectory
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">get</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">Environment</span>.<span style="color:#74531f;">GetFolderPath</span>(<span style="color:#2b91af;">Environment</span>.<span style="color:#2b91af;">SpecialFolder</span>.ApplicationData,&nbsp;<span style="color:#2b91af;">Environment</span>.<span style="color:#2b91af;">SpecialFolderOption</span>.Create)&nbsp;+&nbsp;<span style="color:#2b91af;">Path</span>.DirectorySeparatorChar&nbsp;+&nbsp;<span style="color:#a31515;">&quot;IATSoftware&quot;</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:#2b91af;">String</span>&nbsp;ActivationFilePath
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">get</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;ActivationFileDirectory&nbsp;+&nbsp;<span style="color:#2b91af;">Path</span>.DirectorySeparatorChar&nbsp;+&nbsp;<span style="color:#a31515;">&quot;IATDesign.xml&quot;</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ActivationDataExistsInRegistry
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">get</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:#2b91af;">Registry</span>.CurrentUser.<span style="color:#74531f;">OpenSubKey</span>(<span style="color:#a31515;">&quot;Software&quot;</span>).<span style="color:#74531f;">GetSubKeyNames</span>().<span style="color:#74531f;">Contains</span>(<span style="color:#a31515;">&quot;IATSoftware&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">bool</span>&nbsp;ActivationDataExists
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">get</span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(!<span style="color:#2b91af;">Directory</span>.<span style="color:#74531f;">Exists</span>(ActivationFileDirectory))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:blue;">false</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(!<span style="color:#2b91af;">File</span>.<span style="color:#74531f;">Exists</span>(ActivationFilePath))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:blue;">false</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">return</span>&nbsp;<span style="color:blue;">true</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">private</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">CopyActivationDataFromRegistry</span>()
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">if</span>&nbsp;(!<span style="color:#2b91af;">Directory</span>.<span style="color:#74531f;">Exists</span>(ActivationFileDirectory))
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">Directory</span>.<span style="color:#74531f;">CreateDirectory</span>(ActivationFileDirectory);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">XDocument</span>&nbsp;<span style="color:#1f377f;">xDoc</span>&nbsp;=&nbsp;<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">XDocument</span>();
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">xDoc</span>.<span style="color:#74531f;">Add</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">XElement</span>(<span style="color:#a31515;">&quot;IATDesign&quot;</span>));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">RegistryKey</span>&nbsp;<span style="color:#1f377f;">key</span>&nbsp;=&nbsp;<span style="color:#2b91af;">Registry</span>.CurrentUser.<span style="color:#74531f;">OpenSubKey</span>(<span style="color:#a31515;">&quot;Software&quot;</span>).<span style="color:#74531f;">OpenSubKey</span>(<span style="color:#a31515;">&quot;IATSoftware&quot;</span>).<span style="color:#74531f;">OpenSubKey</span>(<span style="color:#a31515;">&quot;IATClient&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#8f08c4;">foreach</span>&nbsp;(<span style="color:blue;">var</span>&nbsp;<span style="color:#1f377f;">valueName</span>&nbsp;<span style="color:#8f08c4;">in</span>&nbsp;<span style="color:#1f377f;">key</span>.<span style="color:#74531f;">GetValueNames</span>())
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">String</span>&nbsp;<span style="color:#1f377f;">name</span>&nbsp;=&nbsp;(<span style="color:#1f377f;">valueName</span>&nbsp;==&nbsp;<span style="color:#a31515;">&quot;UserKey&quot;</span>)&nbsp;?&nbsp;<span style="color:#a31515;">&quot;VerificationCode&quot;</span>&nbsp;:&nbsp;<span style="color:#1f377f;">valueName</span>;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">xDoc</span>.Root.<span style="color:#74531f;">Add</span>(<span style="color:blue;">new</span>&nbsp;<span style="color:#2b91af;">XElement</span>(<span style="color:#1f377f;">name</span>,&nbsp;<span style="color:#1f377f;">key</span>.<span style="color:#74531f;">GetValue</span>(<span style="color:#1f377f;">valueName</span>)&nbsp;<span style="color:blue;">as</span>&nbsp;<span style="color:#2b91af;">String</span>));
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#1f377f;">xDoc</span>.<span style="color:#74531f;">Save</span>(ActivationFilePath);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#2b91af;">Registry</span>.CurrentUser.<span style="color:#74531f;">OpenSubKey</span>(<span style="color:#a31515;">&quot;Software&quot;</span>,&nbsp;<span style="color:blue;">true</span>).<span style="color:#74531f;">DeleteSubKeyTree</span>(<span style="color:#a31515;">&quot;IATSoftware&quot;</span>);
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}
+&nbsp;&nbsp;&nbsp;&nbsp;}
+ 
+&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue;">public</span>&nbsp;<span style="color:blue;">static</span>&nbsp;<span style="color:blue;">void</span>&nbsp;<span style="color:#74531f;">Activate</span>(<span style="color:#2b91af;">ActivationResponse</span>&nbsp;<span style="color:#1f377f;">confirmation</span>)
+&nbsp;&nbsp;&nbsp;&nbsp;{
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activation[<span style="color:#2b91af;">Field</span>.ProductKey]&nbsp;=&nbsp;<span style="color:#1f377f;">confirmation</span>.ProductKey;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activation[<span style="color:#2b91af;">Field</span>.VerificationCode]&nbsp;=&nbsp;<span style="color:#1f377f;">confirmation</span>.VerificationCode;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activation[<span style="color:#2b91af;">Field</span>.UserName]&nbsp;=&nbsp;<span style="color:#1f377f;">confirmation</span>.ClientName;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Activation[<span style="color:#2b91af;">Field</span>.UserEmail]&nbsp;=&nbsp;<span style="color:#1f377f;">confirmation</span>.ClientEMail;
+&nbsp;&nbsp;&nbsp;&nbsp;}
+}</pre>
+</pre></body>
+</html>

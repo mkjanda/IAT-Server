@@ -13,9 +13,9 @@ package net.iatsoftware.iat.services;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 
-import javax.websocket.Encoder;
-import javax.websocket.Decoder;
-import javax.websocket.EndpointConfig;
+import jakarta.websocket.Encoder;
+import jakarta.websocket.Decoder;
+import jakarta.websocket.EndpointConfig;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import net.iatsoftware.iat.messaging.XmlPacket;

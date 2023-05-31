@@ -16,10 +16,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Calendar;
 import java.util.Random;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaDelete;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaDelete;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 @Repository
 public class DefaultRSADataRepository extends GenericJpaRepository<Long, RSAKeyData> implements RSADataRepository {

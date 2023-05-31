@@ -21,7 +21,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import javax.inject.Inject;
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 
 @Service("MailService")
 @PropertySource("classpath:email/email-config.properties")
@@ -54,7 +54,7 @@ public class DefaultMailService implements MailService {
     ApplicationContext appContext;
 
     @Override
-    public void sendEmail(EmailParameters params) throws javax.mail.MessagingException {
+    public void sendEmail(EmailParameters params) throws jakarta.mail.MessagingException {
         try {
             final Context ctx = new Context();
             ctx.setVariables(params.getParameters());
@@ -68,7 +68,7 @@ public class DefaultMailService implements MailService {
             params.getInlineImages().stream().forEach((trip) -> {
                 try {
                     helper.addInline(trip.getFirst(), appContext.getResource(trip.getSecond()), trip.getThird());
-                } catch (javax.mail.MessagingException ex) {
+                } catch (jakarta.mail.MessagingException ex) {
                     logger.error("Error embedding inline image " + trip.getFirst() + " in email", ex);
                 }
             });
@@ -78,7 +78,7 @@ public class DefaultMailService implements MailService {
     }
 
     @Override
-    public void reportError(String subject, Exception ex) throws javax.mail.MessagingException {
+    public void reportError(String subject, Exception ex) throws jakarta.mail.MessagingException {
         ServerExceptionMessage sEx = new ServerExceptionMessage(subject, ex);
         EmailParameters params = new EmailParameters("sysinfo", "Server Error",
                 "email/server-error-report.html");

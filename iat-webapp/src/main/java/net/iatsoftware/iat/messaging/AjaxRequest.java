@@ -10,9 +10,9 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="AjaxRequest")
 @XmlAccessorType(XmlAccessType.NONE)

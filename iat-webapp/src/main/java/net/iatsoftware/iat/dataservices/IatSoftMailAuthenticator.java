@@ -10,8 +10,8 @@ package net.iatsoftware.iat.dataservices;
  * @author Michael Janda
  */
 
-import javax.mail.Authenticator;
-import javax.mail.PasswordAuthentication;
+import jakarta.mail.Authenticator;
+import jakarta.mail.PasswordAuthentication;
 
 public class IatSoftMailAuthenticator extends Authenticator {
     

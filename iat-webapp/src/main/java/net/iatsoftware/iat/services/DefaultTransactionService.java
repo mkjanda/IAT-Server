@@ -229,7 +229,7 @@ public class DefaultTransactionService implements TransactionService {
                                     true);
                             transLogger.info(logMsgBase + "Request email verification failure");
                         }
-                    } catch (javax.persistence.NoResultException ex) {
+                    } catch (jakarta.persistence.NoResultException ex) {
                         sendMessage(e.getSessionId(),
                                 new TransactionRequest(TransactionType.EMAIL_VERIFICATION_MISMATCH), true);
                         transLogger.info(logMsgBase + "Request email verification failure");
@@ -247,7 +247,7 @@ public class DefaultTransactionService implements TransactionService {
                             transLogger.info(logMsgBase + "Email already verified");
                             return;
                         }
-                    } catch (javax.persistence.NoResultException ex) {
+                    } catch (jakarta.persistence.NoResultException ex) {
                         Predicate<User> emailNotVerified = u2 -> !u2.isEMailVerified();
                         var clientsUsers = client.getUsers().stream().filter(emailNotVerified);
                         if (!clientsUsers.findFirst().isPresent()) {
@@ -269,7 +269,7 @@ public class DefaultTransactionService implements TransactionService {
                         outTrans = new TransactionRequest(TransactionType.TRANSACTION_SUCCESS);
                         sendMessage(e.getSessionId(), outTrans, true);
                         transLogger.info(logMsgBase + "Request resend email verification success");
-                    } catch (javax.mail.MessagingException ex) {
+                    } catch (jakarta.mail.MessagingException ex) {
                         logger.error("Error sending email verification message to " + user.getEMail(), ex);
                         sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.TRANSACTION_FAIL), true);
                     }
@@ -558,7 +558,7 @@ public class DefaultTransactionService implements TransactionService {
     }
 
     private void requestConnection(CommunicationEvent e)
-            throws java.io.UnsupportedEncodingException, javax.persistence.NoResultException {
+            throws java.io.UnsupportedEncodingException, jakarta.persistence.NoResultException {
         TransactionRequest inTrans = (TransactionRequest) e.getMessage();
         Handshake h = Handshake.createOutHand();
         webSocketService.setSessionProperty(e.getSessionId(), "Handshake", h);
@@ -584,7 +584,7 @@ public class DefaultTransactionService implements TransactionService {
                     u.setActivationKey(inTrans.getActivationKey());
                     iatRepositoryManager.updateUser(u);
                 }
-            } catch (javax.persistence.NoResultException ex2) {
+            } catch (jakarta.persistence.NoResultException ex2) {
             }
         }
         if (u != null) {
@@ -595,7 +595,7 @@ public class DefaultTransactionService implements TransactionService {
     }
 
     private void activateProduct(CommunicationEvent e) throws java.io.UnsupportedEncodingException,
-            javax.mail.MessagingException, org.springframework.mail.MailSendException {
+            jakarta.mail.MessagingException, org.springframework.mail.MailSendException {
         ActivationRequest request = (ActivationRequest) e.getMessage();
         Client c = (Client) this.webSocketService.getSessionProperty(e.getSessionId(), "Client");
         if (c.isDeleted()) {
@@ -641,7 +641,7 @@ public class DefaultTransactionService implements TransactionService {
         emailParams.addInlineImage("header", headerClasspathLocation, "image/png");
         mailService.sendEmail(emailParams);
         /*
-         * } catch (javax.mail.MessagingException |
+         * } catch (jakarta.mail.MessagingException |
          * org.springframework.mail.MailSendException ex) {
          * logger.error("Error sending email verification message to " +
          * user.getEMail(), ex); this.sendMessage(e.getSessionId(), new

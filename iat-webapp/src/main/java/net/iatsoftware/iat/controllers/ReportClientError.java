@@ -221,7 +221,7 @@ public class ReportClientError {
 
     @PostMapping(value = "/InvalidSaveFile", consumes = "text/xml")
     public @ResponseBody String corruptedSaveFileReport(@RequestBody CorruptedSaveFileReport report)
-            throws javax.mail.MessagingException {
+            throws jakarta.mail.MessagingException {
         Client c = iatRepositoryManager.getClient(report.getProductCode());
         c.setInvalidSaveFiles(c.getInvalidSaveFiles() + 1);
         if (c.getInvalidSaveFiles() >= 3) {

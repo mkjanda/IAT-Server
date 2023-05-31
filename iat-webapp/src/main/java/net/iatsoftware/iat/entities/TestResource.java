@@ -4,20 +4,20 @@ import net.iatsoftware.iat.generated.ResourceType;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name="test_resources")
@@ -27,7 +27,7 @@ public class TestResource implements java.io.Serializable{
     private ResourceType resourceType = null;
     private String mimeType;
     private Long id;
-    private Integer resourceId = -1, size;
+    private Integer resourceId = null, size;
     private byte[] resource;
     private List<ResourceReference> resourceReferences = new ArrayList<>();
 
@@ -54,6 +54,8 @@ public class TestResource implements java.io.Serializable{
         this.test = test;
         this.resource = null;
         this.resourceType = type;
+        this.size = 0;
+        this.mimeType = mimeType;
     }
     
 

@@ -12,13 +12,13 @@ package net.iatsoftware.iat.configfile;
 
 import net.iatsoftware.iat.generated.IATEventType;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="IATEvent")
 @XmlAccessorType(XmlAccessType.NONE)
-public class BeginIATBlock extends net.iatsoftware.iat.generated.BeginIATBlockPojo {
+public class BeginIATBlock extends net.iatsoftware.iat.generated.BeginIATBlock {
     public BeginIATBlock()
     {
         this.eventType = IATEventType.BEGIN_IAT_BLOCK;

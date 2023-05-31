@@ -84,7 +84,7 @@ public class DefaultDeploymentService implements DeploymentService {
             webSocketService.setSessionProperty(sessID, "DeploymentID", ds.getId());
             webSocketService.setSessionProperty(sessID, "IATName", testName);
             return ds.getDeploymentStart();
-        } catch (javax.xml.bind.JAXBException ex) {
+        } catch (jakarta.xml.bind.JAXBException ex) {
             this.publisher.publishEvent(new DeploymentFailedEvent(sessID, -1,
                     new ServerExceptionMessage("Failed to marshal manifest object", ex)));
             var calendar = Calendar.getInstance();
@@ -107,7 +107,7 @@ public class DefaultDeploymentService implements DeploymentService {
             ds.setTest(test);
             iatRepositoryManager.storeDeploymentSession(ds);
             test.setNumAdministrations(oldTest.getNumAdministrations());
-        } catch (javax.xml.bind.JAXBException ex) {
+        } catch (jakarta.xml.bind.JAXBException ex) {
             this.publisher.publishEvent(new DeploymentFailedEvent(sessID, -1,
                     new ServerExceptionMessage("Failed to marshal manifest object", ex)));
             var calendar = Calendar.getInstance();

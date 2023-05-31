@@ -14,10 +14,10 @@ import net.iatsoftware.iat.entities.Client;
 
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Predicate;
 
 import java.util.List;
 
@@ -36,7 +36,7 @@ public class DefaultUserRepository extends GenericJpaRepository<Long, User>
             return null;
         }
         if (results.stream().map(User::getClient).map(Client::getClientId).distinct().count() > 1) {
-            throw new javax.persistence.NonUniqueResultException();
+            throw new jakarta.persistence.NonUniqueResultException();
         }
         return results.get(0);
     }
@@ -51,7 +51,7 @@ public class DefaultUserRepository extends GenericJpaRepository<Long, User>
     }
     
     @Override
-    public User getUserByVerificationKey(String key) throws javax.persistence.NoResultException {
+    public User getUserByVerificationKey(String key) throws jakarta.persistence.NoResultException {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = cb.createQuery(User.class);
         Root<User> root = query.from(User.class);
@@ -60,7 +60,7 @@ public class DefaultUserRepository extends GenericJpaRepository<Long, User>
     }
 
     @Override
-    public User getUserByClientAndEmail(Client c, String email) throws javax.persistence.NoResultException {
+    public User getUserByClientAndEmail(Client c, String email) throws jakarta.persistence.NoResultException {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<User> query = cb.createQuery(User.class);
         Root<User> root = query.from(User.class);

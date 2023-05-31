@@ -16,10 +16,10 @@ import net.iatsoftware.iat.generated.KeyType;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Predicate;
 
 @Repository
 public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaRepository<Long, PartiallyEncryptedRSAKey>
@@ -34,7 +34,7 @@ public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaReposit
             Predicate pred1 = cb.equal(root.get("test"), test);
             Predicate pred2 = cb.equal(root.get("entityKeyType"), KeyType.DATA);
             return this.entityManager.createQuery(query.where(pred1, pred2)).getSingleResult();
-        } catch (javax.persistence.NoResultException ex) {
+        } catch (jakarta.persistence.NoResultException ex) {
             return null;
         }
     }
@@ -48,7 +48,7 @@ public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaReposit
             Predicate pred1 = cb.equal(root.get("test"), test);
             Predicate pred2 = cb.equal(root.get("entityKeyType"), KeyType.ADMIN);
             return this.entityManager.createQuery(query.where(pred1, pred2)).getSingleResult();
-        } catch (javax.persistence.NoResultException ex) {
+        } catch (jakarta.persistence.NoResultException ex) {
             return null;
         }
     }

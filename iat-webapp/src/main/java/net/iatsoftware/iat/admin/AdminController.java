@@ -27,8 +27,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Named;
 import javax.inject.Inject;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -413,9 +413,6 @@ public class AdminController {
 			SurveyResultRecorder srr = beanFactory.surveyResultRecorder(ts, adminID, numItems, parameterMap,
 					segmentList.size() == adminPhase);
 			srr.run();
-			if (srr.getSpecifierValues() != null) {
-				sess.setAttribute(SessionProperties.SPECIFIER_VALUES, srr.getSpecifierValues());
-			}
 		}
 		if (lastSegment) {
 			return completeTest(sess);
@@ -474,9 +471,6 @@ public class AdminController {
 			SurveyResultRecorder srr = beanFactory.surveyResultRecorder(ts, adminID, numItems, parameterMap,
 					segmentList.size() == adminPhase);
 			srr.run();
-			if (srr.getSpecifierValues() != null) {
-				sess.setAttribute("SpecifierValues", srr.getSpecifierValues());
-			}
 		}
 		if (adminPhase == segmentList.size()) {
 			return completeTest(sess);
@@ -756,7 +750,6 @@ public class AdminController {
 			params.setCorruptCookieName("corrupted");
 		}
 		params.setSessionId(sessId);
-		params.setServerPath(serverConfiguration.getProperty("path"));
 		params.setClientId(Long.toString(test.getClient().getClientId()));
 		params.setIatName(test.getTestName());
 		params.setVersion(test.getVersion());

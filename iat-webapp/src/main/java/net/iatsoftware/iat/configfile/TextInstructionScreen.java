@@ -12,13 +12,13 @@ package net.iatsoftware.iat.configfile;
 
 import net.iatsoftware.iat.generated.IATEventType;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="IATEvent")
 @XmlAccessorType(XmlAccessType.NONE)
-public class TextInstructionScreen extends net.iatsoftware.iat.generated.TextInstructionScreenPojo {
+public class TextInstructionScreen extends net.iatsoftware.iat.generated.TextInstructionScreen {
     public TextInstructionScreen() {
         this.eventType = IATEventType.TEXT_INSTRUCTION_SCREEN;
     }

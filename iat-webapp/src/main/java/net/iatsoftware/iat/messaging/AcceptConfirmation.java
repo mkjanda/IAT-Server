@@ -9,7 +9,7 @@ package net.iatsoftware.iat.messaging;
  *
  * @author Michael Janda
  */
-import javax.xml.bind.annotation.XmlType;
+import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name = "AcceptConfirmation")
 public class AcceptConfirmation extends net.iatsoftware.iat.generated.AcceptConfirmationPojo {

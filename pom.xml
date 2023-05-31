@@ -9,12 +9,12 @@
     <description>The parent project for the IAT Server Application</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.11</version>
+        <version>3.1.0</version>
         <relativePath></relativePath>
     </parent>
     <organization>
@@ -54,7 +54,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <releases>
-                            <release>11</release>
+                            <release>17</release>
                         </releases>
                     </configuration>
                 </plugin>

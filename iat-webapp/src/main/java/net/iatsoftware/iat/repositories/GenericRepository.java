@@ -11,7 +11,7 @@ package net.iatsoftware.iat.repositories;
  */
 
 import org.springframework.validation.annotation.Validated;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.io.Serializable;
 
 @Validated

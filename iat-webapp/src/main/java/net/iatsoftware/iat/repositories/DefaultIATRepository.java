@@ -18,12 +18,12 @@ import org.apache.logging.log4j.LogManager;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.CriteriaUpdate;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.TypedQuery;
 
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
@@ -62,7 +62,7 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
             Predicate pred1 = cb.equal(iatRoot.get("client"), client);
             Predicate pred2 = cb.equal(iatRoot.get("testName"), testName);
             return this.entityManager.createQuery(iatQuery.where(pred1, pred2)).getSingleResult();
-        } catch (javax.persistence.NonUniqueResultException | javax.persistence.NoResultException ex) {
+        } catch (jakarta.persistence.NonUniqueResultException | jakarta.persistence.NoResultException ex) {
             logger.error("No such IAT", ex);
             return null;
         }

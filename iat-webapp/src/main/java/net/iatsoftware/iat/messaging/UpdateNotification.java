@@ -2,10 +2,10 @@ package net.iatsoftware.iat.messaging;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "UpdateNotification")
 @XmlAccessorType(XmlAccessType.NONE)

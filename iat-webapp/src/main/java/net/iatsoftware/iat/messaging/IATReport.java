@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
 import javax.inject.Inject;
 
 /**
@@ -56,7 +56,7 @@ public class IATReport extends net.iatsoftware.iat.generated.IATReportPojo {
         DeploymentSession ds = null;
         try {
             ds = iatRepositoryManager.getDeploymentSession(test);
-        } catch (javax.persistence.NoResultException ex) {
+        } catch (jakarta.persistence.NoResultException ex) {
             ds = null;
         }
         deploying = ds != null;

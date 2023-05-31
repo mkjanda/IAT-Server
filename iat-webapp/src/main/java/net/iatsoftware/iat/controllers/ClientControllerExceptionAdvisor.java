@@ -18,8 +18,8 @@ public class ClientControllerExceptionAdvisor {
     private static final Logger logger = LogManager.getLogger("critical");
     
     @ResponseStatus(HttpStatus.OK)
-    @ExceptionHandler(javax.mail.MessagingException.class)
-    @ResponseBody String handleMessagingException(javax.mail.MessagingException ex) {
+    @ExceptionHandler(jakarta.mail.MessagingException.class)
+    @ResponseBody String handleMessagingException(jakarta.mail.MessagingException ex) {
         logger.error(ex);
         return "fail";
     }

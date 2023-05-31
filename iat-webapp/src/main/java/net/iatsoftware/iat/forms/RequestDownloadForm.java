@@ -10,7 +10,7 @@ package net.iatsoftware.iat.forms;
  * @author Michael Janda
  */
 
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.Size;
 
 public class RequestDownloadForm {
     @Size(min=20, max=20, message="{validate.requestDownload.invalidPassword}")

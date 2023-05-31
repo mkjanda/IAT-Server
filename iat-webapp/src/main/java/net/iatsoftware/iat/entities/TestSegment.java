@@ -12,20 +12,20 @@ package net.iatsoftware.iat.entities;
 
 
 import java.util.Set;
-import javax.persistence.Table;
-import javax.persistence.Entity;
-import javax.persistence.Column;
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Lob;
-import javax.persistence.Index;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Column;
+import jakarta.persistence.Basic;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Index;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
 
 @Entity
 @Table(name = "test_segments", indexes = {
@@ -36,8 +36,7 @@ public class TestSegment implements java.io.Serializable {
     private long id;
     private IAT test;
     private String elementName;
-    private String html;
-    private String jskeys_xml;
+    private String html, jskeys_xml;
     private boolean iat = false;
     private int alternationPriority, initialPos, numAlternations;
     private Set<DynamicSpecifier> dynamicSpecifiers;
@@ -47,10 +46,13 @@ public class TestSegment implements java.io.Serializable {
     public TestSegment(IAT test, String elementName, String html, int alternationPriority, int initialPos) {
         this.test = test;
         this.elementName = elementName;
-        this.html = html;
+        this.html = html; 
         this.alternationPriority = alternationPriority;
         this.numAlternations = 0;
         this.initialPos = initialPos;
+        if (elementName.equals(test.getTestName())) {
+            this.iat = true;
+        }
     }
 
     @Id
@@ -85,7 +87,7 @@ public class TestSegment implements java.io.Serializable {
     }
 
     @Lob
-    @Column(name = "jskeys_xml, nullable=true")
+    @Column(name = "jskeys_xml", nullable=true)
     public String getJsKeyXml() {
         if (this.jskeys_xml == null)
             return null;
@@ -141,13 +143,5 @@ public class TestSegment implements java.io.Serializable {
     }
     public void setIat(boolean val) {
         this.iat = val;
-    }
-    
-    @OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER, targetEntity=net.iatsoftware.iat.entities.DynamicSpecifier.class, mappedBy="testSegment")
-    public Set<DynamicSpecifier> getDynamicSpecifiers() {
-        return this.dynamicSpecifiers;
-    }
-    public void setDynamicSpecifiers(Set<DynamicSpecifier> val) {
-        this.dynamicSpecifiers = val;
     }
 }

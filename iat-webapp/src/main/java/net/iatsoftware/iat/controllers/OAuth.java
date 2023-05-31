@@ -51,7 +51,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/OAuth")
@@ -149,7 +149,7 @@ public class OAuth {
             params.addParameter("errorReport", errorReport);
             this.mailService.sendEmail(params);
             errorReport.setReported(true);
-        } catch (javax.mail.MessagingException ex2) {
+        } catch (jakarta.mail.MessagingException ex2) {
             logger.error("Error reporting oauth exception:", ex);
             logger.error("Because of: ", ex2);
             errorReport.setReported(false);

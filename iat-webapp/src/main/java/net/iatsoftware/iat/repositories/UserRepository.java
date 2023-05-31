@@ -15,8 +15,8 @@ import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.User;
 
 public interface UserRepository extends GenericRepository<Long, User> {
-    User getFirstUserWithEmail(String email) throws javax.persistence.NonUniqueResultException;
-    User getUserByClientAndActivationKey(Client c, String email) throws javax.persistence.NoResultException;
+    User getFirstUserWithEmail(String email) throws jakarta.persistence.NonUniqueResultException;
+    User getUserByClientAndActivationKey(Client c, String email) throws jakarta.persistence.NoResultException;
     User getUserByVerificationKey(String verificaitonKey);
     User getUserByClientAndEmail(Client c, String email);
 }

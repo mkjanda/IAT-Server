@@ -12,20 +12,20 @@ package net.iatsoftware.iat.entities;
 
 import net.iatsoftware.iat.generated.PacketType;
 
-import javax.persistence.Basic;
-import javax.persistence.Table;
-import javax.persistence.Entity;
-import javax.persistence.Lob;
-import javax.persistence.Column;
-import javax.persistence.Index;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Column;
+import jakarta.persistence.Index;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 @Entity
 @Table(name="deployment_packets", indexes=

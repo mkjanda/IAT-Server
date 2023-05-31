@@ -13,5 +13,4 @@ package net.iatsoftware.iat.admin;
 import java.util.Map;
 
 public interface SurveyResultRecorder extends Runnable {
-    Map<Integer, String> getSpecifierValues();
 }

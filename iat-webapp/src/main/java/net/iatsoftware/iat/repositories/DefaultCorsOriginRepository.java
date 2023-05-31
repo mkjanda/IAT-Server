@@ -16,10 +16,10 @@ import net.iatsoftware.iat.entities.CorsOrigin;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import javax.persistence.criteria.Root;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.CriteriaQuery;
 
 @Repository
 public class DefaultCorsOriginRepository extends GenericJpaRepository<Long, CorsOrigin> implements CorsOriginRepository {

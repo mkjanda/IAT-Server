@@ -53,7 +53,7 @@ public interface IATRepositoryManager {
     String getTestSegmentHtml(Long testSegmentID);
     Client getClient(Long clientID);
     Client getClient(String productKey);
-    User getUserByClientAndActivationKey(Client c, String activationKey) throws javax.persistence.NoResultException;
+    User getUserByClientAndActivationKey(Client c, String activationKey) throws jakarta.persistence.NoResultException;
     void addUser(User u);
     void updateUser(User u);
     boolean iatExists(Client c, String iatName);
@@ -150,7 +150,7 @@ public interface IATRepositoryManager {
     void deleteUser(User u);
     void deleteIAT(IAT test);
     User getUserByVerificationKey(String key);
-    User getUserByClientAndEmail(Client c, String email) throws javax.persistence.NoResultException;
+    User getUserByClientAndEmail(Client c, String email) throws jakarta.persistence.NoResultException;
     boolean clientIdMatchesClientSecret(String id, String secret);
     boolean checkClientEmailExists(String email);
     TestSegment getTestSegment(IAT iat, String segmentName);
@@ -165,4 +165,5 @@ public interface IATRepositoryManager {
     DeploymentSession getDeploymentSession(IAT test);
     DeploymentSession getDeploymentSession(CommunicationEvent ce);
     DeploymentSession getDeploymentSession(Long dsId);
+    TestResource getTestImage(IAT test, int index);
 }

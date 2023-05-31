@@ -15,7 +15,7 @@ import net.iatsoftware.iat.validation.OAuthRequestTestNameValid;
 import net.iatsoftware.iat.validation.OAuthRequestTestPasswordValid;
 import net.iatsoftware.iat.validation.URL;
 
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 
 @OAuthRequestTestNameValid(message="{validate.requestOAuthRegistration.invalidTestName}")
 @OAuthRequestTestPasswordValid(message="{validate.requestOAuthRegistration.invalidTestPassword}")

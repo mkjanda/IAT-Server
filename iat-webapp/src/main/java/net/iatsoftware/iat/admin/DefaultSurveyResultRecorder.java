@@ -24,8 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.StreamSupport;
 import javax.inject.Inject;
 import java.util.stream.IntStream;
 import javax.xml.transform.stream.StreamResult;
@@ -41,8 +39,6 @@ public class DefaultSurveyResultRecorder extends ResultRecorder implements Surve
     private long adminID;
     private String testElem;
     private final Map<String, String> resultData;
-    private Set<DynamicSpecifier> specifiers;
-    private Map<Integer, String> specifierValues = null;
     
     public DefaultSurveyResultRecorder() {
         super(null, false);
@@ -57,9 +53,6 @@ public class DefaultSurveyResultRecorder extends ResultRecorder implements Surve
         this.resultData = new HashMap<>();
         for (String key : resultMap.keySet())
             resultData.put(key, resultMap.get(key));
-        this.specifiers = testSeg.getDynamicSpecifiers();
-        if (!this.specifiers.isEmpty())
-            this.specifierValues = new HashMap<>();
     }
 
     private SurveyResponseSet parseResults() {
@@ -67,16 +60,8 @@ public class DefaultSurveyResultRecorder extends ResultRecorder implements Surve
         IntStream.rangeClosed(1, numItems).forEach((ndx) -> {
             final String resp = resultData.get("Item" + Integer.toString(ndx));
             responses.add(resp);
-            StreamSupport.stream(this.specifiers.spliterator(), false).filter((spec) -> (spec.getItemNum() == ndx)).forEach((spec) -> {
-                this.specifierValues.put(spec.getTestSpecifierID(), spec.testValue(resp));
-            });
         });
         return new SurveyResponseSet(testElem, responses);
-    }
-    
-    @Override
-    public Map<Integer, String> getSpecifierValues() {
-        return this.specifierValues;
     }
 
     @Async

@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.ByteArrayOutputStream;
 import javax.crypto.Cipher;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
 import javax.crypto.SecretKey;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKeyFactory;

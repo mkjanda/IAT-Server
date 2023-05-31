@@ -25,8 +25,8 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.websocket.RemoteEndpoint;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.websocket.RemoteEndpoint;
 
 public class DeploymentUploadResolver extends CommonsMultipartResolver {
     

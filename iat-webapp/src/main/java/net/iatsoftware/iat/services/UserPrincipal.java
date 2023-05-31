@@ -9,7 +9,7 @@ package net.iatsoftware.iat.services;
  *
  * @author Michael Janda
  */
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.security.Principal;
 

@@ -12,6 +12,6 @@ package net.iatsoftware.iat.services;
 
 
 public interface MailService {
-    void sendEmail(EmailParameters params) throws javax.mail.MessagingException;
-    void reportError(String serverMessage, Exception ex) throws javax.mail.MessagingException;
+    void sendEmail(EmailParameters params) throws jakarta.mail.MessagingException;
+    void reportError(String serverMessage, Exception ex) throws jakarta.mail.MessagingException;
 }

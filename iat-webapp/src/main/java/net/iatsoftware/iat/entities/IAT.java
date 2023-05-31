@@ -13,29 +13,29 @@ package net.iatsoftware.iat.entities;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.Manifest;
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Lob;
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Basic;
-import javax.persistence.Index;
-import javax.persistence.Enumerated;
-import javax.persistence.EnumType;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.persistence.ManyToOne;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.FetchType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Column;
+import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Index;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import jakarta.persistence.Transient;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.FetchType;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Calendar;
-import javax.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBContext;
 import javax.xml.transform.stream.StreamSource;
 
 @Entity
@@ -62,12 +62,12 @@ public class IAT implements java.io.Serializable {
     private String tokenName = "";
     private JAXBContext marshaller = null;
     private String manifestXml;    
-    public IAT() throws javax.xml.bind.JAXBException {
+    public IAT() throws jakarta.xml.bind.JAXBException {
         marshaller = JAXBContext.newInstance(Manifest.class);        
     }
     
     public IAT(Client c, User u, String testName, String version, int resultFormat, Calendar uploadStart) 
-            throws javax.xml.bind.JAXBException {
+            throws jakarta.xml.bind.JAXBException {
         this.resultFormat = resultFormat;
         this.version = version;
         this.client = c;
@@ -366,12 +366,12 @@ public class IAT implements java.io.Serializable {
     }
 
     @Transient
-    public Manifest getManifest() throws javax.xml.bind.JAXBException {
+    public Manifest getManifest() throws jakarta.xml.bind.JAXBException {
         var um = marshaller.createUnmarshaller();
         return (Manifest)um.unmarshal(new StreamSource(new StringReader(getManifestXml())));
     }
     @Transient
-    public void setManifest(Manifest val) throws javax.xml.bind.JAXBException {
+    public void setManifest(Manifest val) throws jakarta.xml.bind.JAXBException {
         var m = marshaller.createMarshaller();
         var w = new StringWriter();
         m.marshal(val, w);

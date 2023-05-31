@@ -4,8 +4,8 @@ import net.iatsoftware.iat.forms.OAuthRequestForm;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class OAuthIdMatchesSecretValidator implements ConstraintValidator<OAuthIdMatchesSecret, OAuthRequestForm> {
     
