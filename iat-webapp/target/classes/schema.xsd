@@ -1145,6 +1145,7 @@
             <xs:enumeration value="javascript" />
             <xs:enumeration value="updateFile" />
             <xs:enumeration value="testConfiguration" />
+            <xs:enumeration value="errorMark" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -1398,9 +1399,9 @@
             <xs:element name="OutlineColorR" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
             <xs:element name="OutlineColorG" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
             <xs:element name="OutlineColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="PageColorR" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="PageColorG" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="PageColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PageBackColorR" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PageBackColorG" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="PageBackColorB" type="xs:hexBinary" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -1599,24 +1600,6 @@
         <xs:attribute name="EventType" type="iat:IATEventType" form="unqualified" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="event-list-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.configfile.IATEventList"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="IATEventList">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.configfile.IATEventList"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:group ref="iat:IATEvent" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="NumEvents" type="xs:int" use="required"/>
-    </xs:complexType>
 
 
     <xs:complexType name="display-item-impl">
@@ -1650,7 +1633,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATInstructionScreenPojo" abstract="true">
+    <xs:complexType name="IATInstructionScreen" abstract="true">
         <xs:complexContent>
             <xs:extension base="iat:iat-event-impl">
                 <xs:sequence>
@@ -2118,16 +2101,16 @@
 		<xs:attribute name="UniqueResponse" type="xs:int" use="required" form="unqualified" />
 	</xs:complexType>
 
-    <xs:group name="IATEvent">
-        <xs:sequence>
-            <xs:element name="BeginIATBlock" type="iat:BeginIATBlock" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="BeginInstructionBlock" type="iat:BeginInstructionBlock" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="EndIATBlock" type="iat:EndIATBlock" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="IATItem" type="iat:IATItem" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="KeyedInstructionScreen" type="iat:KeyedInstructionScreen" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="TextInstructionScreen" type="iat:TextInstructionScreen" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="MockItemInstructionScreenInstructionSccreen" type="iat:MockItemInstructionScreen" minOccurs="0" maxOccurs="unbounded" />
-        </xs:sequence>
+    <xs:group name="Events">
+        <xs:choice>
+            <xs:element name="BeginIATBlock" type="iat:BeginIATBlock" minOccurs="1" maxOccurs="1" />
+            <xs:element name="BeginInstructionBlock" type="iat:BeginInstructionBlock" minOccurs="1" maxOccurs="1" />
+            <xs:element name="EndIATBlock" type="iat:EndIATBlock" minOccurs="1" maxOccurs="1" />
+            <xs:element name="IATItem" type="iat:IATItem" minOccurs="1" maxOccurs="1" />
+            <xs:element name="KeyedInstructionScreen" type="iat:KeyedInstructionScreen" minOccurs="1" maxOccurs="1" />
+            <xs:element name="TextInstructionScreen" type="iat:TextInstructionScreen" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MockItemInstructionScreenInstructionSccreen" type="iat:MockItemInstructionScreen" minOccurs="1" maxOccurs="1" />
+        </xs:choice>
     </xs:group>
 
     <xs:complexType name="BeginIATBlock">
@@ -2235,7 +2218,13 @@
                     <xs:element name="SurveyB64Xml" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="UniqueResponse" type="iat:unique-response-impl" />
                     <xs:element name="Layout" type="iat:layout-impl" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="IATEventList" type="iat:event-list-impl" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="EventList">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:group ref="iat:Events" minOccurs="1" maxOccurs="unbounded" />
+                            </xs:sequence>
+                        </xs:complexType>
+                    </xs:element>
                     <xs:element name="DisplayItemList" minOccurs="1" maxOccurs="1">
                         <xs:complexType>
                             <xs:sequence>
@@ -2243,12 +2232,40 @@
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>
+                    <xs:element name="Globals" type="iat:globals-impl" minOccurs="0" maxOccurs="1" />
                 </xs:sequence>
                 <xs:attribute name="NumBeforeSurveys" type="xs:int" form="unqualified" use="required" />
                 <xs:attribute name="NumAfterSurveys" type="xs:int" form="unqualified" use="required" />
                 <xs:attribute name="HasUniqueResponse" type="xs:boolean" form="unqualified" use="required" />
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="globals-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.configfile.Globals" />
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="Globals">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.Globals" />
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Global" minOccurs="0" maxOccurs="unbounded" type="iat:GlobalVar" />
+        </xs:sequence>
+    </xs:complexType>
+        
+        
+    <xs:complexType name="GlobalVar">
+        <xs:sequence>
+            <xs:element name="OrigName" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="NewName" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Assign" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="unique-response-impl">

@@ -14,22 +14,21 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlType;
-import net.iatsoftware.iat.messaging.Message;
 
 
 /**
- * <p>Java class for SegmentPojo complex type.
+ * <p>Java class for Globals complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SegmentPojo"&gt;
+ * &lt;complexType name="Globals"&gt;
  *   &lt;complexContent&gt;
- *     &lt;extension base="{http://www.iatsoftware.net/schema}message-impl"&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
  *       &lt;sequence&gt;
- *         &lt;element name="SegmentPart" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/&gt;
+ *         &lt;element name="Global" type="{http://www.iatsoftware.net/schema}GlobalVar" maxOccurs="unbounded" minOccurs="0"/&gt;
  *       &lt;/sequence&gt;
- *     &lt;/extension&gt;
+ *     &lt;/restriction&gt;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
@@ -37,43 +36,41 @@ import net.iatsoftware.iat.messaging.Message;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SegmentPojo", propOrder = {
-    "segmentPart"
+@XmlType(name = "Globals", propOrder = {
+    "global"
 })
-public abstract class SegmentPojo
-    extends Message
-{
+public class Globals {
 
-    @XmlElement(name = "SegmentPart", required = true)
-    protected List<String> segmentPart;
+    @XmlElement(name = "Global")
+    protected List<GlobalVar> global;
 
     /**
-     * Gets the value of the segmentPart property.
+     * Gets the value of the global property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the Jakarta XML Binding object.
-     * This is why there is not a <CODE>set</CODE> method for the segmentPart property.
+     * This is why there is not a <CODE>set</CODE> method for the global property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getSegmentPart().add(newItem);
+     *    getGlobal().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link String }
+     * {@link GlobalVar }
      * 
      * 
      */
-    public List<String> getSegmentPart() {
-        if (segmentPart == null) {
-            segmentPart = new ArrayList<String>();
+    public List<GlobalVar> getGlobal() {
+        if (global == null) {
+            global = new ArrayList<GlobalVar>();
         }
-        return this.segmentPart;
+        return this.global;
     }
 
 }

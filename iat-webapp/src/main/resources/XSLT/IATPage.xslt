@@ -19,7 +19,8 @@
                     }
                     
                     body {
-                    <xsl:value-of select="concat('background: #', ./Layout/PageBackColorR, ./Layout/PageBackColorG, ./Layout/PageBackColorB, ';')" />
+                    <xsl:value-of select="concat('background: #', ./Layout/PageBackColorR, 
+                        ./Layout/PageBackColorG, ./Layout/PageBackColorB, ';&#x0A;')" />
                     }
                     
                     #Message {
@@ -30,15 +31,15 @@
                     #IATContainerDiv {
                     margin: auto;
                     text-align: center;
-                    <xsl:value-of select="'min-height : ', concat(xs:integer(./Layout/InteriorWidth) + (xs:integer(./Layout/BorderWidth) * 2) + 4, 'px;&#x0A;')" />
-                    <xsl:value-of select="concat('background: #', ./Layout/PageBackColorR, ./Layout/PageBackColorG, ./Layout/PageBackColorB, ';&#x0A;')" />
+                    <xsl:value-of select="concat('min-height : ', xs:string(if (Layout/InteriorHeight lt Layout/InteriorWidth) then (xs:integer(Layout/InteriorWidth)) else (xs:integer(Layout/InteriorHeight)) + xs:integer(Layout/BorderWidth) * 2 + 4), 'px;&#x0A;')" />
+                    <xsl:value-of select="concat('width: ', xs:integer(Layout/InteriorWidth) + xs:integer(Layout/BorderWidth), 'px')" />
                     }
                     
                     #IATDisplayDiv {
-                    <xsl:value-of select="concat('width: ', xs:integer(./Layout/InteriorWidth), 'px&#x0A;')" />
-                    <xsl:value-of select="concat('height: ', xs:integer(./Layout/InteriorHeight), 'px;&#x0A;')" />
+                    <xsl:value-of select="concat('width: ', xs:integer(./Layout/InteriorWidth), 'px;&#x0A;')" />
+                    <xsl:value-of select="concat('min-height: ', xs:integer(./Layout/InteriorHeight), 'px;&#x0A;')" />
                     <xsl:value-of select="concat('border: ', ./Layout/BorderWidth, 'px solid #', ./Layout/BorderColorR, ./Layout/BorderColorG, ./Layout/BorderColorB, ';&#x0A;')" />
-                    <xsl:value-of select="concat('background: ', ./Layout/BackColorR, ./Layout/BackColorG, ./Layout/BackColorB, ';&#x0A;')" />
+                    <xsl:value-of select="concat('background: #', ./Layout/BackColorR, ./Layout/BackColorG, ./Layout/BackColorB, ';&#x0A;')" />
                     position: relative;
                     top: 10px;
                     left: 10px;
@@ -176,7 +177,7 @@
     </xsl:template>
     
     <xsl:variable name="responseDisplayIDs">
-        <xsl:for-each select="/ConfigFile/IATEventList/IATEvent[@EventType eq 'BeginIATBlock']">
+        <xsl:for-each select="//EventList/child::BeginIATBlock">
             <xsl:element name="ResponseDisplayID">
                 <xsl:value-of select="RightResponseDisplayID" />
             </xsl:element>
@@ -193,7 +194,7 @@
         <xsl:variable name="displayItem" select="." />
         <xsl:variable name="id" select="ID" />
         <xsl:if test="count($responseDisplayIDs[some $n in ResponseDisplayID satisfies xs:integer($n) eq xs:integer($id)]) gt 0">
-            <xsl:variable name="vertPadding" select="xs:string(ceiling((xs:integer(//Layout/ResponseHeight) - xs:integer($displayItem[$id eq ID]/Height)) div 2) - 5)" />
+            <xsl:variable name="vertPadding" select="xs:string(ceiling((xs:integer(//Layout/ResponseHeight) - xs:integer($displayItem[ID]/Height)) div 2) - 5)" />
             <xsl:variable name="horizPadding" select="xs:string(ceiling((xs:integer(//Layout/ResponseWidth) - xs:integer($displayItem[$id eq ID]/Width)) div 2) - 5)" />
             <xsl:value-of select="concat('left: ', xs:integer(X) - xs:integer($horizPadding), 'px;&#x0A;')" />
             <xsl:value-of select="concat('top: ', xs:integer(Y) - xs:integer($vertPadding), 'px;&#x0A;')" />

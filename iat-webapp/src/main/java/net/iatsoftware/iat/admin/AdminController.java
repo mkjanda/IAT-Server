@@ -84,6 +84,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -355,7 +356,7 @@ public class AdminController {
 		return null;
 	}
 
-	public ModelAndView completeTest(IATSession sess) {
+	public View completeTest(IATSession sess) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 				.getRequest();
 		IAT test = (IAT) sess.getAttribute(SessionProperties.TEST);
@@ -369,20 +370,10 @@ public class AdminController {
 		String tokenValue = (String) sess.getAttribute(SessionProperties.TOKEN_VALUE);
 		String redirect = null;
 		if (test.getTokenType() == TokenType.NONE)
-			redirect = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString()).build().toString();
+			return new RedirectView(test.getRedirectOnComplete());
 		else
-			redirect = UriComponentsBuilder.fromHttpUrl(request.getRequestURL().toString())
-					.queryParam(tokenName, tokenValue).build().toString();
-		WebSocketSession ws = (WebSocketSession) sess.getAttribute("WebSocket");
-		try {
-			ws.sendMessage(new TextMessage("{ \"result\" : \"" + redirect + "\""));
-		} catch (java.io.IOException ex) {
-			criticalLogger.error(ex);
-		} finally {
-			publisher.publishEvent(new WebSocketEvent(ws.getId(), WebSocketEventType.CLOSE_SOCKET));
-		}
-		this.sessionManager.destroySession(sess.getId());
-		return null;
+			return new RedirectView(String.format("%s?%s=%s", test.getRedirectOnComplete(), tokenName,
+				tokenValue));		
 	}
 
 	@SuppressWarnings("unchecked")
@@ -415,7 +406,7 @@ public class AdminController {
 			srr.run();
 		}
 		if (lastSegment) {
-			return completeTest(sess);
+			return new ModelAndView(completeTest(sess));
 		}
 
 		Map<String, Object> model = new HashMap<>();
@@ -452,15 +443,9 @@ public class AdminController {
 		if (sess == null) {
 			return new ModelAndView(new RedirectView("/IAT/html/AdministrationTimeout.html"));
 		}
-		String httpReferer = (String) sess.getAttribute("HTTP_REFERER");
 		Long adminID = (Long) sess.getAttribute("AdminID");
 		iatRepositoryManager.refreshAdminTimer(adminID);
 		int adminPhase = (Integer) sess.getAttribute("AdminPhase") + 1;
-		if (isAdminCorrupted(request.getCookies(), test, adminPhase, RequestMethod.POST)) {
-			ModelAndView mv = new ModelAndView("AbortTest");
-			mv.addObject(SessionProperties.HTTP_REFERER, httpReferer);
-		}
-
 		TestSegment ts = iatRepositoryManager.getTestSegmentByID(administeredElemID);
 		List<Long> segmentList = (List<Long>) sess.getAttribute("SegmentList");
 		if (ts.getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
@@ -473,7 +458,7 @@ public class AdminController {
 			srr.run();
 		}
 		if (adminPhase == segmentList.size()) {
-			return completeTest(sess);
+			return new ModelAndView(completeTest(sess));
 		}
 
 		Map<String, Object> model = new HashMap<>();
@@ -493,18 +478,7 @@ public class AdminController {
 		return new ModelAndView("Admin/" + segmentList.get(adminPhase).toString(), model);
 	}
 
-	@PostMapping(value = "", params = { "IATName", "ClientID", "ABORT", "IATSESSIONID", "target=adminV2", })
-	public ModelAndView abortTest(@RequestParam("IATName") String IATName, @RequestParam("ClientID") Long clientID,
-			@RequestParam("IATSESSIONID") String sessId, @RequestParam("HTTP_REFERER") String referer,
-			@RequestParam("TestURL") String restartLink) {
-		this.sessionManager.destroySession(sessId);
-		ModelAndView mv = new ModelAndView("AbortTest");
-		mv.addObject("restartLink", restartLink);
-		mv.addObject("referer", referer);
-		return mv;
-	}
-
-	@RequestMapping(value = "/resources/{clientId}/{testName}/{resourceId}")
+	@GetMapping(value = "/resources/{clientId}/{testName}/{resourceId}")
 	public ResponseEntity<byte[]> getTestResource(@PathVariable(name = "clientId", required = true) Long clientId,
 			@PathVariable(name = "testName", required = true) String testName,
 			@PathVariable(name = "resourceId", required = true) Long resourceId) {

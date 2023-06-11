@@ -29,6 +29,7 @@
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/entities/TestResultFragment.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/repositories/DefaultClientRepository.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/SurveyFormat.java
+/home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/Globals.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/events/DeploymentCleanupEvent.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/admin/SurveyResultRecorder.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/repositories/DefaultResultSetRepository.java
@@ -85,6 +86,7 @@
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/services/WebSocketService.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/repositories/ConflictingUsersException.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/events/UploadRequestEvent.java
+/home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/IATInstructionScreen.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/repositories/DefaultSelectionSpecifierRepository.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/admin/AdminView.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/PurchaseInitiationPojo.java
@@ -229,7 +231,6 @@
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/messaging/UploadRequest.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/resultretrieval/PacketQueue.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/entities/ScriptType.java
-/home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/IATInstructionScreenPojo.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/repositories/TestBackupFileRepository.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/EnvelopeType.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/UserDataPojo.java
@@ -471,6 +472,8 @@
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/ClientActivityEventPojo.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/messaging/ServerException.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/messaging/DecimalElement.java
+/home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/GlobalVar.java
+/home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/configfile/Globals.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/resultdata/ItemResponseDetails.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/services/DefaultTransactionService.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/services/FinalMessage.java

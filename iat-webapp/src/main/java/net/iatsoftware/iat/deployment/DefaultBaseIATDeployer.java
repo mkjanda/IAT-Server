@@ -12,6 +12,7 @@ package net.iatsoftware.iat.deployment;
 
 import net.iatsoftware.iat.config.MyBeanFactory;
 import net.iatsoftware.iat.configfile.ConfigFile;
+import net.iatsoftware.iat.configfile.Globals;
 import net.iatsoftware.iat.configfile.Survey;
 import net.iatsoftware.iat.dataservices.XsltService;
 import net.iatsoftware.iat.entities.DeploymentSession;
@@ -39,6 +40,7 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.context.ApplicationEventPublisher;
@@ -48,6 +50,9 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.concurrent.Future;
@@ -224,19 +229,28 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         }
     }
 
-    public byte[] transform(byte[] input, XsltExecutable trans)
-            throws net.sf.saxon.s9api.SaxonApiException {
+    public String transform(String input, XsltExecutable trans)
+            throws net.sf.saxon.s9api.SaxonApiException, java.io.IOException {
         var transformer = trans.load();
-        transformer.setSource(new StreamSource(new ByteArrayInputStream(input)));
-        var bOut = new ByteArrayOutputStream();
-        var ser = XsltProcessor.newSerializer(bOut);
+        var readerBuilder = BOMInputStream.builder();
+        readerBuilder.setInclude(false);
+        readerBuilder.setInputStream(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
+        var reader = readerBuilder.get();
+        transformer.setSource(new StreamSource(reader));
+        var out = new StringWriter();
+        var ser = XsltProcessor.newSerializer(out);
         transformer.setDestination(ser);
         transformer.transform();
-        return bOut.toByteArray();
+        return out.toString();
     }
 
-    protected byte[] transformAndMungeCode(byte[] input, XsltExecutable initialTrans)
-            throws net.sf.saxon.s9api.SaxonApiException {
+    public String transform(byte[] input, XsltExecutable trans)
+            throws net.sf.saxon.s9api.SaxonApiException, java.io.IOException {
+        return transform(new String(input, StandardCharsets.UTF_8), trans);
+    }
+
+    protected String transformAndMungeCode(String input, XsltExecutable initialTrans)
+            throws net.sf.saxon.s9api.SaxonApiException, java.io.IOException {
         var transformedData = transform(input, initialTrans);
         var mungedData = transform(transformedData, compiledXSLT.getJSCodeSegmentX());
         return transform(mungedData, compiledXSLT.getPostMungeX());
@@ -248,22 +262,29 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         try {
             var testResource = new TestResource(test, "text/javascript", ResourceType.JAVASCRIPT);
             iatRepositoryManager.addTestResource(testResource);
+            var strWriter = new StringWriter();
+            marshaller.marshal(this.CF, new StreamResult(strWriter));
+            var configResource = iatRepositoryManager.getTestResource(this.test, 0L);
+            configResource.setResourceBytes(strWriter.toString().getBytes(StandardCharsets.UTF_8));
+            var segment1 = transformAndMungeCode(strWriter.toString(), compiledXSLT.getIATHeaderX());
+            var globalsText = transform(strWriter.toString(), compiledXSLT.getGlobalsX());
+            var streamSrc = new StreamSource(new StringReader(globalsText));
+            var globals = (Globals) unmarshaller.unmarshal(streamSrc);
+            this.CF.setGlobals(globals);
+            strWriter = new StringWriter();
+            marshaller.marshal(this.CF, new StreamResult(strWriter));
+            var segment2 = transformAndMungeCode(strWriter.toString(), compiledXSLT.getIATScriptX());
             var bOut = new ByteArrayOutputStream();
-            marshaller.marshal(this.CF, new StreamResult(bOut));
-            var jsBytes1 = transformAndMungeCode(bOut.toByteArray(), compiledXSLT.getIATHeaderX());
-            var jsBytes2 = transformAndMungeCode(bOut.toByteArray(), compiledXSLT.getIATScriptX());
-            var jsBytes = new byte[jsBytes1.length + jsBytes2.length + 1];
-            System.arraycopy(jsBytes1, 0, jsBytes, 0, jsBytes1.length);
-            jsBytes[jsBytes1.length] = "\n".getBytes(java.nio.charset.StandardCharsets.UTF_8)[0];
-            System.arraycopy(jsBytes2, 0, jsBytes, jsBytes1.length + 1, jsBytes2.length);
-            testResource.setResourceBytes(jsBytes);
+            var writer = new PrintWriter(bOut);
+            writer.write(segment1 + "\n" + segment2);
+            writer.flush();
+            testResource.setResourceBytes(bOut.toByteArray());
             iatRepositoryManager.updateTestResource(testResource);
             CF.setScriptId(testResource.getResourceId());
-            bOut = new ByteArrayOutputStream();
-            marshaller.marshal(this.CF, new StreamResult(bOut));
-            var htmlBytes = transform(bOut.toByteArray(), compiledXSLT.getIATPageX());
-            var iatTS = new TestSegment(this.test, test.getTestName(), new String(htmlBytes, StandardCharsets.UTF_8),
-                    0, this.CF.getNumBeforeSurveys());
+            strWriter = new StringWriter();
+            marshaller.marshal(this.CF, new StreamResult(strWriter));
+            var html = transform(strWriter.toString(), compiledXSLT.getIATPageX());
+            var iatTS = new TestSegment(this.test, test.getTestName(), html, 0, this.CF.getNumBeforeSurveys());
             iatRepositoryManager.addTestSegment(iatTS);
         } catch (net.sf.saxon.s9api.SaxonApiException | java.io.IOException ex) {
             throw new DeploymentTerminationException("XSLT Error while generating files for an IAT", ex);
@@ -275,23 +296,16 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         deploymentProgress.setStage(DeploymentStage.GENERATING_SURVEY);
         deploymentProgress.setActiveElement(String.format("Survey #%d", this.CF.getSurvey().indexOf(survey)));
         try {
-            var bOut = new ByteArrayOutputStream();
-            marshaller.marshal(survey, new StreamResult(bOut));
-            var surveyBytes = bOut.toByteArray();
+            var strWriter = new StringWriter();
+            marshaller.marshal(survey, new StreamResult(strWriter));
             var testResource = new TestResource(test, "text/javascript", ResourceType.JAVASCRIPT);
             survey.setScriptId(testResource.getResourceId());
-            var surveyPageBytes = transformAndMungeCode(surveyBytes, compiledXSLT.getSurveyHeaderX());
-            var surveyScriptBytes = transformAndMungeCode(surveyBytes, compiledXSLT.getSurveyScriptX());
-            var surveyJSBytes = new byte[surveyPageBytes.length + 1 + surveyScriptBytes.length];
-            System.arraycopy(surveyPageBytes, 0, surveyJSBytes, 0, surveyPageBytes.length);
-            surveyJSBytes[surveyPageBytes.length] = 10;
-            System.arraycopy(surveyScriptBytes, 0, surveyJSBytes, surveyPageBytes.length + 1, surveyScriptBytes.length);
-            testResource.setResourceBytes(surveyJSBytes);
+            var surveyHeaderJS = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyHeaderX());
+            var surveyScriptJS = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyScriptX());
+            testResource.setResourceBytes((surveyHeaderJS + "\n" + surveyScriptJS).getBytes(StandardCharsets.UTF_8));
             iatRepositoryManager.updateTestResource(testResource);
-
-            var surveyHTMLBytes = transformAndMungeCode(surveyBytes, compiledXSLT.getSurveyPageX());
-            var ts = new TestSegment(this.test, survey.getSurveyName(),
-                    new String(surveyHTMLBytes, StandardCharsets.UTF_8),
+            var surveyHTML = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyPageX());
+            var ts = new TestSegment(this.test, survey.getSurveyName(), new String(surveyHTML),
                     survey.getAlternationGroup(), survey.getInitialPosition());
             ts.setIat(false);
             iatRepositoryManager.addTestSegment(ts);
@@ -338,11 +352,12 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
                 test.setDeploymentDescriptor(DeploymentDescriptor.digest());
                 iatRepositoryManager.updateIAT(test);
                 this.eventPublisher.publishEvent(new TestDeploymentCompleteEvent(sessionId, this.deploymentSessionId));
-            } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException | DeploymentTerminationException ex) {
+            } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException
+                    | DeploymentTerminationException ex) {
                 logger.error("deployment error", ex);
                 criticalLogger.error("Error reporting deployment error", ex);
-                this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId, 
-                    new ServerExceptionMessage("Deployment Error", ex), test.getId()));
+                this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId,
+                        new ServerExceptionMessage("Deployment Error", ex), test.getId()));
             }
         });
     }

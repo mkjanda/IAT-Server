@@ -20,6 +20,7 @@ net/iatsoftware/iat/generated/EncryptedDESCipherPojo.class
 net/iatsoftware/iat/generated/YearMonthDay.class
 net/iatsoftware/iat/repositories/RangeSpecifierRepository.class
 net/iatsoftware/iat/events/UploadRequestEvent.class
+net/iatsoftware/iat/generated/Globals.class
 net/iatsoftware/iat/services/WebSocketContainer.class
 net/iatsoftware/iat/events/RestoreCompleteEvent.class
 net/iatsoftware/iat/generated/SurveyBoolean.class
@@ -280,7 +281,6 @@ net/iatsoftware/iat/deployment/CodeLine.class
 net/iatsoftware/iat/services/UserPrincipal.class
 net/iatsoftware/iat/forms/RetrieveResultForm.class
 net/iatsoftware/iat/forms/OAuthAccessForm.class
-net/iatsoftware/iat/controllers/DeploymentUploadController.class
 net/iatsoftware/iat/entities/TestBackupFile.class
 net/iatsoftware/iat/validation/OAuthIdMatchesSecretValidator.class
 net/iatsoftware/iat/generated/Envelope.class
@@ -333,7 +333,6 @@ net/iatsoftware/iat/generated/AjaxRequestType.class
 net/iatsoftware/iat/entities/IAT.class
 net/iatsoftware/iat/messaging/StringElement.class
 net/iatsoftware/iat/events/DeploymentEvent.class
-net/iatsoftware/iat/generated/IATInstructionScreenPojo.class
 net/iatsoftware/iat/messaging/XmlPacket.class
 net/iatsoftware/iat/generated/EnvelopeType.class
 net/iatsoftware/iat/validation/OAuthIdMatchesSecret.class
@@ -384,6 +383,7 @@ net/iatsoftware/iat/repositories/DefaultPartiallyEncryptedRSAKeyRepository.class
 net/iatsoftware/iat/repositories/MaskSpecifierRepository.class
 net/iatsoftware/iat/forms/RequestProductForm.class
 net/iatsoftware/iat/repositories/DefaultSpecifierValueRepository.class
+net/iatsoftware/iat/configfile/Globals.class
 net/iatsoftware/iat/generated/ResultTOCEntryPojo.class
 net/iatsoftware/iat/generated/WeightedMultiple.class
 net/iatsoftware/iat/generated/SelectionSpecifierPojo.class
@@ -452,6 +452,7 @@ net/iatsoftware/iat/deployment/ItemSlideRecorder.class
 net/iatsoftware/iat/messaging/IATListEntry.class
 net/iatsoftware/iat/messaging/IATList.class
 net/iatsoftware/iat/generated/TransactionType.class
+net/iatsoftware/iat/generated/GlobalVar.class
 net/iatsoftware/iat/entities/TrueFalseSpecifier.class
 net/iatsoftware/iat/events/ManifestReceivedEvent.class
 net/iatsoftware/iat/repositories/DefaultMaskSpecifierRepository.class
@@ -507,6 +508,7 @@ net/iatsoftware/iat/generated/ProcessedCodePojo.class
 net/iatsoftware/iat/generated/ClientStateAlteration.class
 net/iatsoftware/iat/controllers/ClientControllerAnnotation.class
 net/iatsoftware/iat/repositories/DefaultTestResourceRepository.class
+net/iatsoftware/iat/generated/IATInstructionScreen.class
 net/iatsoftware/iat/controllers/ErrorPage.class
 net/iatsoftware/iat/generated/GlobalVarNameTablePojo.class
 net/iatsoftware/iat/messaging/ResultDownloadRequest.class

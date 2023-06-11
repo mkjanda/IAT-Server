@@ -5,7 +5,7 @@
             "name": "Spring Boot-IATServer<iat-webapp>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "mainClass": "net.iatsoftware.iat.config.IATServer",
+            "mainClass": "net.iatsoftware.iat.IATServer",
             "projectName": "iat-webapp",
             "args": "",
             "envFile": "${workspaceFolder}/.env"
@@ -15,7 +15,7 @@
             "name": "Spring Boot-IATServer<iat-webapp>",
             "request": "launch",
             "cwd": "${workspaceFolder}",
-            "mainClass": "net.iatsoftware.iat.IATServer",
+            "mainClass": "net.iatsoftware.iat.config.IATServer",
             "projectName": "iat-webapp",
             "args": "",
             "envFile": "${workspaceFolder}/.env"

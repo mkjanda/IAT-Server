@@ -22,4 +22,17 @@ public class IATItem extends net.iatsoftware.iat.generated.IATItem {
     public IATItem() {
         this.eventType = IATEventType.IAT_ITEM;
     }
+
+    private boolean instrSet = false;
+
+    @Override
+    public boolean setResource(int id, int resourceId) {
+        if ((this.stimulusDisplayID == id) && !instrSet) {
+            this.stimulusDisplayID = resourceId;
+            instrSet = true;
+        }
+        else
+            return false;
+        return true;
+    }
 }

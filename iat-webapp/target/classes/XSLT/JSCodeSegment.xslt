@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xs="http://www.w3.org/2001/XMLSchema" 
-				xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-				xmlns:mng="http://www.iatsoftware.net" 
+<xsl:stylesheet xmlns:xs="http://www.w3.org/2001/XMLSchema"
+				xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+				xmlns:mng="http://www.iatsoftware.net"
 				version="2.0" exclude-result-prefixes="xs mng">
-	
+
 	<xsl:output method="xml" encoding="utf-8" indent="yes" cdata-section-elements="Code Line Function Declaration FunctionConstructor"/>
-	
+
 	<xsl:variable name="documentElement">
 		<xsl:value-of select="//CodeFile"/>
 	</xsl:variable>
-	
+
 	<xsl:variable name="globalVars">
 		<xsl:copy-of select="//VarEntries/Entry"/>
 	</xsl:variable>
-	
+
 	<xsl:variable name="globalCode">
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionNdx" select="'0'"/>
@@ -25,7 +25,7 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:variable>
-	
+
 	<xsl:template match="//VarEntries">
 		<xsl:element name="GlobalVars">
 			<xsl:element name="GlobalDecl">
@@ -55,7 +55,7 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="//Class">
 		<xsl:variable name="class" select="."/>
 		<xsl:variable name="classPrefix" select="@ClassPrefix"/>
@@ -186,7 +186,7 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="//Function">
 		<xsl:variable name="functionPrefix" select="@FunctionPrefix"/>
 		<xsl:variable name="thisFunct" select="."/>
@@ -224,14 +224,14 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="//GlobalCode">
 		<xsl:variable name="function">
 			<xsl:element name="Params"/>
 			<xsl:variable name="params">
 				<xsl:element name="Params"/>
 			</xsl:variable>
-			
+
 			<xsl:call-template name="ConstructFunction">
 				<xsl:with-param name="functionName" select="@CodePrefix"/>
 				<xsl:with-param name="type" select="'function'"/>
@@ -261,7 +261,7 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template match="CodeFile">
 		<xsl:element name="CodeFile">
 			<xsl:attribute name="ElementName" select="@ElementName"/>
@@ -314,7 +314,7 @@
 			</xsl:if>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template name="replaceGlobals">
 		<xsl:param name="globalLookupTable"/>
 		<xsl:param name="functionElem"/>
@@ -434,7 +434,7 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-	
+
 	<xsl:template name="processCode">
 		<xsl:param name="code"/>
 		<xsl:param name="type"/>
@@ -617,7 +617,7 @@
 			</xsl:for-each>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:template name="mungeFunction">
 		<xsl:param name="functionCode"/>
 		<xsl:param name="params"/>
@@ -701,14 +701,14 @@
 			</xsl:for-each>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:function name="mng:replaceVars">
 		<xsl:param name="origVarNames"/>
 		<xsl:param name="newVarNames"/>
 		<xsl:param name="code"/>
 		<xsl:variable name="varSequence">
 			<xsl:for-each select="$origVarNames">
-				
+
 				<xsl:sort select="string-length(.)" order="descending"/>
 				<xsl:element name="name">
 					<xsl:value-of select="."/>
@@ -807,7 +807,7 @@
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:function>
-	
+
 	<xsl:template name="ConstructFunction">
 		<xsl:param name="functionName"/>
 		<xsl:param name="type"/>
@@ -1185,7 +1185,7 @@
 			</xsl:for-each>
 		</xsl:if>
 	</xsl:template>
-	
+
 	<xsl:function name="mng:ConstructSubFunction">
 		<xsl:param name="functionSegments"/>
 		<xsl:param name="type"/>
@@ -1238,7 +1238,7 @@
 				</xsl:if>
 			</xsl:variable>
 			<xsl:variable name="lines">
-				
+
 				<xsl:for-each select="1 to count($depths/Depth)">
 					<xsl:variable name="ndx" select="position()"/>
 					<xsl:if test="position() eq 1">
@@ -1299,10 +1299,10 @@
 				 </xsl:element>
 				 </xsl:for-each>
 			-->
-			
+
 		</xsl:element>
 	</xsl:function>
-	
+
 	<xsl:template name="OutputNonLine">
 		<xsl:param name="elem"/>
 		<xsl:variable name="elemType">
@@ -1385,7 +1385,7 @@
 			</xsl:when>
 		</xsl:choose>
 	</xsl:template>
-	
+
 	<xsl:template name="buildFunctDescriptor">
 		<xsl:param name="entityType"/>
 		<xsl:param name="source"/>
@@ -1461,7 +1461,7 @@
 			</xsl:for-each>
 		</xsl:variable>
 		<xsl:element name="Descriptor">
-			
+
 			<xsl:variable name="groupBy">
 				<xsl:if test="every $cn in $functionList/Function/ClassName satisfies string-length($cn) eq 0">
 					<xsl:value-of select="$functionPrefix"/>

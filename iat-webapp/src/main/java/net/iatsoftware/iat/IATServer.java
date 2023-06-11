@@ -69,8 +69,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.Validator;
@@ -147,7 +149,7 @@ public class IATServer implements SchedulingConfigurer {
 
     public static void main(String[] args) {
         System.setProperty("spring.devtools.restart.enabled", "false");        
-        SpringApplication.run(IATServer.class);
+        SpringApplication.run(net.iatsoftware.iat.IATServer.class);
     }
 
     private static final Logger log = LogManager.getLogger("critical");

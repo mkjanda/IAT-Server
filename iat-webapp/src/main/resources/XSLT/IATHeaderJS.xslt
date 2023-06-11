@@ -43,34 +43,32 @@
 
 	<xsl:variable name="GlobalCode">
 		<xsl:element name="Declaration">
-			<xsl:value-of select="concat('var NumImages = ', count(//IATDisplayItem), ';')"/>
+			<xsl:value-of select="concat('NumImages = ', count(//DisplayItemList/IATDisplayItem))"/>
 		</xsl:element>
 		<xsl:for-each select="//IATDisplayItem">
 			<xsl:element name="Declaration">
-				<xsl:value-of select="concat('var img', ID, ';')"/>
+				<xsl:value-of select="concat('img', ID)"/>
 			</xsl:element>
 		</xsl:for-each>
-		<Declaration>var imgTable;</Declaration>
-		<Declaration>var ImageLoadComplete = false;</Declaration>
-		<Declaration>var CodeProcessingComplete = false;</Declaration>
-		<Declaration>var ImageLoadCtr = 0;</Declaration>
-		<Declaration>var ImageLoadStatusTextElement;</Declaration>
-		<Declaration>var ClickToStartElement;</Declaration>
-		<Declaration>var ClickToStartText;</Declaration>
-		<Declaration>var abort = false;</Declaration>
-		<Declaration>var AllImagesLoaded = false;</Declaration>
-		<Declaration>
-			<xsl:copy-of select="'var NumImages ='" />
-		</Declaration>
-		<Declaration>var submitted = false;</Declaration>
-		<Declaration>var IsAborting = false;</Declaration>
-		<Declaration>var backUrlObj = { url : "https://iatsoftware.net" };</Declaration>
+		<Declaration>imgTable</Declaration>
+		<Declaration>ImageLoadComplete = false</Declaration>
+		<Declaration>CodeProcessingComplete = false</Declaration>
+		<Declaration>ImageLoadCtr = 0</Declaration>
+		<Declaration>ImageLoadStatusTextElement</Declaration>
+		<Declaration>LoadingImagesProgressElement</Declaration>
+		<Declaration>ClickToStartElement</Declaration>
+		<Declaration>ClickToStartText</Declaration>
+		<Declaration>abort = false</Declaration>
+		<Declaration>AllImagesLoaded = false</Declaration>
+		<Declaration>submitted = false</Declaration>
+		<Declaration>IsAborting = false</Declaration>
+		<Declaration>backUrlObj = { url : "https://iatsoftware.net" }</Declaration>
 		<xsl:if test="count(//DynamicSpecifier) gt 0">
-			<Declaration>var DynamicSpecValues;</Declaration>
-			<Declaration>var DynamicSpecValuesLoaded = false;</Declaration>
+			<Declaration>var DynamicSpecValues</Declaration>
+			<Declaration>var DynamicSpecValuesLoaded = false</Declaration>
 		</xsl:if>
 		<Declaration>
-			<xsl:value-of select="concat('var adminHost = &quot;', $root//ServerPath, '/Admin&quot;;')" />
+			<xsl:value-of select="concat('var adminHost = &quot;', $root//ServerPath, '/Admin&quot;')" />
 		</Declaration>
 	</xsl:variable>
 
@@ -80,7 +78,7 @@
 	</xsl:variable>
 
 	<xsl:variable name="globalVariablePrefix">
-		<xsl:value-of select="'ihG'"/>
+		<xsl:value-of select="'gv'"/>
 	</xsl:variable>
 
 	<xsl:variable name="globalCodePrefix">
@@ -91,18 +89,18 @@
 	<xsl:variable name="Globals">
 		<xsl:for-each select="$GlobalCode/Declaration">
 			<xsl:variable name="ndx" select="position()" />
-			<xsl:analyze-string select="." regex="^var\s*([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)?(.+)?;">
+			<xsl:analyze-string select="." regex="^(var\s*)?([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)?(.+)?">
 				<xsl:matching-substring>
 					<xsl:element name="Entry">
 						<xsl:attribute name="type" select="'global'" />
 						<xsl:element name="OrigName">
-							<xsl:value-of select="regex-group(1)" />
+							<xsl:value-of select="regex-group(2)" />
 						</xsl:element>
 						<xsl:element name="NewName">
 							<xsl:value-of select="concat('_', $globalVariablePrefix, $ndx)" />
 						</xsl:element>
 						<xsl:element name="Assign">
-							<xsl:value-of select="regex-group(3)"/>
+							<xsl:value-of select="regex-group(4)"/>
 						</xsl:element>
 					</xsl:element>
 				</xsl:matching-substring>
@@ -117,7 +115,7 @@
 			<xsl:variable name="functionBody">
 				<xsl:text>
                     ImageLoadCtr++;
-                    ImageLoadStatusTextElement.nodeValue = "Loading image #" + (ImageLoadCtr + 1).toString() + " of " + NumImages.toString();
+					document.getElementById("h4Msg").innerHTML = "Loading image #" + (ImageLoadCtr + 1).toString() + " of " + NumImages.toString(); 
                     if (ImageLoadCtr == NumImages) 
                     ImageLoadCompleted();
                 </xsl:text>
@@ -143,8 +141,8 @@
                     var e = EventUtil.getEvent(event); 
                     var img = e.currentTarget;
                     imgTable[img.src] = new Image();
-                    EventUtil.addHandler(imgTable[img.src], 'load', OnImageLoad);
-                    EventUtil.addHandler(imgTable[img.src], 'error', OnImageLoadError);
+                    imgTable[img.src].onload = OnImageLoad;
+                    imgTable[img.src].onerror = OnImageLoadError;
                     imgTable[img.src].src = img.src;
                 </xsl:text>
 			</xsl:variable>
@@ -164,24 +162,26 @@
 			<xsl:attribute name="FunctionName" select="'StartImageLoad'" />
 			<xsl:element name="Params" />
 			<xsl:variable name="functionBody">
+			<xsl:text>
+				var displayDiv = document.getElementById("IATDisplayDiv");
+				LoadingImagesElement = document.createElement("h3");
+				LoadingImagesElement.innerHTML = "Please Wait";
+				displayDiv.appendChild(LoadingImagesElement);			
+				var elem = document.createElement("h4");
+				elem.setAttribute('id', 'h4Msg');	
+				elem.innerHTML = "Loading image #1 of " + NumImages.toString();
+				displayDiv.appendChild(elem);
+			</xsl:text>
 				<xsl:value-of select="'imgTable = [];&#x0A;'" />
-				<xsl:for-each select="//IATDisplayItem">
+				<xsl:for-each select="$root//DisplayItemList/IATDisplayItem">
 					<xsl:variable name="imageUrl" select="concat('/IAT/resource/', $root//ClientID, '/', $root//IATName, '/', ID, '/img')" />
 					<xsl:variable name="imageTableEntry" select="concat('imgTable[&quot;', $imageUrl, '&quot;]')" />
 					<xsl:value-of select="concat($imageTableEntry, ' = new Image();&#x0A;')" />
-					<xsl:value-of select="concat($imageTableEntry, '.load = OnImageLoad;&#x0A;')" />
-					<xsl:value-of select="concat($imageTableEntry, '.error = OnImageLoadError;&#x0A;')" />
+					<xsl:value-of select="concat($imageTableEntry, '.onload = OnImageLoad;&#x0A;')" />
+
+					<xsl:value-of select="concat($imageTableEntry, '.onerror = OnImageLoadError;&#x0A;')" />
 					<xsl:value-of select="concat($imageTableEntry, '.src = &quot;', $imageUrl, '&quot;;&#x0A;')" />
 				</xsl:for-each>
-				var LoadingImagesElement = document.createElement("h3");
-				var LoadingImagesText = document.createTextNode("Please Wait");
-				LoadingImagesElement.appendChild(LoadingImagesText);
-				var LoadingImagesProgressElement = document.createElement("h4");
-				ImageLoadStatusTextElement = document.createTextNode("Loading image #1 of " + NumImages.toString());
-				LoadingImagesProgressElement.appendChild(ImageLoadStatusTextElement);
-				var displayDiv = document.getElementById("IATDisplayDiv");
-				displayDiv.appendChild(LoadingImagesElement);
-				displayDiv.appendChild(LoadingImagesProgressElement);
 			</xsl:variable>
 			<xsl:element name="FunctionBody">
 				<xsl:for-each select="tokenize($functionBody, '&#x0A;')">
@@ -198,7 +198,7 @@
 			<xsl:attribute name="FunctionName" select="'ImageLoadCompleted'" />
 			<xsl:element name="Params" />
 			<xsl:variable name="functionBodyCode">
-				<xsl:for-each select="//IATDisplayItem">
+				<xsl:for-each select="$root//DisplayItemList/IATDisplayItem">
 					<xsl:variable name="imgSrc" select="string-join(('/IAT/resource', $root//ClientID, $root//IATName, ID, 'img'), '/')" />
 					<xsl:value-of select="concat('img', ID, ' = imgTable[&quot;', $imgSrc, '&quot;];&#x0A;')" />
 				</xsl:for-each>
@@ -338,7 +338,6 @@
 				<xsl:element name="Code">else</xsl:element>
 				<xsl:element name="Code">appendFormData(form, "IATSESSIONID", CookieUtil.get("IATSESSIONID"));</xsl:element>
 				<xsl:element name="Code">appendFormData(form, "target", "adminV2");</xsl:element>
-				<xsl:element name="Code">appendFormData(form, "ABORT", "TRUE");</xsl:element>
 				<xsl:element name="Code">appendFormData(form, "HTTP_REFERER", sessionStorage.getItem("HTTP_REFERER"));</xsl:element>
 				<xsl:element name="Code">sessionStorage.clear();</xsl:element>
 				<xsl:element name="Code">form.submit();</xsl:element>
@@ -352,7 +351,8 @@
 			</xsl:element>
 			<xsl:variable name="functionBody">
 				<xsl:text>
-                    window.location.assign(evt.state.url);
+					sessionStorage.clear();
+                   // window.location.assign(evt.state.url);
                 </xsl:text>
 			</xsl:variable>
 			<xsl:element name="FunctionBody">
@@ -380,39 +380,14 @@
                     else 
                     sessionStorage.setItem("HTTP_REFERER", "-");
                     }
-                    if (!CookieUtil.checkCookie("AdminPhase") || !CookieUtil.checkCookie("TestSegment") || !CookieUtil.checkCookie("LastAdminPhase")) {
-                    AbortTest();
-                    return;
-                    }
                     if (!sessionStorage.getItem("IATSESSIONID")) {
                     sessionStorage.setItem("IATSESSIONID", CookieUtil.get("IATSESSIONID"));
                     sessionStorage.setItem("AdminPhase", "0");
-                    if (parseInt(CookieUtil.get("AdminPhase"), 10) !== 0) {
-                    AbortTest();
-                    return;
-                    }
-                    if (sessionStorage.getItem("corrupted") == "true") {
-                    AbortTest();
-                    return;
-                    }
-                    sessionStorage.setItem("corrupted", false);
-
-                    } else if (sessionStorage.getItem("corrupted") === true) {
-                            AbortTest();
-                    return;
-                            } else if (sessionStorage.getItem("AdminPhase")) {
-                        adminPhase = parseInt(CookieUtil.get("AdminPhase"), 10);
-                        localAdminPhase = parseInt(sessionStorage.getItem("AdminPhase"), 10);
-                        if (adminPhase !== localAdminPhase + 1) {
-                    
-                    AbortTest();
-                    return;
-                    }
-                    sessionStorage.setItem("AdminPhase", adminPhase.toString());
-                    } else {
-                    AbortTest();
-                    return;
-                    }
+					adminPhase = 0;
+					} else {
+					adminPhase = parseInt(sessionStorage.getItem("AdminPhase"), 10);
+                    sessionStorage.setItem("AdminPhase", (adminPhase + 1).toString());
+					}
                     sessionStorage.setItem("TestSegment", CookieUtil.get("TestSegment"));
                     sessionStorage.setItem("LastAdminPhase", CookieUtil.get("LastAdminPhase"));
                     testSegment = CookieUtil.get("TestSegment");
@@ -433,7 +408,7 @@
 				</xsl:if>
 				<xsl:text>
                     DisplayDiv = document.getElementById("IATDisplayDiv");
-                    window.history.pushState({}, "IAT Software", '/');
+     //               window.history.pushState({}, "IAT Software", '/');
                     EventUtil.addHandler(window, "popstate", OnPopState);
                     var alternateTag = document.getElementById("Alternate");
                     alternateTag.setAttribute("value", CookieUtil.get("Alternate"));
@@ -471,13 +446,8 @@
 	<xsl:template match="ConfigFile">
 		<xsl:element name="CodeFile">
 			<VarEntries>
-				<xsl:for-each select="$GlobalCode/Declaration">
-					<xsl:element name="Entry">
-						<xsl:value-of select="." />
-					</xsl:element>
-				</xsl:for-each>
+				<xsl:copy-of select="$Globals" />
 			</VarEntries>
-			<xsl:element name="Entry">
 				<xsl:element name="Functions">
 					<xsl:for-each select="$Functions/Function">
 						<xsl:variable name="nodeName" select="name()" />
@@ -489,7 +459,6 @@
 							<xsl:copy-of select="child::*" />
 						</xsl:element>
 					</xsl:for-each>
-				</xsl:element>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
