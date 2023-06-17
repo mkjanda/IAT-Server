@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name = "Handshake")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Handshake extends net.iatsoftware.iat.generated.HandshakePojo implements java.io.Serializable {
+public class Handshake extends net.iatsoftware.iat.generated.GHandshake implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     private static final Logger logger = LogManager.getLogger();
     private static Cipher cipher;

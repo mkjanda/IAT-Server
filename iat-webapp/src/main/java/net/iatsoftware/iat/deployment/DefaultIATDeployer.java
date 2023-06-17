@@ -14,7 +14,6 @@ import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.TransactionRequest;
-import net.iatsoftware.iat.events.TestDeploymentCompleteEvent;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.events.WebSocketFinalDataSent;

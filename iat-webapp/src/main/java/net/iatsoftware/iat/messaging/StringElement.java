@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="StringElement")
 @XmlAccessorType(XmlAccessType.NONE)
-public class StringElement extends net.iatsoftware.iat.generated.StringElement {
+public class StringElement extends net.iatsoftware.iat.generated.GStringElement {
     public StringElement(){}
     
     public StringElement(String name, String value) {

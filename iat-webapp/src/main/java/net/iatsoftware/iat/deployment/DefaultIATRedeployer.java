@@ -20,7 +20,6 @@ import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
-import net.iatsoftware.iat.events.TestDeploymentCompleteEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.TransactionType;
@@ -133,7 +132,6 @@ public class DefaultIATRedeployer extends DefaultBaseIATDeployer implements IATR
 					}
 				}
 				doDeploy(test);
-				this.eventPublisher.publishEvent(new TestDeploymentCompleteEvent(sessionId, this.deploymentSessionId));
 			} catch (DeploymentTerminationException ex) {
 				criticalLogger.error("Error deploying IAT", ex);
 				this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId,

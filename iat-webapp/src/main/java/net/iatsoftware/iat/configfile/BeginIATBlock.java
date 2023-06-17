@@ -14,12 +14,11 @@ import net.iatsoftware.iat.generated.IATEventType;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import ch.qos.logback.core.joran.conditional.ElseAction;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@XmlRootElement(name="IATEvent")
+@XmlRootElement(name="BeginIATBlock")
 @XmlAccessorType(XmlAccessType.NONE)
-public class BeginIATBlock extends net.iatsoftware.iat.generated.BeginIATBlock {
+public class BeginIATBlock extends net.iatsoftware.iat.generated.GBeginIATBlock {
     public BeginIATBlock()
     {
         this.eventType = IATEventType.BEGIN_IAT_BLOCK;

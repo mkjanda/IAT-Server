@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlType(name="UsageReport")
 @XmlAccessorType(XmlAccessType.NONE)
-public class UsageReport extends net.iatsoftware.iat.generated.UsageReportPojo {
+public class UsageReport extends net.iatsoftware.iat.generated.GUsageReport {
     public UsageReport(){}
     
     public UsageReport(ClientUsage cu) {

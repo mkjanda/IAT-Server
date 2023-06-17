@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="IntElement")
 @XmlAccessorType(XmlAccessType.NONE)
-public class IntElement extends net.iatsoftware.iat.generated.IntElement {
+public class IntElement extends net.iatsoftware.iat.generated.GIntElement {
     public IntElement(){}
     
     public IntElement(String name, int value) {

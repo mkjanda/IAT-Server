@@ -23,7 +23,7 @@ import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.events.AbortDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
-import net.iatsoftware.iat.events.TestDeploymentCompleteEvent;
+import net.iatsoftware.iat.events.DeploymentSuccessEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.generated.DeploymentStage;
 import net.iatsoftware.iat.generated.ResourceType;
@@ -297,14 +297,19 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         deploymentProgress.setActiveElement(String.format("Survey #%d", this.CF.getSurvey().indexOf(survey)));
         try {
             var strWriter = new StringWriter();
+            survey.setClientId(this.test.getClient().getClientId());
             marshaller.marshal(survey, new StreamResult(strWriter));
             var testResource = new TestResource(test, "text/javascript", ResourceType.JAVASCRIPT);
+            iatRepositoryManager.addTestResource(testResource);
             survey.setScriptId(testResource.getResourceId());
             var surveyHeaderJS = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyHeaderX());
             var surveyScriptJS = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyScriptX());
             testResource.setResourceBytes((surveyHeaderJS + "\n" + surveyScriptJS).getBytes(StandardCharsets.UTF_8));
             iatRepositoryManager.updateTestResource(testResource);
-            var surveyHTML = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyPageX());
+            survey.setScriptId(testResource.getResourceId());
+            strWriter = new StringWriter();
+            marshaller.marshal(survey, new StreamResult(strWriter));
+            var surveyHTML = transform(strWriter.toString().getBytes(StandardCharsets.UTF_8), compiledXSLT.getSurveyPageX());
             var ts = new TestSegment(this.test, survey.getSurveyName(), new String(surveyHTML),
                     survey.getAlternationGroup(), survey.getInitialPosition());
             ts.setIat(false);
@@ -344,14 +349,14 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
                 this.deploymentProgress.incProgress();
                 if (this.CF.getSurvey() != null) {
                     for (var survey : this.CF.getSurvey()) {
-                        generateSurvey(survey);
                         this.deploymentProgress.incProgress();
+                        generateSurvey(survey);
                     }
                 }
                 deploymentProgress.setStage(DeploymentStage.FINALIZING_DEPLOYMENT);
                 test.setDeploymentDescriptor(DeploymentDescriptor.digest());
                 iatRepositoryManager.updateIAT(test);
-                this.eventPublisher.publishEvent(new TestDeploymentCompleteEvent(sessionId, this.deploymentSessionId));
+                this.eventPublisher.publishEvent(new DeploymentSuccessEvent(sessionId, this.deploymentSessionId, test.getId()));
             } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException
                     | DeploymentTerminationException ex) {
                 logger.error("deployment error", ex);

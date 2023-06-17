@@ -9,7 +9,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "UpdateNotification")
 @XmlAccessorType(XmlAccessType.NONE)
-public class UpdateNotification extends net.iatsoftware.iat.generated.UpdateNotificationPojo {
+public class UpdateNotification extends net.iatsoftware.iat.generated.GUpdateNotification {
     private static final Base64.Encoder b64Encoder = Base64.getEncoder();
     private boolean isBase64 = false;
     public UpdateNotification() {

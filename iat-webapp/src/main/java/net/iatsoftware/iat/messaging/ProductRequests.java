@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="ProductRequests")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ProductRequests extends net.iatsoftware.iat.generated.ProductRequestsPojo {
+public class ProductRequests extends net.iatsoftware.iat.generated.GProductRequests {
    
     public ProductRequests(Iterable<ProductRequestEntity> requests) {
         this.productRequest = new ArrayList<>();

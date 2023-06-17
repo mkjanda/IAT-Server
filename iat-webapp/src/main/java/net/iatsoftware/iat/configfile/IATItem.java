@@ -16,9 +16,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@XmlRootElement(name="IATEvent")
+@XmlRootElement(name="IATItem")
 @XmlAccessorType(XmlAccessType.NONE)
-public class IATItem extends net.iatsoftware.iat.generated.IATItem {
+public class IATItem extends net.iatsoftware.iat.generated.GIATItem {
     public IATItem() {
         this.eventType = IATEventType.IAT_ITEM;
     }

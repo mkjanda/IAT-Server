@@ -22,7 +22,7 @@ import jakarta.persistence.Table;
 @XmlAccessorType(XmlAccessType.NONE)
 @DiscriminatorValue("TrueFalse")
 @Table(name="true_false_specifiers")
-public class TrueFalseSpecifier extends net.iatsoftware.iat.generated.TrueFalseSpecifierPojo {
+public class TrueFalseSpecifier extends net.iatsoftware.iat.generated.GTrueFalseSpecifier {
     
     public TrueFalseSpecifier(){}
     

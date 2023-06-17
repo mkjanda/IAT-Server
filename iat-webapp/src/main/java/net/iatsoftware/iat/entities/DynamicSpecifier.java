@@ -37,7 +37,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @DiscriminatorColumn(name="SpecifierType", discriminatorType=DiscriminatorType.STRING)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name="DynamicSpecifier")
-public abstract class DynamicSpecifier extends net.iatsoftware.iat.generated.DynamicSpecifierPojo implements java.io.Serializable {
+public abstract class DynamicSpecifier extends net.iatsoftware.iat.generated.GDynamicSpecifier implements java.io.Serializable {
     private long id;
     private IAT test;
     private TestSegment testSegment;

@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
         
 @XmlRootElement(name="CorruptedSaveFileReport")       
 @XmlAccessorType(XmlAccessType.NONE)
-public class CorruptedSaveFileReport extends net.iatsoftware.iat.generated.CorruptedSaveFileReportPojo {
+public class CorruptedSaveFileReport extends net.iatsoftware.iat.generated.GCorruptedSaveFileReport {
     private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.LONG);
     
     @Override

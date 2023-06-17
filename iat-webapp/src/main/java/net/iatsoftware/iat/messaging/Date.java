@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="Date")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Date extends net.iatsoftware.iat.generated.DatePojo {
+public class Date extends net.iatsoftware.iat.generated.GDate {
     
 }

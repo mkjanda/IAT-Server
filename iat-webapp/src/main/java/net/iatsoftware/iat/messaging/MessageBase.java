@@ -25,6 +25,6 @@ public abstract class MessageBase {
         doAfterUnmarshal(um, parent);
     }
     
-    public abstract boolean doBeforeMarshal(Marshaller m);
-    public abstract void doAfterUnmarshal(Unmarshaller um, Object parent);
+    protected boolean doBeforeMarshal(Marshaller m) { return true; };
+    public void doAfterUnmarshal(Unmarshaller um, Object parent){};
 }

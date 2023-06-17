@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="PurchaseInitiation")
 @XmlAccessorType(XmlAccessType.NONE)
-public class PurchaseInitiation extends net.iatsoftware.iat.generated.PurchaseInitiationPojo {
+public class PurchaseInitiation extends net.iatsoftware.iat.generated.GPurchaseInitiation {
     public PurchaseInitiation(){}
 }

@@ -16,5 +16,5 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="AlterResourcesRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class AlterResources extends net.iatsoftware.iat.generated.AlterResourcesPojo {
+public class AlterResources extends net.iatsoftware.iat.generated.GAlterResources {
 }

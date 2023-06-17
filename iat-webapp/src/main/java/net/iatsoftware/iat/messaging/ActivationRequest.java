@@ -23,7 +23,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name = "AcitvationRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ActivationRequest extends net.iatsoftware.iat.generated.ActivationRequestPojo {
+public class ActivationRequest extends net.iatsoftware.iat.generated.GActivationRequest {
     private static final Random random = new Random();
     private static final int[] ProductKeyModuli = {22, 6, 17, 30, 5, 15, 24, 2, 19, 35};
     private String eMailVerification;

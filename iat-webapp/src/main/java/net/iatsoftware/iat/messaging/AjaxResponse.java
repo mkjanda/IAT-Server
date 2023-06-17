@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlRootElement(name="AjaxResponse")
 @XmlAccessorType(XmlAccessType.NONE)
-public class AjaxResponse extends net.iatsoftware.iat.generated.AjaxResponsePojo {
+public class AjaxResponse extends net.iatsoftware.iat.generated.GAjaxResponse {
     private String textResponse;
     public AjaxResponse(){}
     

@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="UploadRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class UploadRequest extends net.iatsoftware.iat.generated.UploadRequestPojo {
+public class UploadRequest extends net.iatsoftware.iat.generated.GUploadRequest {
     private static final Base64.Encoder encoder = Base64.getEncoder();
     
     public UploadRequest() {}

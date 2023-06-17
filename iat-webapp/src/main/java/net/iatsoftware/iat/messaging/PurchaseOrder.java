@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="PurchaseOrder")
 @XmlAccessorType(XmlAccessType.NONE)
-public class PurchaseOrder extends net.iatsoftware.iat.generated.PurchaseOrderPojo implements java.io.Serializable {
+public class PurchaseOrder extends net.iatsoftware.iat.generated.GPurchaseOrder implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     
     public PurchaseOrder(){}

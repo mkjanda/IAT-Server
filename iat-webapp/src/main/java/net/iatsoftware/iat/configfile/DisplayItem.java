@@ -16,5 +16,5 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.NONE)
-public class DisplayItem extends net.iatsoftware.iat.generated.DisplayItemPojo {
+public class DisplayItem extends net.iatsoftware.iat.generated.GDisplayItem {
 }

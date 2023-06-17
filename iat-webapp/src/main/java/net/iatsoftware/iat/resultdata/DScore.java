@@ -19,9 +19,9 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlElement;
 
+
 @XmlAccessorType(XmlAccessType.NONE)
 public class DScore extends AbstractResultData {
-    
     private String score;
     
     public DScore() {}
@@ -41,7 +41,8 @@ public class DScore extends AbstractResultData {
         return (double)sum(vals) / vals.length;
     }
     
-    private double sd(Long[] vals) {
+    private double sd(Long[] vals) {    
+
         double mean = mean(vals);
         double sd = 0;
         for (Long l : vals)

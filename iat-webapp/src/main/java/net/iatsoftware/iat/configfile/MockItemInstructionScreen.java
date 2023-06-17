@@ -17,9 +17,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import ch.qos.logback.core.joran.conditional.ElseAction;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@XmlRootElement(name="IATEvent")
+@XmlRootElement(name="MockItemInstructionsScreen")
 @XmlAccessorType(XmlAccessType.NONE)
-public class MockItemInstructionScreen extends net.iatsoftware.iat.generated.MockItemInstructionScreen {
+public class MockItemInstructionScreen extends net.iatsoftware.iat.generated.GMockItemInstructionScreen {
     public MockItemInstructionScreen(){
         this.eventType = IATEventType.MOCK_ITEM_INSTRUCTION_SCREEN;
     }

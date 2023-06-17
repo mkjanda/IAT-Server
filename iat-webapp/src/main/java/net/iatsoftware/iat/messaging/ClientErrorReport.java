@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="ClientErrorReport")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ClientErrorReport extends net.iatsoftware.iat.generated.ClientErrorReport {
+public class ClientErrorReport extends net.iatsoftware.iat.generated.GClientErrorReport {
     
     private static final DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.LONG);
     

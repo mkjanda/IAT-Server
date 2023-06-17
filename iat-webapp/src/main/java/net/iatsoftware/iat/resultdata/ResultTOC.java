@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="ResultTOC")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ResultTOC extends net.iatsoftware.iat.generated.ResultTOCPojo {
+public class ResultTOC extends net.iatsoftware.iat.generated.GResultTOC {
     public ResultTOC() {}
     
     @Override

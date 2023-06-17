@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name = "ClientActivityEvent")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ClientActivityEvent extends net.iatsoftware.iat.generated.ClientActivityEventPojo {
+public class ClientActivityEvent extends net.iatsoftware.iat.generated.GClientActivityEvent {
 
 
     @Override

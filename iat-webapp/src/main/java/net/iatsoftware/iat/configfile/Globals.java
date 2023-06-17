@@ -8,6 +8,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlRootElement(name="Globals")
-public class Globals extends net.iatsoftware.iat.generated.Globals {
+public class Globals extends net.iatsoftware.iat.generated.GGlobals {
     
 }

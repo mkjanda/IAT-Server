@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 @XmlRootElement(name="Segment")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Segment extends net.iatsoftware.iat.generated.SegmentPojo {
+public class Segment extends net.iatsoftware.iat.generated.GSegment {
     public Segment() {
     }
     

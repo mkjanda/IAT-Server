@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="RSAKeyPair")
 @XmlAccessorType(XmlAccessType.NONE)
-public class RSAKeyPair extends net.iatsoftware.iat.generated.RSAKeyPairPojo {
+public class RSAKeyPair extends net.iatsoftware.iat.generated.GRSAKeyPair {
     public RSAKeyPair(){}
     
     public RSAKeyPair(PartiallyEncryptedRSAKey dataKey, PartiallyEncryptedRSAKey adminKey) {

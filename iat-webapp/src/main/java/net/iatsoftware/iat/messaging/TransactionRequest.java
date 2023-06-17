@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
        
 @XmlRootElement(name="TransactionRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class TransactionRequest extends net.iatsoftware.iat.generated.TransactionRequestPojo {
+public class TransactionRequest extends net.iatsoftware.iat.generated.GTransactionRequest {
     public TransactionRequest() {
         transaction = TransactionType.UNSET;
         iatName = "";

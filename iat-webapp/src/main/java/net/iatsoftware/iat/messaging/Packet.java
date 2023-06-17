@@ -21,7 +21,7 @@ import java.util.Base64;
 
 @XmlRootElement(name="Packet")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Packet extends net.iatsoftware.iat.generated.PacketPojo {
+public class Packet extends net.iatsoftware.iat.generated.GPacket {
     protected byte[] byteData = null;
 
     public Packet() {

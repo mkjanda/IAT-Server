@@ -28,7 +28,7 @@ import javax.inject.Inject;
 @XmlAccessorType(XmlAccessType.NONE)
 @Component
 @Scope(value = "prototype")
-public class IATReport extends net.iatsoftware.iat.generated.IATReportPojo {
+public class IATReport extends net.iatsoftware.iat.generated.GIATReport {
     @Inject
     IATRepositoryManager iatRepositoryManager;
 
@@ -60,5 +60,6 @@ public class IATReport extends net.iatsoftware.iat.generated.IATReportPojo {
             ds = null;
         }
         deploying = ds != null;
+        testVersion = test.getVersion();
     }
 }

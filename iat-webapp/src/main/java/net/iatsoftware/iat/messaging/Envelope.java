@@ -22,7 +22,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name = "Envelope")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Envelope extends net.iatsoftware.iat.generated.Envelope {
+public class Envelope extends net.iatsoftware.iat.generated.GEnvelope {
     private EnvelopeType envelopeType = EnvelopeType.NONE;
 
     public Envelope() {

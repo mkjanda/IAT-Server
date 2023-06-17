@@ -14,12 +14,11 @@ import net.iatsoftware.iat.generated.IATEventType;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import ch.qos.logback.core.joran.conditional.ElseAction;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@XmlRootElement(name="IATEvent")
+@XmlRootElement(name="TextInstructionScreen")
 @XmlAccessorType(XmlAccessType.NONE)
-public class TextInstructionScreen extends net.iatsoftware.iat.generated.TextInstructionScreen {
+public class TextInstructionScreen extends net.iatsoftware.iat.generated.GTextInstructionScreen {
     public TextInstructionScreen() {
         this.eventType = IATEventType.TEXT_INSTRUCTION_SCREEN;
     }

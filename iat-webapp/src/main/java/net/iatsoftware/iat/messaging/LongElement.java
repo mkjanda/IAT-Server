@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="LongElement")
 @XmlAccessorType(XmlAccessType.NONE)
-public class LongElement extends net.iatsoftware.iat.generated.LongElement {
+public class LongElement extends net.iatsoftware.iat.generated.GLongElement {
     public LongElement(){}
     
     public LongElement(String name, long value) {

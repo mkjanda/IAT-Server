@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="IATResultSet")
 @XmlAccessorType(XmlAccessType.NONE)
-public class IATResultSet extends net.iatsoftware.iat.generated.IATResultSetPojo {
+public class IATResultSet extends net.iatsoftware.iat.generated.GIATResultSet {
     public IATResultSet(){}
 }

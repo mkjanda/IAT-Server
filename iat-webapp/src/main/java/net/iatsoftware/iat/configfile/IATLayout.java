@@ -16,5 +16,5 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="Layout")
 @XmlAccessorType(XmlAccessType.NONE)
-public class IATLayout extends net.iatsoftware.iat.generated.IATLayoutPojo {
+public class IATLayout extends net.iatsoftware.iat.generated.GIATLayout {
 }

@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="ClientException")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ClientException extends net.iatsoftware.iat.generated.ClientException {
+public class ClientException extends net.iatsoftware.iat.generated.GClientException {
     public ClientException() {}
     
 }

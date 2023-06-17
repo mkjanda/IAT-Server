@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="UpdateDownloadsRemaining")
 @XmlAccessorType(XmlAccessType.NONE)
-public class UpdateDownloadsRemaining extends net.iatsoftware.iat.generated.UpdateDownloadsRemainingPojo {
+public class UpdateDownloadsRemaining extends net.iatsoftware.iat.generated.GUpdateDownloadsRemaining {
     
     public UpdateDownloadsRemaining() {}
 }

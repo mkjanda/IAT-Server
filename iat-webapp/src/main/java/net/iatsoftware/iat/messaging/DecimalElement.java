@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="DecimalElement")
 @XmlAccessorType(XmlAccessType.NONE)
-public class DecimalElement extends net.iatsoftware.iat.generated.DecimalElement {
+public class DecimalElement extends net.iatsoftware.iat.generated.GDecimalElement {
     public DecimalElement() {}
 
     public DecimalElement(String name, BigDecimal value) {

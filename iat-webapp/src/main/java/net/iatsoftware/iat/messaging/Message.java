@@ -15,13 +15,8 @@ import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="Message")
-public class Message extends net.iatsoftware.iat.generated.MessagePojo {
+public class Message extends net.iatsoftware.iat.generated.GMessage {
     public Message() {
         super();
     }
-    
-    @Override
-    public boolean doBeforeMarshal(Marshaller m) { return true; }
-    @Override
-    public void doAfterUnmarshal(Unmarshaller um, Object parent) {}
 }

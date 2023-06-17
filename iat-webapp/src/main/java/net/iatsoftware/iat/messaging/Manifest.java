@@ -30,7 +30,7 @@ import org.apache.logging.log4j.Logger;
 
 @XmlRootElement(name = "Manifest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Manifest extends net.iatsoftware.iat.generated.ManifestPojo {
+public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 	private static final Logger logger = LogManager.getLogger();
 	private static final String NOTIFICATION_FILE = "notification.html";
 	private static final String NOTIFICATION_FLAG_FILE = "notification-flags.txt";

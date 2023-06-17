@@ -28,7 +28,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 @Table(name="selection_specifiers")
 @XmlType(name="SelectionSpecifier")
 @XmlAccessorType(XmlAccessType.NONE)
-public class SelectionSpecifier extends net.iatsoftware.iat.generated.SelectionSpecifierPojo {
+public class SelectionSpecifier extends net.iatsoftware.iat.generated.GSelectionSpecifier {
     private static final long serialVersionUID = 1L;
     
     @Basic

@@ -18,6 +18,6 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlRootElement(name="RequestHandshake")
 @XmlAccessorType(XmlAccessType.NONE)
-public class RequestHandshake extends net.iatsoftware.iat.generated.RequestHandshakePojo {
+public class RequestHandshake extends net.iatsoftware.iat.generated.GRequestHandshake {
     public RequestHandshake() {}
 }

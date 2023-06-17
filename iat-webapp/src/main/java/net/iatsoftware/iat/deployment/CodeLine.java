@@ -16,5 +16,5 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlType(name="Function")
 @XmlAccessorType(XmlAccessType.NONE)
-public class CodeLine extends net.iatsoftware.iat.generated.CodeLinePojo {
+public class CodeLine extends net.iatsoftware.iat.generated.GCodeLine {
 }

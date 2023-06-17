@@ -16,9 +16,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@XmlRootElement(name = "IATEvent")
+@XmlRootElement(name = "KeyedInstructionScreen")
 @XmlAccessorType(XmlAccessType.NONE)
-public class KeyedInstructionScreen extends net.iatsoftware.iat.generated.KeyedInstructionScreen {
+public class KeyedInstructionScreen extends net.iatsoftware.iat.generated.GKeyedInstructionScreen {
     public KeyedInstructionScreen() {
         this.eventType = IATEventType.KEYED_INSTRUCTION_SCREEN;
     }

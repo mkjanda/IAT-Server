@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="IATResultSetElement")
 @XmlAccessorType(XmlAccessType.NONE)
-public class IATResultSetElementV2 extends net.iatsoftware.iat.generated.IATResultSetElementV2Pojo {
+public class IATResultSetElementV2 extends net.iatsoftware.iat.generated.GIATResultSetElementV2 {
     public IATResultSetElementV2(){}
     public IATResultSetElementV2(int item, int block, long latency, int presentationNum, boolean error) {
         this.error = error;

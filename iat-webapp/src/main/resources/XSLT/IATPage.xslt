@@ -121,6 +121,7 @@
                     <xsl:element name="form">
                         <xsl:attribute name="method" select="'post'" />
                         <xsl:attribute name="id" select="'IATForm'" />
+                        <xsl:attribute name="action" select="//ServerPath" />
                         <xsl:element name="div">
                             <xsl:attribute name="id" select="'additionalPostData'" />
                             <xsl:value-of select="' '" />
@@ -194,14 +195,8 @@
         <xsl:variable name="displayItem" select="." />
         <xsl:variable name="id" select="ID" />
         <xsl:if test="count($responseDisplayIDs[some $n in ResponseDisplayID satisfies xs:integer($n) eq xs:integer($id)]) gt 0">
-            <xsl:variable name="vertPadding" select="xs:string(ceiling((xs:integer(//Layout/ResponseHeight) - xs:integer($displayItem[ID]/Height)) div 2) - 5)" />
-            <xsl:variable name="horizPadding" select="xs:string(ceiling((xs:integer(//Layout/ResponseWidth) - xs:integer($displayItem[$id eq ID]/Width)) div 2) - 5)" />
-            <xsl:value-of select="concat('left: ', xs:integer(X) - xs:integer($horizPadding), 'px;&#x0A;')" />
-            <xsl:value-of select="concat('top: ', xs:integer(Y) - xs:integer($vertPadding), 'px;&#x0A;')" />
-            <xsl:value-of select="concat('padding-top: ', $vertPadding, 'px;&#x0A;')" />
-            <xsl:value-of select="concat('padding-left: ', $horizPadding, 'px;&#x0A;')" />
-            <xsl:value-of select="concat('padding-bottom: ', $vertPadding, 'px;&#x0A;')" />
-            <xsl:value-of select="concat('padding-right: ', $horizPadding, 'px;&#x0A;')" />
+            <xsl:value-of select="concat('left: ', xs:integer(X), 'px;&#x0A;')" />
+            <xsl:value-of select="concat('top: ', xs:integer(Y), 'px;&#x0A;')" />
         </xsl:if>
         <xsl:if test="count($responseDisplayIDs[some $n in ResponseDisplayID satisfies xs:integer($n) eq xs:integer($id)]) eq 0">
             <xsl:value-of select="concat('left: ', xs:integer(X), 'px;&#x0A;')" />

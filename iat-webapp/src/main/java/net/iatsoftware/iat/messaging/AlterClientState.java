@@ -16,5 +16,5 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="AlterClientState")
 @XmlAccessorType(XmlAccessType.NONE)
-public class AlterClientState extends net.iatsoftware.iat.generated.AlterClientStatePojo {
+public class AlterClientState extends net.iatsoftware.iat.generated.GAlterClientState {
 }

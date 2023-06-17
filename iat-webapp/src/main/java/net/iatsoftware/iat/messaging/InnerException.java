@@ -6,6 +6,6 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="InnerException")
 @XmlAccessorType(XmlAccessType.NONE)
-public class InnerException extends net.iatsoftware.iat.generated.InnerException {
+public class InnerException extends net.iatsoftware.iat.generated.GInnerException {
 
 }

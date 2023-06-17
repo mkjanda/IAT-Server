@@ -26,7 +26,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 @Table(name="range_specifiers")
 @XmlType(name="RangeSpecifier")
 @XmlAccessorType(XmlAccessType.NONE)
-public class RangeSpecifier extends net.iatsoftware.iat.generated.RangeSpecifierPojo {
+public class RangeSpecifier extends net.iatsoftware.iat.generated.GRangeSpecifier {
     
     public RangeSpecifier(){}
 

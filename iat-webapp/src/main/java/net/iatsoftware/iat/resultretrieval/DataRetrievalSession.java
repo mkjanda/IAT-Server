@@ -41,6 +41,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.StringReader;
 import java.net.URI;
+import java.time.Duration;
 import java.text.DateFormat;
 import java.util.Base64;
 import java.util.Calendar;
@@ -93,7 +94,12 @@ public class DataRetrievalSession {
                     retrieveServerReport(event);
                     break;
             }
-        } catch (java.net.URISyntaxException ex) {
+        } catch (jakarta.persistence.NoResultException | jakarta.persistence.NonUniqueResultException ex) {
+            var outTrans = new TransactionRequest(TransactionType.NOTIFY_DOWNLOAD_LEGACY_SOFTWARE);
+            outTrans.addStringValue("version", "1.1.1.46");
+            this.publisher.publishEvent(new WebSocketFinalDataSent(event.getSessionId(), new Envelope(outTrans)));
+        }
+        catch (Exception ex) {
             log.error(ex);
         }
     }
@@ -116,9 +122,9 @@ public class DataRetrievalSession {
             trans.addStringValue("DownloadKey", fPrefix);
             trans.setClientID(e.getClientID());
             this.publisher.publishEvent(new WebSocketDataSent(e.getSessionId(), new Envelope(trans)));
-            this.scheduler.schedule(() -> {
+            this.scheduler.scheduleWithFixedDelay(() -> {
                 slideFile.delete();
-            }, new java.util.Date(System.currentTimeMillis() + 600_000L));
+            }, Duration.ofMillis(600_000L));
         } catch (java.io.IOException | java.net.URISyntaxException ex) {
             log.error("Error generating item slide file for download", ex);
             this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
@@ -126,9 +132,8 @@ public class DataRetrievalSession {
         }
     }
 
-    private void retrieveResults(DataRequestEvent e) throws java.net.URISyntaxException {
+    private void retrieveResults(DataRequestEvent e) throws java.net.URISyntaxException, java.io.IOException {
         ResultSetDescriptor rsd = beanFactory.resultSetDescriptor();
-        try {
             TestResults testResults = new TestResults();
             IAT test = iatRepositoryManager.getIATByNameAndClientID(e.getTestName(), e.getClientID());
             rsd.load(e.getClientID(), e.getTestName());
@@ -162,11 +167,6 @@ public class DataRetrievalSession {
             trans.addStringValue("AuthToken", encoder.encodeToString(authTokenData));
             trans.addLongValue("ClientId", e.getClientID());
             this.publisher.publishEvent(new WebSocketDataSent(e.getSessionId(), new Envelope(trans)));
-        } catch (java.io.IOException ex) {
-            log.error("Error preparing result file", ex);
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
-                    new Envelope(new ServerExceptionMessage("Error preparing result file", ex))));
-        }
     }
 
     private void retrieveServerReport(DataRequestEvent e) {

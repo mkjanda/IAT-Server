@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="ClientDataRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ClientDataRequest extends net.iatsoftware.iat.generated.ClientDataRequestPojo {
+public class ClientDataRequest extends net.iatsoftware.iat.generated.GClientDataRequest {
     
 }

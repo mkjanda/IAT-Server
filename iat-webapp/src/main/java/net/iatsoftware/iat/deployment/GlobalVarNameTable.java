@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "GlobalVarNameTable")
 @XmlAccessorType(XmlAccessType.NONE)
-public class GlobalVarNameTable extends net.iatsoftware.iat.generated.GlobalVarNameTablePojo {
+public class GlobalVarNameTable extends net.iatsoftware.iat.generated.GGlobalVarNameTable {
 
     public void addGlobalVars(GlobalVarNameTable varTable) {
         for (VarTableEntry vte : varTable.getVarTableEntry()) {

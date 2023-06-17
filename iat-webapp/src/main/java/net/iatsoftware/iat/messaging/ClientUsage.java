@@ -31,7 +31,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.NONE)
 @Component("ClientUsage")
 @Scope("prototype")
-public class ClientUsage extends net.iatsoftware.iat.generated.ClientUsagePojo {
+public class ClientUsage extends net.iatsoftware.iat.generated.GClientUsage {
     private static DecimalFormat decFormat = new DecimalFormat("####.##");
     public ClientUsage() {}
     

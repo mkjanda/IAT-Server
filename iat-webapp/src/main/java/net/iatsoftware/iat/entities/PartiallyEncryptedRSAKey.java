@@ -54,7 +54,7 @@ import jakarta.persistence.EnumType;
 @Table(name = "test_encryption_keys", indexes = {
     @Index(name = "encryption_keys_test_id", columnList = "TestID")
 })
-public class PartiallyEncryptedRSAKey extends net.iatsoftware.iat.generated.PartiallyEncryptedRSAKeyPojo implements java.io.Serializable {
+public class PartiallyEncryptedRSAKey extends net.iatsoftware.iat.generated.GPartiallyEncryptedRSAKey implements java.io.Serializable {
     private static final long serialVersionUID = 1;
     private static final Logger logger = LogManager.getLogger();
     private static final byte[] privKeyDesIv = new byte[]{(byte) 0xFA, (byte) 0x64, (byte) 0x92, (byte) 0x21, (byte) 0x4A, (byte) 0x74, (byte) 0x41, (byte) 0xE9};

@@ -93,8 +93,8 @@ public class TestResource implements java.io.Serializable{
         return resource;
     }
     public void setResourceBytes(byte []val) {
-        if (this.resource != null)
-            this.size = this.resource.length;
+        if (val != null)
+            this.size = val.length;
         this.resource = val;
     }
 

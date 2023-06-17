@@ -30,7 +30,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 @Table(name="resource_prices")
 @XmlType(name="ResourcePrice")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ResourcePrice extends net.iatsoftware.iat.generated.ResourcePricePojo implements java.io.Serializable {
+public class ResourcePrice extends net.iatsoftware.iat.generated.GResourcePrice implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     private long id;
     

@@ -28,7 +28,7 @@ import javax.inject.Inject;
 @XmlAccessorType(XmlAccessType.NONE)
 @Component
 @Scope(value="prototype")
-public class ServerReport extends net.iatsoftware.iat.generated.ServerReportPojo {
+public class ServerReport extends net.iatsoftware.iat.generated.GServerReport {
     @Inject IATRepositoryManager iatRepositoryManager;
     @Inject MyBeanFactory beanFactory;
     

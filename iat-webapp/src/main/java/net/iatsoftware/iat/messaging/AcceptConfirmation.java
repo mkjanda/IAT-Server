@@ -12,7 +12,7 @@ package net.iatsoftware.iat.messaging;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name = "AcceptConfirmation")
-public class AcceptConfirmation extends net.iatsoftware.iat.generated.AcceptConfirmationPojo {
+public class AcceptConfirmation extends net.iatsoftware.iat.generated.GAcceptConfirmation {
 
     public AcceptConfirmation() {
         this.downloadPassword = "FAILED";

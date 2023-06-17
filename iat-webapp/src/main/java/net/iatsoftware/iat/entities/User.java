@@ -41,7 +41,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
         = @Index(name = "client_user", columnList = "ClientID, user_num", unique = true))
 @XmlRootElement(name = "UserInfo")
 @XmlAccessorType(XmlAccessType.NONE)
-public class User extends net.iatsoftware.iat.generated.UserInfoPojo implements java.io.Serializable {
+public class User extends net.iatsoftware.iat.generated.GUserInfo implements java.io.Serializable {
     private static final Random random = new Random();
     private static final long serialVersionUID = 1L;
     private static final int[] productKeyModuli = new int[]{22, 6, 17, 30, 5, 15, 24, 2, 19, 35, 27, 2, 19, 23, 25, 20, 12, 4, 19, 31};

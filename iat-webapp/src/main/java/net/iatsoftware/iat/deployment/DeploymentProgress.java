@@ -23,7 +23,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name = "DeploymentProgress")
 @XmlAccessorType(XmlAccessType.NONE)
-public class DeploymentProgress extends net.iatsoftware.iat.generated.DeploymentProgressPojo {
+public class DeploymentProgress extends net.iatsoftware.iat.generated.GDeploymentProgress {
 
     private String sessionId = null;
 

@@ -11,7 +11,7 @@ import net.iatsoftware.iat.generated.ManifestEntityType;
  *
  * @author Michael Janda
  */
-public class File extends net.iatsoftware.iat.generated.FilePojo implements java.io.Serializable {
+public class File extends net.iatsoftware.iat.generated.GFile implements java.io.Serializable {
     private static final long serialVersionUID = 1;
 
     public File()

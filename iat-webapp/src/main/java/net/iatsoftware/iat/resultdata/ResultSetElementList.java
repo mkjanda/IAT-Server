@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlRootElement(name="IATResultSetElementList")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ResultSetElementList extends net.iatsoftware.iat.generated.IATResultSetElementListPojo {
+public class ResultSetElementList extends net.iatsoftware.iat.generated.GIATResultSetElementList {
     
     @Override
     public boolean doBeforeMarshal(Marshaller m) {

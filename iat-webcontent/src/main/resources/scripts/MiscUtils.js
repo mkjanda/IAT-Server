@@ -150,6 +150,9 @@ EventUtilClass.prototype = {
                     return event.charCode;
                 else
                     return event.keyCode;
+            },
+            bind : function(funct, functThis) {
+                return funct.bind(functThis);
             }
 };
 

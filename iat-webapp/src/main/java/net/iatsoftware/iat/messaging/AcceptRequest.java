@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="AcceptRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class AcceptRequest extends net.iatsoftware.iat.generated.AcceptRequestPojo {
+public class AcceptRequest extends net.iatsoftware.iat.generated.GAcceptRequest {
 
 }

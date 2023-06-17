@@ -18,7 +18,7 @@ import java.util.List;
 
 @XmlRootElement(name="SurveyResponse")
 @XmlAccessorType(XmlAccessType.NONE)
-public class SurveyResponseSet extends net.iatsoftware.iat.generated.SurveyResponseSetPojo {
+public class SurveyResponseSet extends net.iatsoftware.iat.generated.GSurveyResponseSet {
     public SurveyResponseSet(){}
   
     public SurveyResponseSet(String surveyName, List<String> responses)

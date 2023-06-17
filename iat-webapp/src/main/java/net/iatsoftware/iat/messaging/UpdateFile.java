@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="UpdateFile")
 @XmlAccessorType(XmlAccessType.NONE)
-public class UpdateFile extends net.iatsoftware.iat.generated.UpdateFilePojo {
+public class UpdateFile extends net.iatsoftware.iat.generated.GUpdateFile {
     public UpdateFile() {
         this.entityType = ManifestEntityType.UPDATE_FILE;
     }

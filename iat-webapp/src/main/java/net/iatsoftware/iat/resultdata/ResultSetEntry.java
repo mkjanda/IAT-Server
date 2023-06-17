@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="ResultSetEntry")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ResultSetEntry extends net.iatsoftware.iat.generated.ResultSetEntryPojo {
+public class ResultSetEntry extends net.iatsoftware.iat.generated.GResultSetEntry {
     public ResultSetEntry(){}
 }

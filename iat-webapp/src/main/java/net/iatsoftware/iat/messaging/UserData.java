@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="UserData")
 @XmlAccessorType(XmlAccessType.NONE)
-public class UserData extends net.iatsoftware.iat.generated.UserDataPojo {
+public class UserData extends net.iatsoftware.iat.generated.GUserData {
     public UserData() {}
     
     public UserData(User u) {

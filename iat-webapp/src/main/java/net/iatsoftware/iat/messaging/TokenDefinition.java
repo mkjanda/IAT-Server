@@ -10,6 +10,6 @@ package net.iatsoftware.iat.messaging;
  * @author michael
  */
 
-public class TokenDefinition extends net.iatsoftware.iat.generated.TokenDefinitionPojo {
+public class TokenDefinition extends net.iatsoftware.iat.generated.GTokenDefinition {
     
 }

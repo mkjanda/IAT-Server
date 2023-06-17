@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="QueryIATExists")
 @XmlAccessorType(XmlAccessType.NONE)
-public class QueryIATExists extends net.iatsoftware.iat.generated.QueryIATExistsPojo {
+public class QueryIATExists extends net.iatsoftware.iat.generated.GQueryIATExists {
     public QueryIATExists() {}
 }

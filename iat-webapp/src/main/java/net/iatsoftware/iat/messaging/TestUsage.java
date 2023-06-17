@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="TestUsage")
 @XmlAccessorType(XmlAccessType.NONE)
-public class TestUsage extends net.iatsoftware.iat.generated.TestUsagePojo {
+public class TestUsage extends net.iatsoftware.iat.generated.GTestUsage {
     
     public TestUsage() {}
     

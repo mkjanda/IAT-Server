@@ -19,7 +19,7 @@ import java.util.Calendar;
 
 @XmlRootElement(name="ResultPacket")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ResultPacket extends net.iatsoftware.iat.generated.ResultPacketPojo {
+public class ResultPacket extends net.iatsoftware.iat.generated.GResultPacket {
     public ResultPacket(){}
 
     public ResultPacket(Long resultID, ResultTOC toc, byte[] resultData, Calendar timestamp, String token) {

@@ -16,5 +16,5 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlType(name="ProcessedCode")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ProcessedCode extends net.iatsoftware.iat.generated.ProcessedCodePojo {
+public class ProcessedCode extends net.iatsoftware.iat.generated.GProcessedCode {
 }

@@ -5,7 +5,7 @@
     xmlns:iat="http://www.iatsoftware.net/schema" targetNamespace="http://www.iatsoftware.net/schema" 
     jaxb:version="3.0">
 
-    <xs:complexType name="AcceptConfirmationPojo" abstract="true">
+    <xs:complexType name="GAcceptConfirmation" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.AcceptConfirmation"/>
@@ -28,7 +28,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="AcceptRequestPojo" abstract="true">
+    <xs:complexType name="GAcceptRequest" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.AcceptRequest"/>
@@ -48,7 +48,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="AlterClientStatePojo" abstract="true">
+    <xs:complexType name="GAlterClientState" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftare.iat.messaging.AlterClientState"/>
@@ -64,7 +64,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="AlterResourcesPojo" abstract="true">
+    <xs:complexType name="GAlterResources" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.AlterResources"/>
@@ -119,7 +119,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="BasicClientInfoPojo" abstract="true">
+    <xs:complexType name="GBasicClientInfo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.BasicClientInfo"/>
@@ -139,7 +139,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="ClientDataRequestPojo" abstract="true">
+    <xs:complexType name="GClientDataRequest" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientDataRequest"/>
@@ -158,7 +158,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="ClientUsagePojo" abstract="true">
+    <xs:complexType name="GClientUsage" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientUsage"/>
@@ -204,7 +204,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="CorruptedSaveFileReportPojo" abstract="true">
+    <xs:complexType name="GCorruptedSaveFileReport" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.CorruptedSaveFileReport"/>
@@ -223,7 +223,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="DataRequestPojo" abstract="true">
+    <xs:complexType name="GDataRequest" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.DataRequest"/>
@@ -243,7 +243,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="DatePojo" abstract="true">
+    <xs:complexType name="GDate" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Date"/>
@@ -263,7 +263,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="DeleteRequestPojo" abstract="true">
+    <xs:complexType name="GDeleteRequest" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.DeleteRequest"/>
@@ -278,7 +278,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="UpdateNotificationPojo">
+    <xs:complexType name="GUpdateNotification">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.UpdateNotification"/>
@@ -302,7 +302,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="PricingPojo" abstract="true">
+    <xs:complexType name="GPricing" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.clientmanater.messsaging.Pricing"/>
@@ -313,7 +313,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ProductRequestPojo" abstract="true">
+    <xs:complexType name="GProductRequest" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ProductRequest"/>
@@ -343,7 +343,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="ProductRequestsPojo" abstract="true">
+    <xs:complexType name="GProductRequests" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ProductRequests"/>
@@ -365,7 +365,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="PurchaseConfirmationPojo" abstract="true">
+    <xs:complexType name="GPurchaseConfirmation" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.dataservices.PurchaseConfirmation"/>
@@ -401,7 +401,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="PurchaseHistoryPojo" abstract="true">
+    <xs:complexType name="GPurchaseHistory" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.PurchaseHistory"/>
@@ -412,7 +412,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="PurchaseHistoryEntityPojo" abstract="true">
+    <xs:complexType name="GPurchaseHistoryEntity" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.PurchaseHistory"/>
@@ -437,7 +437,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="PurchaseOrderPojo" abstract="true">
+    <xs:complexType name="GPurchaseOrder" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.PurchaseOrder"/>
@@ -452,7 +452,7 @@
     </xs:complexType>
 
 
-    <xs:complexType name="ResourcePricePojo" abstract="true">
+    <xs:complexType name="GResourcePrice" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.ResourcePrice"/>
@@ -472,7 +472,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="TestUsagePojo" abstract="true">
+    <xs:complexType name="GTestUsage" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.TestUsage"/>
@@ -497,7 +497,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="TransactionPojo" abstract="true">
+    <xs:complexType name="GTransaction" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Transaction"/>
@@ -519,7 +519,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="UsageReportPojo">
+    <xs:complexType name="GUsageReport">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.UsageReport"/>
@@ -541,7 +541,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="PurchaseInitiationPojo" abstract="true">
+    <xs:complexType name="GPurchaseInitiation" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.PurchaseInitiation"/>
@@ -552,7 +552,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="UpdateDownloadsRemainingPojo" abstract="true">
+    <xs:complexType name="GUpdateDownloadsRemaining" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.UpdateDownloadsRemaining"/>
@@ -563,7 +563,7 @@
         </xs:simpleContent>
     </xs:complexType>
 
-    <xs:complexType name="UserDataPojo" abstract="true">
+    <xs:complexType name="GUserData" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.UserData"/>
@@ -585,7 +585,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:element name="ClientManagementEnvelopePojo">
+    <xs:element name="GClientManagementEnvelope">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientManagementEnvelope"/>
@@ -611,7 +611,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="CodeFilePojo">
+    <xs:complexType name="GCodeFile">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.deployment.CodeFile"/>
@@ -625,7 +625,7 @@
         <xs:attribute name="ElementName" type="xs:string" form="unqualified" use="required"/>
     </xs:complexType>
 
-    <xs:complexType name="GlobalVarNameTablePojo" abstract="true">
+    <xs:complexType name="GGlobalVarNameTable" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.deployment.GlobalVarNameTable"/>
@@ -650,7 +650,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ProcessedCodePojo" abstract="true">
+    <xs:complexType name="GProcessedCode" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.deployment.ProcessedCode"/>
@@ -671,7 +671,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="CodeLinePojo" abstract="true">
+    <xs:complexType name="GCodeLine" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.deployment.CodeLine"/>
@@ -691,7 +691,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATResultSetPojo" abstract="true">
+    <xs:complexType name="GIATResultSet" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.IATResultSet"/>
@@ -715,7 +715,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATResultSetElementListPojo">
+    <xs:complexType name="GIATResultSetElementList">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultSetElementList"/>
@@ -738,7 +738,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATResultSetElementV1Pojo" abstract="true">
+    <xs:complexType name="GIATResultSetElementV1" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.IATResultSetElementV1"/>
@@ -759,7 +759,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATResultSetElementV2Pojo">
+    <xs:complexType name="GIATResultSetElementV2">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.IATResultSetElementV2"/>
@@ -782,7 +782,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="ResultRequest">
+    <xs:complexType name="GResultRequest">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ResultRequest"/>
@@ -802,7 +802,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ResultTOCPojo" abstract="true">
+    <xs:complexType name="GResultTOC" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultTOC"/>
@@ -821,7 +821,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ResultTOCEntryPojo">
+    <xs:complexType name="GResultTOCEntry">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultTOCEntry"/>
@@ -837,7 +837,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ResultPacketPojo" abstract="true">
+    <xs:complexType name="GResultPacket" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultPacket"/>
@@ -862,7 +862,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="MiscResultSetDataPojo" abstract="true">
+    <xs:complexType name="GMiscResultSetData" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.MiscResultSetData"/>
@@ -881,7 +881,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ResultSetDescriptorPojo">
+    <xs:complexType name="GResultSetDescriptor">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultSetDescriptor"/>
@@ -1076,6 +1076,7 @@
             <xs:enumeration value="DeploymentAbortFailed"/>
             <xs:enumeration value="ResultsReady"/>
             <xs:enumeration value="NoActivationsRemain"/>
+            <xs:enumeration value="NotifyDownloadLegacySoftware" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -1252,7 +1253,7 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:complexType name="ErrorReportResponse">
+    <xs:complexType name="GErrorReportResponse">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ErrorReportResponse"/>
@@ -1274,7 +1275,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="SurveyResponseSetPojo">
+    <xs:complexType name="GSurveyResponseSet">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.SurveyResponseSet"/>
@@ -1294,7 +1295,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATSurveySummaryPojo">
+    <xs:complexType name="GIATSurveySummary">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.IATSurveySummary"/>
@@ -1335,7 +1336,7 @@
         <xs:attribute name="SurveyType" type="iat:SurveyType" use="required" form="unqualified"/>
     </xs:complexType>
 
-    <xs:complexType name="TestResultsPojo">
+    <xs:complexType name="GTestResults">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.TestResults"/>
@@ -1356,7 +1357,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="ResultSetEntryPojo">
+    <xs:complexType name="GResultSetEntry">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.ResultSetEntry"/>
@@ -1378,7 +1379,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATLayoutPojo">
+    <xs:complexType name="GIATLayout">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.IATLayout"/>
@@ -1407,9 +1408,9 @@
 
 
 
-    <xs:complexType name="SurveyMultiBoolean">
+    <xs:complexType name="GSurveyMultiBoolean">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="NumValues" type="xs:integer" minOccurs="1" maxOccurs="1" />
                     <xs:element name="MinSelections" type="xs:integer" minOccurs="1" maxOccurs="1" />
@@ -1426,9 +1427,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyMultipleResponse">
+    <xs:complexType name="GSurveyMultipleResponse">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="NumChoice" type="xs:integer" minOccurs="1" maxOccurs="1" />
                     <xs:element name="Choices" minOccurs="1" maxOccurs="1">
@@ -1443,9 +1444,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyLikertResponse">
+    <xs:complexType name="GSurveyLikertResponse">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="NumChoice" type="xs:integer" minOccurs="1" maxOccurs="1" />
                     <xs:element name="IsReverseScored" type="xs:boolean" minOccurs="1" maxOccurs="1" />
@@ -1461,9 +1462,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyBoolean">
+    <xs:complexType name="GSurveyBoolean">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="TrueStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="FalseStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -1472,9 +1473,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyWeightedMultiple">
+    <xs:complexType name="GSurveyWeightedMultiple">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="WeightedChoices">
                         <xs:complexType>
@@ -1497,9 +1498,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyRegularExpression">
+    <xs:complexType name="GSurveyRegularExpression">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="Expression" type="xs:string" minOccurs="1" maxOccurs="1" />
                 </xs:sequence>
@@ -1507,9 +1508,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyFixedDigit">
+    <xs:complexType name="GSurveyFixedDigit">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="NumDigs" type="xs:integer" minOccurs="1" maxOccurs="1" />
                 </xs:sequence>
@@ -1517,9 +1518,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyBoundedNumber">
+    <xs:complexType name="GSurveyBoundedNumber">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="MinLength" type="xs:decimal" minOccurs="1" maxOccurs="1" />
                     <xs:element name="MaxLength" type="xs:decimal" minOccurs="1" maxOccurs="1" />
@@ -1529,9 +1530,9 @@
     </xs:complexType>
 
 
-    <xs:complexType name="SurveyDate">
+    <xs:complexType name="GSurveyDate">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="StartDate" minOccurs="1" maxOccurs="1">
                         <xs:complexType>
@@ -1558,9 +1559,9 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyBoundedLength">
+    <xs:complexType name="GSurveyBoundedLength">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyResponse">
+            <xs:extension base="iat:GSurveyResponse">
                 <xs:sequence>
                     <xs:element name="MinLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
                     <xs:element name="MaxLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
@@ -1569,15 +1570,15 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyResponse">
+    <xs:complexType name="GSurveyResponse">
         <xs:complexContent>
-            <xs:extension base="iat:SurveyFormat">
+            <xs:extension base="iat:GSurveyFormat">
                 <xs:attribute name="Type" type="xs:string" use="required" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="SurveyFormat">
+    <xs:complexType name="GSurveyFormat">
         <xs:sequence>
             <xs:element name="Font" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="FontSize" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -1596,7 +1597,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATEvent" abstract="true">
+    <xs:complexType name="GIATEvent" abstract="true">
         <xs:attribute name="EventType" type="iat:IATEventType" form="unqualified" use="required"/>
     </xs:complexType>
 
@@ -1609,7 +1610,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="DisplayItemPojo">
+    <xs:complexType name="GDisplayItem">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.DisplayItem"/>
@@ -1633,7 +1634,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATInstructionScreen" abstract="true">
+    <xs:complexType name="GIATInstructionScreen" abstract="true">
         <xs:complexContent>
             <xs:extension base="iat:iat-event-impl">
                 <xs:sequence>
@@ -1644,7 +1645,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="IATItem">
+    <xs:complexType name="GIATItem">
         <xs:annotation>
             <xs:appinfo>
                 <xs:jaxb implClass="net.iatsoftware.iat.configfile.IATItem"/>
@@ -1672,7 +1673,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="KeyedInstructionScreen">
+    <xs:complexType name="GKeyedInstructionScreen">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.KeyedInstructionScreen"/>
@@ -1696,7 +1697,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="MaskSpecifierPojo" abstract="true">
+    <xs:complexType name="GMaskSpecifier" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.MaskSpecifier"/>
@@ -1711,7 +1712,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="MockItemInstructionScreen">
+    <xs:complexType name="GMockItemInstructionScreen">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.MockItemInstructionScreen"/>
@@ -1740,7 +1741,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="RangeSpecifierPojo" abstract="true">
+    <xs:complexType name="GRangeSpecifier" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.RangeSpecifier"/>
@@ -1764,7 +1765,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="DynamicSpecifierPojo" abstract="true">
+    <xs:complexType name="GDynamicSpecifier" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.DynamicSpecifier"/>
@@ -1788,7 +1789,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="TrueFalseSpecifierPojo" abstract="true">
+    <xs:complexType name="GTrueFalseSpecifier" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.TrueFalseSpecifier"/>
@@ -1806,7 +1807,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="SelectionSpecifierPojo" abstract="true">
+    <xs:complexType name="GSelectionSpecifier" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.SelectionSpecifier"/>
@@ -1843,7 +1844,7 @@
 		</xs:restriction>
 	</xs:simpleType>
 	
-	<xs:complexType name="Format">
+	<xs:complexType name="GFormat">
 		<xs:sequence>
 			<xs:element name="Font" type="xs:string" />
 			<xs:element name="FontSize" type="xs:string" />
@@ -1855,7 +1856,7 @@
 		</xs:sequence>
 	</xs:complexType>
 
-	<xs:complexType name="YearMonthDay">
+	<xs:complexType name="GYearMonthDay">
     	<xs:sequence>
 	    	<xs:element name="Year" type="xs:string" minOccurs="1" maxOccurs="1" />
 			<xs:element name="Month" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -1864,32 +1865,30 @@
 		<xs:attribute name="HasValue" type="xs:boolean" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="DateResponse">
+	<xs:complexType name="GDateResponse">
 		<xs:sequence>
-			<xs:element name="SurveyItemFormat" type="iat:Format" />
-			<xs:element name="StartDate" type="iat:YearMonthDay" />
-			<xs:element name="EndDate" type="iat:YearMonthDay" />
+			<xs:element name="Format" type="iat:GFormat" />
+			<xs:element name="StartDate" type="iat:GYearMonthDay" />
+			<xs:element name="EndDate" type="iat:GYearMonthDay" />
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
 
-	<xs:complexType name="Boolean">
+	<xs:complexType name="GBoolean">
 		<xs:sequence>
-			<xs:element name="SurveyItemFormat" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="TrueStatement" type="xs:string" />
 			<xs:element name="FalseStatement" type="xs:string" />
 		</xs:sequence>
-		<xs:attribute name="Type" type="xs:string" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="Instruction">
+	<xs:complexType name="GInstruction">
     	<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="Likert">
+	<xs:complexType name="GLikert">
 		<xs:sequence>
-			<xs:element name="SurveyItemFormat" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="NumChoices" type="xs:int" />
 			<xs:element name="IsReverseScored" type="xs:boolean" />
 			<xs:element name="ChoiceDescriptions">
@@ -1906,12 +1905,11 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="MultiBoolean">
+	<xs:complexType name="GMultiBoolean">
 		<xs:sequence>
-			<xs:element name="SurveyItemFormat" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="NumValues" type="xs:int" />
 			<xs:element name="MinSelections" type="xs:int" />
 			<xs:element name="MaxSelections" type="xs:int" />
@@ -1929,38 +1927,34 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="BoundedLength">
+	<xs:complexType name="GBoundedLength">
 		<xs:sequence>
-			<xs:element name="Format" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="MinLength" type="xs:int" />
 			<xs:element name="MaxLength" type="xs:int" />
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="BoundedNumber">
+	<xs:complexType name="GBoundedNumber">
 		<xs:sequence>
-			<xs:element name="Format" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="MinValue" type="xs:int" />
 			<xs:element name="MaxValue" type="xs:int" />
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="FixedDigit">
+	<xs:complexType name="GFixedDigit">
 		<xs:sequence>
-			<xs:element name="Format" type="iat:Format" />
+    		<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="NumDigs" type="xs:int" />
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="MultipleResponse">
+	<xs:complexType name="GMultipleResponse">
 		<xs:sequence>
-			<xs:element name="SurveyItemFormat" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="NumChoices" type="xs:int" />
 			<xs:element name="Choices">
 				<xs:complexType>
@@ -1976,20 +1970,18 @@
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="RegularExpression">
+	<xs:complexType name="GRegularExpression">
 		<xs:sequence>
-			<xs:element name="Format" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="Expression" type="xs:string" />
 		</xs:sequence>
-		<xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
 	</xs:complexType>
 
-	<xs:complexType name="WeightedMultiple">
+	<xs:complexType name="GWeightedMultiple">
 		<xs:sequence>
-			<xs:element name="Format" type="iat:Format" />
+			<xs:element name="Format" type="iat:GFormat" />
 			<xs:element name="WeightedChoices">
 				<xs:complexType>
 					<xs:sequence>
@@ -2018,18 +2010,19 @@
 					<xs:sequence>
 						<xs:element name="Text" type="xs:string" minOccurs="1" maxOccurs="1" />
 						<xs:choice minOccurs="0" maxOccurs="1" >
-							<xs:element name="Boolean" type="iat:Boolean" />
-							<xs:element name="Date" type="iat:DateResponse" />
-							<xs:element name="Instruction" type="iat:Instruction" />
-							<xs:element name="Likert" type="iat:Likert" />
-							<xs:element name="MultiBoolean" type="iat:MultiBoolean" />
-							<xs:element name="BoundedLength" type="iat:BoundedLength" />
-							<xs:element name="BoundedNumber" type="iat:BoundedNumber" />
-							<xs:element name="FixedDigit" type="iat:FixedDigit" />
-							<xs:element name="MultipleResponse" type="iat:MultipleResponse" />
-							<xs:element name="WeightedMultipleResponse" type="iat:WeightedMultiple" />
+							<xs:element name="Boolean" type="iat:GBoolean" />
+							<xs:element name="Date" type="iat:GDateResponse" />
+							<xs:element name="Instruction" type="iat:GInstruction" />
+							<xs:element name="Likert" type="iat:GLikert" />
+							<xs:element name="MultiBoolean" type="iat:GMultiBoolean" />
+							<xs:element name="BoundedLength" type="iat:GBoundedLength" />
+							<xs:element name="BoundedNumber" type="iat:GBoundedNumber" />
+							<xs:element name="FixedDigit" type="iat:GFixedDigit" />
+							<xs:element name="MultipleResponse" type="iat:GMultipleResponse" />
+							<xs:element name="WeightedMultipleResponse" type="iat:GWeightedMultiple" />
+							<xs:element name="RegularExpression" type="iat:GRegularExpression" />
 						</xs:choice>
-						<xs:element name="SurveyItemFormat" type="iat:Format" />
+						<xs:element name="Format" type="iat:GFormat" />
 					</xs:sequence>
 					<xs:attribute name="Optional" type="xs:boolean" />
 					<xs:attribute name="Image" type="xs:boolean" />
@@ -2039,11 +2032,12 @@
 			<xs:element name="Caption">
 				<xs:complexType>
 					<xs:sequence>
-						<xs:element name="TextWidth" type="xs:int" />
-						<xs:element name="BorderWidth" type="xs:int" />
+                        <xs:element name="Text" type="xs:string" />
+						<xs:element name="TextWidth" type="xs:string" />
+						<xs:element name="BorderWidth" type="xs:string" />
 						<xs:element name="FontName" type="xs:string" />
-						<xs:element name="LineHeight" type="xs:int" />
-						<xs:element name="FontSize" type="xs:int" />
+						<xs:element name="LineHeight" type="xs:string" />
+						<xs:element name="FontSize" type="xs:string" />
 						<xs:element name="FontColorR" type="xs:string" />
 						<xs:element name="FontColorG" type="xs:string" />
 						<xs:element name="FontColorB" type="xs:string" />
@@ -2063,7 +2057,8 @@
 				<xs:complexType>
     				<xs:sequence>
 	    			    <xs:element name="MimeType" type="xs:string" />
-		    		    <xs:element name="ResourceIId" type="xs:long" />
+                        <xs:element name="ImageData" type="xs:string" />
+		    		    <xs:element name="ResourceId" type="xs:long" />
 			    	</xs:sequence>
 				    <xs:attribute name="Optional" type="xs:boolean" />
     				<xs:attribute name="Image" type="xs:boolean" />
@@ -2081,7 +2076,7 @@
 			</xs:appinfo>
 		</xs:annotation>
 	</xs:complexType>
-	<xs:complexType name="IATSurvey">
+	<xs:complexType name="GIATSurvey">
 		<xs:annotation>
 			<xs:appinfo>
 				<jaxb:class implClass="net.iatsoftware.iat.configfile.Survey" />
@@ -2103,17 +2098,17 @@
 
     <xs:group name="Events">
         <xs:choice>
-            <xs:element name="BeginIATBlock" type="iat:BeginIATBlock" minOccurs="1" maxOccurs="1" />
-            <xs:element name="BeginInstructionBlock" type="iat:BeginInstructionBlock" minOccurs="1" maxOccurs="1" />
-            <xs:element name="EndIATBlock" type="iat:EndIATBlock" minOccurs="1" maxOccurs="1" />
-            <xs:element name="IATItem" type="iat:IATItem" minOccurs="1" maxOccurs="1" />
-            <xs:element name="KeyedInstructionScreen" type="iat:KeyedInstructionScreen" minOccurs="1" maxOccurs="1" />
-            <xs:element name="TextInstructionScreen" type="iat:TextInstructionScreen" minOccurs="1" maxOccurs="1" />
-            <xs:element name="MockItemInstructionScreenInstructionSccreen" type="iat:MockItemInstructionScreen" minOccurs="1" maxOccurs="1" />
+            <xs:element name="BeginIATBlock" type="iat:GBeginIATBlock" minOccurs="1" maxOccurs="1" />
+            <xs:element name="BeginInstructionBlock" type="iat:GBeginInstructionBlock" minOccurs="1" maxOccurs="1" />
+            <xs:element name="EndIATBlock" type="iat:GEndIATBlock" minOccurs="1" maxOccurs="1" />
+            <xs:element name="IATItem" type="iat:GIATItem" minOccurs="1" maxOccurs="1" />
+            <xs:element name="KeyedInstructionScreen" type="iat:GKeyedInstructionScreen" minOccurs="1" maxOccurs="1" />
+            <xs:element name="TextInstructionScreen" type="iat:GTextInstructionScreen" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MockItemInstructionScreen" type="iat:GMockItemInstructionScreen" minOccurs="1" maxOccurs="1" />
         </xs:choice>
     </xs:group>
 
-    <xs:complexType name="BeginIATBlock">
+    <xs:complexType name="GBeginIATBlock">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.BeginIATBlock"/>
@@ -2135,7 +2130,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="BeginInstructionBlock">
+    <xs:complexType name="GBeginInstructionBlock">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.BeginInstructionBlock"/>
@@ -2151,7 +2146,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="EndIATBlock">
+    <xs:complexType name="GEndIATBlock">
         <xs:complexContent>
             <xs:extension base="iat:iat-event-impl">
                 <xs:sequence>
@@ -2161,7 +2156,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="TextInstructionScreen">
+    <xs:complexType name="GTextInstructionScreen">
         <xs:complexContent>
             <xs:extension base="iat:instruction-screen-impl">
                 <xs:sequence>
@@ -2178,7 +2173,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ConfigFile">
+    <xs:complexType name="GConfigFile">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.ConfigFile" />
@@ -2196,10 +2191,8 @@
                     <xs:element name="NumIATItems" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="IsSevenBlock" type="xs:boolean" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RedirectOnComplete" type="xs:string" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="LeftResponseASCIIKeyCodeUpper" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="RightResponseASCIIKeyCodeUpper" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="LeftResponseASCIIKeyCodeLower" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="RightResponseASCIIKeyCodeLower" type="xs:int" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="LeftResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="RightResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RandomizationType" minOccurs="1" maxOccurs="1">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
@@ -2248,19 +2241,19 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="Globals">
+    <xs:complexType name="GGlobals">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.Globals" />
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Global" minOccurs="0" maxOccurs="unbounded" type="iat:GlobalVar" />
+            <xs:element name="Global" minOccurs="0" maxOccurs="unbounded" type="iat:GGlobalVar" />
         </xs:sequence>
     </xs:complexType>
         
         
-    <xs:complexType name="GlobalVar">
+    <xs:complexType name="GGlobalVar">
         <xs:sequence>
             <xs:element name="OrigName" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="NewName" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -2275,7 +2268,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="UniqueResponse">
+    <xs:complexType name="GUniqueResponse">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.configfile.UniqueResponse" />
@@ -2300,7 +2293,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ActivationResponsePojo">
+    <xs:complexType name="GActivationResponse">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ActivationResponse"/>
@@ -2333,7 +2326,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ActivationRequestPojo">
+    <xs:complexType name="GActivationRequest">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ActivationRequest"/>
@@ -2353,7 +2346,7 @@
     </xs:complexType>
 
 
-    <xs:complexType name="AjaxRequestPojo">
+    <xs:complexType name="GAjaxRequest">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.AjaxRequest"/>
@@ -2379,7 +2372,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="EncCodeLinePojo" abstract="true">
+    <xs:complexType name="GEncCodeLine" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.CodeLine"/>
@@ -2405,7 +2398,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="SegmentPojo" abstract="true">
+    <xs:complexType name="GSegment" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Segment"/>
@@ -2420,7 +2413,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="AjaxResponsePojo" abstract="true">
+    <xs:complexType name="GAjaxResponse" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.AjaxResponse"/>
@@ -2451,7 +2444,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="DeploymentProgressPojo" abstract="true">
+    <xs:complexType name="GDeploymentProgress" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.deployment.DeploymentProgress"/>
@@ -2472,7 +2465,7 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="FileEntityPojo" abstract="true">
+    <xs:complexType name="GFileEntity" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.FileEntity"/>
@@ -2500,7 +2493,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="FilePojo" abstract="true">
+    <xs:complexType name="GFile" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.File"/>
@@ -2527,7 +2520,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="DirectoryPojo" abstract="true">
+    <xs:complexType name="GDirectory" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Directory"/>
@@ -2550,7 +2543,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ManifestPojo">
+    <xs:complexType name="GManifest">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Manifest"/>
@@ -2582,7 +2575,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="EncryptedDESCipherPojo">
+    <xs:complexType name="GEncryptedDESCipher">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.EncryptedDESCipher"/>
@@ -2605,7 +2598,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="UpdateFilePojo" abstract="true">
+    <xs:complexType name="GUpdateFile" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.messaging.UpdateFile"/>
@@ -2629,7 +2622,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="HandshakePojo">
+    <xs:complexType name="GHandshake">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Handshake"/>
@@ -2651,7 +2644,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATListEntryPojo" abstract="true">
+    <xs:complexType name="GIATListEntry" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.IATListEntry"/>
@@ -2670,7 +2663,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATListPojo" abstract="true">
+    <xs:complexType name="GIATList" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.IATList"/>
@@ -2693,7 +2686,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IATReportPojo" abstract="true">
+    <xs:complexType name="GIATReport" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.IATReport"/>
@@ -2710,6 +2703,7 @@
             <xs:element name="AuthorFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="AuthorLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="AuthorEMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestVersion" type="xs:string" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="Deploying" type="xs:boolean" use="required" form="unqualified"/>
     </xs:complexType>
@@ -2721,7 +2715,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="AdminListenerPojo" abstract="true">
+    <xs:complexType name="GAdminListener" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.AdminListener"/>
@@ -2743,7 +2737,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="TokenDefinitionPojo">
+    <xs:complexType name="GTokenDefinition">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.TokenDefinition"/>
@@ -2768,7 +2762,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="PacketPojo" abstract="true">
+    <xs:complexType name="GPacket" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Packet"/>
@@ -2795,7 +2789,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="PartiallyEncryptedRSAKeyPojo" abstract="true">
+    <xs:complexType name="GPartiallyEncryptedRSAKey" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.PartiallyEncryptedRSAKey"/>
@@ -2820,7 +2814,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="PublicKeyPojo" abstract="true">
+    <xs:complexType name="GPublicKey" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.resultdata.PublicKey"/>
@@ -2846,7 +2840,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="QueryIATExistsPojo" abstract="true">
+    <xs:complexType name="GQueryIATExists" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.QueryIATExists"/>
@@ -2869,7 +2863,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="RequestHandshakePojo" abstract="true">
+    <xs:complexType name="GRequestHandshake" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.RequestHandshake"/>
@@ -2893,7 +2887,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="RSAKeyPairPojo" abstract="true">
+    <xs:complexType name="GRSAKeyPair" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.RSAKeyPair"/>
@@ -2916,7 +2910,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ServerReportPojo" abstract="true">
+    <xs:complexType name="GServerReport" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ServerReport"/>
@@ -2946,7 +2940,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="IntElement">
+    <xs:complexType name="GIntElement">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.IntElement"/>
@@ -2966,7 +2960,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="LongElement">
+    <xs:complexType name="GLongElement">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.LongElement"/>
@@ -2986,7 +2980,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="DecimalElement">
+    <xs:complexType name="GDecimalElement">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.DecimalElement"/>
@@ -3006,7 +3000,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="StringElement">
+    <xs:complexType name="GStringElement">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.StringElement"/>
@@ -3026,7 +3020,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="TransactionRequestPojo" abstract="true">
+    <xs:complexType name="GTransactionRequest" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.TransactionRequest"/>
@@ -3057,7 +3051,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="UploadRequestPojo" abstract="true">
+    <xs:complexType name="GUploadRequest" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.UploadRequest"/>
@@ -3083,7 +3077,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="UserInfoPojo" abstract="true">
+    <xs:complexType name="GUserInfo" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.entities.User"/>
@@ -3097,7 +3091,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ClientErrorReport" abstract="true">
+    <xs:complexType name="GClientErrorReport" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientErrorReport"/>
@@ -3123,7 +3117,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="ActivationException" abstract="true">
+    <xs:complexType name="GActivationException" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ActivationException"/>
@@ -3139,7 +3133,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="ClientException" abstract="true">
+    <xs:complexType name="GClientException" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientException"/>
@@ -3185,7 +3179,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="ClientActivityEventPojo">
+    <xs:complexType name="GClientActivityEvent">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientActivityEvent"/>
@@ -3219,7 +3213,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ServerExceptionMessagePojo" abstract="true">
+    <xs:complexType name="GServerExceptionMessage" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ServerExceptionMessage"/>
@@ -3242,7 +3236,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="ExceptionMessage">
+    <xs:complexType name="GExceptionMessage">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.ExceptionMessage"/>
@@ -3267,7 +3261,7 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="InnerException">
+    <xs:complexType name="GInnerException">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.InnerException"/>
@@ -3290,7 +3284,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="MessagePojo" abstract="true">
+    <xs:complexType name="GMessage" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Message"/>
@@ -3309,7 +3303,7 @@
     </xs:complexType>
 
 
-    <xs:complexType name="XmlPacketPojo" abstract="true">
+    <xs:complexType name="GXmlPacket" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.XmlPacket"/>
@@ -3342,7 +3336,7 @@
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="ServerConfigurationPojo" abstract="true">
+    <xs:complexType name="GServerConfiguration" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.config.DefaultServerConfiguration"/>
@@ -3368,7 +3362,7 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="Envelope" abstract="true">
+    <xs:complexType name="GEnvelope" abstract="true">
         <xs:annotation>
             <xs:appinfo>
                 <jaxb:class implClass="net.iatsoftware.iat.messaging.Envelope"/>

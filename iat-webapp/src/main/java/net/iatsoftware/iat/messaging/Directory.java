@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class Directory extends net.iatsoftware.iat.generated.DirectoryPojo {
+public class Directory extends net.iatsoftware.iat.generated.GDirectory {
 
     private int walkNdx = 0;
 

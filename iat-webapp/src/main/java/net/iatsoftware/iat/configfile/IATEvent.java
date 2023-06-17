@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public abstract class IATEvent extends net.iatsoftware.iat.generated.IATEvent {
+public abstract class IATEvent extends net.iatsoftware.iat.generated.GIATEvent {
 
     public boolean setResource(int id, int resId) {
         return false;

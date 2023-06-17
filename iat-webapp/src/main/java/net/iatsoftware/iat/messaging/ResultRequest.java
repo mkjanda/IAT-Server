@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="ResultRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ResultRequest extends net.iatsoftware.iat.generated.ResultRequest {
+public class ResultRequest extends net.iatsoftware.iat.generated.GResultRequest {
     
     public ResultRequest(){}
 }

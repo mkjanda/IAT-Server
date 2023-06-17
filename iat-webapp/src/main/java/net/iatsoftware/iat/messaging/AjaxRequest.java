@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="AjaxRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class AjaxRequest extends net.iatsoftware.iat.generated.AjaxRequestPojo {
+public class AjaxRequest extends net.iatsoftware.iat.generated.GAjaxRequest {
     
 }

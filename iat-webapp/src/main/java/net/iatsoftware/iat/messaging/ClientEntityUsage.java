@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="ClientSessionUsage")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ClientEntityUsage extends net.iatsoftware.iat.generated.GClientEntityUsage {
+public class ClientEntityUsage extends net.iatsoftware.iat.generated.GGClientEntityUsage {
     private static final DateFormat df = DateFormat.getTimeInstance(DateFormat.MEDIUM);
     
     public ClientEntityUsage(){}

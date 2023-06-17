@@ -17,7 +17,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="ServerException")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ServerExceptionMessage extends net.iatsoftware.iat.generated.ServerExceptionMessagePojo implements java.io.Serializable {
+public class ServerExceptionMessage extends net.iatsoftware.iat.generated.GServerExceptionMessage implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     public ServerExceptionMessage() { }
     

@@ -16,9 +16,9 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@XmlRootElement(name="IATEvent")
+@XmlRootElement(name="BeginInstructionBlock")
 @XmlAccessorType(XmlAccessType.NONE)
-public class BeginInstructionBlock extends net.iatsoftware.iat.generated.BeginInstructionBlock {
+public class BeginInstructionBlock extends net.iatsoftware.iat.generated.GBeginInstructionBlock {
     public BeginInstructionBlock() 
     {
         this.eventType = IATEventType.BEGIN_INSTRUCTION_BLOCK;

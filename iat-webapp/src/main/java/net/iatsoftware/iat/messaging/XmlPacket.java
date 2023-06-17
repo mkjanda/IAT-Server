@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="XmlPacket")
 @XmlAccessorType(XmlAccessType.NONE)
-public class XmlPacket extends net.iatsoftware.iat.generated.XmlPacketPojo {
+public class XmlPacket extends net.iatsoftware.iat.generated.GXmlPacket {
     private static final int maxPacketSize = 5020;
     
     public XmlPacket() {

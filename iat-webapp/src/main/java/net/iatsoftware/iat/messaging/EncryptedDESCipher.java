@@ -18,7 +18,7 @@ import java.util.Base64;
 
 @XmlRootElement(name="EncryptedDESCipher")
 @XmlAccessorType(XmlAccessType.NONE)
-public class EncryptedDESCipher extends net.iatsoftware.iat.generated.EncryptedDESCipherPojo {
+public class EncryptedDESCipher extends net.iatsoftware.iat.generated.GEncryptedDESCipher {
     private final Base64.Encoder encoder = Base64.getEncoder();
     private final byte[] cipherBytes, ivBytes;
 

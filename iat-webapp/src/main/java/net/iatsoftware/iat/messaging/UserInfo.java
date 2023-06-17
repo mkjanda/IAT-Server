@@ -14,7 +14,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class UserInfo extends net.iatsoftware.iat.generated.UserInfoPojo {
+public class UserInfo extends net.iatsoftware.iat.generated.GUserInfo {
     public UserInfo() {}
     
     public UserInfo(String title, String fname, String lname, String email)

@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="ProductRequest")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ProductRequest extends net.iatsoftware.iat.generated.ProductRequestPojo {
+public class ProductRequest extends net.iatsoftware.iat.generated.GProductRequest {
     private static DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT);
     
     public ProductRequest(ProductRequestEntity pr) {

@@ -26,7 +26,7 @@ import jakarta.xml.bind.annotation.XmlType;
 @Table(name="mask_specifiers")
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlType(name="MaskSpecifier")
-public class MaskSpecifier extends net.iatsoftware.iat.generated.MaskSpecifierPojo {
+public class MaskSpecifier extends net.iatsoftware.iat.generated.GMaskSpecifier {
     private static final long serialVersionUID = 1;    
     public MaskSpecifier(){}
 

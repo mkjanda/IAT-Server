@@ -27,7 +27,7 @@ import jakarta.persistence.TemporalType;
 
 @Entity
 @Table(name="purchase_history")
-public class PurchaseHistory extends net.iatsoftware.iat.generated.PurchaseHistoryEntityPojo implements java.io.Serializable {
+public class PurchaseHistory extends net.iatsoftware.iat.generated.GPurchaseHistoryEntity implements java.io.Serializable {
     private long id;
     private Client client;
     private Calendar purchaseTimestamp = Calendar.getInstance();

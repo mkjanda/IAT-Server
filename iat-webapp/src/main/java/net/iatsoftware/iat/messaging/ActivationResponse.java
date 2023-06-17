@@ -20,7 +20,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="ActivationResponse")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ActivationResponse extends net.iatsoftware.iat.generated.ActivationResponsePojo {
+public class ActivationResponse extends net.iatsoftware.iat.generated.GActivationResponse {
     public ActivationResponse()
     {
         verificationCode = productKey = clientName = clientEMail = phone = address1 = address2 = province = city = postalCode = country = "";

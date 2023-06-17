@@ -17,7 +17,7 @@ import java.util.Base64;
 
 @XmlRootElement(name = "PublicKey")
 @XmlAccessorType(XmlAccessType.NONE)
-public class PublicKey extends net.iatsoftware.iat.generated.PublicKeyPojo {
+public class PublicKey extends net.iatsoftware.iat.generated.GPublicKey {
 
     private static final Base64.Decoder decoder = Base64.getDecoder();
     private byte[] ModulusBytes = null, ExponentBytes = null;

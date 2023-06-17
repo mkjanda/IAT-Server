@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlRootElement(name="ResultTOCEntry")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ResultTOCEntry extends net.iatsoftware.iat.generated.ResultTOCEntryPojo implements java.io.Serializable {
+public class ResultTOCEntry extends net.iatsoftware.iat.generated.GResultTOCEntry implements java.io.Serializable {
     final static private long serialVersionUID = 1L;
     
     public ResultTOCEntry() {}

@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="ClientManagementEnvelope")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ClientManagementEnvelope extends net.iatsoftware.iat.generated.ClientManagementEnvelopePojo {
+public class ClientManagementEnvelope extends net.iatsoftware.iat.generated.GClientManagementEnvelope {
     
     public ClientManagementEnvelope() {}
     

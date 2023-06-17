@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.NONE)
 @Component
 @Scope(value="prototype")
-public class CodeFile extends net.iatsoftware.iat.generated.CodeFilePojo {
+public class CodeFile extends net.iatsoftware.iat.generated.GCodeFile {
     public CodeFile(){}
     
 }

@@ -18,7 +18,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlType(name="Transaction")
 @XmlAccessorType(XmlAccessType.NONE)
-public class Transaction extends net.iatsoftware.iat.generated.TransactionPojo {
+public class Transaction extends net.iatsoftware.iat.generated.GTransaction {
 
     public Transaction()
     {

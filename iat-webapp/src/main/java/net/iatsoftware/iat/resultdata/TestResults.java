@@ -16,6 +16,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="TestResults")
 @XmlAccessorType(XmlAccessType.NONE)
-public class TestResults extends net.iatsoftware.iat.generated.TestResultsPojo {
+public class TestResults extends net.iatsoftware.iat.generated.GTestResults {
     
 }

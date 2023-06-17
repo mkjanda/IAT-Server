@@ -14,5 +14,5 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public abstract class IATInstructionScreen extends net.iatsoftware.iat.generated.IATInstructionScreen {
+public abstract class IATInstructionScreen extends net.iatsoftware.iat.generated.GIATInstructionScreen {
 }

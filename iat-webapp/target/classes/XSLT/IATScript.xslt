@@ -188,6 +188,15 @@
                 </xsl:element>
 
                 <xsl:element name="Function">
+                    <xsl:attribute name="FunctionName" select="'getImgTag'" />
+                    <xsl:element name="Params" />
+                    <xsl:element name="FunctionBody">
+                        <xsl:element name="Code">return this.imgTag;</xsl:element>
+                    </xsl:element>
+                </xsl:element>
+
+
+                <xsl:element name="Function">
                     <xsl:attribute name="FunctionName" select="'Outline'"/>
                     <xsl:element name="Params"/>
                     <xsl:element name="FunctionBody">
@@ -243,16 +252,10 @@
                         <xsl:value-of select="concat('this.interiorHeight = ', //Layout/InteriorHeight, ';')"/>
                     </xsl:element>
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('this.leftResponseKeyCodeUpper = ', //LeftResponseASCIIKeyCodeUpper, ';')"/>
+                        <xsl:value-of select="concat('this.leftResponseKey = &quot;', //LeftResponseKey, '&quot;;')"/>
                     </xsl:element>
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('this.rightResponseKeyCodeUpper = ', //RightResponseASCIIKeyCodeUpper, ';')"/>
-                    </xsl:element>
-                    <xsl:element name="Code">
-                        <xsl:value-of select="concat('this.leftResponseKeyCodeLower = ', //LeftResponseASCIIKeyCodeLower, ';')"/>
-                    </xsl:element>
-                    <xsl:element name="Code">
-                        <xsl:value-of select="concat('this.rightResponseKeyCodeLower = ', //RightResponseASCIIKeyCodeLower, ';')"/>
+                        <xsl:value-of select="concat('this.rightResponseKey = &quot;', //RightResponseKey, '&quot;;')"/>
                     </xsl:element>
                     <xsl:element name="Code">this.divTag  = document.getElementById("IATDisplayDiv");</xsl:element>
                     <xsl:element name="Code">while (this.divTag.hasChildNodes())</xsl:element>
@@ -299,34 +302,18 @@
                 </xsl:element>
 
                 <xsl:element name="Function">
-                    <xsl:attribute name="FunctionName" select="'getRightResponseKeyCodeLower'"/>
+                    <xsl:attribute name="FunctionName" select="'getLeftResponse'"/>
                     <xsl:element name="Params" />
                     <xsl:element name="FunctionBody">
-                        <xsl:element name="Code">return this.rightResponseKeyCodeLower;</xsl:element>
+                        <xsl:element name="Code">return this.leftResponseKey;</xsl:element>
                     </xsl:element>
                 </xsl:element>
 
                 <xsl:element name="Function">
-                    <xsl:attribute name="FunctionName" select="'getRightResponseKeyCodeUpper'"/>
+                    <xsl:attribute name="FunctionName" select="'getRightResponse'"/>
                     <xsl:element name="Params" />
                     <xsl:element name="FunctionBody">
-                        <xsl:element name="Code">return this.rightResponseKeyCodeUpper;</xsl:element>
-                    </xsl:element>
-                </xsl:element>
-
-                <xsl:element name="Function">
-                    <xsl:attribute name="FunctionName" select="'getLeftResponseKeyCodeLower'"/>
-                    <xsl:element name="Params" />
-                    <xsl:element name="FunctionBody">
-                        <xsl:element name="Code">return this.leftResponseKeyCodeLower;</xsl:element>
-                    </xsl:element>
-                </xsl:element>
-
-                <xsl:element name="Function">
-                    <xsl:attribute name="FunctionName" select="'getLeftResponseKeyCodeUpper'"/>
-                    <xsl:element name="Params" />
-                    <xsl:element name="FunctionBody">
-                        <xsl:element name="Code">return this.leftResponseKeyCodeUpper;</xsl:element>
+                        <xsl:element name="Code">return this.rightResponseKey;</xsl:element>
                     </xsl:element>
                 </xsl:element>
 
@@ -503,6 +490,9 @@
                         <xsl:element name="Code">this.appendFormData(form, "TestSegment", sessionStorage.getItem("TestSegment"));</xsl:element>
                         <xsl:element name="Code">this.appendFormData(form, "referer", sessionStorage.getItem("HTTP_REFERER"));</xsl:element>
                         <xsl:element name="Code">this.appendFormData(form, "target", "adminV2");</xsl:element>
+                        <xsl:element name="Code">var search = new URLSearchParams(window.location.search);</xsl:element>
+                        <xsl:element name="Code">this.appendFormData(form, "IATName", search.get("IATName"));</xsl:element>
+                        <xsl:element name="Code">this.appendFormData(form, "ClientID", search.get("ClientID"));</xsl:element>
                         <xsl:element name="Code">if (sessionStorage.getItem("LastAdminPhase") === "true")</xsl:element>
                         <xsl:element name="Code">sessionStorage.clear();</xsl:element>
                         <xsl:element name="Code">submitted = true;</xsl:element>
@@ -568,24 +558,18 @@
                     <xsl:variable name="functionBodyElems">
                     <xsl:text>
                         if (this.keyedDir === "Left") {
-                            if ((event.key === Display.getLeftResponseKeyCodeUpper()) ||
-                                (event.key === Display.getLeftResponseKeyCodeLower())) {
+                            if ((event.key === Display.getLeftResponse()) || (event.key === Display.getLeftResponse().toUpperCase())) 
                                 this.correct();
-                                } else if ((event.key === Display.getRightResponseKeyCodeLower()) ||
-                            (event.key === Display.getRightResponseKeyCodeUpper())) {
-                            this.wrong();
+                                 else if ((event.key === Display.getRightResponse()) || (event.key === Display.getRightResponse().toUpperCase())) 
+                            this.error();
                             }
-                        } 
+
                         if (this.keyedDir === "Right") {
-                            if ((event.key === Display.getLeftResponseKeyCodeUpper()) ||
-                                (event.key === Display.getLeftResponseKeyCodeLower())) {
-                                this.wrong();
-                                }
-                        else if ((event.key === Display.getRightResponseKeyCodeLower()) ||
-                            (event.key === Display.getRightResponseKeyCodeUpper())) {
+                            if ((event.key === Display.getLeftResponse()) || (event.key === Display.getLeftResponse().toUpperCase())) 
+                                this.error();
+                                 else if ((event.key === Display.getRightResponse()) || (event.key === Display.getRightResponse().toUpperCase())) 
                             this.correct();
                             }
-                        }
                         </xsl:text>
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
@@ -600,41 +584,87 @@
                 </xsl:element>
 
                 <xsl:element name="Function">
+                    <xsl:attribute name="FunctionName" select="'_click'" />
+                    <xsl:element name="Params">
+                        <xsl:element name="Param">event</xsl:element>
+                    </xsl:element>
+                    <xsl:variable name="functionBodyElems">
+                    <xsl:text>
+                        if (this.keyedDir === "Left") {
+                            if (event.target === this.leftResponseDI.getImgTag())
+                                this.correct();
+                               else if (event.target === this.rightResponseDI.getImgTag()) 
+                            this.error();
+                            }
+                        
+                        if (this.keyedDir === "Right") {
+                            if (event.target === this.rightResponseDI.getImgTag())
+                                this.correct();
+                               else if (event.target === this.leftResponseDI.getImgTag()) 
+                            this.error();
+                            }
+                        </xsl:text>
+                    </xsl:variable>
+                    <xsl:element name="FunctionBody">
+                        <xsl:for-each select="tokenize($functionBodyElems, '&#x0A;')">
+                            <xsl:if test="string-length(normalize-space(.)) gt 0">
+                                <xsl:element name="Code">
+                                    <xsl:value-of select="normalize-space(.)"/>
+                                </xsl:element>
+                            </xsl:if>
+                        </xsl:for-each>
+                    </xsl:element>
+                </xsl:element>
+
+
+
+                <xsl:element name="Function">
                     <xsl:attribute name="FunctionName" select="'correct'" />
                     <xsl:element name="Params" />
                     <xsl:variable name="functionBodyElems">
                     <xsl:text>
-                        document.body.removeEventListener("keypress", this.keypress);
-                        this.rightResponseDI.removeEventListener("click", this.click);
-                        this.leftResponseDI.removeEventListener("click", this.click);
+                        document.body.removeEventListener("keydown", this.keypress);
+                        this.rightResponseDI.getImgTag().removeEventListener("click", this.click);
+                        this.leftResponseDI.getImgTag().removeEventListener("click", this.click);
                         var latency = Display.StopTimer();
+                        var form = document.getElementById("IATForm");
                         var elem = document.createElement("input");
                         elem.type = "hidden";
                         elem.name = "Item" + itemCtr.toString();
                         elem.id = "Item" + itemCtr.toString();
-                        Display.divTag.appendChild(elem);
+                        form.appendChild(elem);
                         elem = document.createElement("input");
                         elem.type = "hidden";
                         elem.name = "Latency" + itemCtr.toString();
                         elem.id = "Latency" + itemCtr.toString();
                         elem.value = latency.toString();
-                        Display.divTag.appendChild(elem);
+                        form.appendChild(elem);
                         elem = document.createElement("input");
                         elem.type = "hidden";
                         elem.name = "Block" + itemCtr.toString();
                         elem.id = "Block" + itemCtr.toString();
                         elem.value = (this.blockNum + 1).toString();
-                        Display.divTag.appendChild(elem);
+                        form.appendChild(elem);
+                        elem = document.createElement("input");
+                        elem.type = "hidden";
+                        elem.name = "Error" + itemCtr.toString();
+                        elem.id = itemCtr.toString();
+                        if (!this.errorMarked)
+                            elem.value = "false";
+                        else
+                            elem.value = "true";    
+                        form.appendChild(elem);
                         itemCtr++;
                         if (this.isErrorMarked)
                             Display.RemoveDisplayItem(ErrorMark);
                         this.isErrorMarked = false;
                         Display.RemoveDisplayItem(this.stimulus);
-                        EventList[++EventCtr].Execute();
+                        var evt = EventList[++EventCtr];
+                        evt.Execute();
                     </xsl:text>                        
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
-                        <xsl:for-each select="$functionBodyElems/Code">
+                        <xsl:for-each select="tokenize($functionBodyElems, '&#x0A;')">
                             <xsl:if test="string-length(normalize-space(.)) gt 0">
                                 <xsl:element name="Code">
                                     <xsl:value-of select="normalize-space(.)"/>
@@ -652,13 +682,11 @@
                         if (!this.isErrorMarked) {
                             Display.AddDisplayItem(ErrorMark);
                             this.isErrorMarked = true;
-                            var errorTag = document.getElementById("Error" + itemCtr.toString().trim());
-                            errorTag.value = "true";
                         }
                     </xsl:text>
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
-                        <xsl:for-each select="$functionBodyElems/Code">
+                        <xsl:for-each select="tokenize($functionBodyElems, '&#x0A;')">
                             <xsl:if test="string-length(normalize-space(.)) gt 0">
                                 <xsl:element name="Code">
                                     <xsl:value-of select="normalize-space(.)"/>
@@ -673,14 +701,8 @@
                     <xsl:attribute name="FunctionName" select="'Execute'"/>
                     <xsl:element name="Params"/>
                     <xsl:variable name="functionBodyElems">
-                        this.leftResponseDI = iatBlocks[this.blockNum].getLeftResponseDI();
-                        this.rightResponseDI = iatBlocks[this.blockNum].getRightResponseDI();
-                        var elem = document.createElement("input");
-                        elem.type = "hidden";
-                        elem.name = "Error" + itemCtr.toString();
-                        elem.id = itemCtr.toString();
-                        elem.value = "false";
-                        Display.divTag.appendChild(elem);
+                        this.leftResponseDI = iatBlocks[this.blockNum - 1].getLeftResponseDI();
+                        this.rightResponseDI = iatBlocks[this.blockNum - 1].getRightResponseDI();
                         Display.AddDisplayItem(this.stimulus);
                         Display.StartTimer();
                         window.setTimeout(100, this.ContinueExecute());
@@ -700,8 +722,8 @@
                     <xsl:element name="Params" />
                     <xsl:variable name="functionBodyElems">
                         document.body.addEventListener("keydown", this.keypress);
-                        this.leftResponseDI.img.addEventListener("click", this.click);
-                        this.rightResponseDI.img.addEventListener("click", this.click);
+                        this.leftResponseDI.getImgTag().addEventListener("click", this.click);
+                        this.rightResponseDI.getImgTag().addEventListener("click", this.click);
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
                         <xsl:for-each select="tokenize($functionBodyElems, '&#x0A;')">
@@ -841,13 +863,14 @@
                     <xsl:element name="Param">continueInstructionsDI</xsl:element>
                 </xsl:element>
                 <xsl:variable name="constructorBodyElems">
-                    <xsl:element name="Code">IATEvent.call(this, IATInstructionScreen.prototype.keyPressHandler);</xsl:element>
-                    <xsl:element name="Code">this.continueChar = continueChar;</xsl:element>
-                    <xsl:element name="Code">this.continueInstructionsDI = continueInstructionsDI;</xsl:element>
-                    <xsl:element name="Code">return this;</xsl:element>
+                    this.continueChar = continueChar;
+                    this.continueInstructionsDI = continueInstructionsDI;
+                    this.keypress = this._keypress.bind(this);
+                    this.click = this._click.bind(this);
+                    return this;
                 </xsl:variable>
                 <xsl:element name="ConstructorBody">
-                    <xsl:for-each select="$constructorBodyElems/Code">
+                    <xsl:for-each select="tokenize($constructorBodyElems, '&#x0A;')">
                         <xsl:element name="Code">
                             <xsl:attribute name="LineNum" select="position()"/>
                             <xsl:value-of select="."/>
@@ -858,18 +881,18 @@
 
             <xsl:element name="PrototypeChain">
                 <xsl:element name="Function">
-                    <xsl:attribute name="FunctionName" select="'clickHandler'" />
+                    <xsl:attribute name="FunctionName" select="'_click'" />
                     <xsl:element name="Params">
                         <xsl:element name="Param">event</xsl:element>  
                     </xsl:element>
                     <xsl:variable name="functionBodyElems">
-                        <xsl:element name="Code">EventUtil.removeHandler(document, "keypress", IATInstructionScreen.prototype.keyPressHandler, this);</xsl:element>
-                        <xsl:element name="Code">Display.Clear();</xsl:element>
-                        <xsl:element name="Code">this.continueInstructionsDI.unwireClickHandler();</xsl:element>
-                        <xsl:element name="Code">setTimeout(EventList[++EventCtr].Execute(), 100);</xsl:element>
+                        this.continueInstructionsDI.getImgTag().removeEventListener("click", this.click);
+                        document.body.removeEventListener("keypress", this.keypress);
+                        Display.Clear();
+                        window.setTimeout(EventList[++EventCtr].Execute(), 100);    
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
-                        <xsl:for-each select="$functionBodyElems/Code">
+                        <xsl:for-each select="tokenize($functionBodyElems, '&#x0A;')">
                             <xsl:element name="Code">
                                 <xsl:attribute name="LineNum" select="position()"/>
                                 <xsl:value-of select="."/>
@@ -879,24 +902,20 @@
                 </xsl:element>
           
                 <xsl:element name="Function">
-                    <xsl:attribute name="FunctionName" select="'keyPressHandler'" />
+                    <xsl:attribute name="FunctionName" select="'_keypress'" />
                     <xsl:element name="Params">
                         <xsl:element name="Param">event</xsl:element>
                     </xsl:element>
                     <xsl:variable name="functionBodyElems">
-                        <xsl:element name="Code">event = EventUtil.getEvent(event);</xsl:element>
-                        <xsl:element name="Code">EventUtil.stopPropogation(event);</xsl:element>
-                        <xsl:element name="Code">EventUtil.preventDefault(event);</xsl:element>
-                        <xsl:element name="Code">var keyCode = EventUtil.getCharCode(event);</xsl:element>
-                        <xsl:element name="Code">if (keyCode == this.continueChar) {</xsl:element>
-                        <xsl:element name="Code">EventUtil.removeHandler(document, "keypress", IATInstructionScreen.prototype.keyPressHandler, this);</xsl:element>
-                        <xsl:element name="Code">this.continueInstructionsDI.unwireClickHandler();</xsl:element>
-                        <xsl:element name="Code">Display.Clear();</xsl:element>
-                        <xsl:element name="Code">setTimeout(EventList[++EventCtr].Execute(), 100);</xsl:element>
-                        <xsl:element name="Code">}</xsl:element>
+                        if (event.keyCode == this.continueChar) {
+                            this.continueInstructionsDI.getImgTag().removeEventListener("click", this.click);
+                            document.body.removeEventListener("keypress", this.keypress);
+                            Display.Clear();
+                            window.setTimeout(EventList[++EventCtr].Execute(), 100);    
+                        }
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
-                        <xsl:for-each select="$functionBodyElems/Code">
+                        <xsl:for-each select="tokenize($functionBodyElems, '&#x0A;')">
                             <xsl:element name="Code">
                                 <xsl:attribute name="LineNum" select="position()"/>
                                 <xsl:value-of select="."/>
@@ -908,13 +927,12 @@
                 <xsl:element name="Function">
                     <xsl:attribute name="FunctionName" select="'Execute'"/>
                     <xsl:variable name="functionBodyElems">
-                        <xsl:element name="Code">var onClick = createSingleParamTargetFunction(this, this.clickHandler);</xsl:element>
-                        <xsl:element name="Code">this.continueInstructionsDI.wireClickHandler(onClick);</xsl:element>
-                        <xsl:element name="Code">Display.AddDisplayItem(this.continueInstructionsDI);</xsl:element>
-                        <xsl:element name="Code">IATEvent.prototype.Execute.call(this);</xsl:element>
+                        this.continueInstructionsDI.getImgTag().addEventListener("click", this.click);
+                        document.body.addEventListener("keypress", this.keypress);
+                        Display.AddDisplayItem(this.continueInstructionsDI);
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
-                        <xsl:for-each select="$functionBodyElems/Code">
+                        <xsl:for-each select="tokenize($functionBodyElems, '&#x0A;')">
                             <xsl:element name="Code">
                                 <xsl:attribute name="LineNum" select="position()"/>
                                 <xsl:value-of select="."/>
@@ -1325,10 +1343,10 @@
                 <xsl:element name="Param">event</xsl:element>
             </xsl:element>
             <xsl:variable name="functionBodyElems">
+                <xsl:element name="Code">Display = new IATDisplay();</xsl:element>
                 <xsl:element name="Code">event.stopPropagation();</xsl:element>
                 <xsl:element name="Code">EventUtil.removeHandler(window, "click", BeginIAT);</xsl:element>
                 <xsl:element name="Code">var dDiv = null;</xsl:element>
-                <xsl:element name="Code">Display = new IATDisplay();</xsl:element>
                 <xsl:element name="Code">dDiv = Display.getDivTag();</xsl:element>
                 <xsl:element name="Code">EventUtil.removeHandler(dDiv, "click", BeginIAT);</xsl:element>
                 <xsl:element name="Code">while (dDiv.hasChildNodes())</xsl:element>
@@ -1358,11 +1376,6 @@
                         <xsl:value-of select="concat('DI', ID, ' = new IATDI(', ID, ', img', ID, ', ', X, ', ', Y, ', ', Width, ', ', Height, ');')"/>
                     </xsl:element>
                 </xsl:for-each>
-                <xsl:variable name="paramList"
-                              select="concat(//Layout/InteriorWidth, ', ', //Layout/InteriorHeight, ', ', //LeftResponseASCIIKeyCodeUpper, ', ', //LeftResponseASCIIKeyCodeLower, ', ', //RightResponseASCIIKeyCodeUpper, ', ', //RightResponseASCIIKeyCodeLower)"/>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('Display = new IATDisplay(', $paramList, ');')"/>
-                </xsl:element>
                 <xsl:element name="Code">
                     <xsl:value-of select="concat('ErrorMark = DI', //ErrorMarkID, ';')"/>
                 </xsl:element>
@@ -1591,17 +1604,17 @@
                 <xsl:choose>
                     <xsl:when test="name() eq 'TextInstructionScreen'">
                         <xsl:element name="Code">
-                            <xsl:value-of select="concat('instructionBlock.AddScreen(&quot;Text&quot;, [', ContinueASCIIKeyCode, ', DI', ContinueInstructionsDisplayID, ', DI', InstructionsDisplayID, ']);')" />
+                            <xsl:value-of select="concat('instructionBlock.AddScreen(&quot;Text&quot;, [', ContinueASCIIKeyCode, ', DI', ContinueInstructionsID, ', DI', InstructionsDisplayID, ']);')" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:when test="name() eq 'KeyedInstructionScreen'">
                         <xsl:element name="Code">
-                            <xsl:value-of select="concat('instructionBlock.AddScreen(&quot;Keyed&quot;, [', ContinueASCIIKeyCode, ', DI', ContinueInstructionsDisplayID, ', DI', InstructionsDisplayID, ', DI', LeftResponseDisplayID, ', DI', RightResponseDisplayID, ']);')" />
+                            <xsl:value-of select="concat('instructionBlock.AddScreen(&quot;Keyed&quot;, [', ContinueASCIIKeyCode, ', DI', ContinueInstructionsID, ', DI', InstructionsDisplayID, ', DI', LeftResponseDisplayID, ', DI', RightResponseDisplayID, ']);')" />
                         </xsl:element>
                     </xsl:when>
                     <xsl:when test="name() eq 'MockItemInstructionScreen'">
                         <xsl:element name="Code">
-                            <xsl:value-of select="concat('instructionBlock.AddScreen(&quot;MockItem&quot;, [', ContinueASCIIKeyCode, ', DI', ContinueInstructionsDisplayID, ', DI', LeftResponseDisplayID, ', DI', RightResponseDisplayID, ', DI', StimulusDisplayID, ', DI', InstructionsDisplayID, ', ', lower-case(ErrorMarkIsDisplayed), ', ', lower-case(OutlineLeftResponse), ', ', lower-case(OutlineRightResponse), ']);')" />
+                            <xsl:value-of select="concat('instructionBlock.AddScreen(&quot;MockItem&quot;, [', ContinueASCIIKeyCode, ', DI', ContinueInstructionsID, ', DI', LeftResponseDisplayID, ', DI', RightResponseDisplayID, ', DI', StimulusDisplayID, ', DI', InstructionsDisplayID, ', ', lower-case(ErrorMarkIsDisplayed), ', ', lower-case(OutlineLeftResponse), ', ', lower-case(OutlineRightResponse), ']);')" />
                         </xsl:element>
                     </xsl:when>
                 </xsl:choose>
@@ -1721,6 +1734,8 @@
 
     <xsl:template name="ProcessNoSpecItems" >
         <xsl:param name="items" />
+        <xsl:element name="Code">Items1 = new Array();</xsl:element>
+        <xsl:element name="Code">Items2 = new Array();</xsl:element>
         <xsl:for-each select="$items" >
             <xsl:variable name="params"
                           select="concat('EventCtr++, DI', ./StimulusDisplayID, ', ', ./ItemNum, ',  &quot;',  KeyedDir, '&quot;, ', ./BlockNum, ', iatBlocks')"/>

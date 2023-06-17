@@ -19,7 +19,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 
 @XmlRootElement(name="Line")
 @XmlAccessorType(XmlAccessType.NONE)
-public class CodeLine extends net.iatsoftware.iat.generated.EncCodeLinePojo {
+public class CodeLine extends net.iatsoftware.iat.generated.GEncCodeLine {
     
     public CodeLine(){}
     

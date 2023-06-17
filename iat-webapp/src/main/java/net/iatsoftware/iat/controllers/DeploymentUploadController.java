@@ -103,7 +103,6 @@ public class DeploymentUploadController {
 				critical.error("Error unmarshalling config file.", ex);
 			}
 		} else {
-			var cf = (ConfigFile)socketService.getSessionProperty(sessId, "configuration");
 			var offset = 0;
 			List<File> files;
 			if (uploadContents.equals("images")) {
@@ -122,7 +121,7 @@ public class DeploymentUploadController {
 				var testResource = new TestResource(test, img.getMimeType(), fData, img.getResourceType());
 				repositoryManager.addTestResource(testResource);
 				if (img.getResourceType() == ResourceType.IMAGE) {
-				configFile.getEventList().getEvents().forEach(evt -> evt.setResource((int)img.getResourceId(), 
+					configFile.getEventList().getEvents().forEach(evt -> ((IATEvent)evt).setResource((int)img.getResourceId(), 
 						(int)testResource.getResourceId()));
 				}
 				if (img.getResourceType() == ResourceType.ERROR_MARK) {

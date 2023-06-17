@@ -16,7 +16,7 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
 @XmlAccessorType(XmlAccessType.NONE)
-public class IATListEntry extends net.iatsoftware.iat.generated.IATListEntryPojo {
+public class IATListEntry extends net.iatsoftware.iat.generated.GIATListEntry {
     public IATListEntry() {
     }
 

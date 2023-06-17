@@ -17,9 +17,9 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
 
-@XmlRootElement(name="IATEvent")
+@XmlRootElement(name="EndIATBlock")
 @XmlAccessorType(XmlAccessType.NONE)
-public class EndIATBlock extends net.iatsoftware.iat.generated.EndIATBlock {
+public class EndIATBlock extends net.iatsoftware.iat.generated.GEndIATBlock {
     public EndIATBlock() {
         this.eventType = IATEventType.END_IAT_BLOCK;
     }

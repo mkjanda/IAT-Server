@@ -1001,7 +1001,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     public void deleteDeploymentSession(IAT test) {
-        deploymentSessionRepository.delete(test.getDeploymentSession());
+        deleteDeploymentSession(test.getDeploymentSession().getId());
     }
 
     @Transactional

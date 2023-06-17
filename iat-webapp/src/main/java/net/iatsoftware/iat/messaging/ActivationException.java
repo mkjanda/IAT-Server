@@ -7,5 +7,5 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name="ActivationException")
 @XmlAccessorType(XmlAccessType.NONE)
-public class ActivationException extends net.iatsoftware.iat.generated.ActivationException {
+public class ActivationException extends net.iatsoftware.iat.generated.GActivationException {
 }
