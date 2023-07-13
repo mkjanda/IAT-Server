@@ -6,7 +6,6 @@ import net.iatsoftware.iat.generated.ResourceType;
 
 import org.springframework.stereotype.Repository;
 
-import java.util.stream.Collectors;
 import java.util.List;
 import javax.inject.Inject;
 
@@ -74,6 +73,13 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 		var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceId"), index));
 		return this.entityManager.createQuery(query.select(root).where(pred).orderBy(cb.asc(root.get("resourceId"))))
 				.getSingleResult();
-//		return resourceList.stream().filter(f -> (f.getResourceType() == ResourceType.IMAGE) || (f.getResourceType() == ResourceType.ERROR_MARK)).collect(Collectors.toList()).get(index - 1);
+	}
+
+	public List<byte[]> getItemSlides(IAT test) {
+		var cb = entityManager.getCriteriaBuilder();
+		var query = cb.createQuery(TestResource.class);
+		var root = query.from(TestResource.class);
+		var pred = cb.and(cb.equal(root.get("test"), test), cb.equal(root.get("resourceType"), ResourceType.ITEM_SLIDE));
+		return this.entityManager.createQuery(query.select(root).where(pred)).getResultStream().filter(tr -> tr.getResourceType().equals(ResourceType.ITEM_SLIDE)).map(tr -> tr.getResourceBytes()).toList();
 	}
 }

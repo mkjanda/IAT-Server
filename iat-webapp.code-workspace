@@ -5,7 +5,7 @@
 		}
 	],
 	"settings": {
-		"java.configuration.updateBuildConfiguration": "interactive",
+		"java.configuration.updateBuildConfiguration": "automatic",
 		"sqltools.connections": [
 			{
 				"connectString": "jdbc:mysql://localhost:3306/iatserver_db?user=IATServer&password=jESUScHRISTsUCKScOCKiNhELLfORcIGARETTEmONEY",
@@ -57,7 +57,7 @@
 		"java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m",
 		"java.format.settings.url": "eclipse-formatter.xml",
 		"workbench.iconTheme": "material-icon-theme",
-		"workbench.colorTheme": "GitHub Light",
+		"workbench.colorTheme": "Material Dark",
 		"workbench.preferredDarkColorTheme": "Material Theme Darker",
 		"editor.semanticHighlighting.enabled": true,
 		"editor.fontFamily": "'Consolas', 'monospace', monospace",

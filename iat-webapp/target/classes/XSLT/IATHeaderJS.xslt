@@ -352,7 +352,7 @@
 			<xsl:variable name="functionBody">
 				<xsl:text>
 					sessionStorage.clear();
-                   // window.location.assign(evt.state.url);
+                   window.location.assign("/");
                 </xsl:text>
 			</xsl:variable>
 			<xsl:element name="FunctionBody">
@@ -409,6 +409,7 @@
 				<xsl:text>
                     DisplayDiv = document.getElementById("IATDisplayDiv");
      //               window.history.pushState({}, "IAT Software", '/');
+	 				window.onpopstate = (evt) => window.location.assign("/");
                     EventUtil.addHandler(window, "popstate", OnPopState);
                     var alternateTag = document.getElementById("Alternate");
                     alternateTag.setAttribute("value", CookieUtil.get("Alternate"));

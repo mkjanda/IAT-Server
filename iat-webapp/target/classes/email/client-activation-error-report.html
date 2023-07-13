@@ -3,7 +3,7 @@
 <head>
     <title th:remove="all">Client Activation Error Report</title>
     <meta charset="UTF-8" />
-    <style th:insert="email/fragments/shared-email-styles.css" type="text/css"></style>
+    <style th:insert="~{email/fragments/shared-email-styles.css}" type="text/css"></style>
     <style type="text/css">
         body div#report {
             padding: 20px;
@@ -43,13 +43,13 @@
         <tr>
             <td colspan="2"
                 style="margin: 0px; padding: 3px 0px; font-family: myriad-pro, calibri, sans-serif; font-size: 16px; font-weight: bold;"
-                th:text="#{name}"></td>
+                th:text="${name}"></td>
             <td style="margin: 0px; padding: 3px 0px; font-family: myriad-pro, calibri, sans-serif; font-size: 16px; font-weight: bold;"
-                th:text="#{value}"></td>
+                th:text="${value}"></td>
         </tr>
     </th:block>
 
-    <th:block th:replace="email/fragments/logo.html :: logo"></th:block>
+    <th:block th:replace="~{email/fragments/logo.html :: logo}"></th:block>
 
     <div id="report">
         <table style="width: 1350px;">
@@ -66,13 +66,13 @@
                 </th:block>
             </th:block>
             <th:block th:if="${email}">
-                <th:block th:replace="::dataItem('eMail', ${email})"></th:block>
+                <th:block th:replace="~{::dataItem('eMail', ${email})}"></th:block>
             </th:block>
-            <th:block th:replace="::dataItem('Product version:', ${version})"></th:block>
+            <th:block th:replace="~{::dataItem('Product version:', ${version})}"></th:block>
             <tr>
                 <td colspan="3" style="height: 15px;"></td>
             </tr>
-            <th:block th:replace="email/fragments/exception.html ::exception(ex=${error}, fullColSpan=3, stackTraceColSpan=2)" />
+            <th:block th:replace="~{email/fragments/exception.html ::exception(ex=${error}, fullColSpan=3, stackTraceColSpan=2)}" />
         </table>
     </div>
 </body>

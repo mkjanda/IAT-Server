@@ -156,7 +156,7 @@
                         </xsl:element>
                         <xsl:element name="input">
                             <xsl:attribute name="name" select="'NumItems'" />
-                            <xsl:attribute name="value" select="sum(//IATEvent[@EventType eq 'BeginIATBlock']/NumPresentations)" />
+                            <xsl:attribute name="value" select="sum(//BeginIATBlock/NumPresentations)" />
                             <xsl:attribute name="type" select="'hidden'" />
                         </xsl:element>
                         <xsl:element name="div">

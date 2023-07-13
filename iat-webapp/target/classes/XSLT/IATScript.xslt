@@ -632,6 +632,7 @@
                         elem.type = "hidden";
                         elem.name = "Item" + itemCtr.toString();
                         elem.id = "Item" + itemCtr.toString();
+                        elem.value = this.itemNum.toString();
                         form.appendChild(elem);
                         elem = document.createElement("input");
                         elem.type = "hidden";
@@ -643,7 +644,7 @@
                         elem.type = "hidden";
                         elem.name = "Block" + itemCtr.toString();
                         elem.id = "Block" + itemCtr.toString();
-                        elem.value = (this.blockNum + 1).toString();
+                        elem.value = this.blockNum.toString();
                         form.appendChild(elem);
                         elem = document.createElement("input");
                         elem.type = "hidden";
@@ -1692,45 +1693,6 @@
         </xsl:element>
     </xsl:template>
 
-    <xsl:template name="ProcessMaskSpecifiers">
-        <xsl:element name="Code">var lesserLen, lesserAry, greaterAry, lesserLen, lesserLen2, lesserAry2, greaterAry2, randomNum, randomNum2, ctr2;</xsl:element>
-        <xsl:element name="Code">if (MaskItemTrueArray.length &gt; MaskItemFalseArray.length) {</xsl:element>
-        <xsl:element name="Code">lesserLen = MaskItemFalseArray.length;</xsl:element>
-        <xsl:element name="Code">lesserAry = MaskItemFalseArray;</xsl:element>
-        <xsl:element name="Code">greaterAry = MaskItemTrueArray;</xsl:element>
-        <xsl:element name="Code">} else {</xsl:element>
-        <xsl:element name="Code">lesserLen = MaskItemTrueArray.length;</xsl:element>
-        <xsl:element name="Code">lesserAry = MaskItemTrueArray;</xsl:element>
-        <xsl:element name="Code">greaterAry = MaskItemFalseArray;</xsl:element>
-        <xsl:element name="Code">}</xsl:element>
-        <xsl:element name="Code">if ((lesserAry.length == 0) || (greaterAry.length == MaskItemTrueArray.length + MaskItemFalseArray.length))</xsl:element>
-        <xsl:element name="Code">return;</xsl:element>
-        <xsl:choose>
-            <xsl:when test="(//Is7Block eq 'True') and (//RandomizationType eq 'SetNumberOfPresentations')" >
-                <xsl:element name="Code">if (lesserAry[0][0][4] == 1)</xsl:element>
-                <xsl:element name="Code">itemBlock = Items1;</xsl:element>
-                <xsl:element name="Code">else</xsl:element>
-                <xsl:element name="Code">itemBlock = Items2;</xsl:element>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:element name="Code">itemBlock = Items;</xsl:element>
-            </xsl:otherwise>
-        </xsl:choose>
-        <xsl:element name="Code">for (ctr = 0; ctr &lt; lesserLen; ctr++) {</xsl:element>
-        <xsl:element name="Code">randomNum = Math.floor(Math.random() * greaterAry.length);</xsl:element>
-        <xsl:element name="Code">lesserAry2 = (lesserAry[ctr].length &gt; greaterAry[randomNum].length) ? greaterAry[randomNum] : lesserAry[ctr];</xsl:element>
-        <xsl:element name="Code">greaterAry2 = (lesserAry[ctr].length &gt; greaterAry[randomNum].length) ? lesserAry[ctr] : greaterAry[randomNum];</xsl:element>
-        <xsl:element name="Code">lesserLen2 = lesserAry2.length;</xsl:element>
-        <xsl:element name="Code">for (ctr2 = 0; ctr2 &lt; lesserLen2; ctr2++) {</xsl:element>
-        <xsl:element name="Code">randomNum2 = Math.floor(Math.random() * greaterAry2.length);</xsl:element>
-        <xsl:element name="Code">itemBlock.push(new IATItem(lesserAry2[ctr2][0], lesserAry2[ctr2][1], lesserAry2[ctr2][3], lesserAry2[ctr2][2], lesserAry2[ctr2][5]));</xsl:element>
-        <xsl:element name="Code">itemBlock.push(new IATItem(greaterAry2[randomNum2][0], greaterAry2[randomNum2][1], greaterAry2[randomNum2][3], greaterAry2[randomNum2][2], greaterAry2[randomNum2][5]));</xsl:element>
-        <xsl:element name="Code">greaterAry2.splice(randomNum2, 1);</xsl:element>
-        <xsl:element name="Code">}</xsl:element>
-        <xsl:element name="Code">greaterAry.splice(randomNum, 1);</xsl:element>
-        <xsl:element name="Code">}</xsl:element>
-    </xsl:template>
-
 
     <xsl:template name="ProcessNoSpecItems" >
         <xsl:param name="items" />
@@ -1834,28 +1796,6 @@
         </xsl:choose>
     </xsl:template>
 
-    <xsl:template name="ProcessMaskSpecItems" >
-        <xsl:param name="items" />
-        <xsl:element name="Code">var MaskItemTrueArray = new Array();</xsl:element>
-        <xsl:element name="Code">var MaskItemFalseArray = new Array();</xsl:element>
-        <xsl:element name="Code">var ctr;</xsl:element>
-        <xsl:for-each-group select="$items" group-by="SpecifierID" >
-            <xsl:variable name="specificSpecifier" select="//DynamicSpecifier[every $i in current-group() satisfies $i/SpecifierID eq TestSpecifierID]"/>
-            <xsl:if test="count(current-group()) eq 1">
-                <xsl:call-template name="MaskSpecifierArrayAppend">
-                    <xsl:with-param name="item" select="current-group()"/>
-                    <xsl:with-param name="specifier" select="$specificSpecifier" />
-                </xsl:call-template>
-            </xsl:if>
-            <xsl:if test="count(current-group()) gt 1">
-                <xsl:call-template name="MaskSpecifierArrayAppendRange">
-                    <xsl:with-param name="items" select="current-group() "/>
-                    <xsl:with-param name="specifier" select="$specificSpecifier" />
-                </xsl:call-template>
-            </xsl:if>
-        </xsl:for-each-group>
-        <xsl:call-template name="ProcessMaskSpecifiers" />
-    </xsl:template>
 
     <xsl:template name="ProcessSelectionSpecItems" >
         <xsl:param name="items" />

@@ -78,6 +78,9 @@ public class ReportClientError {
     @Value("${error-report-recipient}")
     private String errorReportRecipient;
 
+    @Value("${activation-error-report-recipient}")
+    private String activationErrorReportRecipient;
+
     @Value("${mail.images.logo-classpath-location}")
     private String logoClasspathLocation;
 
@@ -151,7 +154,7 @@ public class ReportClientError {
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
             reporters.remove(challengeResponse);
-            EmailParameters emailParams = new EmailParameters(errorReportRecipient, 
+            EmailParameters emailParams = new EmailParameters(activationErrorReportRecipient, 
                 "Product Activation Error", "email/client-activation-error-report.html");
             emailParams.addInlineImage("logo", logoClasspathLocation, PNG_MIME_TYPE);
             emailParams.addInlineImage("header", headerClasspathLocation, PNG_MIME_TYPE);

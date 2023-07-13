@@ -33,10 +33,10 @@
 					<xsl:value-of select="'var '"/>
 					<xsl:for-each select="Entry">
 						<xsl:if test="string-length(normalize-space(Assign)) eq 0">
-							<xsl:value-of select="concat(NewName, if (position() eq last()) then ';' else ',')"/>
+							<xsl:value-of select="concat(NewName, if (position() eq last()) then ';' else ', ')"/>
 						</xsl:if>
 						<xsl:if test="string-length(normalize-space(Assign)) ne 0">
-							<xsl:value-of select="concat(NewName, '=', Assign, if (position() eq last()) then ';' else ',')"/>
+							<xsl:value-of select="concat(NewName, '=', Assign, if (position() eq last()) then ';' else ', ')"/>
 						</xsl:if>
 					</xsl:for-each>
 				</xsl:if>

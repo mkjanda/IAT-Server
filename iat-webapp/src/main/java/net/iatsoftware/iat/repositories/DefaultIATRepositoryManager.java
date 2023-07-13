@@ -327,6 +327,11 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
+    public List<byte[]> getItemSlides(IAT test) {
+        return testResourceRepository.getItemSlides(test);
+    }
+
+    @Transactional
     @Override
     public List<Long> getTestElems(final IAT test) {
         final List<Long> segmentIDs = testSegmentRepository.getTestElems(test);

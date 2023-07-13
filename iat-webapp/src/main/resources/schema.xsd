@@ -1339,12 +1339,12 @@
     <xs:complexType name="GTestResults">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.resultdata.TestResults"/>
+                <jaxb:class implClass="net.iatsoftware.iat.resultdata.TestResults" />
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Descriptor" type="iat:result-set-descriptor-impl" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="ResultSet" type="iat:result-set-entry-impl" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="Descriptor" type="iat:GResultSetDescriptor" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ResultSet" type="iat:GResultSetEntry" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="NumResultSets" type="xs:int" form="unqualified" use="required"/>
     </xs:complexType>
@@ -1620,6 +1620,7 @@
             <xs:element name="ID" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="ResourceId" type="xs:int" minOccurs="0" maxOccurs="1" />
             <xs:element name="Filename" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Format" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="X" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Y" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Width" type="xs:int" minOccurs="1" maxOccurs="1"/>
@@ -2024,8 +2025,10 @@
 						</xs:choice>
 						<xs:element name="Format" type="iat:GFormat" />
 					</xs:sequence>
-					<xs:attribute name="Optional" type="xs:boolean" />
-					<xs:attribute name="Image" type="xs:boolean" />
+					<xs:attribute name="Optional" type="xs:boolean" form="unqualified" use="required" />
+					<xs:attribute name="Image" type="xs:boolean" form="unqualified" use="required" />
+                    <xs:attribute name="ItemNum" type="xs:int" form="unqualified" use="optional" />
+                    <xs:attribute name="QuestionNum" type="xs:int" form="unqualified" use="optional" />
 				</xs:complexType>
 			</xs:element>
 
@@ -2060,8 +2063,8 @@
                         <xs:element name="ImageData" type="xs:string" />
 		    		    <xs:element name="ResourceId" type="xs:long" />
 			    	</xs:sequence>
-				    <xs:attribute name="Optional" type="xs:boolean" />
-    				<xs:attribute name="Image" type="xs:boolean" />
+				    <xs:attribute name="Optional" type="xs:boolean" form="unqualified" use="required" />
+    				<xs:attribute name="Image" type="xs:boolean" form="unqualified" use="required" />
 				</xs:complexType>
 			</xs:element>
 	
@@ -2090,6 +2093,7 @@
 			<xs:element name="InitialPosition" type="xs:int" minOccurs="1" maxOccurs="1" />
 			<xs:element name="AlternationGroup" type="xs:int" minOccurs="1" maxOccurs="1" />
             <xs:element name="ScriptId" type="xs:int" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Globals" type="iat:globals-impl" minOccurs="0" maxOccurs="1" />
 			<xs:group ref="iat:SurveyItemType" minOccurs="0" maxOccurs="unbounded" />
 		</xs:sequence>
 		<xs:attribute name="TimeoutMillis" type="xs:long" use="required" form="unqualified" />
@@ -2248,6 +2252,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="GobalDecl" type="xs:string" minOccurs="0" maxOccurs="1" />
             <xs:element name="Global" minOccurs="0" maxOccurs="unbounded" type="iat:GGlobalVar" />
         </xs:sequence>
     </xs:complexType>

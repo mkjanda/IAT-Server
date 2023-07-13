@@ -387,13 +387,15 @@ public class AdminController {
 		IAT test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientId);
 		IATSession sess = this.sessionManager.getSession(sessId);
 		if (sess == null) {
-			return new ModelAndView(new RedirectView("/IAT/html/AdministrationTimeout.html"));
+			var view = new ModelAndView("AdministrationTimeout");
+			view.addObject(SessionProperties.HTTP_REFERER, "-");
+			return view;
 		}
 		String httpReferer = (String) sess.getAttribute(SessionProperties.HTTP_REFERER);
 		Long adminID = (Long) sess.getAttribute(SessionProperties.ADMIN_ID);
 		TestSegment ts = iatRepositoryManager.getTestSegmentByID(testSegmentID);
-		List<Long> segmentList = (List<Long>) sess.getAttribute("SegmentList");
-		int adminPhase = (Integer) sess.getAttribute("AdminPhase") + 1;
+		List<Long> segmentList = (List<Long>) sess.getAttribute(SessionProperties.SEGMENT_LIST);
+		int adminPhase = (Integer) sess.getAttribute(SessionProperties.ADMIN_PHASE) + 1;
 		boolean lastSegment = adminPhase == segmentList.size();
 		iatRepositoryManager.refreshAdminTimer(adminID);
 		if (ts.getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
@@ -417,12 +419,12 @@ public class AdminController {
 		} else {
 			model.put("LastAdminPhase", "false");
 		}
-		model.put("AdminPhase", adminPhase);
-		model.put("IATSESSIONID", sess.getId());
-		model.put("Test", test);
-		model.put("ClientID", clientId);
-		model.put("TestSegment", segmentList.get(adminPhase));
-		model.put("referer", httpReferer);
+		model.put(SessionProperties.ADMIN_PHASE, adminPhase);
+		model.put(SessionProperties.IAT_SESSION_ID, sess.getId());
+		model.put(SessionProperties.TEST, test);
+		model.put(SessionProperties.CLIENT_ID, clientId);
+		model.put(SessionProperties.TEST_SEGMENT, segmentList.get(adminPhase));
+		model.put(SessionProperties.HTTP_REFERER, httpReferer);
 		return new ModelAndView("Admin/" + segmentList.get(adminPhase).toString(), model);
 	}
 

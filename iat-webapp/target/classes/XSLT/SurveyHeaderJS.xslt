@@ -9,9 +9,12 @@
         <Declarations>
             <Declaration>var TestURL;</Declaration>
             <Declaration>var AppURL;</Declaration>
+            <Declaration>var questionListNode;</Declaration>
             <Declaration>var StopTimer;</Declaration>
             <Declaration>var CryptJSON;</Declaration>
-            <Declaration>var uniqueResponseStaatus = "none";</Declaration>
+            <Declaration>var uniqueResponseStatus = "none";</Declaration>
+            <Declaration>var answers;</Declaration>
+            <Declaration>var questionElems;</Declaration>
             <Declaration>var submitted = false;</Declaration>
             <Declaration>var backUrlObj;</Declaration>
             <Declaration>
@@ -95,7 +98,7 @@
                 <xsl:element name="Param">event</xsl:element>
             </xsl:element>
             <xsl:element name="FunctionBody">
-                <xsl:element name="Code">window.location.assign("https://iatsoftware.net");</xsl:element>
+                <xsl:element name="Code">window.location.assign("/");</xsl:element>
             </xsl:element>
         </xsl:element>
 
@@ -125,53 +128,37 @@
             <xsl:attribute name="FunctionName" select="'OnLoad'" />
             <xsl:element name="Params" />
             <xsl:variable name="functionBody">
+                
                 <xsl:value-of select="concat('var testElem = &quot;', //Survey/@FileName, '&quot;;&#x0A;')" />
                 <xsl:if test="//Survey/@UniqueResponseItem ne '-1'">
                     <xsl:value-of select="concat('EventUtil.addHandler(document.getElementById(&quot;Item', //Survey/@UniqueResponseItem, '&quot;), &quot;onblur&quot;);&#x0A;')" />
                 </xsl:if>
+                <xsl:variable name="itemNodes" select="for $i in $root//Survey/child::*[(name() eq 'SurveyItem') or (name() eq 'SurveyImage')] 
+            return $i" />
+                <xsl:variable name="liNdxs" select="for $i in $itemNodes return if (not($i/child::Text/following-sibling::*[1][Format])) then (0) 
+            else (index-of($itemNodes, $i))" />
+       
+                <xsl:value-of select="replace(concat('questionElems = [', string-join(for $i in $liNdxs return if (xs:integer($i) eq 0) 
+                    then ('') else (concat('document.getElementById(&quot;ItemLITag', $i, '&quot;)')), ', '), '];&#x0A;'), '(, ){2,}', '')" />;
+                <xsl:variable name="n" select="count($root//SurveyItem/node()/Format)" />
+                <xsl:value-of select="concat('answers = [ ', string-join(for $i in 1 to $n return 
+                    concat('document.getElementsByName(&quot;Item', $i, '&quot;)'), ', '), '];&#x0A;')" />
                 <xsl:text>
-                    var adminPhase, localAdminPhase = sessionStorage.getItem("LocalAdminPhase");
-                    if (localAdminPhase == null)
-                        localAdminPhase = -1;
-                    else
-                        localAdminPhase = parseInt(localAdminPhase, 10);
-                    if (CookieUtil.checkCookie("AdminPhase")) {
-                    adminPhase = parseInt(CookieUtil.get("AdminPhase"));
-                    } else {
-                        AbortTest();
-                        return;
-                    }
-                    
-                    var segmentID;
+                document.getElementById("SubmitButton").onclick = OnSubmit;
+                questionListNode = document.getElementById("QuestionList");
                     if (!sessionStorage.getItem("HTTP_REFERER")) {
                     if (CookieUtil.checkCookie("HTTP_REFERER")) 
                     sessionStorage.setItem("HTTP_REFERER", CookieUtil.get("HTTP_REFERER"));
                     else 
                     sessionStorage.setItem("HTTP_REFERER", "-");
-                    backUrlObj = { url : sessionStorage.getItem("HTTP_REFERER") };
                     }
-                    if (!CookieUtil.checkCookie("TestSegment")) {
-                    AbortTest();
-                    return;
-                    }
+                    backUrlObj = { url : sessionStorage.getItem("/") };
                     if (sessionStorage.getItem("IATSESSIONID") == null) {
                     sessionStorage.setItem("IATSESSIONID", CookieUtil.get("IATSESSIONID"));
                     sessionStorage.setItem("TestURL", window.location.href);
                     }
-                    if (sessionStorage.getItem("corrupted") == "true") {
-                    AbortTest();
-                    return;
-                    }
                     sessionStorage.setItem("corrupted", "false");
-                    sessionStorage.setItem("AdminPhase", adminPhase.toString());
-                    if (localAdminPhase + 1 !== adminPhase) {
-                    AbortTest();
-                    return;
-                    }
-                    window.history.pushState({}, "IAT Software", '/');
-                    EventUtil.addHandler(window, "popeventstate", onPopEventState);
-                    sessionStorage.setItem("LocalAdminPhase", adminPhase.toString());
-                    sessionStorage.setItem("LastAdminPhase", CookieUtil.get("LastAdminPhase"));
+                    window.onpopstate = (evt) => window.location.assign("/");
                     sessionStorage.setItem("TestSegment", CookieUtil.get("TestSegment"));
                     CookieUtil.deleteCookie("IATSESSIONID");
                     CookieUtil.deleteCookie("AdminPhase");
@@ -179,7 +166,6 @@
                     CookieUtil.deleteCookie("HTTP_REFERER");
                     CookieUtil.deleteCookie("Alternate");
                     CookieUtil.deleteCookie("TestSegment");
-                    var ctr, xmlDoc;
                     document.getElementById("mainContent").focus();
                  </xsl:text>
             </xsl:variable>

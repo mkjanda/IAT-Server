@@ -166,4 +166,5 @@ public interface IATRepositoryManager {
     DeploymentSession getDeploymentSession(CommunicationEvent ce);
     DeploymentSession getDeploymentSession(Long dsId);
     TestResource getTestImage(IAT test, int index);
+    List<byte[]> getItemSlides(IAT test);
 }

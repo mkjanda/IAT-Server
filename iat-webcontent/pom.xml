@@ -4,7 +4,7 @@
     <parent>
         <artifactId>iat-parent</artifactId>
         <groupId>net.iatsoftware</groupId>
-        <version>1.0.1</version>
+        <version>1.0.2</version>
     </parent>
     <artifactId>web-content</artifactId>
     <name>IAT Application Web Client</name>

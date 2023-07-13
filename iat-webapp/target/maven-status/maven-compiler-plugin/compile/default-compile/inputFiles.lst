@@ -144,7 +144,6 @@
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/services/DefaultWebSocketService.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/resultdata/IATResultSetElement.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/SurveyType.java
-/home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/ClientManagementEnvelope.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/GActivationException.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/entities/Client.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/GDirectory.java
@@ -355,6 +354,7 @@
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/GLongElement.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/controllers/ItemSlideDownload.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/resultdata/DScore.java
+/home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/resultretrieval/ItemSlidePacketDataSource.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/ErrorReportResponseCode.java
 /home/michael/java-projects/iat-webapp/iat-webapp/target/generated/src/main/java/net/iatsoftware/iat/generated/GIATResultSetElementV1.java
 /home/michael/java-projects/iat-webapp/iat-webapp/src/main/java/net/iatsoftware/iat/repositories/TestResourceRepository.java

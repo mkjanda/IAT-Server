@@ -31,8 +31,10 @@ import org.thymeleaf.TemplateEngine;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import javax.inject.Inject;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import jakarta.mail.internet.MimeMessage;
 
 @Service("MailService")
@@ -53,6 +55,10 @@ public class DefaultMailService implements MailService {
     @Inject 
     ApplicationContext appContext;
 
+    @Inject
+    @Named("emailTemplateEngine")
+    TemplateEngine emailTemplateEngine;
+
     @Override
     public void sendEmail(EmailParameters params) throws jakarta.mail.MessagingException {
         try {
@@ -63,7 +69,7 @@ public class DefaultMailService implements MailService {
             helper.setFrom(senderAddress, senderPersonal);
             helper.setTo(params.getDestAddr());
             helper.setSubject(params.getSubject());
-            final String htmlBody = emailTemplateEngine().process(params.getTemplateName(), ctx);
+            final String htmlBody = emailTemplateEngine.process(params.getTemplateName(), ctx);
             helper.setText(htmlBody, true);
             params.getInlineImages().stream().forEach((trip) -> {
                 try {
@@ -72,7 +78,7 @@ public class DefaultMailService implements MailService {
                     logger.error("Error embedding inline image " + trip.getFirst() + " in email", ex);
                 }
             });
- //           mailSender.send(message);
+            mailSender.send(message);
         } catch (java.io.UnsupportedEncodingException ex) {
         }
     }
@@ -85,42 +91,4 @@ public class DefaultMailService implements MailService {
         params.addParameter("exception", sEx);
         sendEmail(params);
     }
-
-    @Bean("emailTemplateEngine")
-    TemplateEngine emailTemplateEngine() {
-        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-        templateEngine.addTemplateResolver(textTemplateResolver());
-        templateEngine.addTemplateResolver(htmlTemplateResolver());
-        templateEngine.addTemplateResolver(stringTemplateResolver());
-        return templateEngine;
-    }
-
-    private ITemplateResolver textTemplateResolver() {
-        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setOrder(1);
-        templateResolver.setResolvablePatterns(new HashSet<>(Arrays.asList(new String[]{"email/*.txt", "email/*.js", "email/*.css"})));
-        templateResolver.setTemplateMode(TemplateMode.TEXT);
-        templateResolver.setCharacterEncoding("UTF-8");
-        templateResolver.setCacheable(false);
-        return templateResolver;
-    }
-
-    private ITemplateResolver htmlTemplateResolver() {
-        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
-        templateResolver.setOrder(2);
-        templateResolver.setResolvablePatterns(Collections.singleton("email/*.html"));
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCharacterEncoding("UTF-8");
-        templateResolver.setCacheable(false);
-        return templateResolver;
-    }
-
-    private ITemplateResolver stringTemplateResolver() {
-        StringTemplateResolver templateResolver = new StringTemplateResolver();
-        templateResolver.setOrder(3);
-        templateResolver.setTemplateMode(TemplateMode.HTML);
-        templateResolver.setCacheable(false);
-        return templateResolver;
-    }
-
 }

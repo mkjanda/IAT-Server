@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.iatsoftware</groupId>
     <artifactId>iat-parent</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <packaging>pom</packaging>
     <name>IAT Application Parent</name>
     <description>The parent project for the IAT Server Application</description>

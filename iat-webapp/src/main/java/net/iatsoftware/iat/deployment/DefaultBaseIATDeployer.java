@@ -21,7 +21,6 @@ import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
-import net.iatsoftware.iat.events.AbortDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
 import net.iatsoftware.iat.events.WebSocketDataSent;
@@ -256,6 +255,14 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         return transform(mungedData, compiledXSLT.getPostMungeX());
     }
 
+    protected Globals getGlobals(String input, XsltExecutable initialTrans) 
+            throws net.sf.saxon.s9api.SaxonApiException, java.io.IOException {
+        var transformedData = transform(input, initialTrans);
+        var mungedData = transform(transformedData, compiledXSLT.getJSCodeSegmentX());
+        var globals = transform(mungedData, compiledXSLT.getSurveyGlobalsX());
+        return (Globals) unmarshaller.unmarshal(new StreamSource(new StringReader(globals)));
+    }
+
     private void generateIAT() throws DeploymentTerminationException {
         deploymentProgress.setStage(DeploymentStage.GENERATING_IAT);
         deploymentProgress.setActiveElement(test.getTestName());
@@ -267,9 +274,10 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
             var configResource = iatRepositoryManager.getTestResource(this.test, 0L);
             configResource.setResourceBytes(strWriter.toString().getBytes(StandardCharsets.UTF_8));
             var segment1 = transformAndMungeCode(strWriter.toString(), compiledXSLT.getIATHeaderX());
-            var globalsText = transform(strWriter.toString(), compiledXSLT.getGlobalsX());
-            var streamSrc = new StreamSource(new StringReader(globalsText));
-            var globals = (Globals) unmarshaller.unmarshal(streamSrc);
+            var globals = getGlobals(strWriter.toString(), compiledXSLT.getIATHeaderX());
+//            var globalsText = transform(segment1, compiledXSLT.getGlobalsX());
+  //          var streamSrc = new StreamSource(new StringReader(globalsText));
+    //        var globals = (Globals) unmarshaller.unmarshal(streamSrc);
             this.CF.setGlobals(globals);
             strWriter = new StringWriter();
             marshaller.marshal(this.CF, new StreamResult(strWriter));
@@ -303,6 +311,10 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
             iatRepositoryManager.addTestResource(testResource);
             survey.setScriptId(testResource.getResourceId());
             var surveyHeaderJS = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyHeaderX());
+            var globals = getGlobals(strWriter.toString(), compiledXSLT.getSurveyHeaderX());
+            survey.setGlobals(globals);
+            strWriter = new StringWriter();
+            marshaller.marshal(survey, new StreamResult(strWriter));
             var surveyScriptJS = transformAndMungeCode(strWriter.toString(), compiledXSLT.getSurveyScriptX());
             testResource.setResourceBytes((surveyHeaderJS + "\n" + surveyScriptJS).getBytes(StandardCharsets.UTF_8));
             iatRepositoryManager.updateTestResource(testResource);

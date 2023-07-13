@@ -31,7 +31,7 @@ import javax.inject.Named;
 
 @Controller
 @ClientControllerAnnotation
-@RequestMapping("/ItemSlideDownload")
+@RequestMapping("/ItemSlides")
 public class ItemSlideDownload {
     private static final Logger log = LogManager.getLogger();
     @Inject

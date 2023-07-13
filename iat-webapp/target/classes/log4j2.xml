@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration>
     <Properties>
-        <Property name="logDir">.</Property>
+        <Property name="logDir">/var/log/iat</Property>
     </Properties>
     <Appenders>
         <RollingFile name="AppLog" fileName="${logDir}/iat.log" filePattern="${logDir}/iat-%d{MM-dd-yyyy}.log.gz">
@@ -42,10 +42,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="transactions" level="info">
+        <Logger name="transactions" level="info" additivity="false">
             <AppenderRef ref="TransLog" />
         </Logger>
-        <Logger name="critical" level="error">
+        <Logger name="critical" additivity="false">
             <AppenderRef ref="CriticalLog" />
         </Logger>
         <Root level="warn">

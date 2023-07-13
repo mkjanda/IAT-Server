@@ -11,6 +11,9 @@
         <xsl:value-of select="'svF'" />
     </xsl:variable>
     
+    <xsl:variable name="responseTypeList" select="tokenize('MultipleResponse,WeightedMultipleResponse,Boolean,Likert,MultiBoolean,BoundedLength,BoundedNumber,FixedDigit,RegularExpression,Date', ',')" />
+    
+    
     <xsl:variable name="globalVariablePrefix">
         <xsl:value-of select="'svG'"/>
     </xsl:variable>
@@ -28,9 +31,12 @@
                 <Param>value</Param>
             </xsl:element>
             <xsl:element name="FunctionBody">
-                <Code>var form = document.querySelector("form#SurveyForm");</Code>
-                <Code>var formData = new FormData(form);</Code>
-                <Code>formData.set(name, value);</Code>
+                <Code>var form = document.getElementById("SurveyForm");</Code>
+                <Code>var input = document.createElement("input");</Code>
+                <Code>input.type = "hidden";</Code>
+                <Code>input.name = name;</Code>
+                <Code>input.value = value;</Code>
+                <Code>form.appendChild(input);</Code>
             </xsl:element>
         </xsl:element>
         
@@ -44,11 +50,7 @@
                 <Code>addPostDataItem("corrupted", sessionStorage.getItem("corrupted"));</Code>
                 <Code>addPostDataItem("target", "adminV2");</Code>
                 <Code>addPostDataItem("HTTP_REFERER", sessionStorage.getItem("HTTP_REFERER"));</Code>
-                <Code><xsl:value-of select="concat('int numItems = ', count($root//SurveyItem[not(@Image)]) - count($root//SurveyItem/Response[@Type ne 'Instruction']))" /></Code>
-                <Code>addPostDataItem("NumItems", numItems.toString());</Code>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('addPostDataItem(&quot;numItems&quot;, &quot;', count($root//SurveyItem[not(@Image)]/Response[@Type ne 'Instruction']), '&quot;);')" />
-                </xsl:element>
+                <Code>addPostDataItem("NumItems", answers.length.toString());</Code>
                 <Code>if (sessionStorage.getItem("LastAdminPhase") == "true")</Code>
                 <Code>sessionStorage.clear();</Code>
             </xsl:element>
@@ -144,7 +146,7 @@
                     </xsl:element>
                 </xsl:if>
                 <Code>var itemErrors;</Code>
-                <xsl:for-each select="for $n in 1 to count(//SurveyItem[Response/@Type ne 'Instruction']) return $n">
+                <xsl:for-each select="for $n in 1 to count(//SurveyItem/child::node()[index-of($responseTypeList, name()) ne 0]) return $n">
                     <xsl:variable name="ctr" select="." />
                     <xsl:variable name="ndx" select="count($root//SurveyItem[Response/@Type ne 'Instruction'][$ctr]/preceding-sibling::SurveyItem) + 1" />
                     <xsl:element name="Code">
@@ -185,31 +187,31 @@
                 <Param>event</Param>
             </xsl:element>
             <xsl:element name="FunctionBody">
-                <Code>var form = document.querySelector("form#SurveyForm");</Code>
+                <Code>var form = document.getElementById("SurveyForm");</Code>
                 <Code>var formData = new FormData(form);</Code>
+                <Code>var nErrors = 0;</Code>
                 <Code>if (IsAborting) {</Code>
                 <Code>addAdditionalPostData();</Code>
                 <Code>formData.set("ABORT", "true");</Code>
                 <Code>submitted = true;</Code>
-                <Code>return;</Code>
-                <Code>}</Code>
-                <Code>if (ForceSubmit == true) {</Code>
+                <Code>form.submit();</Code>
+                <Code>} else if (ForceSubmit == true) {</Code>
                 <Code>document.getElementById("SubmitButton").disabled = true;</Code>
                 <Code>addAdditionalPostData();</Code>
                 <Code>submitted = true;</Code>
+                <Code>form.submit();</Code>
                 <Code>return;</Code>
                 <Code>}</Code>
-                <Code>var nErrors = validateSurvey();</Code>
+                <Code>nErrors = validateSurvey();</Code>
                 <Code>if (nErrors &gt; 0) {</Code>
-                <Code>var errorsExist = document.querySelector("h3#ErrorsExistDiv");</Code>
-                <Code>errorsExist.appendChild(document.createTextNode("Response errors detected. Please review the above survey for error messages and then resubmit."));</Code>
-                <Code>}</Code>
-                <Code>EventUtil.preventDefault(event);</Code>
+                <Code>var errorsExist = document.getElementById("ErrorsExistDiv");</Code>
+                <Code>errorsExist.innerText = "Response errors detected. Please review the above survey for error messages and then resubmit.";</Code>
                 <Code>} else {</Code>
                 <Code>var submitButton = document.getElementById("SubmitButton");</Code>
                 <Code>addAdditionalPostData();</Code>
                 <Code>submitted = true;</Code>
                 <Code>submitButton.disabled = true;</Code>
+                <Code>form.submit();</Code>
                 <Code>}</Code>
             </xsl:element>
         </xsl:element>
@@ -230,49 +232,14 @@
     
     <xsl:variable name="VariableDeclarations">
         <Declarations>
-            <Declaration>var ForceSubmit = false;</Declaration>
-            <Declaration>var questionListNode = document.getElementById("QuestionList");</Declaration>
-            <Declaration>var initFunctions = new Array();</Declaration>
-            <Declaration>var validateFunctions = new Array();</Declaration>
-            <Declaration>var form = document.getElementById("SurveyForm");</Declaration>
-            <Declaration>var uniqueRespErrorLI = null;</Declaration>
-            <xsl:variable name="questionNdxs">
-                <xsl:for-each select="for $n in 1 to count(//SurveyItem[Response/@Type ne 'Instruction']) return $n">
-                    <xsl:variable name="ctr" select="." />
-                    <xsl:variable name="ndx" select="count($root//SurveyItem[Response/@Type ne 'Instruction'][$ctr]/preceding-sibling::SurveyItem) + 1" />
-                    <xsl:element name="elem">
-                        <xsl:value-of select="concat('document.getElementById(&quot;ItemLITag', $ndx, '&quot;)') "/>
-                    </xsl:element>
-                </xsl:for-each>
-            </xsl:variable>
-            <Declaration>
-                <xsl:value-of select="concat('var questionElems = [', string-join($questionNdxs/elem, ', '), '];')" />
-            </Declaration>
+            <Declaration>ForceSubmit = false;</Declaration>
+            <Declaration>initFunctions = new Array();</Declaration>
+            <Declaration>validateFunctions = new Array();</Declaration>
+            <Declaration>uniqueRespErrorLI = null;</Declaration>
         </Declarations>
     </xsl:variable>
     
     
-    <xsl:variable name="GlobalAbbreviations">
-        <xsl:for-each select="$VariableDeclarations/Declarations/Declaration">
-            <xsl:variable name="pos" select="position()" />
-            <xsl:analyze-string select="." regex="([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)(.+);$">
-                <xsl:matching-substring>
-                    <xsl:element name="Entry">
-                        <xsl:attribute name="type" select="'global'" />
-                        <xsl:element name="OrigName">
-                            <xsl:value-of select="regex-group(1)" />
-                        </xsl:element>
-                        <xsl:element name="NewName">
-                            <xsl:value-of select="concat('_', $globalVariablePrefix, $pos)" />
-                        </xsl:element>
-                        <xsl:element name="Assign">
-                            <xsl:value-of select="normalize-space(regex-group(3))" />
-                        </xsl:element>
-                    </xsl:element>
-                </xsl:matching-substring>
-            </xsl:analyze-string>
-        </xsl:for-each>
-    </xsl:variable>
     
     <xsl:variable name="GlobalCode">
         <xsl:if test="//Survey/@TimeoutMillis ne '0'">
@@ -280,7 +247,7 @@
                 <xsl:value-of select="concat('setTimeout(DoForceSubmit, ', //Survey/@TimeoutMillis, ');')"/>
             </xsl:element>
         </xsl:if>
-        <xsl:for-each select="for $i in 1 to count(//SurveyItem/Response[@Type ne 'Instruction']) return $i">
+        <xsl:for-each select="for $i in 1 to count($root//SurveyItem/child::Text/following-sibling::*[1][index-of($responseTypeList, name()) ne 0]) return $i">
             <xsl:element name="Code">
                 <xsl:value-of select="concat('initFunctions.push(InitializeItem', ., ');')" />
             </xsl:element>
@@ -293,7 +260,45 @@
     <xsl:template match="Survey">
         <xsl:element name="CodeFile">
             <xsl:element name="VarEntries">
-                <xsl:copy-of select="$GlobalAbbreviations"/>
+                <xsl:element name="GlobalDecl">
+                    <xsl:value-of select="concat('var ', replace(string-join($VariableDeclarations/Declarations/Declaration, '; '), 
+                                ';;', ','))" />
+                </xsl:element>
+                <xsl:for-each select="$VariableDeclarations/Declarations/Declaration">
+                    <xsl:variable name="pos" select="position()" />
+                    <xsl:analyze-string select="." regex="([A-Za-z_][A-Za-z0-9_]*)(\s*=\s*)(.+)?;$">
+                        <xsl:matching-substring>
+                            <xsl:element name="Entry">
+                                <xsl:attribute name="type" select="'global'" />
+                                <xsl:element name="OrigName">
+                                    <xsl:value-of select="regex-group(1)" />
+                                </xsl:element>
+                                <xsl:element name="NewName">
+                                    <xsl:value-of select="concat('_', $globalVariablePrefix, $pos)" />
+                                </xsl:element>
+                                <xsl:element name="Assign">
+                                    <xsl:value-of select="normalize-space(regex-group(3))" />
+                                </xsl:element>
+                            </xsl:element>
+                        </xsl:matching-substring>
+                    </xsl:analyze-string>
+                </xsl:for-each>
+                
+                <xsl:for-each select="$root//Globals/Global">
+                    <xsl:element name="Entry">
+                        <xsl:attribute name="type" select="'global'" />
+                        <xsl:element name="OrigName">
+                            <xsl:value-of select="OrigName" />
+                        </xsl:element>
+                        <xsl:element name="NewName">
+                            <xsl:value-of select="NewName" />
+                        </xsl:element>
+                        <xsl:element name="Assign">
+                            <xsl:value-of select="Assign" />
+                        </xsl:element>
+                    </xsl:element>
+                </xsl:for-each>
+                
             </xsl:element>
             <xsl:element name="Functions">
                 <xsl:for-each select="$Functions/Function">
@@ -315,48 +320,40 @@
     </xsl:template>
     
     <xsl:template match="SurveyItem">
-        <xsl:variable name="precedingNodes" select="preceding-sibling::node()" />
-        <xsl:variable name="precedingSurveyItems" select="$precedingNodes[compare(name(), 'SurveyItem') eq 0]" />
-        <xsl:variable name="itemNum" select="count($precedingSurveyItems/Response[compare(@Type, 'Instruction') ne 0]) + 1" />
-        <xsl:if test="Response/@Type ne 'Instruction'" >
-            <xsl:apply-templates select="Response">
-                <xsl:with-param name="itemNum" as="xs:integer" select="$itemNum" />
-                <xsl:with-param name="liNum" as="xs:integer" select="count($precedingSurveyItems) + 1" />
+        <xsl:variable name="type" select="child::*[index-of($responseTypeList, name()) ne 0]/name()" />
+        <xsl:if test="$type ne ''">
+            <xsl:apply-templates select="child::*[name() eq $type]">
+                <xsl:with-param name="questionNum" as="xs:integer" select="@QuestionNum" />
+                <xsl:with-param name="itemNum" as="xs:integer" select="@ItemNum" />
                 <xsl:with-param name="optional" as="xs:string" select="@Optional" />
             </xsl:apply-templates>
         </xsl:if>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Likert']">
+    <xsl:template match="Likert">
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
-            <xsl:attribute name="FunctionName" select="concat('InitializeItem', $itemNum)" />
+            <xsl:attribute name="FunctionName" select="concat('InitializeItem', $questionNum)" />
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
-                </xsl:element>
-                <Code>for (var ctr = 0; ctr &lt; answerInputs.length; ctr++)</Code>
-                <Code>answerInputs[ctr].checked = false;</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInputs = answers[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <Code>var ctr;</Code>
                 <Code>var selectionMade = false;</Code>
@@ -372,10 +369,9 @@
                 <Code>if (!ForceSubmit) {</Code>
                 <Code>var errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
-                <Code>var errorMsg = document.createTextNode("Please select a response to the question below.");</Code>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
+                <Code>errorMsgLI.innerText = "Please select a response to the question below.";</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
-                <Code>} else {</Code>
+                <Code>} else {</Code>`
                 <Code>answerInputs[0].checked = true;</Code>
                 <Code>answerInputs[0].value = "__ForceSubmittedUnanswered__";</Code>
                 <Code>}</Code>
@@ -386,38 +382,32 @@
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Boolean']" >
+    <xsl:template match="Boolean" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)" />
+                <xsl:value-of select="concat('InitializeItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
-                </xsl:element>
-                <Code>for (var ctr = 0; ctr &lt; answerInputs.length; ctr++)</Code>
-                <Code>answerInputs[ctr].checked = false;</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInputs = answers[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <Code>var ctr = 0;</Code>
                 <Code>var selectionMade = false;</Code>
@@ -433,8 +423,7 @@
                 <Code>if (!ForceSubmit) {</Code>
                 <Code>var errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
-                <Code>var errorMsg = document.createTextNode("Please select a response to the question below.");</Code>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
+                <Code>errorMsgLI.innerText = "Please select a response to the question below.";</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                 <Code>} else {</Code>
                 <Code>answerInputs[0].checked = true;</Code>
@@ -447,38 +436,32 @@
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Multiple Choice']" >
+    <xsl:template match="MultipleResponse" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)" />
+                <xsl:value-of select="concat('InitializeItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
-                </xsl:element>
-                <Code>for (var ctr = 0; ctr &lt; answerInputs.length; ctr++)</Code>
-                <Code>answerInputs[ctr].checked = false;</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInputs = answers[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <Code>var ctr = 0;</Code>
                 <Code>var selectionMade = false;</Code>
@@ -495,8 +478,7 @@
                     <Code>if (!ForceSubmit) {</Code>
                     <Code>var errorMsgLI = document.createElement("li");</Code>
                     <Code>errorMsgLI.className = "Error";</Code>
-                    <Code>var errorMsg = document.createTextNode("Please select a response to the question below.");</Code>
-                    <Code>errorMsgLI.appendChild(errorMsg);</Code>
+                    <Code>errorMsgLI.innerText = "Please select a response to the question below.";</Code>
                     <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                     <Code>} else {</Code>
                     <Code>answerInputs[0].checked = true;</Code>
@@ -511,38 +493,32 @@
     </xsl:template>
     
     
-    <xsl:template match="Response[@Type='Weighted Multiple Choice']" >
+    <xsl:template match="WeightedMultipleResponse" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)" />
+                <xsl:value-of select="concat('InitializeItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
-                </xsl:element>
-                <Code>for (var ctr = 0; ctr &lt; answerInputs.length; ctr++)</Code>
-                <Code>answerInputs[ctr].checked = false;</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInputs = document.getElementsByName(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInputs = answers[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <Code>var ctr = 0;</Code>
                 <Code>var selectionMade = false;</Code>
@@ -559,8 +535,7 @@
                     <Code>if (!ForceSubmit) {</Code>
                     <Code>var errorMsgLI = document.createElement("li");</Code>
                     <Code>errorMsgLI.className = "Error";</Code>
-                    <Code>var errorMsg = document.createTextNode("Please select a response to the question below.");</Code>
-                    <Code>errorMsgLI.appendChild(errorMsg);</Code>
+                    <Code>errorMsgLI.innerText = "Please select a response to the question below.";</Code>
                     <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                     <Code>} else {</Code>
                     <Code>answerInputs[0].checked = true;</Code>
@@ -573,19 +548,19 @@
             </xsl:element>
         </xsl:element>
     </xsl:template>
-
+    
     <!-- The template that generates the JavaScript to initialize and validate the 
-        item takes the item number, the index of the <li> tag the item is contained in,
-        and a boolen 'optional' value to indicate whether the question must be answered. -->
-    <xsl:template match="Response[@Type='Multiple Selection']" >
+         item takes the item number, the index of the <li> tag the item is contained in,
+         and a boolen 'optional' value to indicate whether the question must be answered. -->
+    <xsl:template match="MultiBoolean" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <!-- For multiple selection items, the initialization function performs no work. -->
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)" />
+                <xsl:value-of select="concat('InitializeItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
@@ -593,177 +568,135 @@
         </xsl:element>
         
         <!-- This function will validate that the user has provided an appropriate
-            response to the question. In the case of multiple selection items,
-            a valid response consists of checking a prescribed minimum and maximum 
-            number of choices. -->
+             response to the question. In the case of multiple selection items,
+             a valid response consists of checking a prescribed minimum and maximum 
+             number of choices. -->
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <!-- What follows is simplicistic JavaScript wrapped in XSLT logic. -->
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
-                <Code>var ctr = 0, responseElement;</Code>
-                <!-- A special response element with its own name is created to hold the answer, if it does not already
-                    exist. -->
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var responseId = &quot;MultiSelectItem', $itemNum, '&quot;;')" />
+                    <xsl:value-of select="concat('var response = answers[', $questionNum - 1, '][0];')" />
                 </xsl:element>
-                <Code>responseElement = document.getElementById('responseId');</Code>
-                <Code>if (responseElement === null) {</Code>
-                <Code>responseElement = document.createElement("input");</Code>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('responseElement.name = &quot;Item', $itemNum, '&quot;;')" />
-                </xsl:element>
-                <Code>responseElement.type = "hidden";</Code>
-                <Code>responseElement.id = responseId;</Code>
-                <Code>questionListNode.appendChild(responseElement);</Code>
-                <Code>}</Code>
- 
-                <!-- The checkboxes are looped through. -->
+                <Code>var ctr = 0;</Code>
                 <Code>var nChecked = 0;</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('for (ctr = 0; ctr &lt; ', count(./Labels/Label), '; ctr++) {')" />
+                    <xsl:value-of select="concat('for (ctr = 0; ctr &lt; ', count(Labels/Label), '; ctr++) {')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var selectionInput = document.getElementById(&quot;Item', $itemNum, 
-                        '_&quot;.concat((ctr + 1).toString()));')" />
+                    <xsl:value-of select="concat('var selectionInput = document.getElementById(&quot;Item', $questionNum, 
+                            '_&quot;.concat((ctr + 1).toString()));')" />
                 </xsl:element>
-                <!-- If the checkbox is checked, it is added to the tally. -->
                 <Code>if (selectionInput.checked)</Code>
                 <Code>nChecked++;</Code>
                 <Code>}</Code>
                 <Code>var errorMsgLI, errorMsg;</Code>
-                <!-- If answering this item is optional, the value of the input is set to "__Unanswered__" and a -1
-                    is returned to the calling validation function. -->
                 <xsl:if test="$optional eq 'True'">
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('if ((nChecked === 0) &amp;&amp; (', ./MinSelections, ' &gt; 0)) {')" />
+                        <xsl:value-of select="concat('if ((nChecked === 0) &amp;&amp; (', MinSelections, ' &gt; 0)) {')" />
                     </xsl:element>
-                    <Code>responseElement.value = "__Unanswered__";</Code>
+                    <Code>response.value = "__Unanswered__";</Code>
                     <!-- Return -1 to indicate the question was option and unanswered. -->
                     <Code>return -1;</Code>
                     <Code>}</Code>
                 </xsl:if>
-
-                <!-- Questionnaires may have time limits. In this instance, if the question is unanswered,
-                    the responseElement is given an appropriate value. -->
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('if (((nChecked &lt; ', ./MinSelections, ') || (nChecked &gt; ', 
-                        ./MaxSelections, ')) &amp;&amp; ForceSubmit){')"/>
+                    <xsl:value-of select="concat('if (((nChecked &lt; ', MinSelections, ') || (nChecked &gt; ', 
+                            MaxSelections, ')) &amp;&amp; ForceSubmit){')"/>
                 </xsl:element>
-                <Code>responseElement.value = "__ForceSubmittedUnanswered__";</Code>
-                <!-- Return 1 to indicate the response is flawed, whether it is to be 
-                    force submitted because the time limit was exceeded or not. -->
+                <Code>response.value = "__ForceSubmittedUnanswered__";</Code>
                 <Code>return 1;</Code>
                 <Code>}</Code>
-
+                
                 <!-- Else, check to ensure the minimum number of elements have been selected. -->
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('if (nChecked &lt; ', ./MinSelections, ') {')"/>
-                </xsl:element>
                 <Code>errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
-                <!-- Insert an appropriate error messsage if not. -->
-                <xsl:if test="./MinSelections eq '1'" >
-                    <xsl:element name="Code">
-                        <xsl:value-of select="concat('errorMsgLI.InnerText = &quot;Please select at least ', ./MinSelections, 
-                            ' response to the question below.&quot;')"/>
-                    </xsl:element>
-                </xsl:if>
-                <xsl:if test="./MinSelections ne '1'" >
-                    <xsl:element name="Code">
-                        <xsl:value-of select="concat('errorMsgLI.InnerText = &quot;Please select at least ', ./MinSelections, 
-                            ' responses to the question below.&quot;')" />
-                    </xsl:element>
-                </xsl:if>
-                <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
-                <!-- Return 1 to indicate the response is flawed. -->
-                <Code>return 1;</Code>
-
-                <!-- Else, check to ensure the maximum number of elements have not been exceeded. -->
+                <Code>errorMsgLI.innerText = "";</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('} else if (nChecked &gt; ', ./MaxSelections, ') {')" />
+                    <xsl:value-of select="concat('if (nChecked &lt; ', MinSelections, ') {')"/>
                 </xsl:element>
-                <!-- Insert an appropriate error messsage if not. -->
+                <xsl:if test="MinSelections eq '1'" >
+                    <Code>errorMsgLI.innerText = "Please select at least one response to the question below.";</Code>
+                </xsl:if>
+                <xsl:if test="MinSelections gt '1'" >
+                    <xsl:element name="Code">
+                        <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please select at least ', MinSelections, ' responses to the question below.&quot;;')" />
+                    </xsl:element>
+                </xsl:if>
+                    <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
+                <xsl:element name="Code">
+                    <xsl:value-of select="concat('} else if (nChecked &gt; ', MaxSelections, ') {')"/>
+                </xsl:element>
                 <Code>errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
                 <xsl:if test="./MaxSelections eq '1'" >
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('errorMsgLI.InnerText = &quot;Please select no more than ', ./MaxSelections, 
-                            ' response to the question below.&quot;')" />
+                        <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please select no more than ', ./MaxSelections, 
+                                ' response to the question below.&quot;;')" />
                     </xsl:element>
                 </xsl:if>
-                <xsl:if test="./MaxSelections ne '1'" >
+                <xsl:if test="MaxSelections ne '1'" >
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('errorMsgLI.InnerText = &quot;Please select no more than ', ./MaxSelections, 
-                            ' responses to the question below.&quot;')" />
+                        <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please select no more than ', MaxSelections, 
+                                ' responses to the question below.&quot;;')" />
                     </xsl:element>
                 </xsl:if>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
-                <!-- Return 1 to indicate the response is flawed. -->
                 <Code>return 1;</Code>
                 <Code>}</Code>
-                <Code>responseElement.value = "";</Code>
-
-                <!-- The response is valid, so tally the checks as a binary string, with the most significant 
-                    digit representing the first checkbox. -->
+                <Code>response.value = "";</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('for (ctr = 0; ctr &lt; ', count(./Labels/Label), '; ctr++) {')" />
+                    <xsl:value-of select="concat('for (ctr = 0; ctr &lt; ', count(Labels/Label), '; ctr++) {')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('selectionInput = document.getElementById(&quot;Item', $itemNum, 
-                        '_&quot;.concat((ctr + 1).toString()));')" />
+                    <xsl:value-of select="concat('selectionInput = document.getElementById(&quot;Item', $questionNum, 
+                            '_&quot;.concat((ctr + 1).toString()));')" />
                 </xsl:element>
                 <Code>if (selectionInput.checked)</Code>
-                <Code>responseElement.value += "1";</Code>
+                <Code>response.value += "1";</Code>
                 <Code>else</Code>
-                <Code>responseElement.value += "0";</Code>
+                <Code>response.value += "0";</Code>
                 <Code>}</Code>
-
-                <!-- Return 0 for success. -->
                 <Code>return 0;</Code>
             </xsl:element>
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Date']" >
+    <xsl:template match="Date" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)" />
+                <xsl:value-of select="concat('InitializeItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')" />
-                </xsl:element>
-                <Code>answerInput.value = "";</Code>
-            </xsl:element>
-        </xsl:element>
+            <xsl:element name="FunctionBody" />
+        </xsl:element>    
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)"/>
+                <xsl:value-of select="concat('ValidateItem', $questionNum)"/>
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
-                <Code>var daysInMonths = new Array();</Code>
+                <Code>var daysInMonths = new Array(), month = "-", day = "-", year  = "-";</Code>
                 <Code>daysInMonths.splice(0, 0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInput = answers[', $questionNum - 1, '][0];')" />
                 </xsl:element>
                 <Code>var answer = answerInput.value;</Code>
                 <xsl:if test="$optional eq 'True'">
@@ -773,15 +706,14 @@
                     <Code>}</Code>
                 </xsl:if>
                 <Code>var error = 0;</Code>
-                <Code>var dateExp = /^[0-2]?[0-9]\/([1-3][0-9]|0?[1-9])\/[0-9]{4}$/;</Code>
+                <Code>var dateExp = new RegExp("^([0-1]?[0-9])\\/(0?[1-9]|[1-3][0-9])\\/([0-9]{1,4})$");</Code>
                 <Code>if (!dateExp.test(answer))</Code>
                 <Code>error = 1;</Code>
                 <Code>if (error == 0) {</Code>
                 <Code>var vals = answer.split("/");</Code>
-                <Code>var month;</Code>
-                <Code>var month = parseInt(vals[0], 10);</Code>
+                <Code>month = parseInt(vals[0], 10);</Code>
                 <Code>day = parseInt(vals[1], 10);</Code>
-                <Code>var year = parseInt(vals[2], 10);</Code>
+                <Code>year = parseInt(vals[2], 10);</Code>
                 <Code>if (isNaN(month))</Code>
                 <Code>error = 2;</Code>
                 <Code>else if (isNaN(day))</Code>
@@ -792,32 +724,30 @@
                 <Code>error = 2;</Code>
                 <Code>else if ((day &lt; 1) || (day &gt; daysInMonths[month - 1]))</Code>
                 <Code>error = 3;</Code>
-                <Code>else if ((day == 29) &amp;&amp; (month == 2) &amp;&amp; (year % 4))</Code>
+                <Code>else if ((day == 29) &amp;&amp; (month == 2) &amp;&amp; (year % 4 !== 0))</Code>
                 <Code>error = 3;</Code>
                 <Code>else if (year &lt; 0)</Code>
                 <Code>error = 4;</Code>
-                <xsl:if test="./StartDate[@HasValue eq 'True']" >
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('if (year &lt; ', ./StartDate/Year, ')')" />
+                        <xsl:value-of select="concat('if (year &lt; ', StartDate/Year, ')')" />
                     </xsl:element>
                     <Code>error = 5;</Code>
                     <xsl:element name="Code">
                         <xsl:value-of select="concat('else if (year == ', StartDate/Year, ') {')" />
                     </xsl:element>
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('if (month &lt; ', StartDate/Month, ')')"/>
+                        <xsl:value-of select="concat('if (month &lt; ', StartDate/Month, ') {')"/>
                     </xsl:element>
                     <Code>error = 5;</Code>
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('else if (month == ', StartDate/Month, ')')"/>
+                        <xsl:value-of select="concat('} else if (month == ', StartDate/Month, ') {')"/>
                     </xsl:element>
                     <xsl:element name="Code">
                         <xsl:value-of select="concat('if (day &lt; ', StartDate/Day, ')')"/>
                     </xsl:element>
                     <Code>error = 5;</Code>
-                    <Code>}</Code>
-                </xsl:if>
-                <xsl:if test="./EndDate[@HasValue eq 'True']" >
+                   <Code>}</Code>
+                   <Code>}</Code>
                     <xsl:element name="Code">
                         <xsl:value-of select="concat('if (year &gt; ', EndDate/Year, ')')"/>
                     </xsl:element>
@@ -826,18 +756,18 @@
                         <xsl:value-of select="concat('else if (year == ', EndDate/Year, ') {')" />
                     </xsl:element>
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('if (month &gt; ', EndDate/Month, ')')" />
+                        <xsl:value-of select="concat('if (month &gt; ', EndDate/Month, ') {')" />
                     </xsl:element>
                     <Code>error = 6;</Code>
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('else if (month == ', EndDate/Month, ')')" />
+                        <xsl:value-of select="concat('} else if (month == ', EndDate/Month, ') {')" />
                     </xsl:element>
                     <xsl:element name="Code">
                         <xsl:value-of select="concat('if (day &gt; ', EndDate/Day, ')')"/>
                     </xsl:element>
                     <Code>error = 6;</Code>
                     <Code>}</Code>
-                </xsl:if>
+                <Code>}</Code>
                 <Code>}</Code>
                 <Code>var monthNames = new Array();</Code>
                 <Code>monthNames.push("January");</Code>
@@ -857,86 +787,83 @@
                 <Code>if (!ForceSubmit) {</Code>
                 <Code>var errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
-                <Code>var errorMsg;</Code>
                 <Code>if (error == 1)</Code>
-                <Code>errorMsg = document.createTextNode("Please enter a date in MM/DD/YYYY format for the question below.");</Code>
+                <Code>errorMsgLI.innerText = "Please enter a date in MM/DD/YYYY format for the question below.";</Code>
                 <Code>else if (error == 2)</Code>
-                <Code>errorMsg = document.createTextNode("The supplied month is not valid.");</Code>
+                <Code>errorMsgLI.innerText = "The supplied month is not valid.";</Code>
                 <Code>else if (error == 3)</Code>
-                <Code>errorMsg = document.createTextNode("The supplied day is not valid.");</Code>
+                <Code>errorMsgLI.innerText = "The supplied day is not valid.";</Code>
                 <Code>else if (error == 4)</Code>
-                <Code>errorMsg = document.createTextNode("The supplied year is not valid.");</Code>
+                <Code>errorMsgLI.innerText = "The supplied year is not valid.";</Code>
                 <Code>else if (error == 5)</Code>
                 <xsl:element name="Code">
                     <xsl:variable name="date" select="concat('monthNames[', StartDate/Month, ' - 1] + &quot; ', StartDate/Day, ', ', StartDate/Year, '&quot;')" />
-                    <xsl:value-of select="concat('errorMsg = document.createTextNode(&quot;Please enter a date that falls on or after &quot; + ', $date, ');')" />
+                    <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please enter a date that falls on or after &quot; + ', $date, ';')" />
                 </xsl:element>
                 <Code>else if (error == 6)</Code>
                 <xsl:element name="Code">
                     <xsl:variable name="date" select="concat('monthNames[', EndDate/Month, ' - 1] + &quot; ', EndDate/Day, ', ', EndDate/Year, '&quot;')" />
-                    <xsl:value-of select="concat('errorMsg = document.createTextNode(&quot;Please enter a date that falls on or before &quot; + ', $date, ');')" />
+                    <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please enter a date that falls on or before &quot; + ', $date, ';')" />
                 </xsl:element>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                 <Code>return 1;</Code>
-                <Code>}} else if (error != 0) {</Code>
+                <Code>} else {</Code>
                 <Code>answerInput.value = "__ForceSubmittedUnanswered__";</Code>
                 <Code>return 1;</Code>
+                <Code>}</Code>
                 <Code>}</Code>
                 <Code>return 0;</Code>
             </xsl:element>
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Bounded Length']" >
+    <xsl:template match="BoundedLength" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)"/>
+                <xsl:value-of select="concat('InitializeItem', $questionNum)"/>
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')" />
-                </xsl:element>
-                <Code>answerInput.value = "";</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)"/>
+                <xsl:value-of select="concat('ValidateItem', $questionNum)"/>
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInput = answers[', $questionNum - 1, '][0];')" />
                 </xsl:element>
                 <Code>var answer = answerInput.value.trim();</Code>
-                <xsl:if test="($optional eq 'True') and (xs:integer(MinLength) gt 0)">
-                    <Code>if (answer.length === 0) {</Code>
+                <xsl:element name="Code">
+                    <xsl:value-of select="concat('var minLength = ', MinLength, ';')" />
+                </xsl:element>    
+                <xsl:element name="Code">
+                    <xsl:value-of select="concat('var maxLength = ', MaxLength, ';')" />
+                </xsl:element>    
+                <xsl:if test="($optional eq 'True')">
+                    <Code>if ((answer.length === 0) (minLength &gt; 0)) {</Code>
                     <Code>answerInput.value = "Unanswered";</Code>
                     <Code>return -1;</Code>
                     <Code>}</Code>
                 </xsl:if>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('if ((answer.length &lt; ', MinLength, ') || (answer.length &gt; ', MaxLength, ')) {')" />
-                </xsl:element>
+                <Code>if ((answer.length &lt; minLength) || (answer.length &gt; maxLength)) {</Code>
                 <Code>if (!ForceSubmit) {</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <Code>var errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var errorMsg = document.createTextNode(&quot;Please provide a response between ', MinLength, ' and ', MaxLength, ' characters in length for the question below.&quot;);')" />
+                    <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please provide a response that is between ', MinLength, ' and ', MaxLength, ' characters for the question below.&quot;;')" />
                 </xsl:element>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                 <Code>return 1;</Code>
                 <Code>} else {</Code>
@@ -948,142 +875,113 @@
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Bounded Number']" >
+    <xsl:template match="BoundedNumber" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)"/>
+                <xsl:value-of select="concat('InitializeItem', $questionNum)"/>
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')" />
-                </xsl:element>
-                <Code>answerInput.value = "";</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
+                <Code>var errorMsgLI = document.createElement("li");</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')"/>
+                    <xsl:value-of select="concat('var answerInput = answers[', $questionNum - 1, '][0];')" />
+                </xsl:element>
+                <xsl:element name="Code">
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <xsl:if test="$optional eq 'True'">
-                    <Code>if (answerInput.value.length === 0) {</Code>
+                    <Code>if (isNaN(answerInput.value) || (answerInput.value === "")) {</Code>
                     <Code>answerInput.value = "__Unanswered__";</Code>
                     <Code>return -1;</Code>
                     <Code>}</Code>
                 </xsl:if>
                 <Code>var answer = answerInput.value;</Code>
-                <Code>if (!isNumber(answer)) {</Code>
+                <Code>if (isNaN(answer) || (answer === "")) {</Code>
                 <Code>if (!ForceSubmit) {</Code>
-                <Code>var errorMsgLI = document.createElement("li");</Code>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
-                </xsl:element>
                 <Code>errorMsgLI.className = "Error";</Code>
-                <Code>errorMsgLI.appendChild(document.createTextNode("Please enter a numerical response for the question below."));</Code>
+                <Code>errorMsgLI.innerText = "Please enter a numerical response for the question below.";</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                 <Code>return 1;</Code>
                 <Code>} else {</Code>
                 <Code>answerInput.value = "__ForceSubmittedUnanswered__";</Code>
                 <Code>return 1;</Code>
-                <Code>}}</Code>
-                <Code>var num;</Code>
-                <Code>if (!answer)</Code>
-                <Code>num = Number.NaN;</Code>
-                <Code>else</Code>
-                <Code>num = parseFloat(answer);</Code>
+                <Code>}</Code>
+                <Code>}</Code>
+                <Code>var num = parseFloat(answer);</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')"/>
-                </xsl:element>
-                <Code>var errorMsgLI, errorMsg;</Code>
-                <Code>if (isNaN(num)) {</Code>
-                <Code>if (!ForceSubmit) {</Code>
-                <Code>errorMsgLI = document.createElement("li");</Code>
-                <Code>errorMsgLI.className = "Error";</Code>
-                <Code>errorMsg = document.createTextNode("Please enter a numerical response for the question below.");</Code>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
-                <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
-                <Code>return 1;</Code>
-                <Code>} else {</Code>
-                <Code>answerInput.value = "__ForceSubmittedUnanswered__";</Code>
-                <Code>return 1;</Code>
-                <Code>}}</Code>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('else if ((num &lt; ', MinValue, ') || (num &gt; ', MaxValue, ')) {')" />
+                    <xsl:value-of select="concat('if ((num &lt; ', MinValue, ') || (num &gt; ', MaxValue, ')) {')" />
                 </xsl:element>
                 <Code>if (!ForceSubmit) {</Code>
-                <Code>errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('errorMsg = document.createTextNode(&quot;Please enter a numerical response between ', MinValue, ' and ', MaxValue, ' for the question below.&quot;);')" />
+                    <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please enter a numerical response between ', MinValue, ' and ', MaxValue, ' for the question below.&quot;;')" />
                 </xsl:element>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                 <Code>return 1;</Code>
                 <Code>} else {</Code>
                 <Code>answerInput.value = "NULL";</Code>
                 <Code>return 1;</Code>
-                <Code>}}</Code>
+                <Code>}</Code>
+                <Code>}</Code>
                 <Code>return 0;</Code>
             </xsl:element>
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Fixed Digit']" >
+    <xsl:template match="FixedDigit" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)" />
+                <xsl:value-of select="concat('InitializeItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionName">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, ');')" />
-                </xsl:element>
-                <Code>answerInput.value = "";</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInput = answers[', $questionNum - 1, '][0];')"/>
                 </xsl:element>
                 <xsl:if test="$optional eq 'True'">
-                    <Code>if (answerInput.value.length === 0) {</Code>
+                    <Code>if (!isNaN(answerInput.value.length)) {</Code>
                     <Code>answerInput.value = "__Unanswered__";</Code>
                     <Code>return -1;</Code>
                     <Code>}</Code>
                 </xsl:if>
-                <Code>var answer = answerInput.value;</Code>
-                <Code>var num = parseInt(answer, 10);</Code>
-                <Code>var errorMsgLI, errorMsg;</Code>
+                <Code>var errorMsgLI;</Code>
+                <Code>var num = answerInput.value;</Code>
+                <Code>if (!num)</Code>
+                <Code>num = "-";</Code>
                 <Code>var bErrorInResponse = false;</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var intExp = /[0-9]{', NumDigs, '}/;')" />
+                    <xsl:value-of select="concat('var intExp = /^[0-9]{', NumDigs, '}\s*$/;')" />
                 </xsl:element>
                 <Code>if (!intExp.test(num))</Code>
                 <Code>bErrorInResponse = true;</Code>
@@ -1092,9 +990,8 @@
                 <Code>errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('errorMsg = document.createTextNode(&quot;Please enter a numerical response of ', NumDigs, ' digits for the question below.&quot;);')" />
+                    <xsl:value-of select="concat('errorMsgLI.innerText = &quot;Please enter a numerical response of ', NumDigs, ' digits for the question below.&quot;;')" />
                 </xsl:element>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                 <Code>return 1;</Code>
                 <Code>} else {</Code>
@@ -1106,61 +1003,55 @@
         </xsl:element>
     </xsl:template>
     
-    <xsl:template match="Response[@Type='Regular Expression']" >
+    <xsl:template match="RegularExpression" >
+        <xsl:param name="questionNum" as="xs:integer" />
         <xsl:param name="itemNum" as="xs:integer" />
-        <xsl:param name="liNum" as="xs:integer" />
         <xsl:param name="optional" as="xs:string" />
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('InitializeItem', $itemNum)"/>
+                <xsl:value-of select="concat('InitializeItem', $questionNum)"/>
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'initialization'" />
             <xsl:element name="Params" />
-            <xsl:element name="FunctionBody">
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')"/>
-                </xsl:element>
-                <Code>answerInput.value = "";</Code>
-            </xsl:element>
+            <xsl:element name="FunctionBody" />
         </xsl:element>
         
         <xsl:element name="Function">
             <xsl:attribute name="FunctionName">
-                <xsl:value-of select="concat('ValidateItem', $itemNum)" />
+                <xsl:value-of select="concat('ValidateItem', $questionNum)" />
             </xsl:attribute>
             <xsl:attribute name="FunctionType" select="'validation'" />
             <xsl:element name="Params" />
             <xsl:element name="FunctionBody">
                 <xsl:element name="Code">
-                    <xsl:value-of select="concat('var answerInput = document.getElementById(&quot;Item', $itemNum, '&quot;);')" />
+                    <xsl:value-of select="concat('var answerInput = answers[', $questionNum - 1, '][0];')"/>
+                </xsl:element>
+                <xsl:element name="Code">
+                    <xsl:value-of select="concat('var questionLI = questionElems[', $questionNum - 1, '];')" />
                 </xsl:element>
                 <Code>var answer = answerInput.value;</Code>
                 <xsl:element name="Code">
                     <xsl:value-of select="concat('var regEx = /', Expression, '/;')" />
                 </xsl:element>
-                <Code>if (answer.search(regEx) != 0) {</Code>
+                <Code>if (!regEx.test(answer)) {</Code>
                 <xsl:if test="$optional eq 'True'">
                     <Code>answerInput.value = "__Unanswered__";</Code>
                     <Code>return -1;</Code>
                 </xsl:if>
                 <Code>if (!ForceSubmit) {</Code>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('var questionLI = document.getElementById(&quot;ItemLITag', $liNum, '&quot;);')" />
-                </xsl:element>
                 <Code>var errorMsgLI = document.createElement("li");</Code>
                 <Code>errorMsgLI.className = "Error";</Code>
-                <Code>var errorMsg = document.createTextNode("Invalid input supplied for the question below.");</Code>
-                <Code>errorMsgLI.appendChild(errorMsg);</Code>
+                <Code>errorMsgLI.innerText = "Invalid input supplied for the question below.";</Code>
                 <Code>questionListNode.insertBefore(errorMsgLI, questionLI);</Code>
                 <Code>return 1;</Code>
                 <Code>} else {</Code>
                 <Code>answerInput.value = "__ForceSubmittedUnanswered__";</Code>
                 <Code>return 1;</Code>
-                <Code>}}</Code>
+                <Code>}</Code>
+                <Code>}</Code>
                 <Code>return 0;</Code>
             </xsl:element>
         </xsl:element>
     </xsl:template>
 </xsl:stylesheet>
-

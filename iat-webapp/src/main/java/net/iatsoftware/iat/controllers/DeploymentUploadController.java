@@ -153,11 +153,13 @@ public class DeploymentUploadController {
 	public void manifestReceived(ManifestReceivedEvent evt) {
 		try {
 			var map = new HashMap<String, Object>();
+			var deploymentSession = repositoryManager.getDeploymentSession(evt.getDeploymentID());
+			var iat = deploymentSession.getTest();
+			iat.setManifest(evt.getManifest());
+			iat = repositoryManager.updateIAT(iat);
 			manifests.put(evt.getDeploymentID(), map);
 			map.put(MANIFEST, evt.getManifest());
 			map.put(MANIFEST_UPLOAD_MILLIS, System.currentTimeMillis());
-			var deploymentSession = repositoryManager.getDeploymentSession(evt.getDeploymentID());
-			deploymentSession = repositoryManager.updateDeploymentSession(deploymentSession);
 			var trans = new TransactionRequest(TransactionType.DEPLOYMENT_FILE_MANIFEST_RECEIVED);
 			trans.addLongValue("DeploymentId", evt.getDeploymentID());
 			trans.addStringValue("SessionId", evt.getSessionId());

@@ -91,10 +91,12 @@ import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.StringTemplateResolver;
 import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 
 import java.io.BufferedReader;
@@ -108,6 +110,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -265,6 +268,44 @@ public class IATServer implements SchedulingConfigurer {
         properties.put(jakarta.xml.bind.Marshaller.JAXB_FORMATTED_OUTPUT, true);
         return jaxb2Marshaller;
     }
+
+    @Bean("emailTemplateEngine")
+    TemplateEngine emailTemplateEngine() {
+        SpringTemplateEngine templateEngine = new SpringTemplateEngine();
+        templateEngine.addTemplateResolver(textTemplateResolver());
+        templateEngine.addTemplateResolver(htmlTemplateResolver());
+        templateEngine.addTemplateResolver(stringTemplateResolver());
+        return templateEngine;
+    }
+
+    private ITemplateResolver textTemplateResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setOrder(1);
+        templateResolver.setResolvablePatterns(new HashSet<>(Arrays.asList(new String[]{"email/*.txt", "email/*.js", "email/*.css"})));
+        templateResolver.setTemplateMode(TemplateMode.TEXT);
+        templateResolver.setCharacterEncoding("UTF-8");
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
+    private ITemplateResolver htmlTemplateResolver() {
+        final ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setOrder(2);
+        templateResolver.setResolvablePatterns(Collections.singleton("email/*.html"));
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCharacterEncoding("UTF-8");
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
+    private ITemplateResolver stringTemplateResolver() {
+        StringTemplateResolver templateResolver = new StringTemplateResolver();
+        templateResolver.setOrder(3);
+        templateResolver.setTemplateMode(TemplateMode.HTML);
+        templateResolver.setCacheable(false);
+        return templateResolver;
+    }
+
 
     @Bean
     public WebMvcConfigurer webMvcConfigurer() {

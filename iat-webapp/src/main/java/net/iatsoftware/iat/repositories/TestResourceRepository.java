@@ -11,4 +11,5 @@ public interface TestResourceRepository extends GenericRepository<Long, TestReso
     TestResource get(IAT test, Long resourceId);
     List<TestResource> getDeploymentResources(IAT test);
     TestResource getTestImage(IAT test, int index);
+    List<byte[]> getItemSlides(IAT test);
 }

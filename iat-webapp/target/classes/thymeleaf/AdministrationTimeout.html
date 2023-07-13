@@ -19,10 +19,10 @@
 </head>
 
 <body>
-    <div th:insert="header :: header(caption='Test Administration Timeout')"></div>
+    <div th:insert="~{header :: header(caption='Test Administration Timeout')}"></div>
     <div>
         <div id="content">
-            <p>An hour or more has passed since the last test segment was submitted and the data tied to your
+            <p class="message">An hour or more has passed since the last test segment was submitted and the data tied to your
                 administration
                 has been deleted. If you would like to restart the test, click
                 <span class="hilightHover" onclick="restart()">here</span>.
@@ -32,7 +32,7 @@
             </p>
         </div>
         <div id="logo">
-            <img src="/IAT/images/logo.png" />
+            <img alt="logo" src="/IAT/images/logo.png" />
         </div>
     </div>
 </body>

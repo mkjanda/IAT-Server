@@ -31,7 +31,7 @@ public class XsltService {
     private static final Logger logger = LogManager.getLogger();
     private XsltExecutable iatScriptX = null, iatHeaderX = null, iatPageX = null, surveyScriptX = null, surveyHeaderX = null, surveyPageX = null;
     private XsltExecutable iatDescriptorX = null, surveyDescriptorX = null, aesX = null, jsCodeSegmentX = null, postMungeX = null;
-    private XsltExecutable encPostMungeX = null, globalsX = null;
+    private XsltExecutable encPostMungeX = null, iatGlobalsX = null, surveyGlobalsX = null;
     private static final String IAT_SCRIPT = "classpath:XSLT/IATScript.xslt";
     private static final String IAT_HEADER = "classpath:XSLT/IATHeaderJS.xslt";
     private static final String IAT_PAGE = "classpath:XSLT/IATPage.xslt";
@@ -44,7 +44,8 @@ public class XsltService {
     private static final String JS_CODE_SEGMENT = "classpath:XSLT/JSCodeSegment.xslt";
     private static final String POST_MUNGE = "classpath:XSLT/PostMunge.xslt";
     private static final String ENCRYPTED_POST_MUNGE = "classpath:XSLT/EncPostMunge.xslt";
-    private static final String GLOBAL_VARIABLES = "classpath:XSLT/globals.xslt";
+    private static final String IAT_GLOBAL_VARIABLES = "classpath:XSLT/IATGlobals.xslt";
+    private static final String SURVEY_GLOBAL_VARIABLES = "classpath:XSLT/SurveyGlobals.xslt";
     private static final Processor xsltProcessor = new Processor(false);
 
     @Inject ApplicationContext ctx;
@@ -240,14 +241,28 @@ public class XsltService {
         return null;
     }
 
-    public synchronized XsltExecutable getGlobalsX() {
+    public synchronized XsltExecutable getIATGlobalsX() {
         try {
-            if (globalsX != null) {
-                return globalsX;
+            if (iatGlobalsX != null) {
+                return iatGlobalsX;
             } else {
-                globalsX = compile(GLOBAL_VARIABLES);
+                iatGlobalsX = compile(IAT_GLOBAL_VARIABLES);
             }
-            return globalsX;
+            return iatGlobalsX;
+        } catch (Exception ex) {
+            logger.error("Error compiling Global Variable XSLT", ex);
+        }
+        return null;
+    }
+
+    public synchronized XsltExecutable getSurveyGlobalsX() {
+        try {
+            if (surveyGlobalsX != null) {
+                return surveyGlobalsX;
+            } else {
+                surveyGlobalsX = compile(SURVEY_GLOBAL_VARIABLES);
+            }
+            return surveyGlobalsX;
         } catch (Exception ex) {
             logger.error("Error compiling Global Variable XSLT", ex);
         }
