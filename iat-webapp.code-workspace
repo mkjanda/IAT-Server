@@ -57,7 +57,7 @@
 		"java.jdt.ls.vmargs": "-XX:+UseParallelGC -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90 -Dsun.zip.disableMemoryMapping=true -Xmx4G -Xms100m",
 		"java.format.settings.url": "eclipse-formatter.xml",
 		"workbench.iconTheme": "material-icon-theme",
-		"workbench.colorTheme": "Material Dark",
+		"workbench.colorTheme": "Sapphire (Dim)",
 		"workbench.preferredDarkColorTheme": "Material Theme Darker",
 		"editor.semanticHighlighting.enabled": true,
 		"editor.fontFamily": "'Consolas', 'monospace', monospace",

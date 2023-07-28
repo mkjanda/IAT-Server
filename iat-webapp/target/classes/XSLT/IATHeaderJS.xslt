@@ -275,14 +275,8 @@
 			<xsl:element name="Params" />
 			<xsl:element name="FunctionBody">
 				<xsl:element name="Code">var lastAdminPhase = false;</xsl:element>
-				<xsl:element name="Code">if (sessionStorage.getItem("LastAdminPhase") == "true")</xsl:element>
-				<xsl:element name="Code">lastAdminPhase = true;</xsl:element>
-				<xsl:element name="Code">if (submitted &amp;&amp; lastAdminPhase) {</xsl:element>
-				<xsl:element name="Code">sessionStorage.removeItem("IATSESSIONID");</xsl:element>
-				<xsl:element name="Code">sessionStorage.removeItem("AdminPhase");</xsl:element>
-				<xsl:element name="Code">sessionStorage.removeItem("TestSegment");</xsl:element>
-				<xsl:element name="Code">sessionStorage.removeItem("LastAdminPhase");</xsl:element>
-				<xsl:element name="Code">sessionStorage.removeItem("corrupted");</xsl:element>
+				<xsl:element name="Code">if (sessionStorage.getItem("LastAdminPhase") == "true") {</xsl:element>
+				<xsl:element name="Code">sessionStorage.clear();</xsl:element>
 				<xsl:element name="Code">CookieUtil.set("AdminPhase", "0");</xsl:element>
 				<xsl:element name="Code">}</xsl:element>
 			</xsl:element>
@@ -351,6 +345,9 @@
 			</xsl:element>
 			<xsl:variable name="functionBody">
 				<xsl:text>
+				if (evt.state.path === undefined) {
+					return;
+					}
 					sessionStorage.clear();
                    window.location.assign("/");
                 </xsl:text>
@@ -374,19 +371,15 @@
 				<xsl:value-of select="concat('var corruptAdminCookie = &quot;', //ClientID, '-', //IATName, '-corrupt&quot;;&#x0A;')"/>
 				<xsl:text>
                     var adminPhase, localAdminPhase, testSegment;
-                    if (!sessionStorage.getItem("HTTP_REFERER")) {
-                    if (CookieUtil.checkCookie("HTTP_REFERER"))
-                    sessionStorage.setItem("HTTP_REFERER", CookieUtil.get("HTTP_REFERER"));
-                    else 
-                    sessionStorage.setItem("HTTP_REFERER", "-");
-                    }
                     if (!sessionStorage.getItem("IATSESSIONID")) {
-                    sessionStorage.setItem("IATSESSIONID", CookieUtil.get("IATSESSIONID"));
-                    sessionStorage.setItem("AdminPhase", "0");
-					adminPhase = 0;
+                    	var obj = JSON.parse("{ \"path\" : \"/\" }");
+						window.history.replaceState(obj, "IAT Software", window.location.toString());
+                    	sessionStorage.setItem("IATSESSIONID", CookieUtil.get("IATSESSIONID"));
+                    	sessionStorage.setItem("AdminPhase", "0");
+						adminPhase = 0;
 					} else {
-					adminPhase = parseInt(sessionStorage.getItem("AdminPhase"), 10);
-                    sessionStorage.setItem("AdminPhase", (adminPhase + 1).toString());
+						adminPhase = parseInt(sessionStorage.getItem("AdminPhase"), 10);
+                    	sessionStorage.setItem("AdminPhase", (adminPhase + 1).toString());
 					}
                     sessionStorage.setItem("TestSegment", CookieUtil.get("TestSegment"));
                     sessionStorage.setItem("LastAdminPhase", CookieUtil.get("LastAdminPhase"));
@@ -408,9 +401,7 @@
 				</xsl:if>
 				<xsl:text>
                     DisplayDiv = document.getElementById("IATDisplayDiv");
-     //               window.history.pushState({}, "IAT Software", '/');
-	 				window.onpopstate = (evt) => window.location.assign("/");
-                    EventUtil.addHandler(window, "popstate", OnPopState);
+					window.onpopstate = OnPopState;
                     var alternateTag = document.getElementById("Alternate");
                     alternateTag.setAttribute("value", CookieUtil.get("Alternate"));
                     CookieUtil.deleteCookie("IATSESSIONID");

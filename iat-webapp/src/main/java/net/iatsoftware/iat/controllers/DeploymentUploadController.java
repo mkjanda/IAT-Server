@@ -137,8 +137,8 @@ public class DeploymentUploadController {
 				var configFileRes = repositoryManager.getTestResource(test, 0L);
 				configFileRes.setResourceBytes(configFileBytes.toByteArray());
 				repositoryManager.updateTestResource(configFileRes);
+			} else 	
 				this.publisher.publishEvent(new BeginDeploymentEvent(deploymentSession.getId()));
-			}
 		}
 		return new ResponseEntity<Envelope>(new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)),
 				HttpStatus.OK);
