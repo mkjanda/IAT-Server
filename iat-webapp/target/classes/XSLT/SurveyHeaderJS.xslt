@@ -164,7 +164,6 @@
                     }
                     var obj = JSON.parse("{ \"path\" : \"/\" }");
                     if (sessionStorage.getItem("IATSESSIONID") == null) {
-                        window.history.pushState(obj, "IAT Software", window.location.toString());
                         sessionStorage.setItem("IATSESSIONID", CookieUtil.get("IATSESSIONID"));
                     } 
                     sessionStorage.setItem("TestURL", window.location.href);
