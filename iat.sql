@@ -1,10 +1,8 @@
-create database iatserver_db;
-use iatserver_db;
--- MariaDB dump 10.19  Distrib 10.6.7-MariaDB, for debian-linux-gnu (x86_64)
+-- MariaDB dump 10.19  Distrib 10.6.12-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: iatserver_db
 -- ------------------------------------------------------
--- Server version	10.6.7-MariaDB-2ubuntu1.1
+-- Server version	10.6.12-MariaDB-0ubuntu0.22.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -20,6 +18,7 @@ use iatserver_db;
 --
 -- Table structure for table `admin_timers`
 --
+
 DROP TABLE IF EXISTS `admin_timers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -29,11 +28,11 @@ CREATE TABLE `admin_timers` (
   `TestID` int(64) unsigned NOT NULL,
   `complete` bit(1) NOT NULL,
   `testee_token` varbinary(1024) DEFAULT NULL,
-  `session_id` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `iatsessionid` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`timer_id`),
   KEY `timers_test` (`TestID`),
   CONSTRAINT `timers_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1690 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5656 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -48,13 +47,13 @@ CREATE TABLE `client_exception` (
   `UserID` int(64) unsigned NOT NULL,
   `ClientID` int(64) unsigned NOT NULL,
   `exception_timestamp` datetime NOT NULL,
-  `exception_xml` text CHARACTER SET latin1 NOT NULL,
+  `exception_xml` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   PRIMARY KEY (`ExceptionID`),
   KEY `exceptions_client` (`ClientID`),
   KEY `exceptions_user` (`UserID`),
   CONSTRAINT `exceptions_client` FOREIGN KEY (`ClientID`) REFERENCES `clients` (`ClientID`) ON DELETE CASCADE,
   CONSTRAINT `exceptions_user` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1440 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1426 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -66,21 +65,21 @@ DROP TABLE IF EXISTS `clients`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `clients` (
   `ClientID` int(64) unsigned NOT NULL AUTO_INCREMENT,
-  `product_key` char(20) CHARACTER SET latin1 NOT NULL,
+  `product_key` char(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `activations_remaining` int(16) unsigned DEFAULT NULL,
   `activations_consumed` int(16) NOT NULL,
-  `contact_fname` varchar(80) CHARACTER SET latin1 NOT NULL,
-  `contact_lname` varchar(80) CHARACTER SET latin1 NOT NULL,
-  `organization` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `organization_id` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `phone` varchar(25) CHARACTER SET latin1 DEFAULT NULL,
-  `province` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
-  `streetaddress1` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `streetaddress2` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `city` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
-  `postalcode` varchar(25) CHARACTER SET latin1 DEFAULT NULL,
-  `country` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
+  `contact_fname` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `contact_lname` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `organization` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `organization_id` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `phone` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `province` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `streetaddress1` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `streetaddress2` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `city` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `postalcode` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `country` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `registration_date` datetime DEFAULT NULL,
   `disk_alottment_mb` int(16) unsigned DEFAULT NULL,
   `num_iats_alotted` int(16) unsigned DEFAULT NULL,
@@ -91,15 +90,15 @@ CREATE TABLE `clients` (
   `kill_filed` bit(1) NOT NULL,
   `invalid_save_files` int(16) NOT NULL,
   `isolate_users` bit(1) NOT NULL,
-  `product_use` text CHARACTER SET latin1 DEFAULT NULL,
-  `download_password` char(20) CHARACTER SET latin1 DEFAULT NULL,
+  `product_use` text CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `download_password` char(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `downloads_remaining` int(16) DEFAULT NULL,
   `downloads_consumed` int(16) NOT NULL,
   `oauth_access_expires` datetime DEFAULT NULL,
   PRIMARY KEY (`ClientID`),
   UNIQUE KEY `unique_email` (`email`),
   KEY `clients_product_keys` (`product_key`)
-) ENGINE=InnoDB AUTO_INCREMENT=892 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=994 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -111,7 +110,7 @@ DROP TABLE IF EXISTS `cors_origins`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `cors_origins` (
   `OriginID` int(64) unsigned NOT NULL AUTO_INCREMENT,
-  `origin` varchar(512) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `origin` varchar(512) NOT NULL,
   `http` bit(1) NOT NULL,
   `ClientID` int(64) unsigned NOT NULL,
   PRIMARY KEY (`OriginID`),
@@ -129,8 +128,8 @@ DROP TABLE IF EXISTS `country_codes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `country_codes` (
   `CodeID` int(16) unsigned NOT NULL AUTO_INCREMENT,
-  `code` char(2) CHARACTER SET latin1 NOT NULL,
-  `country` varchar(80) CHARACTER SET latin1 NOT NULL,
+  `code` char(2) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `country` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   PRIMARY KEY (`CodeID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=255 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -147,7 +146,7 @@ CREATE TABLE `deployment_packets` (
   `DeploymentSessionID` int(64) unsigned NOT NULL,
   `packet_data` mediumblob NOT NULL,
   `upload_ordinal` int(32) unsigned NOT NULL,
-  `packet_type` enum('DEPLOYMENT_DATA','ITEM_SLIDE') CHARACTER SET latin1 NOT NULL,
+  `packet_type` enum('DEPLOYMENT_DATA','ITEM_SLIDE') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   PRIMARY KEY (`DeploymentPacketID`),
   KEY `tests_deployment` (`DeploymentSessionID`),
   CONSTRAINT `packets_deployment_session` FOREIGN KEY (`DeploymentSessionID`) REFERENCES `deployment_sessions` (`SessionID`) ON DELETE CASCADE
@@ -164,15 +163,15 @@ DROP TABLE IF EXISTS `deployment_sessions`;
 CREATE TABLE `deployment_sessions` (
   `SessionID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `deployment_start` datetime NOT NULL,
-  `item_slide_upload_key` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `reconnection_key` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `web_socket_id` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `deployment_upload_key` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `TestID` int(64) unsigned NOT NULL,
+  `item_slide_upload_key` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `reconnection_key` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `web_socket_id` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `deployment_upload_key` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `TestID` int(64) unsigned DEFAULT NULL,
   PRIMARY KEY (`SessionID`),
-  KEY `deployments_test` (`TestID`),
-  CONSTRAINT `deployments_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=160 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  KEY `dsessions_test` (`TestID`),
+  CONSTRAINT `dsessions_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=681 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -184,7 +183,7 @@ DROP TABLE IF EXISTS `downloads`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `downloads` (
   `client_id` int(64) unsigned NOT NULL,
-  `download_password` char(20) CHARACTER SET latin1 NOT NULL,
+  `download_password` char(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `downloads_remaining` int(16) NOT NULL,
   `downloads_consumed` int(16) NOT NULL,
   PRIMARY KEY (`client_id`),
@@ -205,7 +204,7 @@ CREATE TABLE `dynamic_specifiers` (
   `TestSegmentID` int(64) unsigned NOT NULL,
   `test_specifier_id` int(16) unsigned NOT NULL,
   `item_num` int(16) unsigned NOT NULL,
-  `SpecifierType` enum('Mask','TrueFalse','Selection','Range') CHARACTER SET latin1 DEFAULT NULL,
+  `SpecifierType` enum('Mask','TrueFalse','Selection','Range') CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   PRIMARY KEY (`SpecifierID`),
   KEY `specifiers_test_segment` (`TestSegmentID`),
   KEY `specifiers_tests_id` (`TestID`),
@@ -224,14 +223,14 @@ DROP TABLE IF EXISTS `item_slides`;
 CREATE TABLE `item_slides` (
   `SlideID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `TestID` int(64) unsigned NOT NULL,
-  `file_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `file_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `slide_num` int(16) NOT NULL,
   `slide_size` int(64) NOT NULL,
   `image_data` mediumblob NOT NULL,
   PRIMARY KEY (`SlideID`),
   KEY `items_test_ndx` (`TestID`),
   CONSTRAINT `slides_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=70451 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=84000 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -244,15 +243,15 @@ DROP TABLE IF EXISTS `manifest_files`;
 CREATE TABLE `manifest_files` (
   `ManifestFileID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `SessionID` int(64) unsigned NOT NULL,
-  `file_name` varchar(80) CHARACTER SET latin1 NOT NULL,
+  `file_name` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `file_size` int(64) NOT NULL,
-  `file_path` varchar(2500) CHARACTER SET latin1 NOT NULL,
+  `file_path` varchar(2500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `transmission_order` int(32) unsigned NOT NULL,
-  `file_type` enum('ITEM_SLIDES','DEPLOYMENT_FILES') CHARACTER SET latin1 NOT NULL,
+  `file_type` enum('ITEM_SLIDES','DEPLOYMENT_FILES') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   PRIMARY KEY (`ManifestFileID`),
   KEY `files_deployment_session` (`SessionID`),
   CONSTRAINT `files_session` FOREIGN KEY (`SessionID`) REFERENCES `deployment_sessions` (`SessionID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10001 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=34604 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -264,7 +263,7 @@ DROP TABLE IF EXISTS `mask_specifiers`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `mask_specifiers` (
   `SpecifierID` int(64) unsigned NOT NULL,
-  `mask` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `mask` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   PRIMARY KEY (`SpecifierID`),
   CONSTRAINT `mask_spec_fk` FOREIGN KEY (`SpecifierID`) REFERENCES `dynamic_specifiers` (`SpecifierID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -281,9 +280,9 @@ CREATE TABLE `oauth_access` (
   `AccessID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `ClientID` int(64) unsigned NOT NULL,
   `TestID` int(64) unsigned NOT NULL,
-  `access_token` char(40) CHARACTER SET latin1 NOT NULL,
-  `refresh_token` char(40) CHARACTER SET latin1 NOT NULL,
-  `auth_token` char(40) CHARACTER SET latin1 NOT NULL,
+  `access_token` char(40) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `refresh_token` char(40) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `auth_token` char(40) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `access_expires` datetime NOT NULL,
   `refresh_expires` datetime NOT NULL,
   `auth_token_consumed` bit(1) NOT NULL,
@@ -293,7 +292,7 @@ CREATE TABLE `oauth_access` (
   KEY `oauth_access_index` (`access_token`),
   CONSTRAINT `oauths_client` FOREIGN KEY (`ClientID`) REFERENCES `clients` (`ClientID`) ON DELETE CASCADE,
   CONSTRAINT `oauths_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -314,10 +313,10 @@ CREATE TABLE `purchases` (
   `disk_space` int(16) unsigned NOT NULL,
   `disk_space_price` int(16) unsigned NOT NULL,
   `total` int(16) unsigned NOT NULL,
-  `credit_card` varchar(20) CHARACTER SET latin1 NOT NULL,
-  `ending_card_digits` char(4) CHARACTER SET latin1 NOT NULL,
-  `cardholder_fname` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `cardholder_lname` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `credit_card` varchar(20) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `ending_card_digits` char(4) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `cardholder_fname` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `cardholder_lname` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `card_exp_month` int(16) unsigned NOT NULL,
   `card_exp_year` int(16) unsigned NOT NULL,
   PRIMARY KEY (`PurchaseID`),
@@ -352,18 +351,18 @@ DROP TABLE IF EXISTS `requests`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `requests` (
   `request_id` int(64) unsigned NOT NULL AUTO_INCREMENT,
-  `fname` varchar(80) CHARACTER SET latin1 NOT NULL,
-  `lname` varchar(80) CHARACTER SET latin1 NOT NULL,
-  `organization` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `email` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `phone` varchar(25) CHARACTER SET latin1 NOT NULL,
-  `address1` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `address2` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `city` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `province` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `postalcode` varchar(25) CHARACTER SET latin1 NOT NULL,
-  `country` varchar(80) CHARACTER SET latin1 NOT NULL,
-  `product_use` text CHARACTER SET latin1 NOT NULL,
+  `fname` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `lname` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `organization` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `email` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `phone` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `address1` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `address2` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `city` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `province` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `postalcode` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `country` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `product_use` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `registration_timestamp` datetime NOT NULL,
   `delete_flag` bit(1) NOT NULL,
   PRIMARY KEY (`request_id`)
@@ -383,24 +382,7 @@ CREATE TABLE `resource_prices` (
   `quantity` int(16) unsigned NOT NULL,
   `price` int(16) unsigned NOT NULL,
   PRIMARY KEY (`ResourcePriceID`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `resource_references`
---
-
-DROP TABLE IF EXISTS `resource_references`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `resource_references` (
-  `id` int(64) unsigned NOT NULL AUTO_INCREMENT,
-  `reference_id` int(16) unsigned NOT NULL,
-  `TestResourceID` int(64) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `references_resource` (`TestResourceID`),
-  CONSTRAINT `references_resource` FOREIGN KEY (`TestResourceID`) REFERENCES `test_resources` (`TestResourceID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=13000 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -420,7 +402,7 @@ CREATE TABLE `results` (
   PRIMARY KEY (`ResultID`),
   KEY `results_tests_id` (`TestID`),
   CONSTRAINT `results_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6582 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=7435 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -450,7 +432,7 @@ DROP TABLE IF EXISTS `selection_specifiers`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `selection_specifiers` (
   `SpecifierID` int(64) unsigned NOT NULL,
-  `key_specifiers` varchar(2500) CHARACTER SET latin1 NOT NULL,
+  `key_specifiers` varchar(2500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   PRIMARY KEY (`SpecifierID`),
   CONSTRAINT `selection_spec_fk` FOREIGN KEY (`SpecifierID`) REFERENCES `dynamic_specifiers` (`SpecifierID`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
@@ -466,7 +448,7 @@ DROP TABLE IF EXISTS `specifier_values`;
 CREATE TABLE `specifier_values` (
   `SpecifierValueID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `AdminID` int(64) unsigned NOT NULL,
-  `specifier_value` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `specifier_value` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `test_specifier_id` int(16) NOT NULL,
   PRIMARY KEY (`SpecifierValueID`),
   KEY `specifier_values_admin_ndx` (`AdminID`),
@@ -484,7 +466,7 @@ DROP TABLE IF EXISTS `test_backup_files`;
 CREATE TABLE `test_backup_files` (
   `ManifestFileID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `TestID` int(64) unsigned NOT NULL,
-  `file_name` varchar(2500) CHARACTER SET latin1 NOT NULL,
+  `file_name` varchar(2500) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `DeploymentSessionID` int(64) unsigned NOT NULL,
   `file_data` mediumblob NOT NULL,
   PRIMARY KEY (`ManifestFileID`),
@@ -492,7 +474,7 @@ CREATE TABLE `test_backup_files` (
   KEY `backups_deployment_session` (`DeploymentSessionID`),
   CONSTRAINT `backups_deployment_session` FOREIGN KEY (`DeploymentSessionID`) REFERENCES `deployment_sessions` (`SessionID`) ON DELETE CASCADE,
   CONSTRAINT `backups_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=729 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4065 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -505,20 +487,20 @@ DROP TABLE IF EXISTS `test_code`;
 CREATE TABLE `test_code` (
   `TestCodeID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `TestSegmentID` int(64) unsigned NOT NULL,
-  `entity_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `entity_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `andx` int(16) unsigned NOT NULL,
   `bndx` int(16) unsigned NOT NULL,
   `cl` int(16) unsigned NOT NULL,
-  `code_type` enum('CONSTRUCTOR','DECLARATION','CODE','GLOBAL_DECLARATION','GLOBAL_CODE','TOC') CHARACTER SET latin1 NOT NULL,
-  `code1` text CHARACTER SET latin1 NOT NULL,
-  `code2` text CHARACTER SET latin1 NOT NULL,
-  `code3` text CHARACTER SET latin1 NOT NULL,
-  `code4` text CHARACTER SET latin1 NOT NULL,
+  `code_type` enum('CONSTRUCTOR','DECLARATION','CODE','GLOBAL_DECLARATION','GLOBAL_CODE','TOC') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `code1` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `code2` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `code3` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `code4` text CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `ordinal` int(16) NOT NULL,
   PRIMARY KEY (`TestCodeID`),
   KEY `codes_index` (`TestSegmentID`),
   CONSTRAINT `codes_segment` FOREIGN KEY (`TestSegmentID`) REFERENCES `test_segments` (`TestSegmentID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=203427 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=222004 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -531,14 +513,14 @@ DROP TABLE IF EXISTS `test_encryption_keys`;
 CREATE TABLE `test_encryption_keys` (
   `KeyID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `TestID` int(64) unsigned DEFAULT NULL,
-  `keytype` enum('DATA','ADMIN','NONE') CHARACTER SET latin1 NOT NULL,
+  `keytype` enum('DATA','ADMIN','NONE') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `modulus` varbinary(255) NOT NULL,
   `exponent` varbinary(255) NOT NULL,
   `encrypted_key` varbinary(2500) NOT NULL,
   PRIMARY KEY (`KeyID`),
   KEY `encryption_keys_test_id` (`TestID`),
   CONSTRAINT `encryption_keys_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2719 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4211 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -550,18 +532,16 @@ DROP TABLE IF EXISTS `test_resources`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `test_resources` (
   `TestResourceID` int(64) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) NOT NULL,
-  `path` varchar(1024) NOT NULL,
-  `mimetype` varchar(32) NOT NULL,
-  `size` int(32) unsigned NOT NULL,
-  `resource_type` enum('DEPLOYMENT_FILE','DEPLOYMENT_IMAGE','ITEM_SLIDE','UPDATE_FILE') NOT NULL,
   `TestID` int(64) unsigned NOT NULL,
-  `resource_data` mediumblob DEFAULT NULL,
-  `resource_id` int(16) unsigned NOT NULL,
+  `mimetype` varchar(80) DEFAULT NULL,
+  `discriminator` int(16) DEFAULT NULL,
+  `size` int(24) unsigned DEFAULT NULL,
+  `resource` mediumblob DEFAULT NULL,
+  `resource_type` enum('IMAGE','ITEM_SLIDE','JAVASCRIPT','TEST_CONFIGURATION','ERROR_MARK') DEFAULT NULL,
   PRIMARY KEY (`TestResourceID`),
   KEY `resources_test` (`TestID`),
   CONSTRAINT `resources_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1905 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=80827 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -581,7 +561,7 @@ CREATE TABLE `test_result_fragments` (
   PRIMARY KEY (`ResultFragmentID`),
   KEY `admin_id` (`TestAdminID`),
   CONSTRAINT `fragments_result` FOREIGN KEY (`TestAdminID`) REFERENCES `admin_timers` (`timer_id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=905 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3187 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -594,26 +574,17 @@ DROP TABLE IF EXISTS `test_segments`;
 CREATE TABLE `test_segments` (
   `TestSegmentID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `TestID` int(64) unsigned NOT NULL,
-  `elem_name` varchar(255) CHARACTER SET latin1 NOT NULL,
-  `jskeys_xml` text CHARACTER SET latin1 NOT NULL,
-  `html` mediumtext COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `elem_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `html` mediumtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `alternation_priority` int(16) NOT NULL,
   `initial_pos` int(16) NOT NULL,
   `num_alternations` int(16) NOT NULL,
   `iat` bit(1) NOT NULL,
-  `html_resource_id` int(64) unsigned DEFAULT NULL,
-  `header_resource_id` int(64) unsigned DEFAULT NULL,
-  `script_resource_id` int(64) unsigned DEFAULT NULL,
+  `jskeys_xml` text DEFAULT NULL,
   PRIMARY KEY (`TestSegmentID`),
   KEY `segments_test_id` (`TestID`),
-  KEY `test_segments_header_resource` (`header_resource_id`),
-  KEY `test_segments_html_resource` (`html_resource_id`),
-  KEY `test_segments_script_resource` (`script_resource_id`),
-  CONSTRAINT `segments_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE,
-  CONSTRAINT `test_segments_header_resource` FOREIGN KEY (`header_resource_id`) REFERENCES `test_resources` (`TestResourceID`) ON DELETE CASCADE,
-  CONSTRAINT `test_segments_html_resource` FOREIGN KEY (`html_resource_id`) REFERENCES `test_resources` (`TestResourceID`) ON DELETE CASCADE,
-  CONSTRAINT `test_segments_script_resource` FOREIGN KEY (`script_resource_id`) REFERENCES `test_resources` (`TestResourceID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1652 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+  CONSTRAINT `segments_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2330 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -626,39 +597,39 @@ DROP TABLE IF EXISTS `tests`;
 CREATE TABLE `tests` (
   `TestID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `client_id` int(64) unsigned NOT NULL,
-  `test_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `test_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `user_id` int(64) unsigned NOT NULL,
   `num_administrations` int(16) unsigned NOT NULL,
   `test_size_kb` int(16) DEFAULT NULL,
-  `test_type` enum('None','RandomOrder','SetNumberOfPresentations') CHARACTER SET latin1 NOT NULL,
+  `test_type` enum('None','RandomOrder','SetNumberOfPresentations') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `upload_timestamp` datetime NOT NULL,
   `last_data_retrieval` datetime DEFAULT NULL,
-  `version` varchar(16) CHARACTER SET latin1 NOT NULL,
+  `version` varchar(16) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `result_format` int(16) unsigned NOT NULL,
   `alternate` bit(1) DEFAULT NULL,
   `alternated` bit(1) NOT NULL,
-  `aes_code` text CHARACTER SET latin1 DEFAULT NULL,
+  `aes_code` text CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `deployment_descriptor` blob DEFAULT NULL,
-  `redirect_on_complete` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `redirect_on_complete` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `num_elems` int(16) DEFAULT NULL,
   `result_retrieval_token` binary(64) DEFAULT NULL,
   `result_retrieval_token_age` datetime DEFAULT NULL,
-  `item_slide_download_key` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `url` varchar(300) CHARACTER SET latin1 DEFAULT NULL,
-  `oauth_client_redirect` varchar(511) CHARACTER SET latin1 DEFAULT NULL,
+  `item_slide_download_key` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `url` varchar(300) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `oauth_client_redirect` varchar(511) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `oauth_subpath_redirects` bit(1) NOT NULL,
-  `oauth_client_id` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
-  `oauth_client_secret` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
-  `token_type` enum('NONE','VALUE','HEX','BASE_64','BASE_64_UTF_8') CHARACTER SET latin1 NOT NULL,
-  `token_name` varchar(80) CHARACTER SET latin1 DEFAULT NULL,
+  `oauth_client_id` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `oauth_client_secret` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `token_type` enum('NONE','VALUE','HEX','BASE_64','BASE_64_UTF_8') CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `token_name` varchar(80) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
   `redeployed` bit(1) NOT NULL,
-  `manifest` mediumtext COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `manifest` mediumtext DEFAULT NULL,
   PRIMARY KEY (`TestID`),
   KEY `tests_user` (`user_id`),
   KEY `tests` (`client_id`,`test_name`),
   CONSTRAINT `tests_client` FOREIGN KEY (`client_id`) REFERENCES `clients` (`ClientID`) ON DELETE CASCADE,
   CONSTRAINT `tests_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`UserID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1037 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1544 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -686,12 +657,12 @@ CREATE TABLE `unique_response_items` (
   `UniqueResponseItemID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `TestID` int(64) unsigned NOT NULL,
   `additive` bit(1) NOT NULL,
-  `survey_name` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `survey_name` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `item_num` int(16) NOT NULL,
   PRIMARY KEY (`UniqueResponseItemID`),
   KEY `questionnaire` (`TestID`,`survey_name`),
   CONSTRAINT `unique_response_items_test` FOREIGN KEY (`TestID`) REFERENCES `tests` (`TestID`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=428 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -704,7 +675,7 @@ DROP TABLE IF EXISTS `unique_responses`;
 CREATE TABLE `unique_responses` (
   `UniqueResponseID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `ItemID` int(64) unsigned NOT NULL,
-  `val` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `val` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `taken` bit(1) NOT NULL,
   `consumed` bit(1) NOT NULL,
   `AdminID` int(64) unsigned DEFAULT NULL,
@@ -726,18 +697,18 @@ CREATE TABLE `users` (
   `UserID` int(64) unsigned NOT NULL AUTO_INCREMENT,
   `ClientID` int(64) unsigned NOT NULL,
   `user_num` int(16) unsigned NOT NULL,
-  `title` varchar(25) CHARACTER SET latin1 DEFAULT NULL,
-  `fname` varchar(50) CHARACTER SET latin1 NOT NULL,
-  `lname` varchar(50) CHARACTER SET latin1 NOT NULL,
-  `email` varchar(255) CHARACTER SET latin1 NOT NULL,
+  `title` varchar(25) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `fname` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `lname` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `email` varchar(255) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `activation_date` datetime DEFAULT NULL,
-  `activation_key` varchar(64) CHARACTER SET latin1 DEFAULT NULL,
-  `verification_code` varchar(64) CHARACTER SET latin1 NOT NULL,
+  `activation_key` varchar(64) CHARACTER SET latin1 COLLATE latin1_swedish_ci DEFAULT NULL,
+  `verification_code` varchar(64) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `email_verified` bit(1) NOT NULL,
   PRIMARY KEY (`UserID`),
   UNIQUE KEY `client_user` (`ClientID`,`user_num`),
   CONSTRAINT `users_client` FOREIGN KEY (`ClientID`) REFERENCES `clients` (`ClientID`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=513 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=551 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -749,6 +720,4 @@ CREATE TABLE `users` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2022-08-02  1:00:36
-create user 'iat'@'localhost' identified by 'ezasabcdefg';
-grant all on iatserver_db.* to 'iat'@'localhost';
+-- Dump completed on 2023-10-27 19:57:09
