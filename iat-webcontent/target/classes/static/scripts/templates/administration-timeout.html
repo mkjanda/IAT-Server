@@ -1,0 +1,7 @@
+<p>An hour or more has passed since the last test segment was submitted and the data tied to your administration
+    has been deleted. If you would like to restart the test, click 
+    <span class="hilightHover" onclick="restart()">here</span>.
+    <!-- ko if : httpReferer !== '-' -->
+     Or you may return to the site that directed you to the test: 
+        <span class="hilightHover" onclick="returnToReferer()" data-bind="text : httpReferer"></span>.
+</p>

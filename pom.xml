@@ -3,18 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.iatsoftware</groupId>
     <artifactId>iat-parent</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
     <packaging>pom</packaging>
     <name>IAT Application Parent</name>
     <description>The parent project for the IAT Server Application</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>17</java.version>
+        <java.version>21</java.version>
     </properties>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.0</version>
+        <version>3.3.2</version>
         <relativePath></relativePath>
     </parent>
     <organization>
@@ -54,7 +54,7 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <configuration>
                         <releases>
-                            <release>17</release>
+                            <release>21</release>
                         </releases>
                     </configuration>
                 </plugin>
