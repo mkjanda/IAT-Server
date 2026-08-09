@@ -528,19 +528,6 @@ public class DefaultTransactionService implements TransactionService {
                     new Envelope(new ServerExceptionMessage("Error processing transaction", ex))));
         }
     }
-
-    private void sendMessage(String webSessionId, Message msg, boolean lastTransmission) {
-        if (!lastTransmission) {
-            this.publisher.publishEvent(new WebSocketDataSent(webSessionId, new Envelope(msg)));
-        } else {
-            this.publisher.publishEvent(new WebSocketFinalDataSent(webSessionId, new Envelope(msg)));
-        }
-    }
-
-    private void closeSocket(String webSessionId) {
-        webSocketService.unregisterWebSocket(webSessionId);
-    }
-
     private String encryptValue(PartiallyEncryptedRSAKey key, byte[] val) {
         try {
             KeyFactory keyFact = KeyFactory.getInstance("RSA");
@@ -557,98 +544,4 @@ public class DefaultTransactionService implements TransactionService {
         }
     }
 
-    private void requestConnection(CommunicationEvent e)
-            throws java.io.UnsupportedEncodingException, jakarta.persistence.NoResultException {
-        TransactionRequest inTrans = (TransactionRequest) e.getMessage();
-        Handshake h = Handshake.createOutHand();
-        webSocketService.setSessionProperty(e.getSessionId(), "Handshake", h);
-        Client c = (Client) webSocketService.getSessionProperty(e.getSessionId(), "Client");
-        if (c == null) {
-            logger.error("Client not found");
-            sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.NO_SUCH_CLIENT), true);
-            return;
-        }
-        if (inTrans.getActivationKey() == null) {
-            sendMessage(e.getSessionId(), h, false);
-            return;
-        }
-        User u = null;
-        String email = inTrans.getStringValue("email");
-        try {
-            u = iatRepositoryManager.getUserByClientAndActivationKey(c, inTrans.getActivationKey());
-        } catch (Exception ex) {
-            logger.error("Cannot locate user by client and activation key", ex);
-            try {
-                u = iatRepositoryManager.getUserByClientAndEmail(c, email);
-                if (u.getActivationKey() == null) {
-                    u.setActivationKey(inTrans.getActivationKey());
-                    iatRepositoryManager.updateUser(u);
-                }
-            } catch (jakarta.persistence.NoResultException ex2) {
-            }
-        }
-        if (u != null) {
-            webSocketService.setSessionProperty(e.getSessionId(), "User", u);
-        }
-        webSocketService.setSessionProperty(e.getSessionId(), "IATName", inTrans.getIATName());
-        sendMessage(e.getSessionId(), h, false);
-    }
-
-    private void activateProduct(CommunicationEvent e) throws java.io.UnsupportedEncodingException,
-            jakarta.mail.MessagingException, org.springframework.mail.MailSendException {
-        ActivationRequest request = (ActivationRequest) e.getMessage();
-        Client c = (Client) this.webSocketService.getSessionProperty(e.getSessionId(), "Client");
-        if (c.isDeleted()) {
-            this.sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.CLIENT_FROZEN), true);
-            return;
-        } else if (c.isFrozen()) {
-            this.sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.CLIENT_FROZEN), true);
-            return;
-        }
-        if (c.getActivationsRemaining() != null) {
-            if (c.getActivationsRemaining() == 0) {
-                this.sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.NO_ACTIVATIONS_REMAIN), true);
-                return;
-            } else {
-                c.setActivationsRemaining(c.getActivationsRemaining() - 1);
-                iatRepositoryManager.updateClient(c);
-            }
-        }
-
-        User user;
-        List<User> users = c.getUsers();
-        if (users.stream().anyMatch(u -> u.getEMail().equals(request.getEMail()))) {
-            user = users.stream().filter(u -> u.getEMail().equals(request.getEMail())).findFirst().get();
-            if (user.isEMailVerified()) {
-                transLogger.info("Client (" + Long.toString(user.getClient().getClientId()) + ") " + c.getProductKey()
-                        + ": Product activated");
-                TransactionRequest outTrans = new TransactionRequest(TransactionType.E_MAIL_ALREADY_VERIFIED);
-                outTrans.setActivationKey(user.getActivationKey());
-                sendMessage(e.getSessionId(), outTrans, true);
-                return;
-            }
-        } else {
-            user = new User(request, users.size() + 1, c);
-            iatRepositoryManager.addUser(user);
-        }
-        c.setActivationsConsumed(c.getActivationsConsumed() + 1);
-        iatRepositoryManager.updateClient(c);
-        // try {
-        EmailParameters emailParams = new EmailParameters(user.getEMail(), "IAT Software eMail Verification",
-                "email/email-verification.html");
-        emailParams.addParameter("user", user);
-        emailParams.addInlineImage("logo", logoClasspathLocation, "image/png");
-        emailParams.addInlineImage("header", headerClasspathLocation, "image/png");
-        mailService.sendEmail(emailParams);
-        /*
-         * } catch (jakarta.mail.MessagingException |
-         * org.springframework.mail.MailSendException ex) {
-         * logger.error("Error sending email verification message to " +
-         * user.getEMail(), ex); this.sendMessage(e.getSessionId(), new
-         * TransactionRequest(TransactionType.TRANSACTION_FAIL), true); return; } trans
-         */
-        logger.info("Client (" + Long.toString(user.getClient().getClientId()) + ") " + c.getProductKey()
-                + ": Product activated");
-        this.sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.TRANSACTION_SUCCESS), true);
-    }
 }

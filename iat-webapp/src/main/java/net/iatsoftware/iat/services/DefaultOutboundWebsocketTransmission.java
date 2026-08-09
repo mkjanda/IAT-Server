@@ -10,15 +10,17 @@ package net.iatsoftware.iat.services;
  * @author Michael Janda
  */
 import net.iatsoftware.iat.config.MyBeanFactory;
+import net.iatsoftware.iat.events.OutboundMessageEvent;
+import net.iatsoftware.iat.events.OutboundFinalMessageEvent;
 import net.iatsoftware.iat.messaging.Envelope;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.event.EventListener;
 import org.springframework.oxm.Marshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.ConcurrentWebSocketSessionDecorator;
@@ -29,41 +31,38 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.inject.Inject;
 import javax.xml.transform.stream.StreamResult;
 
-@Component("OutboundWebsocketTransmission")
-@Scope("prototype")
+@Service("OutboundWebsocketTransmission")
 public class DefaultOutboundWebsocketTransmission implements OutboundWebsocketTransmission {
 
-    private static final Logger logger = LogManager.getLogger();
-    private final ConcurrentWebSocketSessionDecorator session;
-    private final AtomicBoolean closeOnComplete = new AtomicBoolean(false), sendingMessages = new AtomicBoolean(false), closing = new AtomicBoolean(false);
-    private final ConcurrentLinkedQueue<OutboundMessage> messageQueue = new ConcurrentLinkedQueue<>();
+    private static final Logger logger = LogManager.getLogger(DefaultOutboundWebsocketTransmission.class);
 
-    @Inject
-    MyBeanFactory beanFactory;
-    @Inject
-    ThreadPoolTaskScheduler scheduler;
     @Inject
     Marshaller marshaller;
     @Inject
-    ApplicationEventPublisher publisher;
-    @Inject
     WebSocketService webSocketService;
 
-    public DefaultOutboundWebsocketTransmission(WebSocketSession sess) {
-        this.session = new ConcurrentWebSocketSessionDecorator(sess, 10000, 104_857_600);
-    }
 
-    @Override
-    public void closeOnComplete() {
-        closeOnComplete.set(true);
-    }
 
-    private void queueMessage(OutboundMessage msg) {
-        if (this.closing.get()) {
-            return;
+    
+
+    @EventListener
+    private void sendMessage(OutboundMessageEvent e) {
+        try {
+            StringWriter sWriter = new StringWriter();
+            StreamResult sResult = new StreamResult(sWriter);
+            this.marshaller.marshal(new Envelope(e.getMessage()), sResult);
+            e.getSession().sendMessage(new TextMessage(sWriter.toString()));
+        } catch (java.io.IOException ex) {
+            logger.error("Web socket error", ex);
+        } catch (org.springframework.oxm.MarshallingFailureException ex) {
+            logger.error("Marshalling error", ex);
         }
-        this.messageQueue.add(msg);
-        startTransmission();
+    }
+
+    @EventListener
+    private void sendFinalMessage(OutboundFinalMessageEvent e) {
+        sendMessage(e);
+        webSocketService.unregisterWebSocket(e.session().getId();
     }
 
     private void startTransmission() {

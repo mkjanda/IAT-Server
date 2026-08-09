@@ -72,8 +72,9 @@ public class Handshake extends net.iatsoftware.iat.generated.GHandshake implemen
         try {
             Handshake hs = new Handshake();
             Random rand = new Random();
-            byte[] randomBytes = new byte[200];
+            byte[] randomBytes = new byte[32];
             rand.nextBytes(randomBytes);
+            
             hs.origValue = b64Encoder.encodeToString(randomBytes);
             hs.setValue(b64Encoder.encodeToString(cipher.doFinal(randomBytes)));
             return hs;

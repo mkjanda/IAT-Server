@@ -18,6 +18,17 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\admin\SurveyResultRecorder.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\admin\TestAbortController.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\admin\TestAbortParams.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ActivationHandler.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ConnectionHandler.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\EmailVerification.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ItemSlideHandler.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\PasswordHandler.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ReplyChannel.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\SessionState.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\TransactionContext.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\TransactionHandler.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\WebSocketReplyChannel.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\WebSocketSessionState.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\config\DataTransactionWebSocketHandler.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\config\DefaultIATServerBeanFactory.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\config\IATDeployerFactory.java
@@ -132,6 +143,8 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\ItemSlideManifestReceivedEvent.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\ItemSlidesDeploymentCompleteEvent.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\ManifestReceivedEvent.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\OutboundFinalMessageEvent.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\OutboundMessageEvent.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\RedeploymentEventType.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\RestoreCompleteEvent.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\events\RSAKeyReceivedEvent.java
@@ -322,7 +335,6 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\resultretrieval\PacketQueue.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\CommunicationCodec.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\DefaultDeploymentService.java
-C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\DefaultInboundWebsocketTransmission.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\DefaultMailService.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\DefaultOutboundWebsocketTransmission.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\DefaultPacketReceiptService.java
@@ -342,7 +354,6 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\SingleMessage.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\TransactionService.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\UserPrincipal.java
-C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\WebSocketContainer.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\services\WebSocketService.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\validation\AccessTokenValid.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\validation\AccessTokenValidator.java

@@ -40,6 +40,7 @@ import net.iatsoftware.iat.messaging.ServerReport;
 import net.iatsoftware.iat.entities.DynamicSpecifier;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.TestResource;
+
 public interface IATRepositoryManager {
     Long registerIAT(IAT test);
     void storeDeploymentPacket(DeploymentPacket dp);
@@ -53,9 +54,6 @@ public interface IATRepositoryManager {
     String getTestSegmentHtml(Long testSegmentID);
     Client getClient(Long clientID);
     Client getClient(String productKey);
-    User getUserByClientAndActivationKey(Client c, String activationKey) throws jakarta.persistence.NoResultException;
-    void addUser(User u);
-    void updateUser(User u);
     boolean iatExists(Client c, String iatName);
     boolean noRemainingIATs(Client client);
     long getFreeDiskSpaceKB(Client client);
@@ -147,10 +145,7 @@ public interface IATRepositoryManager {
     List<Client> getClientsWithCors();
     List<CorsOrigin> getCorsOriginsForClient(Client c);
     Iterable<CorsOrigin> getAllCorsOrigins();
-    void deleteUser(User u);
     void deleteIAT(IAT test);
-    User getUserByVerificationKey(String key);
-    User getUserByClientAndEmail(Client c, String email) throws jakarta.persistence.NoResultException;
     boolean clientIdMatchesClientSecret(String id, String secret);
     boolean checkClientEmailExists(String email);
     TestSegment getTestSegment(IAT iat, String segmentName);

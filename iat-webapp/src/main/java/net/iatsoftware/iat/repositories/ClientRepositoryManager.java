@@ -62,4 +62,11 @@ public interface ClientRepositoryManager {
     Client getClientByEmail(String email);
     boolean containsClientWithEmail(String email);
     User getFirstUserWithEmail(String email);
+    User getUserByClientAndActivationKey(Client c, String activationKey) throws jakarta.persistence.NoResultException;
+    void addUser(User u);
+    void updateUser(User u);
+    User getUserByVerificationKey(String key);
+    User getUserByClientAndEmail(Client c, String email) throws jakarta.persistence.NoResultException;
+    void deleteUser(User u);
+
 }

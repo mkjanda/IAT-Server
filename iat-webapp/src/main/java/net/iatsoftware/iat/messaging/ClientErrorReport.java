@@ -31,7 +31,7 @@ public class ClientErrorReport extends net.iatsoftware.iat.generated.GClientErro
     public ClientErrorReport(Client c, User u, String version, ClientException ex, Calendar timestamp) {
         this.clientMessage = ex.getClientMessage();
         this.exception = ex.getException();
-        this.productCode = ex.getProductCode();
+        this.productKey = ex.getProductKey();
         this.version = version;
         this.clientID = c.getClientId();
         this.timestamp = dateFormat.format(new Date(timestamp.getTimeInMillis()));

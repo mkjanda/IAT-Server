@@ -10,12 +10,9 @@ package net.iatsoftware.iat.services;
  * @author Michael Janda
  */
 
-import org.springframework.web.socket.WebSocketSession;
 
+import net.iatsoftware.iat.events.WebSocketDataReceived;
 
-public interface WebSocketService extends WebSocketContainer {
-    void registerWebSocket(WebSocketSession wss);
-    Object getSessionProperty(String sessionId, String property);
-    void setSessionProperty(String sessionId, String property, Object o);
-    WebSocketSession getSocketSession(String sessId);
+public interface WebSocketService {
+    void onMessageReceived(WebSocketDataReceived e);
 }

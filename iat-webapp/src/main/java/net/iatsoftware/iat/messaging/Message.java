@@ -10,8 +10,6 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlType;
 
 @XmlType(name="Message")

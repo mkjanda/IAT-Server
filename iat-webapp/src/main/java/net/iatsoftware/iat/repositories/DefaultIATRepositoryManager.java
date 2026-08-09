@@ -192,18 +192,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void addUser(final User u) {
-        userRepository.add(u);
-    }
-
-    @Transactional
-    @Override
-    public void updateUser(final User u) {
-        userRepository.update(u);
-    }
-
-    @Transactional
-    @Override
     public boolean iatExists(final Client c, final String iatName) {
         return iatRepository.iatExists(c, iatName);
     }
@@ -701,13 +689,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    @Override
-    public User getUserByClientAndActivationKey(Client c, String activationKey)
-            throws jakarta.persistence.NonUniqueResultException {
-        return userRepository.getUserByClientAndActivationKey(c, activationKey);
-    }
-
-    @Transactional
     public void deleteIAT(Long testID) {
         iatRepository.deleteById(testID);
     }
@@ -931,24 +912,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Override
     public Iterable<CorsOrigin> getAllCorsOrigins() {
         return corsOriginRepository.getAll();
-    }
-
-    @Transactional
-    @Override
-    public void deleteUser(final User u) {
-        userRepository.delete(u);
-    }
-
-    @Transactional
-    @Override
-    public User getUserByVerificationKey(final String key) {
-        return this.userRepository.getUserByVerificationKey(key);
-    }
-
-    @Transactional
-    @Override
-    public User getUserByClientAndEmail(final Client c, final String email) throws jakarta.persistence.NoResultException {
-        return this.userRepository.getUserByClientAndEmail(c, email);
     }
 
     @Transactional

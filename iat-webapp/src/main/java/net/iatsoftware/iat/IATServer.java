@@ -188,14 +188,7 @@ public class IATServer implements SchedulingConfigurer {
             @Inject
             Unmarshaller unmarshaller;
             @Inject
-            WebSocketService webSocketService;
-            @Inject
             ApplicationEventPublisher publisher;
-
-            @Override
-            public void afterConnectionEstablished(WebSocketSession sess) {
-                webSocketService.registerWebSocket(sess);
-            }
 
             @Override
             public boolean supportsPartialMessages() {
@@ -237,8 +230,6 @@ public class IATServer implements SchedulingConfigurer {
 
             @Override
             public void afterConnectionClosed(WebSocketSession sess, CloseStatus status) {
-                if (sess.getUri().getPath().equals("/IAT/DataTransaction"))
-                    webSocketService.unregisterWebSocket(sess.getId());
                 partialTransmissions.remove(sess.getId());
             }
         }

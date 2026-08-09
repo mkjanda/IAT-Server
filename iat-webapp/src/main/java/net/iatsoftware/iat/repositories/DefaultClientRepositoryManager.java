@@ -281,4 +281,41 @@ public class DefaultClientRepositoryManager implements ClientRepositoryManager {
     public User getFirstUserWithEmail(String email) throws ConflictingUsersException {
         return userRepository.getFirstUserWithEmail(email);
     }
+
+    @Override   
+    @Transactional
+    public void addUser(final User u) {
+        userRepository.add(u);
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(final User u) {
+        userRepository.update(u);
+    }
+
+    @Override
+    @Transactional
+    public User getUserByClientAndActivationKey(Client c, String activationKey)
+            throws jakarta.persistence.NonUniqueResultException {
+        return userRepository.getUserByClientAndActivationKey(c, activationKey);
+    }
+
+    @Override
+    @Transactional
+    public void deleteUser(final User u) {
+        userRepository.delete(u);
+    }
+
+    @Override
+    @Transactional
+    public User getUserByVerificationKey(final String key) {
+        return this.userRepository.getUserByVerificationKey(key);
+    }
+
+    @Override
+    @Transactional
+    public User getUserByClientAndEmail(final Client c, final String email) throws jakarta.persistence.NoResultException {
+        return this.userRepository.getUserByClientAndEmail(c, email);
+    }
 }

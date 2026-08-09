@@ -24,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
+import java.util.List;
 import java.util.Properties;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,7 +43,7 @@ public class ItemSlideDownload {
     Properties serverConfiguration;
 
     @RequestMapping(value = "", method = RequestMethod.GET, params = { "DownloadKey", "ClientID", "IATName" })
-    public ResponseEntity<FileSystemResource> downloadSlides(@RequestParam("DownloadKey") String downloadKey,
+    public ResponseEntity<byte[]> downloadSlides(@RequestParam("DownloadKey") String downloadKey,
             @RequestParam("ClientID") long clientID, @RequestParam("IATName") String iatName) {
         try {
             IAT test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientID);
@@ -50,9 +52,17 @@ public class ItemSlideDownload {
             if (!test.getItemSlideDownloadKey().equals(downloadKey))
                 return null;
             test.setItemSlideDownloadKey(null);
-            var slideUri = new URI(String.format("%s/%s.%d.%s.slides", serverConfiguration.getProperty("item-slide-directory"),
-                downloadKey, clientID, iatName));
-            return new ResponseEntity<>(new FileSystemResource(new File(slideUri).getAbsolutePath()), HttpStatus.OK);
+            var memStream = new ByteArrayOutputStream();
+            List<byte[]> slides = iatRepositoryManager.getItemSlides(test);
+            try {
+            slides.stream().forEach(b -> {
+                try {
+                    memStream.write(b);
+                } catch (Exception ex) {
+                    log.error(ex);
+                }
+            });
+            return new ResponseEntity<>(memStream.toByteArray(), HttpStatus.OK);
         } catch (java.net.URISyntaxException ex) {
             log.error(ex);
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
