@@ -6,6 +6,9 @@ import net.iatsoftware.iat.messaging.ActivationRequest;
 import net.iatsoftware.iat.messaging.ActivationResponse;
 import net.iatsoftware.iat.services.EmailParameters;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class ActivationHandler implements TransactionHandler {
     private final String logoClasspathLocation = "classpath:email/images/logo.png";
 

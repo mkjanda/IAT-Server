@@ -6,7 +6,7 @@
 package net.iatsoftware.iat.controllers;
 
 import net.iatsoftware.iat.entities.User;
-import net.iatsoftware.iat.repositories.IATRepositoryManager;
+import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,11 +22,11 @@ import javax.inject.Inject;
 public class EMailVerification {
 
     @Inject
-    IATRepositoryManager iatRepositoryManager;
+    ClientRepositoryManager clientRepositoryManager;
 
     @RequestMapping(name = "", params = {"VerificationKey"}, method = RequestMethod.GET)
     public String doEMailVerification(Model model, @RequestParam("VerificationKey") String verificationKey) {
-        User u = iatRepositoryManager.getUserByVerificationKey(verificationKey);
+        User u = clientRepositoryManager.getUserByVerificationKey(verificationKey);
         if (u == null) {
             return "InvalidEmailVerificationCode";
         }
@@ -35,7 +35,7 @@ public class EMailVerification {
         }
         u.setEMailVerified(true);
         
-        iatRepositoryManager.updateUser(u);
+        clientRepositoryManager.updateUser(u);
         String userName = u.getTitle() + " " + u.getFName() + " " + u.getLName();
         model.addAttribute("userName", userName);
         return "EmailVerificationSuccessful";

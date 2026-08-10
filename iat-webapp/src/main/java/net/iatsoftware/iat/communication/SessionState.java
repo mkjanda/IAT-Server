@@ -46,4 +46,7 @@ public interface SessionState {
 
     PartiallyEncryptedRSAKey rsaKey();
     void setRSAKey(PartiallyEncryptedRSAKey key);
+    
+    boolean isAuthenticated();
+    void setAuthenticated(boolean value);
 }

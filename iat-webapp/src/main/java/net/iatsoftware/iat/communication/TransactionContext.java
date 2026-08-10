@@ -33,4 +33,5 @@ public final class TransactionContext {
     public User user() { return sessionState.client().getUsers().get(0); }
     public ClientRepositoryManager clientRepositoryManager() { return sessionState.clientRepositoryManager(); }
     public MailService mailService() { return sessionState.mailService(); }
+    public boolean isAuthenticated() { return sessionState.isAuthenticated(); }
 }

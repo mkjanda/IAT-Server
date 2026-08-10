@@ -179,7 +179,7 @@ public class ReportClientError {
     }
 
     @PostMapping(value = "", consumes = "text/xml", produces = "text/xml")
-    public ResponseEntity<ErrorReportResponse> errorReport(@RequestBody ClientException exception,
+    public ResponseEntity<ErrorReportResponse> errorReport(@RequestBody  ClientException exception,
             @RequestHeader("response") String challengeResponse) {
         try {
             ErrorReportResponse resp = new ErrorReportResponse();
@@ -194,14 +194,14 @@ public class ReportClientError {
             StreamResult sResult = new StreamResult(sWriter);
             sWriter.flush();
             marshaller.marshal(exception, sResult);
-            Client c = iatRepositoryManager.getClient(exception.getProductCode());
+            Client c = iatRepositoryManager.getClient(exception.getProductKey());
             if (c.isKillFiled()) {
                 resp.setCaption(killFiledCaption);
                 resp.setMessage(killFiledMessage);
                 resp.setResponse(ErrorReportResponseCode.KILL_FILED);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            User u = iatRepositoryManager.getUserByClientAndActivationKey(c, exception.getActivationKey());
+            User u = c.getUsers().stream().filter(user -> user.getActivationKey().equals(exception.getActivationKey())).findFirst().orElse(null);
             iatRepositoryManager.recordClientException(new ClientExceptionReport(c, u, sWriter.toString()));
             ClientErrorReport cer = new ClientErrorReport(c, u, exception.getVersion(), exception,
                     Calendar.getInstance());
@@ -225,13 +225,13 @@ public class ReportClientError {
     @PostMapping(value = "/InvalidSaveFile", consumes = "text/xml")
     public @ResponseBody String corruptedSaveFileReport(@RequestBody CorruptedSaveFileReport report)
             throws jakarta.mail.MessagingException {
-        Client c = iatRepositoryManager.getClient(report.getProductCode());
+        Client c = iatRepositoryManager.getClient(report.getProductKey());
         c.setInvalidSaveFiles(c.getInvalidSaveFiles() + 1);
         if (c.getInvalidSaveFiles() >= 3) {
             c.setFrozen(true);
         }
         iatRepositoryManager.updateClient(c);
-        report.setClientId(iatRepositoryManager.getClient(report.getProductCode()).getClientId());
+        report.setClientId(iatRepositoryManager.getClient(report.getProductKey()).getClientId());
         EmailParameters params = new EmailParameters(errorReportRecipient, "Invalid Save File",
                 "email/invalid-save-file-report.html");
         params.addParameter("report", report);

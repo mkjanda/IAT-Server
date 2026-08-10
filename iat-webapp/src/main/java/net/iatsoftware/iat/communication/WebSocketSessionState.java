@@ -147,4 +147,13 @@ public final class WebSocketSessionState implements SessionState {
     public void setMailService(MailService mailService) {
         setAttribute("MailService", mailService);
     }
+
+    @Override
+    public boolean isAuthenticated() {
+        return Boolean.TRUE.equals(getAttribute("Authenticated"));
+    }
+    @Override
+    public void setAuthenticated(boolean value) {
+        setAttribute("Authenticated", value);
+    }   
 }

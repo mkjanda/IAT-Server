@@ -5,10 +5,13 @@ import net.iatsoftware.iat.messaging.File;
 import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Base64;
 import java.util.List;
 import java.security.SecureRandom;
 
+@Component
 public class ItemSlideHandler implements TransactionHandler {
     private final SecureRandom random = new SecureRandom();
     private final Base64.Encoder encoder = Base64.getEncoder();
@@ -24,6 +27,10 @@ public class ItemSlideHandler implements TransactionHandler {
 
     @Override
     public void handle(TransactionContext ctx) {
+        if (!ctx.isAuthenticated()) {
+            ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
+            return;
+        }
         var transaction = (TransactionRequest) ctx.inbound();
         if (transaction.getType() == TransactionType.REQUEST_ITEM_SLIDE_MANIFEST) {
             var test = ctx.sessionState().repositoryManager().getIATByNameAndClientID(transaction.getIATName(), ctx.client().getClientId());

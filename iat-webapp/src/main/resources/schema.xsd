@@ -3030,7 +3030,7 @@
                     <xs:element name="DeploymentStartTime" type="xs:long" minOccurs="0" maxOccurs="1" nillable="true" />
                     <xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
                     <xs:element name="AuthToken" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
-                    <xs:element name="EncryptedTestString" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+                    <xs:element name="TestString" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="DownloadKey" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="IsLastTransaction" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>

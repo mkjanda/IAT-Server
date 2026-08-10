@@ -5,6 +5,9 @@ import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.services.EmailParameters;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class EmailVerification implements TransactionHandler {
     @Override
     public boolean supports(TransactionContext ctx) {
