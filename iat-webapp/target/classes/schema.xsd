@@ -1051,7 +1051,7 @@
             <xs:enumeration value="RemainingIATS"/>
             <xs:enumeration value="RequestDataUpload"/>
             <xs:enumeration value="TestBeingDeployed"/>
-            <xs:enumeration value="ItemSlideDownloadReady"/>
+            <xs:enumeration value="ItemSlidesReady"/>
             <xs:enumeration value="DeploymentDescriptorMismatch"/>
             <xs:enumeration value="CannotCreateBackup"/>
             <xs:enumeration value="EncryptionKeysReceived"/>
@@ -3026,10 +3026,10 @@
                     <xs:element name="ActivationKey" type="xs:string" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="ClientId" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="DeploymentId" type="xs:long" minOccurs="0" maxOccurs="1" nillable="true" />
-                    <xs:element name="DeploymentStartTime" type="xs:long" minOccurs="0" maxOccurs="1" nillable="true" />
-                    <xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
-                    <xs:element name="AuthToken" type="xs:string" minOccurs="0" maxOccurs="1" nillable="true" />
+                    <xs:element name="DeploymentId" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="DeploymentStartTime" type="xs:long" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="Email" type="xs:string" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="AuthToken" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="TestString" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="DownloadKey" type="xs:string" minOccurs="0" maxOccurs="1" />
                     <xs:element name="IsLastTransaction" type="xs:boolean" minOccurs="1" maxOccurs="1"/>

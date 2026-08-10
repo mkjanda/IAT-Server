@@ -11,12 +11,10 @@ package net.iatsoftware.iat.entities;
  */
 
 
-import java.util.Set;
 import jakarta.persistence.Table;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Basic;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Index;
 import jakarta.persistence.GeneratedValue;
@@ -25,7 +23,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
 
 @Entity
 @Table(name = "test_segments", indexes = {
@@ -39,7 +36,6 @@ public class TestSegment implements java.io.Serializable {
     private String html, jskeys_xml;
     private boolean iat = false;
     private int alternationPriority, initialPos, numAlternations;
-    private Set<DynamicSpecifier> dynamicSpecifiers;
     public TestSegment() {
     }
 

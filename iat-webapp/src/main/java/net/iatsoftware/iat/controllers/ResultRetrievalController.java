@@ -8,11 +8,16 @@ package net.iatsoftware.iat.controllers;
 /**
  *
  * @author michael
+ *
+ * 
  */
 
+import net.iatsoftware.iat.messaging.Manifest;
+import net.iatsoftware.iat.messaging.File;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.messaging.ResultRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
+import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -21,11 +26,14 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -39,6 +47,8 @@ import javax.inject.Named;
 @ClientControllerAnnotation
 @RequestMapping("/RetrieveResults")
 public class ResultRetrievalController {
+    @Inject
+    ClientRepositoryManager clientRepositoryManager;
 
     @Inject
     IATRepositoryManager repositoryManager;
@@ -68,12 +78,34 @@ public class ResultRetrievalController {
         return new ResponseEntity<>(new FileSystemResource(Paths.get(resultFileURI)), HttpStatus.OK);
     }
 
+    @GetMapping(value="/ItemSlides")
+    public ResponseEntity<byte[]> downloadItemSlides(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId, @RequestParam("AuthToken") String authToken) {
+        if (!clientRepositoryManager.authTokenValid(clientId, authToken)) {
+            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
+        }
+        var test = repositoryManager.getIATByNameAndClientID(testName, clientId);
+        if (test == null) {
+            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
+        }
+        var slideManifest = repositoryManager.getItemSlides(test);
+        var outStream = new ByteArrayOutputStream();
+        try {
+            for (byte[] b  : slideManifest) {
+                outStream.write(b);
+            }
+        } catch (java.io.IOException ex) {
+            logger.error("Error writing item slides to output stream", ex);
+            return new ResponseEntity<>((byte[]) null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(outStream.toByteArray(), HttpStatus.OK);
+    }
+
     @Scheduled(initialDelay = 300_000L, fixedDelay = 60_000L)
     private void cleanupResultFiles() {
         List<IAT> expiredIATResults = repositoryManager.getExpiredTestResults(300_000L);
         for (IAT test : expiredIATResults) {
             try {
-                Files.delete(Paths.get(new URI(String.format("%s/%s-%d", test.getTestName(), test.getClient().getClientId()))));
+                Files.delete(Paths.get(new URI(String.format("%s/%s-%d", serverConfiguration.getProperty("result-data"), test.getTestName(), test.getClient().getClientId()))));
                 test.setResultRetrievalToken(null);
                 test.setResultRetrievalTokenAge(null);
                 repositoryManager.updateIAT(test);

@@ -22,9 +22,9 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ConnectionHandler.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\DeletionHandler.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\EmailVerification.java
-C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ItemSlideHandler.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\PasswordHandler.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ReplyChannel.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\ResultDataHandler.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\SessionState.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\TransactionContext.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\communication\TransactionHandler.java
@@ -59,7 +59,6 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\controllers\EMailVerification.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\controllers\ErrorPage.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\controllers\ItemSlideDownload.java
-C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\controllers\OAuth.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\controllers\ReportClientError.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\controllers\RestException.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\controllers\ResultRetrievalController.java

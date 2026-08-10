@@ -68,5 +68,6 @@ public interface ClientRepositoryManager {
     User getUserByVerificationKey(String key);
     User getUserByClientAndEmail(Client c, String email) throws jakarta.persistence.NoResultException;
     void deleteUser(User u);
-
+    String generateAuthToken(Client c, long creationTime, long expirationTime);
+    boolean authTokenValid(long clientId, String token);
 }

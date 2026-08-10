@@ -215,11 +215,11 @@ public class IATServer implements SchedulingConfigurer {
                         }
                     } else if (!partialTransmissions.containsKey(sess.getId())) {
                         publisher.publishEvent(
-                                new WebSocketDataReceived(sess.getId(), unmarshalTransmission(msg.getPayload())));
+                                new WebSocketDataReceived(sess, unmarshalTransmission(msg.getPayload())));
                     } else {
                         List<String> fullTrans = partialTransmissions.get(sess.getId());
                         fullTrans.add(msg.getPayload());
-                        publisher.publishEvent(new WebSocketDataReceived(sess.getId(),
+                        publisher.publishEvent(new WebSocketDataReceived(sess, 
                                 unmarshalTransmission(fullTrans.stream().reduce("", (s1, s2) -> s1.concat(s2)))));
                         fullTrans.clear();
                     }
@@ -388,40 +388,6 @@ public class IATServer implements SchedulingConfigurer {
             @Override
             public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
                 configurer.setTaskExecutor(this.taskScheduler);
-            }
-
-            @Override
-            public void addCorsMappings(final CorsRegistry registry) {
-                /*
-                 * registry.addMapping("/**").allowedMethods("GET", "POST",
-                 * "HEAD").allowedOrigins("iatsoftware.net",
-                 * "www.iatsoftware.net", "127.0.0.1", "192.168.56.101", "100.100.100.101");
-                 * registry.addMapping("/**")
-                 * Iterable<CorsOrigin> corsOrigins = repositoryManager.getAllCorsOrigins();
-                 * final List<String> allDomains = new ArrayList<>();
-                 * corsOrigins.forEach(co -> {
-                 * allDomains.add(co.getOrigin());
-                 * allDomains.add("www." + co.getOrigin());
-                 * });
-                 * String[] domainNames = new String[allDomains.size()];
-                 * allDomains.toArray(domainNames);
-                 * CorsRegistration adminRegistration = registry.addMapping("/Admin");
-                 * adminRegistration.allowedMethods("GET", "HEAD", "POST");
-                 * adminRegistration.allowedOrigins(domainNames);
-                 * CorsRegistration ajaxRegistration = registry.addMapping("/Admin/Ajax**");
-                 * ajaxRegistration.allowedMethods("GET", "HEAD", "POST");
-                 * ajaxRegistration.allowedOrigins(domainNames);
-                 * CorsRegistration webJarsRegistration = registry.addMapping("/webjars/**");
-                 * webJarsRegistration.allowedMethods("GET", "HEAD", "POST");
-                 * webJarsRegistration.allowedOrigins(domainNames);
-                 * corsOrigins.forEach(co -> {
-                 * CorsRegistration clientRegistration = registry
-                 * .addMapping("/Admin/TestResource/" +
-                 * Long.toString(co.getClient().getClientId()) + "/**");
-                 * clientRegistration.allowedMethods("GET", "HEAD", "POST");
-                 * clientRegistration.allowedOrigins(co.getOrigin(), "www." + co.getOrigin());
-                 * });
-                 */
             }
         };
     }

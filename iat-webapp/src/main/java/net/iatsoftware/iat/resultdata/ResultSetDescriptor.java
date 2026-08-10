@@ -9,9 +9,7 @@ package net.iatsoftware.iat.resultdata;
  *
  * @author Michael Janda
  */
-import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
@@ -20,15 +18,11 @@ import org.springframework.oxm.Unmarshaller;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
-import java.util.ArrayList;
 import javax.inject.Inject;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
-import javax.xml.transform.stream.StreamResult;
 
 @Component
 @Scope(value = "prototype")

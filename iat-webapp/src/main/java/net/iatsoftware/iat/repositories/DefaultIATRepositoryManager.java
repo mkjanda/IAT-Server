@@ -44,6 +44,7 @@ import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.ServerReport;
 import net.iatsoftware.iat.messaging.IATReport;
+import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
 import net.iatsoftware.iat.messaging.IATList;
 import net.iatsoftware.iat.messaging.IATListEntry;
@@ -315,8 +316,15 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
+    @Override
     public List<byte[]> getItemSlides(IAT test) {
         return testResourceRepository.getItemSlides(test);
+    }
+
+    @Transactional
+    @Override   
+    public Manifest getItemSlideManifest(IAT test) {
+        return testResourceRepository.getItemSlideManifest(test);
     }
 
     @Transactional

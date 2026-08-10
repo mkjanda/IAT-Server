@@ -36,9 +36,9 @@ import jakarta.persistence.Transient;
         = @Index(name = "clients_product_key", columnList = "product_key"))
 public class Client implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
-    private long id;
+    private long id, authCreated, authTokenExpiration;
     private String productKey, contactFName, contactLName, phone, city, province, country, organization, email, address1, address2;
-    private String organizationId = null, postalCode, productUse, downloadPassword;
+    private String organizationId = null, postalCode, productUse, downloadPassword, authToken;
     private int activationsConsumed, diskAlottmentMB, numIATsAlotted, administrations, administrationsRemaining, downloadsConsumed;
     private Calendar registrationDate, oauthAccessExpiration = null;
     private boolean frozen, deleted, isolateUsers, killFiled = false;
@@ -73,6 +73,9 @@ public class Client implements java.io.Serializable {
         this.downloadPassword = downloadPassword;
         this.downloadsRemaining = acceptance.getNumDownloads();
         this.downloadsConsumed = 0;
+        this.authTokenExpiration = 0;
+        this.authCreated = 0;
+        this.authToken = "";
     }
     
     public Client(String productKey, String downloadPassword, RequestProductForm f, StartingResources resources) {
@@ -101,6 +104,9 @@ public class Client implements java.io.Serializable {
         this.downloadPassword = downloadPassword;
         this.downloadsRemaining = resources.getDownloads();
         this.downloadsConsumed = 0;
+        this.authTokenExpiration = 0;
+        this.authCreated = 0;
+        this.authToken = "";
     }
 
     
@@ -416,7 +422,34 @@ public class Client implements java.io.Serializable {
     public void setOauthAccessExpiration(Calendar val) {
         this.oauthAccessExpiration = val;
     }
+
+    @Basic
+    @Column(name="auth_token")
+    public String getAuthToken() {
+        return this.authToken;
+    }       
+    public void setAuthToken(String val) {
+        this.authToken = val;
+    }
+
+    @Basic  
+    @Column(name="auth_created")
+    public long getAuthCreated() {
+        return this.authCreated;
+    }
+    public void setAuthCreated(long val) {
+        this.authCreated = val;
+    }
     
+    @Basic
+    @Column(name="auth_token_expiration")
+    public long getAuthTokenExpiration() {
+        return this.authTokenExpiration;
+    }
+    public void setAuthTokenExpiration(long val) {
+        this.authTokenExpiration = val;
+    }
+
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name="ClientID")
     public List<User> getUsers() {

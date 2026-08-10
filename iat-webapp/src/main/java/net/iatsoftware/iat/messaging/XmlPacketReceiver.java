@@ -37,7 +37,7 @@ public class XmlPacketReceiver {
     public String getPayload() {
         if (packetMap.size() == numPackets) {
             String msg = packetMap.values().stream().sorted((p1, p2) -> p1.getOrdinal() - p2.getOrdinal())
-                    .map(t -> t.getStringData()).collect(StringBuffer::new, StringBuffer::append, StringBuffer::append).toString();
+                    .map(t -> t.getStringData()).collect(StringBuffer::new, (a, b) -> a.append(b), (a, b) -> a.append(b)).toString();
             packetMap.clear();
             numPackets = -1;
             return msg;

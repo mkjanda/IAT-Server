@@ -35,8 +35,9 @@ import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.generated.PacketType;
 import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
-import net.iatsoftware.iat.messaging.IATList;
 import net.iatsoftware.iat.messaging.ServerReport;
+import net.iatsoftware.iat.messaging.IATList;
+import net.iatsoftware.iat.messaging.Manifest;      
 import net.iatsoftware.iat.entities.DynamicSpecifier;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.TestResource;
@@ -162,4 +163,5 @@ public interface IATRepositoryManager {
     DeploymentSession getDeploymentSession(Long dsId);
     TestResource getTestImage(IAT test, int index);
     List<byte[]> getItemSlides(IAT test);
+    Manifest getItemSlideManifest(IAT test);
 }

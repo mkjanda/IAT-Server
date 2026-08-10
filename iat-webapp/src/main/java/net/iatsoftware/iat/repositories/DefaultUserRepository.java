@@ -35,7 +35,7 @@ public class DefaultUserRepository extends GenericJpaRepository<Long, User>
         if (results.isEmpty()) {
             return null;
         }
-        if (results.stream().map(User::getClient).map(Client::getClientId).distinct().count() > 1) {
+        if (results.stream().map(u -> u.getClient()).map(c -> c.getClientId()).distinct().count() > 1) {
             throw new jakarta.persistence.NonUniqueResultException();
         }
         return results.get(0);

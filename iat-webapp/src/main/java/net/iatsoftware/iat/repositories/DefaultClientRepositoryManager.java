@@ -318,4 +318,16 @@ public class DefaultClientRepositoryManager implements ClientRepositoryManager {
     public User getUserByClientAndEmail(final Client c, final String email) throws jakarta.persistence.NoResultException {
         return this.userRepository.getUserByClientAndEmail(c, email);
     }
+
+    @Override
+    @Transactional
+    public String generateAuthToken(Client c, long creationTime, long expirationTime) {
+        return clientRepository.generateAuthToken(c, creationTime, expirationTime);
+    }
+
+    @Override
+    @Transactional  
+    public boolean authTokenValid(long clientId, String token) {
+            return clientRepository.authTokenValid(clientId, token);
+        }
 }

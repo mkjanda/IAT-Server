@@ -9,6 +9,7 @@ package net.iatsoftware.iat.dataservices;
  *
  * @author Michael Janda
  */
+import org.springframework.lang.NonNull;
 import net.sf.saxon.s9api.XsltCompiler;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
@@ -64,7 +65,7 @@ public class XsltService {
         return sWriter.toString();
     }
 
-    synchronized private XsltExecutable compile(String src)
+    synchronized private XsltExecutable compile(@NonNull String src)
             throws java.security.InvalidKeyException, java.io.IOException, java.security.InvalidAlgorithmParameterException,
             net.sf.saxon.s9api.SaxonApiException {
         Resource res = this.ctx.getResource(src);

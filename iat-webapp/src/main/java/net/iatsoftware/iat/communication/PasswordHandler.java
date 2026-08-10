@@ -35,7 +35,10 @@ public class PasswordHandler implements TransactionHandler {
         var key = ctx.sessionState().repositoryManager().getRSAKeyPair(ctx.client(), transaction.getIATName()).getDataKey();
         if (key.testPassword(transaction.getTestString())) {
             ctx.sessionState().setAuthenticated(true);
-            ctx.reply().send(new TransactionRequest(TransactionType.PASSWORD_VALID));
+            String token = ctx.clientRepositoryManager().generateAuthToken(ctx.client(), System.currentTimeMillis(), 3_000_000L);
+            var outTransaction = new TransactionRequest(TransactionType.PASSWORD_VALID);
+            outTransaction.setAuthToken(token);
+            ctx.reply().send(outTransaction);
         } else {
             ctx.reply().send(new TransactionRequest(TransactionType.PASSWORD_INVALID));
         }
