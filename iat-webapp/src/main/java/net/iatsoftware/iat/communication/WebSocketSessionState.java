@@ -167,7 +167,7 @@ public final class WebSocketSessionState implements SessionState {
     public void setMarshaller(Marshaller marshaller) {
         setAttribute("Marshaller", marshaller);
     }
-S
+
     @Override
     public Unmarshaller unmarshaller() {
         return (Unmarshaller) getAttribute("Unmarshaller");

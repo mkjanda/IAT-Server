@@ -35,7 +35,6 @@ import net.iatsoftware.iat.events.UploadRequestEvent;
 import net.iatsoftware.iat.generated.KeyType;
 import net.iatsoftware.iat.messaging.ActivationRequest;
 import net.iatsoftware.iat.messaging.Manifest;
-import net.iatsoftware.iat.resultretrieval.DataRetrievalSession;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
@@ -84,8 +83,6 @@ public class DefaultTransactionService implements TransactionService {
     @Inject
     WebSocketService webSocketService;
     @Inject
-    DataRetrievalSession dataRetrievalSession;
-    @Inject
     MailService mailService;
 
     @Value("${mail.images.logo-classpath-location}")
@@ -93,83 +90,9 @@ public class DefaultTransactionService implements TransactionService {
     @Value("${mail.images.header-classpath-location}")
     private String headerClasspathLocation;
 
-    @EventListener
-    public void onApplicationEvent(CommunicationEvent e) {
-        try {
-            Message msg = e.getMessage();
-            Client client = (Client) webSocketService.getSessionProperty(e.getSessionId(), "Client");
-            if (client == null) {
-                if (msg instanceof TransactionRequest) {
-                    client = iatRepositoryManager.getClient(((TransactionRequest) msg).getProductKey());
-                    if (client == null) {
-                        sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.NO_SUCH_CLIENT), true);
-                        return;
-                    }
-                    webSocketService.setSessionProperty(e.getSessionId(), "Client", client);
-                }
-            }
-            String logMsgBase = "Client (" + Long.toString(client.getClientId()) + ") " + client.getProductKey() + ": ";
-
-            User user = (User) webSocketService.getSessionProperty(e.getSessionId(), "User");
-            if (msg instanceof TransactionRequest) {
-                TransactionRequest trans = (TransactionRequest) msg;
-                if (trans.getTransaction() == TransactionType.REQUEST_CONNECTION) {
-                    requestConnection(e);
-                    transLogger.info(logMsgBase + "Handshake sent");
-                    return;
-                }
-            }
-            if (msg instanceof Handshake) {
-                Handshake outhand = (Handshake) webSocketService.getSessionProperty(e.getSessionId(), "Handshake");
-                if (outhand.checkInHand((Handshake) msg)) {
-                    if (client.isDeleted()) {
-                        transLogger.info(logMsgBase + "Client deleted");
-                        webSocketService.setSessionProperty(e.getSessionId(), "HandsShaken", Boolean.FALSE);
-                        sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.CLIENT_DELETED), true);
-                    } else if (client.isFrozen()) {
-                        transLogger.info(logMsgBase + "Client frozen");
-                        webSocketService.setSessionProperty(e.getSessionId(), "HandsShaken", Boolean.FALSE);
-                        sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.CLIENT_FROZEN), true);
-                    } else {
-                        transLogger.info(logMsgBase + "Hands shaken");
-                        webSocketService.setSessionProperty(e.getSessionId(), "HandsShaken", Boolean.TRUE);
-                        TransactionRequest requestTransmissionTrans = new TransactionRequest(
-                                TransactionType.REQUEST_TRANSMISSION);
-                        requestTransmissionTrans.setClientID(client.getClientId());
-                        if (user != null)
-                            requestTransmissionTrans.setActivationKey(user.getActivationKey());
-                        sendMessage(e.getSessionId(), requestTransmissionTrans, false);
-                    }
-                } else {
-                    transLogger.info(logMsgBase + "Handshake failed");
-                    this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
-                            new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
-                }
-                return;
-            } else if (webSocketService.getSessionProperty(e.getSessionId(), "HandsShaken") != Boolean.TRUE) {
-                transLogger.info(logMsgBase + "Hands not shaken");
-                closeSocket(e.getSessionId());
-                return;
-            }
-            if (msg instanceof TransactionRequest) {
-                processTransactionRequest(e);
-            } else if (msg instanceof ActivationRequest) {
-                activateProduct(e);
-            }
-        } catch (Exception ex) {
-            critical.error("Error occurred processing the transaction", ex);
-            var ds = iatRepositoryManager.getDeploymentSession(e);
-            if (ds != null) {
-                this.publisher.publishEvent(new DeploymentCleanupEvent(ds.getTest().getId(), ex));
-            }
-            this.publisher.publishEvent(new WebSocketDataSent(e.getSessionId(),
-                    new Envelope(new ServerExceptionMessage("Error processing transaction request", ex))));
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSessionId(),
-                    new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
-        }
-    }
 
     private void processTransactionRequest(CommunicationEvent e) {
+/*
         TransactionRequest inTrans = (TransactionRequest) e.getMessage();
         String webSessionId = e.getSessionId();
         Random Rand = new Random();
@@ -199,23 +122,6 @@ public class DefaultTransactionService implements TransactionService {
                 return;
             }
             switch (inTrans.getTransaction()) {
-                case ABORT_TRANSACTION:
-                    transLogger.info(logMsgBase + "Abort Transaction");
-                    closeSocket(e.getSessionId());
-                    break;
-
-                case ABORT_DEPLOYMENT:
-                    transLogger.info(logMsgBase + "Abort deployment");
-                    this.publisher.publishEvent(
-                            new AbortDeploymentEvent(e.getSessionId(), inTrans.getLongValue("DeploymentId")));
-                    break;
-
-                case HALT_TEST_DEPLOYMENT:
-                    this.publisher.publishEvent(
-                            new AbortDeploymentEvent(e.getSessionId(), inTrans.getLongValue("DeploymentId")));
-                    sendMessage(e.getSessionId(), new TransactionRequest(TransactionType.DEPLOYMENT_HALTED), false);
-                    transLogger.info(logMsgBase + "Halt deployment");
-                    break;
 
                 case REQUEST_IAT_UPLOAD:
                     iatName = inTrans.getIATName();
@@ -274,14 +180,6 @@ public class DefaultTransactionService implements TransactionService {
                                     DataRequestEventType.retrieveServerReport));
                     break;
 
-                case UPDATE_USER_INFORMATION:
-                    user = iatRepositoryManager.getUserByClientAndActivationKey(
-                            iatRepositoryManager.getClient(inTrans.getProductKey()), inTrans.getActivationKey());
-                    user.setFName(inTrans.getStringValue("FirstName"));
-                    user.setLName(inTrans.getStringValue("LastName"));
-                    user.setTitle(inTrans.getStringValue("Title"));
-                    iatRepositoryManager.updateUser(user);
-                    break;
 
                 default:
                     break;
@@ -291,6 +189,7 @@ public class DefaultTransactionService implements TransactionService {
             this.publisher.publishEvent(new WebSocketFinalDataSent(webSessionId,
                     new Envelope(new ServerExceptionMessage("Error processing transaction", ex))));
         }
+                    */
     }
     private String encryptValue(PartiallyEncryptedRSAKey key, byte[] val) {
         try {

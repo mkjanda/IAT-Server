@@ -15,25 +15,16 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.lang.NonNull;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
-import org.thymeleaf.spring6.SpringTemplateEngine;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.StringTemplateResolver;
 import org.thymeleaf.TemplateEngine;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import javax.inject.Inject;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 import jakarta.mail.internet.MimeMessage;
 
@@ -60,7 +51,7 @@ public class DefaultMailService implements MailService {
     TemplateEngine emailTemplateEngine;
 
     @Override
-    public void sendEmail(EmailParameters params) throws jakarta.mail.MessagingException {
+    public void sendEmail(@NonNull EmailParameters params) throws jakarta.mail.MessagingException {
         try {
             final Context ctx = new Context();
             ctx.setVariables(params.getParameters());

@@ -2767,6 +2767,7 @@
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
                     <xs:element name="Data" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Length" type="xs:int" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
                 <xs:attribute name="IsNullPacket" type="xs:boolean" form="unqualified" use="required"/>
                 <xs:attribute name="IsErrorPacket" type="xs:boolean" form="unqualified" use="required"/>
