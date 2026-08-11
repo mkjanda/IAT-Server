@@ -12,74 +12,100 @@ package net.iatsoftware.iat.controllers;
  * 
  */
 
-import net.iatsoftware.iat.messaging.Manifest;
-import net.iatsoftware.iat.messaging.File;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.messaging.ResultRequest;
+import net.iatsoftware.iat.entities.ResultSet;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
+import net.iatsoftware.iat.resultdata.ResultSetEntry;
+import net.iatsoftware.iat.resultdata.ResultTOC;
+import net.iatsoftware.iat.resultdata.TestResults;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
+import net.iatsoftware.iat.resultdata.ResultSetDescriptor;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Controller;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.ByteArrayOutputStream;
+import java.io.StringReader;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.util.Base64;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
+import java.io.StringWriter;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 @Controller
 @ClientControllerAnnotation
 @RequestMapping("/RetrieveResults")
 public class ResultRetrievalController {
-    @Inject
-    ClientRepositoryManager clientRepositoryManager;
-
-    @Inject
-    IATRepositoryManager repositoryManager;
+    @Inject Marshaller marshaller;
+    @Inject Unmarshaller unmarshaller;
+    @Inject IATRepositoryManager repositoryManager;
+    @Inject ClientRepositoryManager clientRepositoryManager;
     @Inject
     @Named("ServerConfiguration")
     Properties serverConfiguration;
 
-    private static final Base64.Decoder decoder = Base64.getDecoder();
     private static final Logger logger = LogManager.getLogger();
 
-    @PostMapping(value = "", consumes = "text/json")
+    @GetMapping(value = "")
     @ResponseBody
-    public ResponseEntity<FileSystemResource> downloadResults(@RequestBody ResultRequest request) throws java.net.URISyntaxException {
-        IAT test = repositoryManager.getIATByNameAndClientID(request.getTestName(), request.getClientId());
-        byte[] offeredAuthToken = decoder.decode(request.getAuthToken());
-        byte[] authToken = test.getResultRetrievalToken();
-        if (offeredAuthToken.length != authToken.length) {
-            return new ResponseEntity<>((FileSystemResource) null, HttpStatus.BAD_REQUEST);
+    public ResponseEntity<byte[]> downloadResults(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId,
+            @RequestParam("AuthToken") String authToken) throws Exception {
+        if (!clientRepositoryManager.authTokenValid(clientId, authToken)) {
+            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
         }
-        for (int ctr = 0; ctr < authToken.length; ctr++) {
-            if (offeredAuthToken[ctr] != authToken[ctr]) {
-                return new ResponseEntity<>((FileSystemResource) null, HttpStatus.BAD_REQUEST);
-            }
+        IAT test = repositoryManager.getIATByNameAndClientID(testName, clientId);
+        if (test == null) {
+            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
         }
-        URI resultFileURI = new URI(String.format("%s/%s-%d", serverConfiguration.getProperty("result-data"), 
-            test.getTestName(), request.getClientId()));
-        return new ResponseEntity<>(new FileSystemResource(Paths.get(resultFileURI)), HttpStatus.OK);
+        TestResults testResults = new TestResults();
+        ResultSetDescriptor rsd = new ResultSetDescriptor(marshaller, unmarshaller, repositoryManager); 
+        rsd.load(clientId, testName);
+        testResults.setDescriptor(rsd);
+        List<ResultSet> resultSets = repositoryManager.getResults(clientId, testName);
+        testResults.setNumResultSets(resultSets.size());
+        DateFormat df = DateFormat.getDateTimeInstance(DateFormat.LONG, DateFormat.LONG);
+        for (ResultSet rs : resultSets) {
+            StringReader sReader = new StringReader(rs.getToc());
+            StreamSource sSource = new StreamSource(sReader);
+            ResultTOC toc = (ResultTOC) unmarshaller.unmarshal(sSource);
+            ResultSetEntry rse = new ResultSetEntry();
+            rse.setTOC(toc);
+            rse.setAdminTime(df.format(rs.getAdminTime().getTime()));
+            rse.setResultData(Base64.getEncoder().encodeToString(rs.getResults()));
+            rse.setResultId(rs.getId());
+            testResults.getResultSet().add(rse);
+        }
+        StringWriter sWriter = new StringWriter();
+        var bOut = new ByteArrayOutputStream();
+        StreamResult sResult = new StreamResult(sWriter);
+        marshaller.marshal(testResults, sResult);
+        bOut.write(sWriter.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        test.setResultRetrievalTokenAge(Calendar.getInstance());
+        repositoryManager.updateIAT(test);
+        return new ResponseEntity<byte[]>(bOut.toByteArray(), HttpStatus.OK);
     }
 
     @GetMapping(value="/ItemSlides")
-    public ResponseEntity<byte[]> downloadItemSlides(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId, @RequestParam("AuthToken") String authToken) {
+    public ResponseEntity<byte[]> downloadItemSlides(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId, 
+            @RequestParam("AuthToken") String authToken) {
         if (!clientRepositoryManager.authTokenValid(clientId, authToken)) {
             return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
         }

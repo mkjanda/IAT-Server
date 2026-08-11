@@ -801,7 +801,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="ResultTOCEntry" type="iat:result-toc-entry-impl" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="ResultTOCEntry" type="iat:result-toc-entry-impl" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="NumEntries" type="xs:int" form="unqualified" use="required"/>
     </xs:complexType>
@@ -1337,8 +1337,8 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Descriptor" type="iat:GResultSetDescriptor" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="ResultSet" type="iat:GResultSetEntry" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element name="Descriptor" type="iat:result-set-descriptor-impl" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="ResultSet" type="iat:result-set-entry-impl" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
         <xs:attribute name="NumResultSets" type="xs:int" form="unqualified" use="required"/>
     </xs:complexType>
@@ -2771,7 +2771,6 @@
                 <xs:attribute name="IsNullPacket" type="xs:boolean" form="unqualified" use="required"/>
                 <xs:attribute name="IsErrorPacket" type="xs:boolean" form="unqualified" use="required"/>
                 <xs:attribute name="IsLastPacket" type="xs:boolean" form="unqualified" use="required"/>
-                <xs:attribute name="Length" type="xs:long" form="unqualified" use="required"/>
                 <xs:attribute name="Type" type="iat:PacketType" form="unqualified" use="required"/>
             </xs:extension>
         </xs:complexContent>

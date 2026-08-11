@@ -10,6 +10,9 @@ import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.MailService;
 
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
+
 public interface SessionState {
     Client client();
     void setClient(Client c);
@@ -49,4 +52,10 @@ public interface SessionState {
     
     boolean isAuthenticated();
     void setAuthenticated(boolean value);
+
+    Marshaller marshaller();
+    void setMarshaller(Marshaller marshaller);
+
+    Unmarshaller unmarshaller();
+    void setUnmarshaller(Unmarshaller unmarshaller);
 }

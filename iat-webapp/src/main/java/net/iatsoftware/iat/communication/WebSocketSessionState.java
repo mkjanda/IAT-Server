@@ -1,6 +1,7 @@
 package net.iatsoftware.iat.communication;
 
-
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
 import org.springframework.web.socket.WebSocketSession;
 
 import net.iatsoftware.iat.configfile.ConfigFile;
@@ -156,4 +157,24 @@ public final class WebSocketSessionState implements SessionState {
     public void setAuthenticated(boolean value) {
         setAttribute("Authenticated", value);
     }   
+
+    @Override
+    public Marshaller marshaller() {
+        return (Marshaller) getAttribute("Marshaller");
+    }       
+
+    @Override
+    public void setMarshaller(Marshaller marshaller) {
+        setAttribute("Marshaller", marshaller);
+    }
+S
+    @Override
+    public Unmarshaller unmarshaller() {
+        return (Unmarshaller) getAttribute("Unmarshaller");
+    }
+
+    @Override
+    public void setUnmarshaller(Unmarshaller unmarshaller) {
+        setAttribute("Unmarshaller", unmarshaller);
+    }
 }

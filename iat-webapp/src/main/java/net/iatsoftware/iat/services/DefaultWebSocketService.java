@@ -26,6 +26,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,6 +44,8 @@ public class DefaultWebSocketService implements WebSocketService {
     @Inject IATRepositoryManager iatRepositoryManager;
     @Inject List<TransactionHandler> handlers;
     @Inject MailService mailService;
+    @Inject Marshaller marshaller;
+    @Inject Unmarshaller unmarshaller;
 
     @EventListener
     public void onMessageReceived(WebSocketDataReceived e) {
@@ -57,6 +61,8 @@ public class DefaultWebSocketService implements WebSocketService {
         session.setClientRepositoryManager(repositoryManager);
         session.setRepositoryManager(iatRepositoryManager);
         session.setMailService(mailService);
+        session.setMarshaller(marshaller);
+        session.setUnmarshaller(unmarshaller);
         var ctx = new TransactionContext(e.session(), e.getEnvelope().getMessage(), new WebSocketReplyChannel(e.session(), this.publisher), session);
         if (client == null) {
             logger.error("Received message from unknown client with product key " + productKey);

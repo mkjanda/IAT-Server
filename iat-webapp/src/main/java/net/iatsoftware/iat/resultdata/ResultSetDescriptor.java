@@ -15,29 +15,24 @@ import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
-import javax.inject.Inject;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@Component
-@Scope(value = "prototype")
 @XmlRootElement(name = "ResultSetDescriptor")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ResultSetDescriptor extends net.iatsoftware.iat.generated.GResultSetDescriptor {
 
-    @Inject
     IATRepositoryManager iatRepositoryManager;
-    @Inject
     Marshaller marshaller;
-    @Inject
     Unmarshaller unmarshaller;
 
-    public ResultSetDescriptor() {
+    public ResultSetDescriptor(Marshaller marshaller, Unmarshaller unmarshaller, IATRepositoryManager iatRepositoryManager) {
+        this.marshaller = marshaller;
+        this.unmarshaller = unmarshaller;
+        this.iatRepositoryManager = iatRepositoryManager;
     }
 
     public void load(Long clientID, String testName) throws java.io.IOException, java.net.URISyntaxException {
