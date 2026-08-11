@@ -71,7 +71,9 @@ public class ConnectionHandler implements TransactionHandler {
         } else if (msg instanceof Handshake) {
             Handshake hs = (Handshake) msg;
             if (hs.getValue().equals(sessionState.unencryptedValue())) {
-                channel.send(new TransactionRequest(TransactionType.REQUEST_TRANSMISSION));
+                var outTrans = new TransactionRequest(TransactionType.REQUEST_TRANSMISSION);
+                outTrans.setClientId(sessionState.client().getClientId());
+                channel.send(outTrans); 
                 return;
             }
                 channel.close();

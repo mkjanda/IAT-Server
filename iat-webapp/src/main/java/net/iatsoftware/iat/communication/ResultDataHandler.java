@@ -39,7 +39,7 @@ public class ResultDataHandler implements TransactionHandler {
             
             case TransactionType.REQUEST_RESULTS:
                 outTrans.setType(TransactionType.RESULTS_READY);
-                outTrans.setDownloadKey(ctx.client().getAuthToken());
+                outTrans.setAuthToken(ctx.client().getAuthToken());
                 ctx.reply().send(outTrans);
                 break;
             
