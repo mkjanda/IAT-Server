@@ -23,7 +23,7 @@ public class PasswordHandler implements TransactionHandler {
         var transaction = (TransactionRequest) ctx.inbound();
         if (transaction.getIATName() == null)
             return false;
-        if (transaction.getType() == TransactionType.VERIFY_PASSWORD)
+        if (transaction.getType() == TransactionType.VERIFY_PASSWORD) 
             return true;
         return false;
     }
@@ -33,6 +33,7 @@ public class PasswordHandler implements TransactionHandler {
         var transaction = (TransactionRequest) ctx.inbound();
         ctx.sessionState().setIatName(transaction.getIATName());
         var key = ctx.sessionState().repositoryManager().getRSAKeyPair(ctx.client(), transaction.getIATName()).getDataKey();
+
         if (key.testPassword(transaction.getTestString())) {
             ctx.sessionState().setAuthenticated(true);
             String token = ctx.clientRepositoryManager().generateAuthToken(ctx.client(), System.currentTimeMillis(), 3_000_000L);
