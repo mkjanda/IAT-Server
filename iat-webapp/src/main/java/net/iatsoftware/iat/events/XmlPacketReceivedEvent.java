@@ -13,18 +13,19 @@ package net.iatsoftware.iat.events;
 import net.iatsoftware.iat.messaging.XmlPacket;
 
 import org.springframework.context.ApplicationEvent;
-
+import org.springframework.web.socket.WebSocketSession;
+    
 public class XmlPacketReceivedEvent extends ApplicationEvent {
     private final XmlPacket packet;
-    private final String sessionId;
-    public XmlPacketReceivedEvent(String sessId, XmlPacket p) {
-        super(sessId);
+    private final WebSocketSession session;
+    public XmlPacketReceivedEvent(WebSocketSession sess, XmlPacket p) {
+        super(sess);
         this.packet = p;
-        this.sessionId = sessId;
+        this.session = sess;
     }
     
-    public String getSessionId() {
-        return this.sessionId;
+    public WebSocketSession getSession() {
+        return this.session;
     }
     
     public XmlPacket getPacket() {

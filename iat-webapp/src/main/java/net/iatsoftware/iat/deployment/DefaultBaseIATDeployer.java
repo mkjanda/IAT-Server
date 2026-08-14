@@ -46,6 +46,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -67,14 +68,13 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     protected static final Logger logger = LogManager.getLogger();
     protected static final Logger criticalLogger = LogManager.getLogger("critical");
     protected Long clientID = 1L, testId = -1L, deploymentSessionId = -1L;
-    protected String sessionId = null;
     protected ConfigFile CF;
+    protected WebSocketSession session;
     protected byte[] IATSource;
     protected byte[][] SurveySources;
     protected Processor XsltProcessor;
     protected GlobalVarNameTable GlobalVars = new GlobalVarNameTable(), AESGlobals;
     protected MessageDigest DeploymentDescriptor;
-    protected DeploymentProgress deploymentProgress = null;
     protected boolean complete = false;
     protected Future<?> generationFuture = null;
     protected IAT test;
@@ -105,12 +105,12 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     @Inject
     protected MailService mailService;
 
-    public DefaultBaseIATDeployer(Long clientId, Long deploymentId, Long testId, String sessId) {
+    public DefaultBaseIATDeployer(Long clientId, Long deploymentId, Long testId, WebSocketSession sess, IATRepositoryManager iatRepositoryManager, ApplicationEventPublisher eventPublisher) {
         try {
             clientID = clientId;
             this.deploymentSessionId = deploymentId;
             this.testId = testId;
-            sessionId = sessId;
+            session = sess;
             this.XsltProcessor = new Processor(false);
             this.DeploymentDescriptor = MessageDigest.getInstance("MD5");
         } catch (java.security.NoSuchAlgorithmException ex) {
@@ -130,8 +130,8 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         this.testId = testId;
     }
 
-    public void setSessionId(String sessId) {
-        this.deploymentProgress = new DeploymentProgress(sessId, eventPublisher);
+    public void setSession(WebSocketSession sess) {
+        this.session = sess;
     }
 
     public abstract void generateTest();
@@ -147,7 +147,6 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         iatRepositoryManager.updateDeploymentSession(ds);
         this.eventPublisher.publishEvent(new WebSocketDataSent(sessID, new Envelope(upReq)));
         logger.info("Upload request message processed");
-        this.deploymentProgress = new DeploymentProgress(sessID, eventPublisher);
     }
 
     @Override
@@ -264,8 +263,6 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     }
 
     private void generateIAT() throws DeploymentTerminationException {
-        deploymentProgress.setStage(DeploymentStage.GENERATING_IAT);
-        deploymentProgress.setActiveElement(test.getTestName());
         try {
             var testResource = new TestResource(test, "text/javascript", ResourceType.JAVASCRIPT);
             iatRepositoryManager.addTestResource(testResource);
@@ -301,8 +298,6 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
 
     private void generateSurvey(Survey survey)
             throws DeploymentTerminationException {
-        deploymentProgress.setStage(DeploymentStage.GENERATING_SURVEY);
-        deploymentProgress.setActiveElement(String.format("Survey #%d", this.CF.getSurvey().indexOf(survey)));
         try {
             var strWriter = new StringWriter();
             survey.setClientId(this.test.getClient().getClientId());
@@ -347,33 +342,27 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         this.test = iat;
         this.scheduler.submit(() -> {
             try {
-                this.deploymentProgress = new DeploymentProgress(sessionId, eventPublisher);
-                this.deploymentProgress.setStage(DeploymentStage.INITIALIZING_DEPLOYMENT);
-                this.CF = (ConfigFile) socketService.getSessionProperty(this.sessionId, "configuration");
+                this.CF = (ConfigFile)this.session.getAttributes().get("configuration") != null ? (ConfigFile) this.session.getAttributes().get("configuration") : null;
                 this.CF.setIATName(this.test.getTestName());
                 int numStages = (1 + this.CF.getNumAfterSurveys() + CF.getNumBeforeSurveys());
                 processUniqueResponses(test);
-                this.deploymentProgress.setProgressRange(0, numStages);
                 test.setRedirectOnComplete(CF.getRedirectOnComplete());
                 test.setAlternated(true);
                 test.setNumElements(numStages);
                 generateIAT();
-                this.deploymentProgress.incProgress();
                 if (this.CF.getSurvey() != null) {
                     for (var survey : this.CF.getSurvey()) {
-                        this.deploymentProgress.incProgress();
                         generateSurvey(survey);
                     }
                 }
-                deploymentProgress.setStage(DeploymentStage.FINALIZING_DEPLOYMENT);
                 test.setDeploymentDescriptor(DeploymentDescriptor.digest());
                 iatRepositoryManager.updateIAT(test);
-                this.eventPublisher.publishEvent(new DeploymentSuccessEvent(sessionId, this.deploymentSessionId, test.getId()));
+                this.eventPublisher.publishEvent(new DeploymentSuccessEvent(this.session, this.deploymentSessionId, test.getId()));
             } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException
                     | DeploymentTerminationException ex) {
                 logger.error("deployment error", ex);
                 criticalLogger.error("Error reporting deployment error", ex);
-                this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId,
+                this.eventPublisher.publishEvent(new DeploymentFailedEvent(this.session, this.deploymentSessionId,
                         new ServerExceptionMessage("Deployment Error", ex), test.getId()));
             }
         });

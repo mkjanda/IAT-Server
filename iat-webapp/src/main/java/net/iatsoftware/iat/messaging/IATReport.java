@@ -26,16 +26,12 @@ import javax.inject.Inject;
 
 @XmlRootElement(name = "IATReport")
 @XmlAccessorType(XmlAccessType.NONE)
-@Component
-@Scope(value = "prototype")
 public class IATReport extends net.iatsoftware.iat.generated.GIATReport {
-    @Inject
-    IATRepositoryManager iatRepositoryManager;
 
     public IATReport() {
     }
 
-    public void load(IAT test) {
+    public void load(IAT test, boolean deploying, int numResultSets) {
         DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
         iatName = test.getTestName();
         this.url = test.getURL();
@@ -52,14 +48,8 @@ public class IATReport extends net.iatsoftware.iat.generated.GIATReport {
         authorFName = test.getUser().getFName();
         authorLName = test.getUser().getLName();
         authorEMail = test.getUser().getEMail();
-        numResultSets = iatRepositoryManager.getNumResultSets(test); 
-        DeploymentSession ds = null;
-        try {
-            ds = iatRepositoryManager.getDeploymentSession(test);
-        } catch (jakarta.persistence.NoResultException ex) {
-            ds = null;
-        }
-        deploying = ds != null;
-        testVersion = test.getVersion();
+        this.setNumResultSets(numResultSets);   
+        this.setDeploying(deploying);
+        this.testVersion = test.getVersion();
     }
 }

@@ -7,15 +7,15 @@ package net.iatsoftware.iat.events;
 
 import net.iatsoftware.iat.messaging.Manifest;
 
+import org.springframework.web.socket.WebSocketSession;
 
 public class ManifestReceivedEvent extends DeploymentTransactionEvent {
 	private final Manifest manifest;
 
-    public ManifestReceivedEvent(String sessionId, Long deploymentID, Manifest manifest)
+    public ManifestReceivedEvent(WebSocketSession session, Long deploymentID, Manifest manifest)
     {
-        super(sessionId, deploymentID);
-		this.manifest = manifest;
-
+        super(session, deploymentID);
+        this.manifest = manifest;
     }
     
     public Manifest getManifest() {

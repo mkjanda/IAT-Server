@@ -13,11 +13,13 @@ package net.iatsoftware.iat.events;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
 
+import org.springframework.web.socket.WebSocketSession;
+
 public class RSAKeyReceivedEvent extends DeploymentTransactionEvent {
     private PartiallyEncryptedRSAKey adminKey, dataKey;
     
-    public RSAKeyReceivedEvent(String sessId, Long deploymentID, RSAKeyPair keyPair) {
-        super(sessId, deploymentID);
+    public RSAKeyReceivedEvent(WebSocketSession session, Long deploymentID, RSAKeyPair keyPair) {
+        super(session, deploymentID);
         this.adminKey = keyPair.getAdminKey();
         this.dataKey = keyPair.getDataKey();
     }

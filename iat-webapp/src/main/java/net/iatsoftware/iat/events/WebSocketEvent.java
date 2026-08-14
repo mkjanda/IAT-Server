@@ -11,14 +11,15 @@ package net.iatsoftware.iat.events;
  */
 
 import org.springframework.context.ApplicationEvent;
+import org.springframework.web.socket.WebSocketSession;
 
 public class WebSocketEvent extends ApplicationEvent {
-    private final String sessionId;
+    private final WebSocketSession session;
     private final WebSocketEventType eventType;
     
-    public WebSocketEvent(String sessId, WebSocketEventType eventType) {
-        super(sessId);
-        this.sessionId = sessId;
+    public WebSocketEvent(WebSocketSession session, WebSocketEventType eventType) {
+        super(session);
+        this.session = session;
         this.eventType = eventType;
     }
     
@@ -26,7 +27,7 @@ public class WebSocketEvent extends ApplicationEvent {
         return this.eventType;
     }
     
-    public String getSessionId() {
-        return this.sessionId;
+    public WebSocketSession getSession() {
+        return this.session;
     }
 }

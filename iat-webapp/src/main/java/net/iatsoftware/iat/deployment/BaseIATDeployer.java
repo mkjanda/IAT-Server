@@ -5,6 +5,7 @@
  */
 package net.iatsoftware.iat.deployment;
 
+
 /**
  *
  * @author Michael Janda
@@ -14,12 +15,15 @@ import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 
+import org.springframework.web.socket.WebSocketSession;
+
+
 public interface BaseIATDeployer  {
-    void requestUpload(String sessionId) throws java.net.URISyntaxException;
+    void requestUpload(WebSocketSession session);
     void storeRSAKeys(PartiallyEncryptedRSAKey adminKey, PartiallyEncryptedRSAKey dataKey);
     void storeTokenDefinition(TokenType type, String tokenName);
-    void setFailed(String sessId, ServerExceptionMessage ex);
-    void setSuccess(String sessId);
+    void setFailed(WebSocketSession session, ServerExceptionMessage ex);
+    void setSuccess(WebSocketSession session);
     void abort();
     Long getTestId();
     void setClientId(Long id);

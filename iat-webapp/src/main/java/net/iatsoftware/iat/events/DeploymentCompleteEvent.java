@@ -5,17 +5,21 @@
  */
 package net.iatsoftware.iat.events;
 
+import org.springframework.web.socket.WebSocketSession;
+
+
 /**
  *
  * @author Michael Janda
  */
 
+
 public class DeploymentCompleteEvent extends DeploymentTransactionEvent {
     public enum EResult { itemSlidesDeployed, testDeployed, failure, halt, deploymentDescriptorMismatch };
     private final EResult result;
     
-    public DeploymentCompleteEvent(String sess, Long deploymentID, EResult result) {
-        super(sess, deploymentID);
+    public DeploymentCompleteEvent(WebSocketSession session, Long deploymentID, EResult result) {
+        super(session, deploymentID);
         this.result = result;
     }
     

@@ -9,8 +9,7 @@ package net.iatsoftware.iat.deployment;
  *
  * @author Michael Janda
  */
-
-import net.iatsoftware.iat.config.MyBeanFactory;
+/*
 import net.iatsoftware.iat.entities.JSKey;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -79,3 +78,4 @@ public class JSKeys implements java.io.Serializable {
         return beanFactory.jsKeys();
     }
 }
+*/

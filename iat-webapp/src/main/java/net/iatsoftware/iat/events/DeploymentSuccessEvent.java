@@ -5,14 +5,16 @@
  */
 package net.iatsoftware.iat.events;
 
+import org.springframework.web.socket.WebSocketSession;
+
 /**
  *
  * @author michael
  */
 public class DeploymentSuccessEvent extends DeploymentTransactionEvent {
     private final Long testId;
-    public DeploymentSuccessEvent(String sessId, long deploymentId, Long testId) {
-        super(sessId, deploymentId);
+    public DeploymentSuccessEvent(WebSocketSession session, long deploymentId, Long testId) {
+        super(session, deploymentId);
         this.testId = testId;
     }
 

@@ -5,12 +5,14 @@
  */
 package net.iatsoftware.iat.events;
 
+import org.springframework.web.socket.WebSocketSession;
+
 /**
  *
  * @author michael
  */
 public class AbortDeploymentEvent extends DeploymentTransactionEvent {
-    public AbortDeploymentEvent(String webSocketId, Long deploymentId) {
-        super(webSocketId, deploymentId);
+    public AbortDeploymentEvent(WebSocketSession session, Long deploymentId) {
+        super(session, deploymentId);
     }
 }

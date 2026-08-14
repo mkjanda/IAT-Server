@@ -12,11 +12,13 @@ package net.iatsoftware.iat.events;
 
 import net.iatsoftware.iat.messaging.Envelope;
 
+import org.springframework.web.socket.WebSocketSession;
+
 public class WebSocketDataSent extends WebSocketEvent {
     private final Envelope envelope;
     
-    public WebSocketDataSent(String sessId, Envelope env) {
-        super(sessId, WebSocketEventType.DATA_SENT);
+    public WebSocketDataSent(WebSocketSession session, Envelope env) {
+        super(session, WebSocketEventType.DATA_SENT);
         this.envelope = env;
     }
     

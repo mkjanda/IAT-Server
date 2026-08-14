@@ -5,7 +5,6 @@
  */
 package net.iatsoftware.iat.events;
 
-import org.springframework.web.socket.WebSocketSession;
 
 /**
  *
@@ -13,23 +12,18 @@ import org.springframework.web.socket.WebSocketSession;
  */
 
 import net.iatsoftware.iat.messaging.Envelope;
+import org.springframework.web.socket.WebSocketSession;
 
 public class WebSocketDataReceived extends WebSocketEvent {
     private final Envelope envelope;
-    private final WebSocketSession session;
-
     
-    public WebSocketDataReceived(WebSocketSession sess, Envelope env) {
-        super(sess.getId(), WebSocketEventType.DATA_RECEIVED);
+    
+    public WebSocketDataReceived(WebSocketSession session, Envelope env) {
+        super(session, WebSocketEventType.DATA_RECEIVED);
         this.envelope = env;
-        this.session = sess;
     }
     
     public Envelope getEnvelope() {
         return this.envelope;
-    }
-
-    public WebSocketSession session() {
-        return this.session;
     }
 }

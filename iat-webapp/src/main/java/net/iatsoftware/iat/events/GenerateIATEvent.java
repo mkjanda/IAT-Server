@@ -9,8 +9,11 @@ package net.iatsoftware.iat.events;
  *
  * @author Michael Janda
  */
+
+import org.springframework.web.socket.WebSocketSession;
+
 public class GenerateIATEvent extends DeploymentTransactionEvent {
-    public GenerateIATEvent(String sessionId, Long deploymentID) {
-        super(sessionId, deploymentID);
+    public GenerateIATEvent(WebSocketSession session, Long deploymentID) {
+        super(session, deploymentID);
     }
 }

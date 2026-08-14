@@ -9,8 +9,10 @@ package net.iatsoftware.iat.events;
  *
  * @author Michael Janda
  */
+import org.springframework.web.socket.WebSocketSession;
+
 public class UploadRequestEvent extends DeploymentTransactionEvent {
-    public UploadRequestEvent(String sessId, Long deploymentSessionID) {
-        super(sessId, deploymentSessionID);
+    public UploadRequestEvent(WebSocketSession session, Long deploymentSessionID) {
+        super(session, deploymentSessionID);
     }
 }

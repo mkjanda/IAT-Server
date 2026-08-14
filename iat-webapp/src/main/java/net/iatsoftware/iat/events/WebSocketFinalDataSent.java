@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package net.iatsoftware.iat.events;
+import org.springframework.web.socket.WebSocketSession;
 
 import net.iatsoftware.iat.messaging.Envelope;
 
@@ -13,7 +14,7 @@ import net.iatsoftware.iat.messaging.Envelope;
  */
 public class WebSocketFinalDataSent  extends WebSocketDataSent {
     
-    public WebSocketFinalDataSent(String sessId, Envelope msg) {
-        super(sessId, msg);
+    public WebSocketFinalDataSent(WebSocketSession session, Envelope msg) {
+        super(session, msg);
     }
 }

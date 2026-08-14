@@ -9,8 +9,10 @@ package net.iatsoftware.iat.events;
  *
  * @author michael
  */
+import org.springframework.web.socket.WebSocketSession;
+
 public class DeploymentDescriptorMismatch extends DeploymentCompleteEvent {
-    public DeploymentDescriptorMismatch(String sessId, Long deploymentId) {
-        super(sessId, deploymentId, EResult.deploymentDescriptorMismatch);
+    public DeploymentDescriptorMismatch(WebSocketSession session, Long deploymentId) {
+        super(session, deploymentId, EResult.deploymentDescriptorMismatch);
     }
 }

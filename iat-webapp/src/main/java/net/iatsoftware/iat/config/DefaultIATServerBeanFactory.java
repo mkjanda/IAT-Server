@@ -9,7 +9,7 @@ package net.iatsoftware.iat.config;
  *
  * @author Michael Janda
  */
-
+/*
 import net.iatsoftware.iat.admin.AjaxTextResult;
 import net.iatsoftware.iat.admin.CodeResult;
 import net.iatsoftware.iat.admin.IATResultRecorder;
@@ -114,3 +114,4 @@ public class DefaultIATServerBeanFactory implements MyBeanFactory {
         return (JSKey)ctx.getBean(JSKey.class);
     }
 }
+*/

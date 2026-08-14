@@ -9,7 +9,7 @@ package net.iatsoftware.iat.config;
  *
  * @author Michael Janda
  */
-
+/*
 import net.iatsoftware.iat.admin.AjaxTextResult;
 import net.iatsoftware.iat.admin.CodeResult;
 import net.iatsoftware.iat.admin.IATResultRecorder;
@@ -50,3 +50,4 @@ public interface MyBeanFactory {
    JSKey jsKey();
 
 }
+*/

@@ -12,24 +12,26 @@ package net.iatsoftware.iat.events;
 
 
 import org.springframework.context.ApplicationEvent;
+import org.springframework.web.socket.WebSocketSession;
+
 
 
 public abstract class DeploymentTransactionEvent extends ApplicationEvent {
             
     private final Long deploymentID;
-    private final String sessionId;
+    private final WebSocketSession session; 
     
-    public DeploymentTransactionEvent(String sessionId, Long deploymentID) {
-        super(sessionId);
+    public DeploymentTransactionEvent(WebSocketSession session, Long deploymentID) {
+        super(session);
         this.deploymentID = deploymentID;
-        this.sessionId = sessionId;
+        this.session = session;
     }
     
-    public String getSessionId() {
-        return this.sessionId;
+    public WebSocketSession getSession() {
+        return this.session;
     }
     
-    public long getDeploymentID() {
+    public Long getDeploymentID() {
         return this.deploymentID;
     }
 }

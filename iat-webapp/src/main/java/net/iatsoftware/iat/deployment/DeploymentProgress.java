@@ -9,6 +9,7 @@ package net.iatsoftware.iat.deployment;
  *
  * @author Michael Janda
  */
+/*
 import net.iatsoftware.iat.events.WebSocketDataSent;
 import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.DeploymentStage;
@@ -148,3 +149,4 @@ public class DeploymentProgress extends net.iatsoftware.iat.generated.GDeploymen
         return copy;
     }
 }
+ */

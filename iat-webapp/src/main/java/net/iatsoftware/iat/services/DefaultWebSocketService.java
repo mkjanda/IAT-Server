@@ -53,29 +53,29 @@ public class DefaultWebSocketService implements WebSocketService {
         Envelope env = e.getEnvelope();
         String productKey = env.getMessage().getProductKey();
         Client client = repositoryManager.getClientByProductKey(productKey);
-        if (!e.session().getAttributes().containsKey("SessionState")) {
-            e.session().getAttributes().put("SessionState", new WebSocketSessionState(e.session()));
+        if (!e.getSession().getAttributes().containsKey("SessionState")) {
+            e.getSession().getAttributes().put("SessionState", new WebSocketSessionState(e.getSession()));
         }
-        SessionState session = (SessionState) e.session().getAttributes().get("SessionState");
+        SessionState session = (SessionState) e.getSession().getAttributes().get("SessionState");
         session.setClient(client);
         session.setClientRepositoryManager(repositoryManager);
         session.setRepositoryManager(iatRepositoryManager);
         session.setMailService(mailService);
         session.setMarshaller(marshaller);
         session.setUnmarshaller(unmarshaller);
-        var ctx = new TransactionContext(e.session(), e.getEnvelope().getMessage(), new WebSocketReplyChannel(e.session(), this.publisher), session);
+        var ctx = new TransactionContext(e.getSession(), e.getEnvelope().getMessage(), new WebSocketReplyChannel(e.getSession(), this.publisher), session);
         if (client == null) {
             logger.error("Received message from unknown client with product key " + productKey);
-            e.session().close();
+            e.getSession().close();
             return;
         }
         if (!(env.getMessage() instanceof ActivationRequest) && client.getUsers().isEmpty()) {
-            e.session().close();
+            e.getSession().close();
             return;
         }
         if (client.isFrozen() || client.isDeleted() || client.isKillFiled()) {
             logger.error("Received message from frozen or deleted client with product key " + productKey);
-            e.session().close();
+            e.getSession().close();
             return;
         }
             handlers.forEach(h -> {

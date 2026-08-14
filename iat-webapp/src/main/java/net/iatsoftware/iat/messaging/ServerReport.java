@@ -10,7 +10,7 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.config.MyBeanFactory;
+
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
@@ -30,11 +30,6 @@ import javax.inject.Inject;
 @Scope(value="prototype")
 public class ServerReport extends net.iatsoftware.iat.generated.GServerReport {
     @Inject IATRepositoryManager iatRepositoryManager;
-    @Inject MyBeanFactory beanFactory;
-    
-    public ServerReport() 
-    {
-    }
     
     public void load(long clientID)
     {
@@ -62,8 +57,9 @@ public class ServerReport extends net.iatsoftware.iat.generated.GServerReport {
             diskAlottmentRemainingKB = (diskAlottmentMB << 10) - totalDiskUsageKB;
         List<IAT> tests = iatRepositoryManager.getIATs(client);
         for (IAT test : tests) {
-            IATReport report = beanFactory.IATReport();
-            report.load(test);
+            IATReport report = new IATReport();
+            var deploymentSession = iatRepositoryManager.getDeploymentSession(test);
+            report.load(test, deploymentSession != null, iatRepositoryManager.getNumResultSets(test));
             this.getIATReport().add(report);
         }
     }

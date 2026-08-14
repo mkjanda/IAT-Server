@@ -10,6 +10,8 @@ package net.iatsoftware.iat.entities;
  * @author Michael Janda
  */
 
+import org.springframework.web.socket.WebSocketSession;
+
 
 import java.util.Calendar;
 import jakarta.persistence.Basic;
@@ -30,16 +32,14 @@ import jakarta.persistence.TemporalType;
 public class DeploymentSession implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     public static final long DEPLOYMENT_TIMEOUT = 300_000L;
-    private String sessID;
     private IAT test;
     private Long id;
     private Calendar deploymentStart = Calendar.getInstance();
     private String deploymentUploadKey = null, itemSlideUploadKey = null, reconnectionKey = null;
     public DeploymentSession() { }
     
-    public DeploymentSession(Client c, User u, IAT test, String sessID) {
+    public DeploymentSession(Client c, User u, IAT test) {
         this.test = test;
-        this.sessID = sessID;
     }
 
     @Id
@@ -86,15 +86,6 @@ public class DeploymentSession implements java.io.Serializable {
     }
     public void setReconnectionKey(String val) {
         this.reconnectionKey = val;
-    }
-
-    @Basic
-    @Column(name="web_socket_id")
-    public String getWebSocketId() {
-        return this.sessID;
-    }
-    public void setWebSocketId(String val) {
-        this.sessID = val;
     }
 
     @OneToOne(fetch=FetchType.EAGER, optional=false)

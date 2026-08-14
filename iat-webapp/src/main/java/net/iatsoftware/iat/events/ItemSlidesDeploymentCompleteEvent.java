@@ -9,10 +9,12 @@ package net.iatsoftware.iat.events;
  *
  * @author michael
  */
+
+import org.springframework.web.socket.WebSocketSession;
+
 public class ItemSlidesDeploymentCompleteEvent extends DeploymentTransactionEvent {
-	
-    public ItemSlidesDeploymentCompleteEvent(String sessionId, Long deploymentId) {
-        super(sessionId, deploymentId);
+    public ItemSlidesDeploymentCompleteEvent(WebSocketSession session, Long deploymentId) {
+        super(session, deploymentId);
     }
     
 }

@@ -238,7 +238,7 @@ public class IATServer implements SchedulingConfigurer {
 
     @Bean
     WebSocketConfigurer webSocketConfigurer() {
-        return registry -> registry.addHandler(webSocketHandler(), "/IAT/DataTransaction");
+        return registry -> registry.addHandler(webSocketHandler(), "/DataTransaction");
     }
 
     @Bean
