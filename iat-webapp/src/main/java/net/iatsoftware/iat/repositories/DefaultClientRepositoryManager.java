@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Service("ClientRepositoryManager")
 public class DefaultClientRepositoryManager implements ClientRepositoryManager {

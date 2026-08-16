@@ -57,6 +57,7 @@ public class IAT implements java.io.Serializable {
     private int resultFormat, numElements = -1;
     private User user;
     private UniqueResponseItem uniqueResponseItem;
+    private PartiallyEncryptedRSAKey dataKey = null;
     private String itemSlideDownloadKey = null, version;
     private TokenType tokenType = TokenType.NONE;
     private String tokenName = "";
@@ -119,6 +120,14 @@ public class IAT implements java.io.Serializable {
     }
     public void setUser(User val) {
         this.user = val;
+    }
+
+    @OneToOne(fetch=FetchType.EAGER, optional=true, mappedBy="test")
+    public PartiallyEncryptedRSAKey getDataKey() {
+        return this.dataKey;
+    }
+    public void setDataKey(PartiallyEncryptedRSAKey val) {
+        this.dataKey = val;
     }
     
     @OneToOne(fetch=FetchType.EAGER, optional=true, mappedBy="test")

@@ -18,13 +18,13 @@ public class DeploymentFailedEvent extends DeploymentCompleteEvent {
     private final ServerExceptionMessage failureCause;
     private Long testId = -1L;
     
-    public DeploymentFailedEvent(WebSocketSession session, long deploymentId, ServerExceptionMessage failureCause) {
-        super(session, deploymentId, DeploymentCompleteEvent.EResult.failure);
+    public DeploymentFailedEvent(long deploymentId, ServerExceptionMessage failureCause) {
+        super(deploymentId, DeploymentCompleteEvent.EResult.failure);
         this.failureCause = failureCause;
     }
 
-    public DeploymentFailedEvent(WebSocketSession session, long deploymentId, ServerExceptionMessage failureCause, Long testId) {
-        super(session, deploymentId, DeploymentCompleteEvent.EResult.failure);
+    public DeploymentFailedEvent(long deploymentId, ServerExceptionMessage failureCause, Long testId) {
+        super(deploymentId, DeploymentCompleteEvent.EResult.failure);
         this.failureCause = failureCause;
         this.testId = testId;
     }

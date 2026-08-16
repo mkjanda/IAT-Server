@@ -25,15 +25,13 @@ import java.util.function.BinaryOperator;
 import java.util.concurrent.Callable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.inject.Named;
-import javax.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Inject;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import net.iatsoftware.iat.config.MyBeanFactory;
-import net.iatsoftware.iat.deployment.JSKeys;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.EncCodeLine;
@@ -89,6 +87,8 @@ import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.context.WebApplicationContext;
+
 
 @Controller
 @EnableAsync
@@ -178,6 +178,8 @@ public class AdminController {
 	@Inject
 	IATSessionManager sessionManager;
 
+	@Inject WebApplicationContext context;
+
 	@Inject
 	IATRepositoryManager iatRepositoryManager;
 
@@ -187,9 +189,6 @@ public class AdminController {
 	@Named("ServerConfiguration")
 	@Inject
 	Properties serverConfiguration;
-
-	@Inject
-	MyBeanFactory beanFactory;
 
 	@Inject
 	Unmarshaller unmarshaller;
@@ -399,13 +398,21 @@ public class AdminController {
 		boolean lastSegment = adminPhase == segmentList.size();
 		iatRepositoryManager.refreshAdminTimer(adminID);
 		if (ts.getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
-			IATResultRecorder irr = beanFactory.IATResultRecorder(ts, adminID, numItems, parameterMap,
-					segmentList.size() == adminPhase);
-			irr.run();
+			IATResultRecorder irr = context.getBean(DefaultIATResultRecorder.class);
+			irr.setAdminID(adminID);
+			irr.setNumItems(numItems);
+			irr.setTestSegment(ts);
+			irr.setResponseData(parameterMap);
+			irr.setLastFragment(segmentList.size() == adminPhase);
+			this.scheduler.submit(irr);
 		} else {
-			SurveyResultRecorder srr = beanFactory.surveyResultRecorder(ts, adminID, numItems, parameterMap,
-					segmentList.size() == adminPhase);
-			srr.run();
+			SurveyResultRecorder srr = this.context.getBean(DefaultSurveyResultRecorder.class);
+			srr.setAdminID(adminID);
+			srr.setNumItems(numItems);
+			srr.setTestSegment(ts);
+			srr.setResponseData(parameterMap);
+			srr.setLastFragment(segmentList.size() == adminPhase);
+			this.scheduler.submit(srr);
 		}
 		if (lastSegment) {
 			return new ModelAndView(completeTest(sess));
@@ -451,13 +458,21 @@ public class AdminController {
 		TestSegment ts = iatRepositoryManager.getTestSegmentByID(administeredElemID);
 		List<Long> segmentList = (List<Long>) sess.getAttribute("SegmentList");
 		if (ts.getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
-			IATResultRecorder irr = beanFactory.IATResultRecorder(ts, adminID, numItems, parameterMap,
-					segmentList.size() == adminPhase);
+			IATResultRecorder irr = context.getBean(DefaultIATResultRecorder.class);
+			irr.setAdminID(adminID);
+			irr.setNumItems(numItems);
+			irr.setTestSegment(ts);
+			irr.setResponseData(parameterMap);
+			irr.setLastFragment(segmentList.size() == adminPhase);
 			this.scheduler.submit(irr);
 		} else {
-			SurveyResultRecorder srr = beanFactory.surveyResultRecorder(ts, adminID, numItems, parameterMap,
-					segmentList.size() == adminPhase);
-			srr.run();
+			SurveyResultRecorder srr = this.context.getBean(DefaultSurveyResultRecorder.class);
+			srr.setAdminID(adminID);
+			srr.setNumItems(numItems);
+			srr.setTestSegment(ts);
+			srr.setResponseData(parameterMap);
+			srr.setLastFragment(segmentList.size() == adminPhase);
+			this.scheduler.submit(srr);
 		}
 		if (adminPhase == segmentList.size()) {
 			return new ModelAndView(completeTest(sess));
@@ -507,7 +522,7 @@ public class AdminController {
 		};
 	}
 
-
+/*
 	@PostMapping(value = "/Ajax/KeySet", consumes = "text/json", produces = "text/json")
 	@ResponseBody
 	public String getKeyJSON(@RequestHeader("IATSESSIONID") String sessId,
@@ -529,7 +544,7 @@ public class AdminController {
 			JSKeys keySet = beanFactory.jsKeys((JSKeys)unmarshaller.unmarshal(sSource));
 			return keySet.getEncryptedKeySet(cipherWords).getKeySetJSON();
 	}
-
+*/
 	@PostMapping(value = "/Ajax/AES", consumes = "text/xml", produces = "text/xml")
 	@ResponseBody
 	public ResponseEntity<AjaxResponse> getAesFile() throws java.io.IOException {

@@ -6,15 +6,9 @@
 package net.iatsoftware.iat;
 
 import net.iatsoftware.iat.admin.AdminViewResolver;
-import net.iatsoftware.iat.config.IATDeployerFactory;
-import net.iatsoftware.iat.deployment.DefaultIATDeployer;
-import net.iatsoftware.iat.deployment.DefaultIATRedeployer;
-import net.iatsoftware.iat.deployment.IATDeployer;
-import net.iatsoftware.iat.deployment.IATRedeployer;
 import net.iatsoftware.iat.events.WebSocketDataReceived;
 import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
-import net.iatsoftware.iat.services.WebSocketService;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,16 +31,12 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.data.repository.config.BootstrapMode;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -56,7 +46,6 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MarshallingHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
-import org.springframework.lang.Nullable;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -69,10 +58,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
-import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.validation.Validator;
@@ -81,7 +66,6 @@ import org.springframework.web.filter.ForwardedHeaderFilter;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.socket.CloseStatus;
@@ -116,8 +100,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.crypto.SecretKeyFactory;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import jakarta.persistence.SharedCacheMode;
 import jakarta.persistence.ValidationMode;
 import javax.sql.DataSource;
@@ -485,34 +469,19 @@ public class IATServer implements SchedulingConfigurer {
         msgSource.setBasename("classpath:OauthExceptionMessages");
         return msgSource;
     }
-
-    @Bean
-    @Scope("prototype")
-    public IATDeployer iatDeployer(@Nullable Long clientId, @Nullable Long deploymentId, @Nullable Long testId, 
-            @Nullable String session) {
-        return new DefaultIATDeployer(clientId, deploymentId, testId, session);
-    }
-
-    @Bean
-    @Scope("prototype")
-    public IATRedeployer iatRedeployer(@Nullable Long clientId, @Nullable Long deploymentId, @Nullable Long newTestId,
-            @Nullable Long oldTestId, String session) {
-        return new DefaultIATRedeployer(clientId, deploymentId, newTestId, oldTestId, session);
-    }
-
+/*
     @Bean
     public IATDeployerFactory deployerFactory() {
         return new IATDeployerFactory() {
             public IATDeployer createDeployer(Long clientId, Long deploymentId, Long testId, String session) {
                 return iatDeployer(clientId, deploymentId, testId, session);
-/* 
+
                 var deployer = (IATDeployer) applicationContext.getBean("IATDeployer");
                 deployer.setClientId(clientId);
                 deployer.setDeploymentId(deploymentId);
                 deployer.setTestId(testId);
                 deployer.setSessionId(session);
                 return deployer;
-            */         }
 
             public IATRedeployer createRedeployer(Long clientId, Long deploymentId, Long replacementTestId,
                     Long testId, String sessId) {
@@ -524,10 +493,10 @@ public class IATServer implements SchedulingConfigurer {
                 deployer.setTestId(testId);
                 deployer.setSessionId(sessId);
                 deployer.setOldTestId(replacementTestId);
-                return deployer;*/
+                return deployer;
             }
         };
-    }
+    }*/
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar registrar) {

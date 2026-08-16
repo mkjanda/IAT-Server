@@ -28,8 +28,8 @@ import java.io.File;
 import java.net.URI;
 import java.util.Properties;
 import jakarta.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Controller
 @ClientControllerAnnotation

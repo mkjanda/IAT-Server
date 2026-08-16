@@ -10,7 +10,8 @@ package net.iatsoftware.iat.deployment;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.config.MyBeanFactory;
+import net.iatsoftware.iat.communication.ReplyChannel;
+import net.iatsoftware.iat.communication.SessionState;
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.configfile.Globals;
 import net.iatsoftware.iat.configfile.Survey;
@@ -23,8 +24,7 @@ import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
-import net.iatsoftware.iat.events.WebSocketDataSent;
-import net.iatsoftware.iat.generated.DeploymentStage;
+import net.iatsoftware.iat.events.WebSocketSendEvent;
 import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.Envelope;
@@ -57,8 +57,8 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.concurrent.Future;
 import java.util.Properties;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -69,7 +69,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     protected static final Logger criticalLogger = LogManager.getLogger("critical");
     protected Long clientID = 1L, testId = -1L, deploymentSessionId = -1L;
     protected ConfigFile CF;
-    protected WebSocketSession session;
+    protected SessionState session;
     protected byte[] IATSource;
     protected byte[][] SurveySources;
     protected Processor XsltProcessor;
@@ -78,21 +78,18 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     protected boolean complete = false;
     protected Future<?> generationFuture = null;
     protected IAT test;
+    protected ReplyChannel replyChannel;
 
     @Inject
     protected WebSocketService socketService;
     @Inject
     protected IATRepositoryManager iatRepositoryManager;
     @Inject
-    protected MyBeanFactory beanFactory;
-    @Inject
     protected ThreadPoolTaskScheduler scheduler;
     @Inject
     protected XsltService compiledXSLT;
     @Inject
     protected ApplicationEventPublisher eventPublisher;
-    @Inject
-    protected MyBeanFactory iatServerBeanFactory;
     @Inject
     protected Marshaller marshaller;
     @Inject
@@ -105,19 +102,15 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     @Inject
     protected MailService mailService;
 
-    public DefaultBaseIATDeployer(Long clientId, Long deploymentId, Long testId, WebSocketSession sess, IATRepositoryManager iatRepositoryManager, ApplicationEventPublisher eventPublisher) {
+    public DefaultBaseIATDeployer() {
         try {
-            clientID = clientId;
-            this.deploymentSessionId = deploymentId;
-            this.testId = testId;
-            session = sess;
             this.XsltProcessor = new Processor(false);
             this.DeploymentDescriptor = MessageDigest.getInstance("MD5");
         } catch (java.security.NoSuchAlgorithmException ex) {
             criticalLogger.error("Error creating deployment descriptor digest", ex);
         }
     }
-
+    
     public void setClientId(Long clientId) {
         this.clientID = clientId;
     }
@@ -130,24 +123,18 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         this.testId = testId;
     }
 
-    public void setSession(WebSocketSession sess) {
-        this.session = sess;
+    @Override
+    public void setSession(SessionState state) {
+        this.session = state;
     }
-
-    public abstract void generateTest();
 
     @Override
-    public void requestUpload(String sessID) throws java.net.URISyntaxException {
-        logger.error("Upload request message received");
-        UploadRequest upReq = new UploadRequest(this.deploymentSessionId);
-        DeploymentSession ds = this.iatRepositoryManager.getDeploymentSession(this.deploymentSessionId);
-        ds.setDeploymentUploadKey(upReq.getDataUploadKey());
-        ds.setItemSlideUploadKey(upReq.getItemSlideUploadKey());
-        ds.setReconnectionKey(upReq.getReconnectionKey());
-        iatRepositoryManager.updateDeploymentSession(ds);
-        this.eventPublisher.publishEvent(new WebSocketDataSent(sessID, new Envelope(upReq)));
-        logger.info("Upload request message processed");
+    public SessionState session() {
+        return this.session;
     }
+
+
+    public abstract void generateTest();
 
     @Override
     public void storeRSAKeys(PartiallyEncryptedRSAKey adminKey, PartiallyEncryptedRSAKey dataKey) {
@@ -169,49 +156,22 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         return this.testId;
     }
 
+    @Override
+    public void setReplyChannel(ReplyChannel replyChannel) {
+        this.replyChannel = replyChannel;
+    }
+
+    @Override
+    public ReplyChannel replyChannel() {
+        return this.replyChannel    ;
+    }
+
     public void abort() {
         if (generationFuture != null)
             generationFuture.cancel(true);
         generationFuture = null;
     }
 
-    public void setFailed(String sessId, ServerExceptionMessage serverEx) {
-        onFailure(sessId, serverEx);
-    }
-
-    public void setSuccess(String sessId) {
-        onSuccess(sessId);
-    }
-
-    protected abstract void onFailure(String sessId, ServerExceptionMessage ex);
-
-    protected abstract void onSuccess(String sessId);
-
-    /*
-     * protected void loadTransformSources(IAT test) throws
-     * DeploymentTerminationException {
-     * try {
-     * this.IATSource = iatRepositoryManager.getTestResource(test,
-     * 0L).getResourceBytes();
-     * var cfString = new String(this.IATSource, StandardCharsets.UTF_16);
-     * this.CF = (ConfigFile) unmarshaller.unmarshal(new StreamSource(new
-     * StringReader(cfString)));
-     * if (this.CF.getSurvey().size() > 0) {
-     * SurveySources = new byte[this.CF.getSurvey().size()][];
-     * for (int ctr = 1; ctr <= SurveySources.length; ctr++) {
-     * this.SurveySources[ctr] = iatRepositoryManager
-     * .getTestResource(test, (long)ctr).getResourceBytes();
-     * }
-     * } else {
-     * SurveySources = null;
-     * }
-     * } catch (java.io.IOException ex) {
-     * throw new
-     * DeploymentTerminationException("Error loading transform sources during test deployment"
-     * , ex);
-     * }
-     * }
-     */
     protected void digestTestSegment(StreamSource src, XsltExecutable digestTransX)
             throws DeploymentTerminationException {
         try {
@@ -335,14 +295,13 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
         iatRepositoryManager.addUniqueResponseItem(uri);
         if (!CF.getUniqueResponse().isAdditive())
             iatRepositoryManager.addUniqueResponses(uri, CF.getUniqueResponse().getValue());
-        this.deploymentProgress.incProgress();
     }
 
     protected void doDeploy(IAT iat) throws DeploymentTerminationException {
         this.test = iat;
         this.scheduler.submit(() -> {
             try {
-                this.CF = (ConfigFile)this.session.getAttributes().get("configuration") != null ? (ConfigFile) this.session.getAttributes().get("configuration") : null;
+                this.CF = (ConfigFile)this.session.configFile();
                 this.CF.setIATName(this.test.getTestName());
                 int numStages = (1 + this.CF.getNumAfterSurveys() + CF.getNumBeforeSurveys());
                 processUniqueResponses(test);
@@ -357,12 +316,12 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
                 }
                 test.setDeploymentDescriptor(DeploymentDescriptor.digest());
                 iatRepositoryManager.updateIAT(test);
-                this.eventPublisher.publishEvent(new DeploymentSuccessEvent(this.session, this.deploymentSessionId, test.getId()));
+                this.eventPublisher.publishEvent(new DeploymentSuccessEvent(this.deploymentSessionId, test.getId()));
             } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException
                     | DeploymentTerminationException ex) {
                 logger.error("deployment error", ex);
                 criticalLogger.error("Error reporting deployment error", ex);
-                this.eventPublisher.publishEvent(new DeploymentFailedEvent(this.session, this.deploymentSessionId,
+                this.eventPublisher.publishEvent(new DeploymentFailedEvent(this.deploymentSessionId,
                         new ServerExceptionMessage("Deployment Error", ex), test.getId()));
             }
         });

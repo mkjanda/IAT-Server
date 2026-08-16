@@ -61,7 +61,7 @@
 		"workbench.preferredDarkColorTheme": "Material Theme Darker",
 		"editor.semanticHighlighting.enabled": true,
 		"editor.fontFamily": "'Consolas', 'monospace', monospace",
-		"editor.fontSize": 16,
+		"editor.fontSize": 22,
 		"java.compile.nullAnalysis.mode": "automatic",
 		"dartsass.disableCompileOnSave": false,
 		"dartsass.debug": true,

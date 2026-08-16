@@ -8,7 +8,7 @@ import net.iatsoftware.iat.messaging.Manifest;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Repository
 public class DefaultTestResourceRepository extends GenericJpaRepository<Long, TestResource>

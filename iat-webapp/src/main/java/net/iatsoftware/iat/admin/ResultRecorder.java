@@ -29,7 +29,7 @@ import javax.crypto.spec.IvParameterSpec;
 import java.security.spec.RSAPublicKeySpec;
 import java.math.BigInteger;
 import javax.crypto.CipherOutputStream;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.Random;
 
 @Component

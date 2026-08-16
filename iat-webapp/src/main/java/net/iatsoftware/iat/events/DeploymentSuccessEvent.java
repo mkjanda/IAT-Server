@@ -13,8 +13,8 @@ import org.springframework.web.socket.WebSocketSession;
  */
 public class DeploymentSuccessEvent extends DeploymentTransactionEvent {
     private final Long testId;
-    public DeploymentSuccessEvent(WebSocketSession session, long deploymentId, Long testId) {
-        super(session, deploymentId);
+    public DeploymentSuccessEvent(long deploymentId, Long testId) {
+        super(deploymentId);
         this.testId = testId;
     }
 

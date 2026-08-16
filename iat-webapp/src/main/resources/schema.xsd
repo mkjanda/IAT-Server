@@ -984,6 +984,13 @@
             <xs:enumeration value="VerifyUniqueResponse"/>
         </xs:restriction>
     </xs:simpleType>
+    
+    <xs:simpleType name="ManifestType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="FileManifest"/>
+            <xs:enumeration value="ItemSlideManifest"/>
+        </xs:restriction>  
+    </xs:simpleType>
 
 
     <xs:simpleType name="TransactionType">
@@ -996,6 +1003,12 @@
             <xs:enumeration value="AbortTransaction"/>
             <xs:enumeration value="RetrieveResults"/>
             <xs:enumeration value="DoIATDeploy"/>
+            <xs:enumeration value="RequestConfigFile" />
+            <xs:enumeration value="RequestFileManifest"/>
+            <xs:enumeration value="RequestFiles"/>
+            <xs:enumeration value="RequestSlideManifest"/>
+            <xs:enumeration value="RequestSlides"/>
+            <xs:enumeration value="RequestIATUpload"/>
             <xs:enumeration value="RequestActivation"/>
             <xs:enumeration value="VerifyIATDeployment"/>
             <xs:enumeration value="DeleteIAT"/>
@@ -1025,7 +1038,6 @@
             <xs:enumeration value="RequestRSAKey"/>
             <xs:enumeration value="RetrieveSurveys"/>
             <xs:enumeration value="RequestRemainingResources"/>
-            <xs:enumeration value="QueryDeploymentProgress"/>
             <xs:enumeration value="IATBeingDeployed"/>
             <xs:enumeration value="IATDeployHaltFailed"/>
             <xs:enumeration value="NoSuchClient"/>
@@ -1036,7 +1048,6 @@
             <xs:enumeration value="LegacyData"/>
             <xs:enumeration value="MismatchedDataFormat"/>
             <xs:enumeration value="RequestConnection"/>
-            <xs:enumeration value="RequestIATUpload"/>
             <xs:enumeration value="PasswordValid"/>
             <xs:enumeration value="PasswordInvalid"/>
             <xs:enumeration value="RequestItemSlides"/>
@@ -1081,7 +1092,6 @@
             <xs:enumeration value="ActivationResponse"/>
             <xs:enumeration value="AdminListener"/>
             <xs:enumeration value="ConfigFile"/>
-            <xs:enumeration value="DeploymentProgress"/>
             <xs:enumeration value="Handshake"/>
             <xs:enumeration value="Manifest"/>
             <xs:enumeration value="ResultPacket"/>
@@ -2434,33 +2444,6 @@
     </xs:complexType>
 
 
-    <xs:complexType name="deployment-progress-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.deployment.DeploymentProgress"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GDeploymentProgress" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.deployment.DeploymentProgress"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:message-impl">
-                <xs:sequence>
-                    <xs:element name="Stage" type="iat:DeploymentStage" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ActiveElement" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ProgressMin" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ProgressMax" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ProgressVal" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="LastUpdate" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ServerException" type="iat:server-exception-message-impl" minOccurs="0" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
 
     <xs:complexType name="GFileEntity" abstract="true">
         <xs:annotation>
@@ -2551,6 +2534,7 @@
                 <xs:sequence>
                     <xs:group ref="iat:ManifestGroup"/>
                 </xs:sequence>
+                <xs:attribute name="ManifestType" type="iat:ManifestType" form="unqualified" use="optional" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -3373,7 +3357,6 @@
                 <xs:element name="ConfigFile" type="iat:config-file-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="ActivationResponse" type="iat:activation-response-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="ActivationRequest" type="iat:activation-request-impl" minOccurs="1" maxOccurs="1"/>
-                <xs:element name="DeploymentProgress" type="iat:deployment-progress-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="Handshake" type="iat:handshake-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="IATList" type="iat:iat-list-impl" minOccurs="1" maxOccurs="1"/>
                 <xs:element name="Manifest" type="iat:manifest-impl" minOccurs="1" maxOccurs="1"/>

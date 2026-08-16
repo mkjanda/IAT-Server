@@ -15,12 +15,14 @@ import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
-import net.iatsoftware.iat.events.WebSocketDataSent;
-import net.iatsoftware.iat.events.WebSocketFinalDataSent;
+import net.iatsoftware.iat.events.WebSocketSendEvent;
+import net.iatsoftware.iat.events.WebSocketFinalSendEvent;
 import net.iatsoftware.iat.services.MailService;
 import net.iatsoftware.iat.services.WebSocketService;
 
-import javax.inject.Inject;
+import org.springframework.web.socket.WebSocketSession;
+
+import jakarta.inject.Inject;
 
 public class DefaultIATDeployer extends DefaultBaseIATDeployer implements IATDeployer {
 
@@ -29,33 +31,7 @@ public class DefaultIATDeployer extends DefaultBaseIATDeployer implements IATDep
     @Inject
     WebSocketService webSocketService;
 
-    public DefaultIATDeployer(Long clientId, Long deploymentId, Long testId, String session) {
-        super(clientId, deploymentId, testId, session);
-    }
 
-    @Override
-    protected void onFailure(String sessionId, ServerExceptionMessage ex) {
-        try {
-            this.iatRepositoryManager.deleteIAT(this.testId);
-        } catch (org.springframework.orm.ObjectOptimisticLockingFailureException failureEx) {
-            this.eventPublisher.publishEvent(new WebSocketDataSent(sessionId,
-                    new Envelope(new ServerExceptionMessage("Error halting deployment", failureEx))));
-        } catch (Exception ex2) {
-        }
-        if (ex != null) {
-            criticalLogger.error("Error deploying iat {}", ex);
-            this.eventPublisher.publishEvent(new WebSocketDataSent(sessionId, new Envelope(ex)));
-        }
-        this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessionId,
-                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
-    }
-
-    @Override
-    protected void onSuccess(String sessId) {
-        this.iatRepositoryManager.finalizeDeployment(deploymentSessionId);
-        this.eventPublisher.publishEvent(new WebSocketFinalDataSent(sessId,
-                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS))));
-    }
 
     @Override
     public void generateTest() {
@@ -66,8 +42,7 @@ public class DefaultIATDeployer extends DefaultBaseIATDeployer implements IATDep
             criticalLogger.error("Error generating IAT", ex);
         } catch (Exception ex) {
             criticalLogger.error("Error generating IAT", ex);
-            this.eventPublisher.publishEvent(new DeploymentFailedEvent(sessionId, this.deploymentSessionId,
-                    new ServerExceptionMessage("Deployment Error", ex)));
+       //     webSocketService.sendEvent(new WebSocketFinalSendEvent(this.session, new Envelope(new ServerExceptionMessage("Error generating IAT: " + ex.getMessage()))));}
         }
     }
 }

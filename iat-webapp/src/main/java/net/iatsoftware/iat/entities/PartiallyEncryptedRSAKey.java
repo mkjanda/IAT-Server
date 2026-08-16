@@ -35,7 +35,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -225,7 +225,7 @@ public class PartiallyEncryptedRSAKey extends net.iatsoftware.iat.generated.GPar
         this.id = val;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    @OneToOne(optional = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "TestID")
     public IAT getTest() {
         return this.test;

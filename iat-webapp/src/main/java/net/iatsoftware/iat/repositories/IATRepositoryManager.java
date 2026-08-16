@@ -52,6 +52,7 @@ public interface IATRepositoryManager {
     void addTestSegment(TestSegment ts);
     void setTestDescriptor(Long testID, byte[] descriptor);
     IAT getIATByNameAndClientID(String testName, long clientID);
+    IAT getTest(long testID);
     String getTestSegmentHtml(Long testSegmentID);
     Client getClient(Long clientID);
     Client getClient(String productKey);
@@ -87,7 +88,6 @@ public interface IATRepositoryManager {
     long getNumResults(Long clientID, String testName);
     List<ResultSet> getResults(Long clientID, String testName);
     void deleteIATResults(Long clientID, String testName);
-//    void deleteIAT(Long clientID, String testName);
     int getResultDataFormat(String testName, Long clientID);
     ServerReport retrieveClientReport(Long clientID);
     void addDynamicSpecifier(DynamicSpecifier dSpec, IAT test);

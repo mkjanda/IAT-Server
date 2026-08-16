@@ -15,8 +15,8 @@ package net.iatsoftware.iat.validation;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import javax.inject.Named;
-import javax.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.inject.Inject;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 

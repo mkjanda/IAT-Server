@@ -5,7 +5,10 @@ import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.generated.ManifestType;
+import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.Handshake;
+import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.MailService;
@@ -58,4 +61,19 @@ public interface SessionState {
 
     Unmarshaller unmarshaller();
     void setUnmarshaller(Unmarshaller unmarshaller);
+
+    TransactionType lastTransactionType();
+    void setLastTransactionType(TransactionType type);
+
+    ManifestType wantedManifestType();
+    void setWantedManifestType(ManifestType type);
+
+    Manifest fileManifest();
+    void setFileManifest(Manifest manifest);
+
+    Manifest itemSlideManifest();
+    void setItemSlideManifest(Manifest manifest);
+
+    IAT replacementTest();
+    void setReplacementTest(IAT test);
 }

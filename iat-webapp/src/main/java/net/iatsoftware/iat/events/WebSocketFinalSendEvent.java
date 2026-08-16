@@ -4,15 +4,17 @@
  * and open the template in the editor.
  */
 package net.iatsoftware.iat.events;
-
 import org.springframework.web.socket.WebSocketSession;
+
+import net.iatsoftware.iat.messaging.Envelope;
 
 /**
  *
- * @author michael
+ * @author Michael Janda too
  */
-public class AbortDeploymentEvent extends DeploymentTransactionEvent {
-    public AbortDeploymentEvent(WebSocketSession session, Long deploymentId) {
-        super(session, deploymentId);
+public class WebSocketFinalSendEvent  extends WebSocketSendEvent {
+    
+    public WebSocketFinalSendEvent(WebSocketSession session, Envelope msg) {
+        super(session, msg);
     }
 }

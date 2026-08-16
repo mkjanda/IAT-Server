@@ -33,7 +33,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.socket.WebSocketSession;
 
 import java.util.Map;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 @Service
 public class DefaultIATServerBeanFactory implements MyBeanFactory {

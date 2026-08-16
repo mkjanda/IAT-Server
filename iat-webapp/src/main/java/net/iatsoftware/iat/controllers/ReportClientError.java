@@ -51,7 +51,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.RSAPublicKeySpec;
 import javax.crypto.Cipher;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.xml.transform.stream.StreamResult;
 
 @Controller
@@ -164,6 +164,7 @@ public class ReportClientError {
             emailParams.addParameter("email", exception.getEmail());
             emailParams.addParameter("version", exception.getVersion());
             emailParams.addParameter("error", exception.getException());
+            emailParams.addInlineImage("logo", logoClasspathLocation, PNG_MIME_TYPE);
             mailService.sendEmail(emailParams);
             resp.setResponse(ErrorReportResponseCode.SUCCESS);
             return new ResponseEntity<>(resp, HttpStatus.OK);
@@ -235,6 +236,7 @@ public class ReportClientError {
         EmailParameters params = new EmailParameters(errorReportRecipient, "Invalid Save File",
                 "email/invalid-save-file-report.html");
         params.addParameter("report", report);
+        params.addInlineImage("logo", logoClasspathLocation, "image/png");
         mailService.sendEmail(params);
         if (c.isFrozen()) {
             return "frozen";

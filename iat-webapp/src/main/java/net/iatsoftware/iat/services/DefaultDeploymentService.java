@@ -9,67 +9,80 @@ package net.iatsoftware.iat.services;
  *
  * @author Michael Janda
  */
-import net.iatsoftware.iat.config.MyBeanFactory;
-import net.iatsoftware.iat.config.IATDeployerFactory;
+
+import net.iatsoftware.iat.communication.ReplyChannel;
+import net.iatsoftware.iat.communication.SessionState;
 import net.iatsoftware.iat.deployment.IATDeployer;
-import net.iatsoftware.iat.deployment.IATRedeployer;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.User;
-import net.iatsoftware.iat.events.AbortDeploymentEvent;
 import net.iatsoftware.iat.events.BeginDeploymentEvent;
-import net.iatsoftware.iat.events.DeploymentDescriptorMismatch;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
 import net.iatsoftware.iat.events.DeploymentCleanupEvent;
-import net.iatsoftware.iat.events.RSAKeyReceivedEvent;
-import net.iatsoftware.iat.events.TokenDefinitionReceivedEvent;
-import net.iatsoftware.iat.events.UploadRequestEvent;
-import net.iatsoftware.iat.events.WebSocketDataSent;
-import net.iatsoftware.iat.events.WebSocketFinalDataSent;
 import net.iatsoftware.iat.generated.TransactionType;
-import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.ServerExceptionMessage;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
+
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.RemovalCause;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.web.socket.WebSocketSession;
+import org.springframework.web.context.WebApplicationContext;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
 @Service
 @EnableAsync
 public class DefaultDeploymentService implements DeploymentService {
 
     private static final Logger critical = LogManager.getLogger("critical");
-    private static final ConcurrentHashMap<Long, IATDeployer> IATDeploymentMap = new ConcurrentHashMap<>();
     @Inject
     IATRepositoryManager iatRepositoryManager;
-    @Inject
-    MyBeanFactory iatServerBeanFactory;
     @Inject
     ApplicationEventPublisher publisher;
     @Inject
     @Named("ServerConfiguration")
     Properties serverConfiguration;
     @Inject
-    IATDeployerFactory deployerFactory;
+    WebApplicationContext context;
+
+    private final Cache<Long, IATDeployer> deploymentCache = Caffeine.newBuilder()
+            .expireAfterAccess(DeploymentSession.DEPLOYMENT_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS)
+            .removalListener((Long key, IATDeployer deployer, RemovalCause cause) -> {
+                if (deployer != null) {
+                    critical.error("Deployment session " + key + " removed from cache due to " + cause);
+                    deployer.abort();
+                    iatRepositoryManager.deleteIAT(deployer.getTestId());
+                }
+            }).build();
+            
+    @Override
+    public IATDeployer getDeployer(long deploymentId) {
+        return deploymentCache.getIfPresent(deploymentId);
+    }           
 
     @Override
-    public Calendar beginNewDeployment(Client c, User u, String testName, WebSocketSession session) throws java.io.IOException, java.net.URISyntaxException, java.nio.file.NoSuchFileException {
+    public void setWebSocketSessionState(long deploymentId, SessionState state) {
+        IATDeployer deployer = deploymentCache.getIfPresent(deploymentId);
+        if (deployer != null) {
+            deployer.setSession(state);
+        }
+    }
+
+
+    @Override
+    public long beginNewDeployment(Client c, User u, String testName, SessionState session, ReplyChannel replyChannel) throws java.io.IOException, java.net.URISyntaxException {
         try {
             IAT test = new IAT(c, u, testName, serverConfiguration.getProperty("admin-version"),
                     Integer.parseInt(serverConfiguration.getProperty("data-format-version")),
@@ -77,88 +90,32 @@ public class DefaultDeploymentService implements DeploymentService {
             DeploymentSession ds = new DeploymentSession(c, u, test);
             iatRepositoryManager.addTest(test);
             iatRepositoryManager.storeDeploymentSession(ds);
-            IATDeployer deployment = deployerFactory.createDeployer(c.getClientId(), ds.getId(), test.getId(), session);
-            IATDeploymentMap.put(ds.getId(), deployment);
-            session.getAttributes().put("DeploymentID", ds.getId());
-            session.getAttributes().put("IATName", testName);
-            return ds.getDeploymentStart();
+            IATDeployer deployment = (IATDeployer) context.getBean("DefaultIATDeployer");
+            deployment.setClientId(c.getClientId());
+            deployment.setDeploymentId(ds.getId());
+            deployment.setTestId(test.getId());
+            deployment.setSession(session);
+            deployment.setReplyChannel(replyChannel);
+            session.setDeploymentId(ds.getId());
+            session.setIatName(testName);
+            deploymentCache.put(ds.getId(), deployment);
+            return ds.getId();
         } catch (jakarta.xml.bind.JAXBException ex) {
-            this.publisher.publishEvent(new DeploymentFailedEvent(session, -1,
-                    new ServerExceptionMessage("Failed to marshal manifest object", ex)));
-            var calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(0);
-            return calendar;
+            return -1;
         }
     }
 
-    @Override
-    public Calendar beginNewRedeployment(Client c, User u, String testName, IAT oldTest, WebSocketSession session)
-            throws java.io.IOException, java.net.URISyntaxException, java.nio.file.NoSuchFileException {
-        DeploymentSession ds = null;
-        IAT test = null;
-        try {
-            test = new IAT(c, u, testName, serverConfiguration.getProperty("admin-version"),
-                    Integer.parseInt(serverConfiguration.getProperty("data-format-version")),
-                    oldTest.getUploadTimestamp());
-            iatRepositoryManager.addTest(test);
-            ds = new DeploymentSession(c, u, test);
-            ds.setTest(test);
-            iatRepositoryManager.storeDeploymentSession(ds);
-            test.setNumAdministrations(oldTest.getNumAdministrations());
-        } catch (jakarta.xml.bind.JAXBException ex) {
-            this.publisher.publishEvent(new DeploymentFailedEvent(session, -1,
-                    new ServerExceptionMessage("Failed to marshal manifest object", ex)));
-            var calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(0);
-            return calendar;
-        }
-        IATRedeployer redeployer = null;
-        try {
-            iatRepositoryManager.storeDeploymentSession(ds);
-            redeployer = deployerFactory.createRedeployer(c.getClientId(), ds.getId(), test.getId(), oldTest.getId(),
-                    session);
 
-            IATDeploymentMap.put(ds.getId(), redeployer);
-            session.getAttributes().put("DeploymentID", ds.getId());
-            session.getAttributes().put("IATName", testName);
-            session.getAttributes().put("ReplacementTest", test);
-            iatRepositoryManager.copyRSAKey(test.getId(), oldTest.getId());
-            return ds.getDeploymentStart();
-        } catch (org.hibernate.exception.ConstraintViolationException ex) {
-            redeployer.setFailed(session, new ServerExceptionMessage("Constraint violation creating redeployer", ex));
-            throw ex;
-        }
-    }
 
     @Override
     public void completeDeployment(DeploymentSession ds) {
-        IATDeploymentMap.remove(ds.getId());
+        deploymentCache.invalidate(ds.getId());
         iatRepositoryManager.finalizeDeployment(ds.getId());
     }
 
     @EventListener
-    public void processUploadRequest(UploadRequestEvent e) {
-        try {
-            IATDeploymentMap.get(e.getDeploymentID()).requestUpload(e.getSession());
-        } catch (Exception ex) {
-            reportException("Error processing upload request", ex, e.getSession());
-        }
-    }
-
-    @EventListener
-    public void onRSAKeyReceived(RSAKeyReceivedEvent e) {
-        try {
-            IATDeploymentMap.get(e.getDeploymentID()).storeRSAKeys(e.getAdminKey(), e.getDataKey());
-            this.publisher.publishEvent(new WebSocketDataSent(e.getSession(),
-                    new Envelope(new TransactionRequest(TransactionType.ENCRYPTION_KEYS_RECEIVED))));
-        } catch (Exception ex) {
-            reportException("Error recording encryption keys", ex, e.getSession());
-        }
-    }
-
-    @EventListener
     public void beginDeployment(BeginDeploymentEvent evt) {
-        var deployer = IATDeploymentMap.get(evt.getDeploymentSessionID());
+        var deployer = deploymentCache.getIfPresent(evt.getDeploymentSessionID());
         if (deployer == null)
             return;
         deployer.generateTest();
@@ -170,92 +127,25 @@ public class DefaultDeploymentService implements DeploymentService {
                 + e.getFailureCause().getStackTraceElement().stream()
                         .reduce(new StringBuffer(), (sb1, sb2) -> sb1.append("\n").append(sb2),
                                 (sb1, sb2) -> sb1.append("\n").append(sb2)));
-        IATDeploymentMap.remove(e.getDeploymentID());
+        deploymentCache.invalidate(e.getDeploymentID());
         iatRepositoryManager.deleteIAT(e.getTestId());
-        this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSession(), new Envelope(e.getFailureCause())));
-    }
-
-    @EventListener
-    public void onDeploymentDescriptorMismatch(DeploymentDescriptorMismatch e) {
-        try {
-            var deployer = IATDeploymentMap.get(e.getDeploymentID());
-            ((IATRedeployer) deployer).onDescriptorMismatch(e.getSession());
-            IATDeploymentMap.remove(e.getDeploymentID());
-        } catch (Exception ex) {
-            reportException("Error handling deployment descriptor mismatch", ex, e.getSession());
-        }
+        var deployer = deploymentCache.getIfPresent(e.getDeploymentID());
+        deployer.replyChannel().send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
     }
 
     @EventListener
     public void onDeploymentSuccess(DeploymentSuccessEvent e) {
-        try {
-            var test = iatRepositoryManager.getIAT(e.getTestId());
-            IATDeploymentMap.remove(e.getDeploymentID());
-            iatRepositoryManager.deleteDeploymentSession(test);
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSession(),
-                    new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS))));
-        } catch (Exception ex) {
-            reportException("Error processing \"Test Deployment Complete\" event", ex, e.getSession());
-        }
-    }
-
-    @EventListener
-    public void onAbortDeployment(AbortDeploymentEvent e) {
-        try {
-            var deployer = IATDeploymentMap.remove(e.getDeploymentID());
-            if (deployer != null) {
-                deployer.abort();
-                iatRepositoryManager.deleteIAT(deployer.getTestId());
-            }
-            this.publisher.publishEvent(new WebSocketFinalDataSent(e.getSession(),
-                    new Envelope(new TransactionRequest(TransactionType.ABORT_DEPLOYMENT))));
-        } catch (Exception ex) {
-            reportException("Error aborting test deployment", ex, e.getSession());
-        }
-    }
-
-    @EventListener
-    public void onTokenDefinitionReceived(TokenDefinitionReceivedEvent e) {
-        try {
-            var deployer = IATDeploymentMap.get(e.getDeploymentID());
-            deployer.storeTokenDefinition(e.getTokenType(), e.getTokenName());
-            this.publisher.publishEvent(new WebSocketDataSent(e.getSession(),
-                    new Envelope(new TransactionRequest(TransactionType.TOKEN_DEFINITION_RECEIVED))));
-        } catch (Exception ex) {
-            reportException("Error reccording token descriptor", ex, e.getSession());
-        }
+        var test = iatRepositoryManager.getIAT(e.getTestId());
+        deploymentCache.invalidate(e.getDeploymentID());
+        iatRepositoryManager.deleteDeploymentSession(test);
+        var deployer = deploymentCache.getIfPresent(e.getDeploymentID());
+        deployer.replyChannel().send(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS));
     }
 
     @EventListener
     public void onDeploymentCleanup(DeploymentCleanupEvent evt) {
         var ds = iatRepositoryManager.getDeploymentSession(evt.getDeploymentSessionID());
         iatRepositoryManager.deleteIAT(ds.getTest());
-        IATDeploymentMap.remove(ds.getId());
-    }
-
-    @Scheduled(initialDelay = 60_000L, fixedRate = 5_000)
-    private void cleanupAbandonedDeployments() {
-        long timeout = System.currentTimeMillis() - DeploymentSession.DEPLOYMENT_TIMEOUT;
-        var removing = new ArrayList<Long>();
-        IATDeploymentMap.keys().asIterator().forEachRemaining(dsId -> {
-            var ds = iatRepositoryManager.getDeploymentSession(dsId);
-            if (ds == null)
-                removing.add(dsId);
-            else if (ds.getDeploymentStart().before(timeout))
-                removing.add(dsId);
-        });
-        removing.forEach(dsId -> {
-            var ds = iatRepositoryManager.getDeploymentSession(dsId);
-            if (ds != null)
-                iatRepositoryManager.deleteIAT(ds.getTest());
-            IATDeploymentMap.remove(dsId);
-        });
-    }
-
-    private void reportException(String msg, Exception ex, WebSocketSession session) {
-        critical.error(msg, ex);
-        this.publisher.publishEvent(new WebSocketDataSent(session, new Envelope(new ServerExceptionMessage(msg, ex))));
-        this.publisher.publishEvent(new WebSocketFinalDataSent(session,
-                new Envelope(new TransactionRequest(TransactionType.TRANSACTION_FAIL))));
+        deploymentCache.invalidate(ds.getId());
     }
 }

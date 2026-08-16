@@ -23,9 +23,9 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.TemplateEngine;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
-import javax.inject.Named;
+import jakarta.inject.Named;
 import jakarta.mail.internet.MimeMessage;
 
 @Service("MailService")
@@ -49,6 +49,10 @@ public class DefaultMailService implements MailService {
     @Inject
     @Named("emailTemplateEngine")
     TemplateEngine emailTemplateEngine;
+
+    @Value("${mail.images.logo-classpath-location}")
+    private String logoClasspathLocation;
+
 
     @Override
     public void sendEmail(@NonNull EmailParameters params) throws jakarta.mail.MessagingException {
@@ -80,6 +84,7 @@ public class DefaultMailService implements MailService {
         EmailParameters params = new EmailParameters("sysinfo", "Server Error",
                 "email/server-error-report.html");
         params.addParameter("exception", sEx);
+        params.addInlineImage("logo", logoClasspathLocation, "image/png");
         sendEmail(params);
     }
 }

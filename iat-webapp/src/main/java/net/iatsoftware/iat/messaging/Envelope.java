@@ -11,7 +11,6 @@ package net.iatsoftware.iat.messaging;
  */
 
 import net.iatsoftware.iat.configfile.ConfigFile;
-import net.iatsoftware.iat.deployment.DeploymentProgress;
 import net.iatsoftware.iat.generated.EnvelopeType;
 import net.iatsoftware.iat.resultdata.ResultPacket;
 import net.iatsoftware.iat.resultdata.ResultSetDescriptor;
@@ -37,8 +36,6 @@ public class Envelope extends net.iatsoftware.iat.generated.GEnvelope {
             envelopeType = EnvelopeType.ACTIVATION_RESPONSE;
         if (this.configFile != null)
             envelopeType = EnvelopeType.CONFIG_FILE;
-        if (this.deploymentProgress != null)
-            envelopeType = EnvelopeType.DEPLOYMENT_PROGRESS;
         if (this.handshake != null)
             envelopeType = EnvelopeType.HANDSHAKE;
         if (this.manifest != null)
@@ -69,8 +66,6 @@ public class Envelope extends net.iatsoftware.iat.generated.GEnvelope {
             setActivationResponse((ActivationResponse) msg);
         if (msg instanceof ConfigFile)
             setConfigFile((ConfigFile) msg);
-        if (msg instanceof DeploymentProgress)
-            setDeploymentProgress((DeploymentProgress) msg);
         if (msg instanceof Handshake)
             setHandshake((Handshake) msg);
         if (msg instanceof Manifest)
@@ -100,8 +95,6 @@ public class Envelope extends net.iatsoftware.iat.generated.GEnvelope {
             return getActivationResponse();
         if (this.configFile != null)
             return getConfigFile();
-        if (this.deploymentProgress != null)
-            return getDeploymentProgress();
         if (this.handshake != null)
             return getHandshake();
         if (this.manifest != null)
@@ -121,9 +114,9 @@ public class Envelope extends net.iatsoftware.iat.generated.GEnvelope {
         if (this.serverReport != null)
             return getServerReport();
         if (this.uploadRequest != null)
-            return uploadRequest;
+            return getUploadRequest();
         if (this.tokenDefinition != null)
-            return this.tokenDefinition;
+            return getTokenDefinition();
         return null;
     }
 }

@@ -8,7 +8,10 @@ import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.messaging.Handshake;
+import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.generated.ManifestType;
+import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.MailService;
@@ -177,4 +180,53 @@ public final class WebSocketSessionState implements SessionState {
     public void setUnmarshaller(Unmarshaller unmarshaller) {
         setAttribute("Unmarshaller", unmarshaller);
     }
+
+    @Override 
+    public TransactionType lastTransactionType() {
+        return (TransactionType) getAttribute("LastTransactionType");
+    }
+
+    @Override
+    public void setLastTransactionType(TransactionType type) {
+        setAttribute("LastTransactionType", type);
+    }   
+
+    @Override
+    public ManifestType wantedManifestType() {
+        return (ManifestType) getAttribute("WantedManifestType");
+    }
+    
+    @Override
+    public void setWantedManifestType(ManifestType type) {
+        setAttribute("WantedManifestType", type);
+    }   
+
+    @Override
+    public Manifest fileManifest() {
+        return (Manifest) getAttribute("FileManifest");
+    }
+
+    @Override
+    public void setFileManifest(Manifest manifest) {
+        setAttribute("FileManifest", manifest);
+    }
+    @Override
+    public Manifest itemSlideManifest() {
+        return (Manifest) getAttribute("SlideManifest");
+    }
+
+    @Override
+    public void setItemSlideManifest(Manifest manifest) {
+        setAttribute("SlideManifest", manifest);
+    }
+
+    @Override
+    public IAT replacementTest() {
+        return (IAT) getAttribute("ReplacementTest");
+    }
+
+    @Override
+    public void setReplacementTest(IAT test) {
+        setAttribute("ReplacementTest", test);
+    }   
 }

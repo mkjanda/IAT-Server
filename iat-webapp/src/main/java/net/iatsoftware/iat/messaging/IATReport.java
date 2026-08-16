@@ -17,7 +17,7 @@ import java.text.DateFormat;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 /**
  *

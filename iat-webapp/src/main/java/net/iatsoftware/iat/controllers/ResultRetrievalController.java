@@ -45,14 +45,14 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Properties;
 import java.io.StringWriter;
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 @Controller
 @ClientControllerAnnotation
-@RequestMapping("/RetrieveResults")
+@RequestMapping("/Download")
 public class ResultRetrievalController {
     @Inject Marshaller marshaller;
     @Inject Unmarshaller unmarshaller;
@@ -76,8 +76,15 @@ public class ResultRetrievalController {
             return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
         }
         TestResults testResults = new TestResults();
-        ResultSetDescriptor rsd = new ResultSetDescriptor(marshaller, unmarshaller, repositoryManager); 
-        rsd.load(clientId, testName);
+        var configFileResource = repositoryManager.getTestResource(test, 0L);
+        var configFileString = new String(configFileResource.getResourceBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        ResultSetDescriptor rsd = new ResultSetDescriptor(); 
+
+        rsd.setTest(test);
+        rsd.setConfigFile(configFileString);
+        rsd.setNumResults((int)repositoryManager.getNumResults(clientId, testName));
+        rsd.setRSAKey(test.getDataKey());
+
         testResults.setDescriptor(rsd);
         List<ResultSet> resultSets = repositoryManager.getResults(clientId, testName);
         testResults.setNumResultSets(resultSets.size());

@@ -10,5 +10,9 @@ package net.iatsoftware.iat.admin;
  * @author Michael Janda
  */
 public interface IATResultRecorder extends Runnable {
-    
+    void setNumItems(int numItems);
+    void setResponseData(java.util.Map<String, String> responseData);
+    void setTestSegment(net.iatsoftware.iat.entities.TestSegment testSeg);
+    void setAdminID(Long adminID);   
+    void setLastFragment(boolean val);
 }

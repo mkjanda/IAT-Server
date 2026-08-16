@@ -18,8 +18,8 @@ public class DeploymentCompleteEvent extends DeploymentTransactionEvent {
     public enum EResult { itemSlidesDeployed, testDeployed, failure, halt, deploymentDescriptorMismatch };
     private final EResult result;
     
-    public DeploymentCompleteEvent(WebSocketSession session, Long deploymentID, EResult result) {
-        super(session, deploymentID);
+    public DeploymentCompleteEvent(Long deploymentID, EResult result) {
+        super(deploymentID);
         this.result = result;
     }
     

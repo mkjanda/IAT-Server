@@ -10,7 +10,6 @@ package net.iatsoftware.iat.admin;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.entities.DynamicSpecifier;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.resultdata.SurveyResponseSet;
 
@@ -24,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import java.util.stream.IntStream;
 import javax.xml.transform.stream.StreamResult;
 
@@ -54,6 +53,30 @@ public class DefaultSurveyResultRecorder extends ResultRecorder implements Surve
         for (String key : resultMap.keySet())
             resultData.put(key, resultMap.get(key));
     }
+
+    public void setTestSegment(TestSegment testSeg) {
+        this.test = testSeg.getTest();
+        this.testElem = testSeg.getElemName();
+    }
+
+    public void setAdminID(Long adminID) {
+        this.adminID = adminID;
+    }   
+
+    public void setNumItems(int numItems) {
+        this.numItems = numItems;
+    }
+
+    public void setResponseData(Map<String, String> responseData) {
+        this.resultData.clear();
+        for (String key : responseData.keySet())
+            this.resultData.put(key, responseData.get(key));
+    }
+
+    public void setLastFragment(boolean lastFragment) {
+        this.lastFragment = lastFragment;
+    }
+
 
     private SurveyResponseSet parseResults() {
         final List<String> responses = new ArrayList<>();

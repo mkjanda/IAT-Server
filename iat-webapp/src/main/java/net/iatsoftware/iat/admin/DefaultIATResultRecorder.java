@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.xml.transform.stream.StreamResult;
 
 
@@ -41,6 +41,26 @@ public class DefaultIATResultRecorder extends ResultRecorder implements IATResul
         super(null, false);
     }
     
+    public void setTestSegment(TestSegment testSeg) {
+        this.test = testSeg.getTest();
+        this.testElem = testSeg.getElemName();
+    }
+
+    public void setAdminID(Long adminID) {
+        this.adminID = adminID;
+    }
+
+    public void setNumItems(int numItems) {
+        this.numItems = numItems;
+    }
+
+    public void setResponseData(Map<String, String> responseData) {
+        this.responseData = responseData;
+    }
+
+    public void setLastFragment(boolean lastFragment) {
+        this.lastFragment = lastFragment;
+    }
     
     public DefaultIATResultRecorder(TestSegment testSeg, Long adminID, int numItems, Map<String, String> responseData, boolean lastFragment) {
         super(testSeg.getTest(), lastFragment);

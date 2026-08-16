@@ -13,4 +13,9 @@ package net.iatsoftware.iat.admin;
 import java.util.Map;
 
 public interface SurveyResultRecorder extends Runnable {
+    void setNumItems(int numItems);
+    void setResponseData(Map<String, String> responseData);
+    void setTestSegment(net.iatsoftware.iat.entities.TestSegment testSeg);
+    void setAdminID(Long adminID);   
+    void setLastFragment(boolean val);
 }

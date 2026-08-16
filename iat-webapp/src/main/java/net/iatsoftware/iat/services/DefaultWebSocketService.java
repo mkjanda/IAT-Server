@@ -17,6 +17,8 @@ import net.iatsoftware.iat.communication.WebSocketReplyChannel;
 import net.iatsoftware.iat.communication.WebSocketSessionState;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.events.WebSocketDataReceived;
+import net.iatsoftware.iat.events.WebSocketFinalSendEvent;
+import net.iatsoftware.iat.events.WebSocketSendEvent;
 import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.messaging.ActivationRequest;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
@@ -29,15 +31,20 @@ import org.springframework.context.event.EventListener;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketMessage;
 
+import java.io.StringWriter;
 import java.util.List;
-import javax.inject.Inject;
+import javax.xml.transform.stream.StreamResult;
+
+import jakarta.inject.Inject;
 
 @Service("WebSocketService")
 public class DefaultWebSocketService implements WebSocketService {
 
     private static final Logger logger = LogManager.getLogger(DefaultWebSocketService.class);
-
+    private static final Logger critical = LogManager.getLogger("critical");
     @Inject
     ApplicationEventPublisher publisher;
     @Inject ClientRepositoryManager repositoryManager;
@@ -84,7 +91,33 @@ public class DefaultWebSocketService implements WebSocketService {
                 }
             });
         } catch (Exception ex) {
-            logger.error("Error processing client message", ex);
+            critical.error("Error processing client message", ex);
         }
     }
+
+    private TextMessage buildTextMessage(Envelope env) throws java.io.IOException {
+        var stringWriter = new StringWriter();
+        marshaller.marshal(env, new StreamResult(stringWriter));
+        return new TextMessage(stringWriter.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
+
+    @EventListener
+    public void sendMessage(WebSocketSendEvent e) {
+        try {
+            e.getSession().sendMessage(buildTextMessage(e.getData()));
+        } catch (Exception ex) {
+            critical.error("Error sending message to client", ex);
+        }
+    }
+
+    @EventListener
+    public void sendFinalMessage(WebSocketFinalSendEvent e) {
+        try {
+            e.getSession().sendMessage(buildTextMessage(e.getData()));
+            e.getSession().close();
+        } catch (Exception ex) {
+            critical.error("Error sending final message to client", ex);
+        }
+    }
+
 }

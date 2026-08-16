@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.StringReader;
 import java.io.StringWriter;
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 import javax.xml.transform.stream.StreamSource;
 
 @Service

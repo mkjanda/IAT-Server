@@ -58,7 +58,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import java.util.Calendar;
 
@@ -998,6 +998,11 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     public TestResource getTestImage(IAT test, int index) {
         return testResourceRepository.getTestImage(test, index);
+    }
+
+    @Transactional
+    public IAT getTest(long testID) {
+        return iatRepository.get(testID);
     }
 
     @Scheduled(initialDelay = 5_000L, fixedDelay = 5_000L)

@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.async.DeferredResult;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.messaging.AjaxResponse;

@@ -39,6 +39,13 @@ public class ResultSetDescriptor extends net.iatsoftware.iat.generated.GResultSe
         this.numResults = numResults;
     }
 
+    public void setTest(IAT test) {
+        this.testAuthor = test.getUser().getFName() + " " + test.getUser().getLName();
+        this.dataVersion = test.getResultFormat();
+        this.tokenName = test.getTokenName();
+        this.tokenType = test.getTokenType();
+    }    
+
     @Override
     protected boolean doBeforeMarshal(jakarta.xml.bind.Marshaller m) {
         this.setConfigFile("<![CDATA[" + this.configFile + "]]>");

@@ -10,173 +10,73 @@ package net.iatsoftware.iat.controllers;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.configfile.ConfigFile;
-import net.iatsoftware.iat.configfile.IATEvent;
 import net.iatsoftware.iat.entities.TestResource;
-import net.iatsoftware.iat.events.BeginDeploymentEvent;
-import net.iatsoftware.iat.events.ManifestReceivedEvent;
-import net.iatsoftware.iat.events.WebSocketDataSent;
-import net.iatsoftware.iat.generated.ResourceType;
-import net.iatsoftware.iat.generated.TransactionType;
-import net.iatsoftware.iat.messaging.Envelope;
-import net.iatsoftware.iat.messaging.File;
-import net.iatsoftware.iat.messaging.Manifest;
-import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
-import net.iatsoftware.iat.services.WebSocketService;
+import net.iatsoftware.iat.services.DeploymentService;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import org.springframework.stereotype.Controller;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.oxm.Marshaller;
-import org.springframework.oxm.Unmarshaller;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.lang.module.FindException;
-import java.util.stream.Collectors;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.Properties;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import jakarta.inject.Inject;
 
 @Controller
-@RequestMapping("/DeploymentUpload")
+@RequestMapping("/Upload")
 public class DeploymentUploadController {
-	private final String MANIFEST_UPLOAD_MILLIS = "MANIFEST_UPLOAD_MILLIS";
-	private final String MANIFEST = "MANIFEST";
 
 	@Inject
-	Unmarshaller unmarshaller;
-	@Inject
-	Marshaller marshaller;
+	DeploymentService deploymentService;
+
 	@Inject
 	IATRepositoryManager repositoryManager;
-	@Inject
-	@Named("ServerConfiguration")
-	Properties serverConfiguration;
-	@Inject
-	ApplicationEventPublisher publisher;
-	@Inject
-	WebSocketService socketService;
 
-	private static final ConcurrentHashMap<Long, Map<String, Object>> manifests = new ConcurrentHashMap<Long, Map<String, Object>>();
-
-	private static Logger transactions = LogManager.getLogger("transactions");
-	private static Logger critical = LogManager.getLogger("critical");
-
-	@PostMapping("/DeploymentFiles/{upload}")
-	public ResponseEntity<Envelope> deploymentUpload(@RequestHeader("deploymentId") Long deploymentId,
-			@RequestHeader("sessionId") String sessId, @PathVariable("upload") String uploadContents,
-			@RequestBody byte[] data) throws java.io.IOException {
+	@PostMapping("/Deployment")
+	public ResponseEntity<Void> deploymentUpload(@RequestParam("deploymentId") Long deploymentId,
+				@RequestBody byte[] data) throws java.io.IOException {
 		var deploymentSession = repositoryManager.getDeploymentSession(deploymentId);
-		if (!deploymentSession.getWebSocketId().equals(sessId))
-			throw new FindException("The supplied web socket session id mismatched.");
-		var manifest = (Manifest) manifests.get(deploymentId).get(MANIFEST);
+		var deployer = deploymentService.getDeployer(deploymentId);
+		var sessionState = deployer.session();
 		var test = deploymentSession.getTest();
-		if (uploadContents.equals("configuration")) {
-			try {
-				var cf = (ConfigFile) this.unmarshaller.unmarshal(new StreamSource(new ByteArrayInputStream(data))); 
-				socketService.setSessionProperty(sessId, "configuration", cf);
-				cf.setIATName(test.getTestName());
-				
-				var testResource = new TestResource(test, 0, "text/xml", data,
-						ResourceType.TEST_CONFIGURATION);
-				repositoryManager.addTestResource(testResource);
-			} catch (java.io.IOException ex) {
-				critical.error("Error unmarshalling config file.", ex);
-			}
-		} else {
-			var offset = 0;
-			List<File> files;
-			if (uploadContents.equals("images")) {
-				files = manifest.getFiles().stream().filter(f -> (f.getResourceType().equals(ResourceType.IMAGE)) ||
-					(f.getResourceType().equals(ResourceType.ERROR_MARK))).collect(Collectors.toList());
-			} else {
-				files = manifest.getFiles().stream().filter(f -> f.getResourceType().equals(ResourceType.ITEM_SLIDE))
-					.collect(Collectors.toList());
-			}
-			var configFile = (ConfigFile) socketService.getSessionProperty(sessId, "configuration");
-			for (var img : files) {
-				var fSize = img.getSize();
-				var fData = new byte[fSize];
+			int offset = 0;
+			for (var f : sessionState.fileManifest().getFiles()) {
+				int fSize = f.getSize();
+				byte[] fData = new byte[fSize];
 				System.arraycopy(data, offset, fData, 0, fSize);
 				offset += fSize;
-				var testResource = new TestResource(test, img.getMimeType(), fData, img.getResourceType());
+				var testResource = new TestResource(test, f.getMimeType(), fData, f.getResourceType());
 				repositoryManager.addTestResource(testResource);
-				if (img.getResourceType() == ResourceType.IMAGE) {
-					configFile.getEventList().getEvents().forEach(evt -> ((IATEvent)evt).setResource((int)img.getResourceId(), 
-						(int)testResource.getResourceId()));
-				}
-				if (img.getResourceType() == ResourceType.ERROR_MARK) {
-					configFile.getDisplayItemList().getIATDisplayItem().stream()
-							.filter(di -> di.getFilename().equals(img.getName()))
-							.forEach(di -> di.setResourceId(testResource.getResourceId()));
-					configFile.setErrorMarkID(testResource.getResourceId());
-				}
 			}
-			if (uploadContents.equals("images")) {
-				var configFileBytes = new ByteArrayOutputStream();
-				marshaller.marshal(configFile, new StreamResult(configFileBytes));
-				var configFileRes = repositoryManager.getTestResource(test, 0L);
-				configFileRes.setResourceBytes(configFileBytes.toByteArray());
-				repositoryManager.updateTestResource(configFileRes);
-			} else 	
-				this.publisher.publishEvent(new BeginDeploymentEvent(deploymentSession.getId()));
-		}
-		return new ResponseEntity<Envelope>(new Envelope(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS)),
-				HttpStatus.OK);
+		return ResponseEntity.ok().build();
 	}
+
+	@PostMapping("/ItemSlides")
+	public ResponseEntity<Void> itemSlidesUpload(@RequestParam("deploymentId") Long deploymentId,
+				@RequestBody byte[] data) throws java.io.IOException {
+		var deploymentSession = repositoryManager.getDeploymentSession(deploymentId);
+		var deployer = deploymentService.getDeployer(deploymentId);
+		var sessionState = deployer.session();
+		var test = deploymentSession.getTest();
+			int offset = 0;
+			for (var f : sessionState.itemSlideManifest().getFiles()) {
+				int fSize = f.getSize();
+				byte[] fData = new byte[fSize];
+				System.arraycopy(data, offset, fData, 0, fSize);
+				offset += fSize;
+				var testResource = new TestResource(test, f.getMimeType(), fData, f.getResourceType());
+				repositoryManager.addTestResource(testResource);
+			}
+		return ResponseEntity.ok().build();
+	}
+
 
 	@ExceptionHandler(java.io.IOException.class)
-	public ResponseEntity<Integer> onException() {
-		return new ResponseEntity<Integer>(0, HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<Void> onException() {
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 	}
 
-	@EventListener
-	public void manifestReceived(ManifestReceivedEvent evt) {
-		try {
-			var map = new HashMap<String, Object>();
-			var deploymentSession = repositoryManager.getDeploymentSession(evt.getDeploymentID());
-			var iat = deploymentSession.getTest();
-			iat.setManifest(evt.getManifest());
-			iat = repositoryManager.updateIAT(iat);
-			manifests.put(evt.getDeploymentID(), map);
-			map.put(MANIFEST, evt.getManifest());
-			map.put(MANIFEST_UPLOAD_MILLIS, System.currentTimeMillis());
-			var trans = new TransactionRequest(TransactionType.DEPLOYMENT_FILE_MANIFEST_RECEIVED);
-			trans.addLongValue("DeploymentId", evt.getDeploymentID());
-			trans.addStringValue("SessionId", evt.getSessionId());
-			transactions.info(String.format("Client(%d) %s: ", evt.getManifest().getClientId(),
-					evt.getManifest().getProductKey()));
-			this.publisher.publishEvent(new WebSocketDataSent(evt.getSessionId(), new Envelope(trans)));
-		} catch (java.lang.Exception ex) {
-			critical.error("Error recording file manifest", ex);
-		}
-	}
-
-	@Scheduled(initialDelay = 1_800_000L, fixedDelay = 1_800_000L)
-	private void cleanStaleDeployments() {
-		manifests.keySet().stream()
-				.filter(k -> (Long) ((Map<String, Object>) manifests.get(k)).get(MANIFEST_UPLOAD_MILLIS) -
-						System.currentTimeMillis() > 1_800_000L)
-				.forEach(k -> manifests.remove(k));
-
-	}
 }
