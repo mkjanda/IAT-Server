@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title th:text="${title}"></title>
+        <link rel="stylesheet" href="/IAT/css/main.css">
+        <meta charset="UTF-8" />
+    </head>
+    <body>
+        <div th:insert="header :: header(caption=${caption})"></div>
+        <div>
+            <div id="content" th:switch="${page}">
+                <th:block th:case="'ClientFrozen'">
+                <p>This account has been frozen. For information, please contact <span class="hilight">
+                        michael@iatsoftware.net</span>.</p>
+                </th:block>
+                <th:block th:case="'NoAdministrations'">
+            <p>The test administrations for this client have been exhausted. For information, please 
+                contact <span class="hilight">michael@iatsoftware.net</span>.</p>
+                </th:block>
+                <th:block th:case="'NoSuchTest'">
+            <p>No test was found with the name <span class="hilight" th:text="${testName}"></span> associated with this individual or organization. Please verify the link
+                below is correct. If so and you are the author of this test, contact me at <span class="hilight">michael@iatsoftware.net</span>. Otherwise, notify the
+                person or website that directed you here.</p>.
+            <div style="text-align: center; margin-top: 50px;"><p class="attention" id="testLink"></p></div>
+                    
+                </th:block>
+            </div>
+            <div id="logo">
+                <img src="/IAT/images/logo.png" />
+            </div>
+        </div>
+    </body>
+</html>

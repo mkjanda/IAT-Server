@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title th:remove="all">eMail Verification Message</title>
+        <meta charset="UTF-8">
+        <style th:insert="email/fragments/shared-email-styles.css"></style>
+    </head>
+    <body>
+        <table style="width: 800px; border-collapse: collapse;">
+            <tr>
+                <td style="width: 620px;"></td>
+                <td style="width: 180px;"></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div th:insert="email/fragments/logo.html :: logo" style="text-align: right;"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="content">
+                        <p style="font-family: oxtail, serif; font-size: 16px;" th:text="${user.fullName + ','}"></p>
+                        <p style="font-family: oxtail, serif; font-size: 16px;">
+                            You are receiving this email because a copy of <span
+                                style="font-weight: bold; color: rgb(163, 87, 118);">IAT Design</span> was recently registered
+                            with your name and this email address. In order to complete your
+                            product activation, click on the link at the bottom of this
+                            message. If you are unable to click on the provided link, then copy
+                            and paste it into the address bar of your web browser. If you
+                            experience problems with any of this, please contact me at the
+                            address below.
+                        </p>
+                        <p style="font-family: oxtail, serif; font-size: 16px;">
+                            <a th:href="@{https://www.iatsoftware.net/IAT/EMailVerification(VerificationKey=${user.verificationKey})}"
+                               th:text="${'https://www.iatsoftware.net/IAT/EMailVerification?VerificationKey=' + user.verificationKey}"></a>
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+            <th:block th:replace="email/fragments/signature.html :: signature"></th:block>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

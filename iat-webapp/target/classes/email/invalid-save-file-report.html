@@ -1,0 +1,16 @@
+<html>
+<head>
+<title th:remove="all">Invalid Save File Report</title>
+<meta charset="UTF-8">
+<style th:insert="email/fragments/shared-email-styles.css :: sharedCss"></style>
+</head>
+<body>
+	<div id="content">
+		<p class="line" th:text="${'Client Id: ' + report.clientId}"></p>
+		<p class="line" th:text="${'Product Key: ' + report.productCode}"></p>
+		<p class="line" th:text="${'Name: ' + report.userName}"></p>
+		<p class="line" th:text="${'Email: ' + report.userEmail}"></p>
+		<p class="line" th:text="${'Report time: ' + report.reportTime}"></p>
+	</div>
+</body>
+</html>

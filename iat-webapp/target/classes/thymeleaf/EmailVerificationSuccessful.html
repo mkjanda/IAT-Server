@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>eMail Verification Successful</title>
+        <link rel="stylesheet" href="/IAT/css/main.css" />
+    </head>
+    <body>
+        <div th:replace="header :: header(caption='eMail Verified')"></div>
+        <div>
+            <div id="content">
+                <p>Thank you, <span th:text="${userName}"></span>. Your email has been verified.  If your copy of <span class="hilight">IAT Design</span> is
+                    currently open to the Activation screen, click the "I have verified my email" button and activation should complete.  If you have closed
+                    the design program, then it should automatically connect to our server to confirm your email verification and activate.</p>
+                <p>If you experience problems with program activation, please contact me at <span class="hilight">michael@iatsoftware.net</span>.</p>
+            </div>
+            <div id="logo">
+                <img src="/IAT/images/logo.png" />
+            </div>
+        </div>
+    </body>
+</html>
