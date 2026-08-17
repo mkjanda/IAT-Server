@@ -228,5 +228,15 @@ public final class WebSocketSessionState implements SessionState {
     @Override
     public void setReplacementTest(IAT test) {
         setAttribute("ReplacementTest", test);
-    }   
+    }
+    
+    @Override
+    public String authToken() {
+        return (String) getAttribute("AuthToken");
+    }
+
+    @Override
+    public void setAuthToken(String authToken) {
+        setAttribute("AuthToken", authToken);
+    }
 }

@@ -51,7 +51,6 @@ public class DeploymentHandler implements TransactionHandler {
                 ctx.reply().send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
 
             var outTrans = new TransactionRequest(TransactionType.REQUEST_CONFIG_FILE);
-            outTrans.setAuthToken(ctx.client().getAuthToken());
             outTrans.setDeploymentId(ctx.deploymentId());
             ctx.reply().send(outTrans);
         }

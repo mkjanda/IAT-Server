@@ -12,6 +12,7 @@ package net.iatsoftware.iat.services;
 
 import net.iatsoftware.iat.communication.SessionState;
 import net.iatsoftware.iat.communication.TransactionContext;
+import net.iatsoftware.iat.messaging.Message;
 import net.iatsoftware.iat.communication.TransactionHandler;
 import net.iatsoftware.iat.communication.WebSocketReplyChannel;
 import net.iatsoftware.iat.communication.WebSocketSessionState;
@@ -57,8 +58,8 @@ public class DefaultWebSocketService implements WebSocketService {
     @EventListener
     public void onMessageReceived(WebSocketDataReceived e) {
         try {
-        Envelope env = e.getEnvelope();
-        String productKey = env.getMessage().getProductKey();
+        Message message = (Message)e.getMessage();
+        String productKey = message.getProductKey();
         Client client = repositoryManager.getClientByProductKey(productKey);
         if (!e.getSession().getAttributes().containsKey("SessionState")) {
             e.getSession().getAttributes().put("SessionState", new WebSocketSessionState(e.getSession()));
@@ -70,13 +71,13 @@ public class DefaultWebSocketService implements WebSocketService {
         session.setMailService(mailService);
         session.setMarshaller(marshaller);
         session.setUnmarshaller(unmarshaller);
-        var ctx = new TransactionContext(e.getSession(), e.getEnvelope().getMessage(), new WebSocketReplyChannel(e.getSession(), this.publisher), session);
+        var ctx = new TransactionContext(e.getSession(), message, new WebSocketReplyChannel(e.getSession(), this.publisher), session);
         if (client == null) {
             logger.error("Received message from unknown client with product key " + productKey);
             e.getSession().close();
             return;
         }
-        if (!(env.getMessage() instanceof ActivationRequest) && client.getUsers().isEmpty()) {
+        if (!(message instanceof ActivationRequest) && client.getUsers().isEmpty()) {
             e.getSession().close();
             return;
         }
@@ -95,7 +96,7 @@ public class DefaultWebSocketService implements WebSocketService {
         }
     }
 
-    private TextMessage buildTextMessage(Envelope env) throws java.io.IOException {
+    private TextMessage buildTextMessage(Message env) throws java.io.IOException {
         var stringWriter = new StringWriter();
         marshaller.marshal(env, new StreamResult(stringWriter));
         return new TextMessage(stringWriter.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));

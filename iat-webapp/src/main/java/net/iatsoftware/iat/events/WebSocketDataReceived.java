@@ -11,19 +11,18 @@ package net.iatsoftware.iat.events;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.messaging.Envelope;
 import org.springframework.web.socket.WebSocketSession;
 
 public class WebSocketDataReceived extends WebSocketEvent {
-    private final Envelope envelope;
+    private final Object message;
     
     
-    public WebSocketDataReceived(WebSocketSession session, Envelope env) {
+    public WebSocketDataReceived(WebSocketSession session, Object message) {
         super(session, WebSocketEventType.DATA_RECEIVED);
-        this.envelope = env;
+        this.message = message;
     }
-    
-    public Envelope getEnvelope() {
-        return this.envelope;
+
+    public Object getMessage() {
+        return this.message;
     }
 }

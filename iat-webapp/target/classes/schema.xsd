@@ -2610,7 +2610,9 @@
         <xs:complexContent>
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
-                    <xs:element name="Value" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Nonce" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Challenge" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="Tag" type="xs:string" minOccurs="1" maxOccurs="1" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2672,16 +2674,13 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorName" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="URL" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="NumResultSets" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="TestSizeKB" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="LastDataRetrieval" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorTitle" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorEMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="TestVersion" type="xs:string" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="Deploying" type="xs:boolean" use="required" form="unqualified"/>

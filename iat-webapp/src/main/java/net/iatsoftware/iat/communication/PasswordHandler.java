@@ -3,7 +3,10 @@ package net.iatsoftware.iat.communication;
 import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
 import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.TransactionRequest;
+import java.time.Duration;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import org.springframework.stereotype.Component;
 
 import java.security.SecureRandom;
@@ -13,6 +16,10 @@ import java.util.Base64;
 public class PasswordHandler implements TransactionHandler {
     static final SecureRandom random = new SecureRandom();
     static final Base64.Encoder b64Encoder = Base64.getEncoder();
+    static public final Cache<String, TransactionContext> authTokenCache = Caffeine.newBuilder()
+    .maximumSize(10_000)
+    .expireAfterWrite(Duration.ofMinutes(10))
+    .build();
 
     @Override
     public boolean supports(TransactionContext ctx) {
@@ -36,9 +43,13 @@ public class PasswordHandler implements TransactionHandler {
 
         if (key.testPassword(transaction.getTestString())) {
             ctx.sessionState().setAuthenticated(true);
-            String token = ctx.clientRepositoryManager().generateAuthToken(ctx.client(), System.currentTimeMillis(), 3_000_000L);
+            byte[] tokenBytes = new byte[32];
+            random.nextBytes(tokenBytes);
+            String tokenString = b64Encoder.encodeToString(tokenBytes);
+            authTokenCache.put(tokenString, ctx);
+            ctx.sessionState().setAuthToken(tokenString);
             var outTransaction = new TransactionRequest(TransactionType.PASSWORD_VALID);
-            outTransaction.setAuthToken(token);
+            outTransaction.setActivationKey(tokenString);
             ctx.reply().send(outTransaction);
         } else {
             ctx.reply().send(new TransactionRequest(TransactionType.PASSWORD_INVALID));

@@ -76,4 +76,7 @@ public interface SessionState {
 
     IAT replacementTest();
     void setReplacementTest(IAT test);
+
+    String authToken();
+    void setAuthToken(String authToken);
 }

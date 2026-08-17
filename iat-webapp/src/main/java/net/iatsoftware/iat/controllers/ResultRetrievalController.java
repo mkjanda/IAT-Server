@@ -12,6 +12,7 @@ package net.iatsoftware.iat.controllers;
  * 
  */
 
+import net.iatsoftware.iat.communication.PasswordHandler;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.ResultSet;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
@@ -64,17 +65,21 @@ public class ResultRetrievalController {
 
     private static final Logger logger = LogManager.getLogger();
 
+
+
     @GetMapping(value = "")
     @ResponseBody
     public ResponseEntity<byte[]> downloadResults(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId,
             @RequestParam("AuthToken") String authToken) throws Exception {
-        if (!clientRepositoryManager.authTokenValid(clientId, authToken)) {
-            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
-        }
-        IAT test = repositoryManager.getIATByNameAndClientID(testName, clientId);
-        if (test == null) {
-            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
-        }
+
+        var ctx = PasswordHandler.authTokenCache.getIfPresent(authToken);
+        if (ctx == null)
+            return ResponseEntity.badRequest().build();
+        if (!ctx.sessionState().authToken().equals(authToken))
+            return ResponseEntity.badRequest().build();
+        var test = repositoryManager.getIATByNameAndClientID(testName, clientId);
+        if (test == null) 
+            return ResponseEntity.badRequest().build();
         TestResults testResults = new TestResults();
         var configFileResource = repositoryManager.getTestResource(test, 0L);
         var configFileString = new String(configFileResource.getResourceBytes(), java.nio.charset.StandardCharsets.UTF_8);
@@ -113,13 +118,14 @@ public class ResultRetrievalController {
     @GetMapping(value="/ItemSlides")
     public ResponseEntity<byte[]> downloadItemSlides(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId, 
             @RequestParam("AuthToken") String authToken) {
-        if (!clientRepositoryManager.authTokenValid(clientId, authToken)) {
-            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
-        }
+        var ctx = PasswordHandler.authTokenCache.getIfPresent(authToken);
+        if (ctx == null)
+            return ResponseEntity.badRequest().build();
+        if (!ctx.sessionState().authToken().equals(authToken))
+            return ResponseEntity.badRequest().build();
         var test = repositoryManager.getIATByNameAndClientID(testName, clientId);
-        if (test == null) {
-            return new ResponseEntity<>((byte[]) null, HttpStatus.BAD_REQUEST);
-        }
+        if (test == null) 
+            return ResponseEntity.badRequest().build();
         var slideManifest = repositoryManager.getItemSlides(test);
         var outStream = new ByteArrayOutputStream();
         try {

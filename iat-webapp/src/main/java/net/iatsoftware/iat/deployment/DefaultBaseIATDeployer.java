@@ -39,7 +39,6 @@ import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
 import net.sf.saxon.s9api.XsltExecutable;
 import net.sf.saxon.s9api.XsltTransformer;
-import org.apache.commons.io.input.BOMInputStream;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.context.ApplicationEventPublisher;
@@ -190,10 +189,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     public String transform(String input, XsltExecutable trans)
             throws net.sf.saxon.s9api.SaxonApiException, java.io.IOException {
         var transformer = trans.load();
-        var readerBuilder = BOMInputStream.builder();
-        readerBuilder.setInclude(false);
-        readerBuilder.setInputStream(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
-        var reader = readerBuilder.get();
+        var reader = new StringReader(input);
         transformer.setSource(new StreamSource(reader));
         var out = new StringWriter();
         var ser = XsltProcessor.newSerializer(out);

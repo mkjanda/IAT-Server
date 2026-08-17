@@ -6,15 +6,17 @@
 package net.iatsoftware.iat.events;
 import org.springframework.web.socket.WebSocketSession;
 
-import net.iatsoftware.iat.messaging.Envelope;
+import net.iatsoftware.iat.messaging.Message;
 
 /**
  *
  * @author Michael Janda too
  */
+
+
 public class WebSocketFinalSendEvent  extends WebSocketSendEvent {
     
-    public WebSocketFinalSendEvent(WebSocketSession session, Envelope msg) {
+    public WebSocketFinalSendEvent(WebSocketSession session, Message msg) {
         super(session, msg);
     }
 }

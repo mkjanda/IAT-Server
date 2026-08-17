@@ -15,23 +15,16 @@ import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.util.List;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.inject.Inject;
 
 @XmlRootElement(name="ServerReport")
 @XmlAccessorType(XmlAccessType.NONE)
-@Component
-@Scope(value="prototype")
 public class ServerReport extends net.iatsoftware.iat.generated.GServerReport {
-    @Inject IATRepositoryManager iatRepositoryManager;
     
-    public void load(long clientID)
+    public void load(long clientID, IATRepositoryManager iatRepositoryManager)
     {
         Client client = iatRepositoryManager.getClient(clientID);
         contactFName = client.getContactFName();

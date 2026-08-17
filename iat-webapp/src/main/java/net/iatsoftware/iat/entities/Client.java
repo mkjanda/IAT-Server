@@ -413,42 +413,6 @@ public class Client implements java.io.Serializable {
     public void setDownloadsConsumed(Integer val) {
         this.downloadsConsumed = val;
     }
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="oauth_access_expires")
-    public Calendar getOauthAccessExpiration() {
-        return this.oauthAccessExpiration;
-    }
-    public void setOauthAccessExpiration(Calendar val) {
-        this.oauthAccessExpiration = val;
-    }
-
-    @Basic
-    @Column(name="auth_token")
-    public String getAuthToken() {
-        return this.authToken;
-    }       
-    public void setAuthToken(String val) {
-        this.authToken = val;
-    }
-
-    @Basic  
-    @Column(name="auth_created")
-    public long getAuthCreated() {
-        return this.authCreated;
-    }
-    public void setAuthCreated(long val) {
-        this.authCreated = val;
-    }
-    
-    @Basic
-    @Column(name="auth_token_expiration")
-    public long getAuthTokenExpiration() {
-        return this.authTokenExpiration;
-    }
-    public void setAuthTokenExpiration(long val) {
-        this.authTokenExpiration = val;
-    }
 
     @OneToMany(fetch = FetchType.EAGER)
     @JoinColumn(name="ClientID")

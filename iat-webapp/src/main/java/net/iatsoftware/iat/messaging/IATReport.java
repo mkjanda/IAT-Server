@@ -33,7 +33,7 @@ public class IATReport extends net.iatsoftware.iat.generated.GIATReport {
 
     public void load(IAT test, boolean deploying, int numResultSets) {
         DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
-        iatName = test.getTestName();
+        this.testName = test.getTestName();
         this.url = test.getURL();
         numAdministrations = test.getNumAdministrations();
         testSizeKB = test.getTestSizeKB();
@@ -41,13 +41,7 @@ public class IATReport extends net.iatsoftware.iat.generated.GIATReport {
             lastDataRetrieval = "never";
         else
             lastDataRetrieval = df.format(test.getLastDataRetrieval().getTime());
-        if (test.getUser().getTitle() != null)
-            authorTitle = test.getUser().getTitle();
-        else
-            authorTitle = "";
-        authorFName = test.getUser().getFName();
-        authorLName = test.getUser().getLName();
-        authorEMail = test.getUser().getEMail();
+        this.authorName = test.getUser().getFName() + " " + test.getUser().getLName();
         this.setNumResultSets(numResultSets);   
         this.setDeploying(deploying);
         this.testVersion = test.getVersion();

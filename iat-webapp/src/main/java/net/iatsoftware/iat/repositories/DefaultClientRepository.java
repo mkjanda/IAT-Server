@@ -238,44 +238,4 @@ public class DefaultClientRepository extends GenericJpaRepository<Long, Client>
         Predicate pred = cb.equal(root.get("email"), email.toLowerCase());
         return (this.entityManager.createQuery(query.select(cb.count(root)).where(pred)).getSingleResult() > 0L);
     }
-
-    @Override
-    public String generateAuthToken(Client c, long creationTime, long expirationTime) {
-        byte[] tokenBytes = new byte[12];
-        random.nextBytes(tokenBytes);
-        String str = new String(tokenBytes, java.nio.charset.StandardCharsets.UTF_8);
-        c.setAuthToken(str);
-        c.setAuthCreated(creationTime);
-        c.setAuthTokenExpiration(expirationTime);     
-        update(c);
-        return str;
-    }
-
-    @Override 
-    public boolean authTokenValid(long clientId, String token) {
-        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-        CriteriaQuery<Client> query = cb.createQuery(Client.class);
-        Root<Client> root = query.from(Client.class);
-        Predicate pred = cb.equal(root.get("clientId"), clientId);
-        try {
-            Client c = this.entityManager.createQuery(query.select(root).where(pred)).getSingleResult();
-            if ((c.getAuthTokenExpiration() > System.currentTimeMillis()) && c.getAuthToken().equals(token)) {
-                return true;
-            }
-            else {
-                return false;
-            }
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    @Scheduled(initialDelay = 300_000L, fixedDelay = 60_000L)
-    private void cleanupAuthTokens() {
-        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-        CriteriaUpdate<Client> update = cb.createCriteriaUpdate(Client.class);
-        Root<Client> root = update.from(Client.class);
-        Predicate pred = cb.lessThan(root.get("authTokenExpiration"), root.get("authCreated"));
-        this.entityManager.createQuery(update.set(root.get("authToken"), "").set(root.get("authCreated"), 0).where(pred)).executeUpdate();
-    }
 }

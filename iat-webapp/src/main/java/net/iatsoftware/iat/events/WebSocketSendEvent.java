@@ -10,19 +10,19 @@ package net.iatsoftware.iat.events;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.messaging.Envelope;
+import net.iatsoftware.iat.messaging.Message;
 
 import org.springframework.web.socket.WebSocketSession;
 
 public class WebSocketSendEvent extends WebSocketEvent {
-    private final Envelope envelope;
+    private final Message message;
     
-    public WebSocketSendEvent(WebSocketSession session, Envelope env) {
+    public WebSocketSendEvent(WebSocketSession session, Message message) {
         super(session, WebSocketEventType.DATA_SENT);
-        this.envelope = env;
+        this.message = message;
     }
     
-    public Envelope getData() {
-        return this.envelope;
+    public Message getData() {
+        return this.message;
     }
 }

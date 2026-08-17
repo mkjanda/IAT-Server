@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
+import com.zaxxer.hikari.HikariDataSource;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
@@ -135,16 +138,18 @@ public class IATServer implements SchedulingConfigurer {
     private int serverPort;
 
     public static void main(String[] args) {
-        System.setProperty("spring.devtools.restart.enabled", "false");        
+        System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(net.iatsoftware.iat.IATServer.class);
     }
 
     private static final Logger log = LogManager.getLogger("critical");
 
-    @ConfigurationProperties(prefix = "datasource")
     @Bean
+    @ConfigurationProperties(prefix = "datasource")
     public DataSource dataSource() {
-        return new MysqlConnectionPoolDataSource();
+        return DataSourceBuilder.create()
+                .type(HikariDataSource.class)
+                .build();
     }
 
     @Primary
@@ -179,10 +184,10 @@ public class IATServer implements SchedulingConfigurer {
                 return true;
             }
 
-            protected Envelope unmarshalTransmission(String trans) throws java.io.IOException {
+            protected Object unmarshalTransmission(String trans) throws java.io.IOException {
                 StringReader sReader = new StringReader(trans);
                 StreamSource sSource = new StreamSource(sReader);
-                return (Envelope) unmarshaller.unmarshal(sSource);
+                return unmarshaller.unmarshal(sSource);
             }
 
             @Override
@@ -203,7 +208,7 @@ public class IATServer implements SchedulingConfigurer {
                     } else {
                         List<String> fullTrans = partialTransmissions.get(sess.getId());
                         fullTrans.add(msg.getPayload());
-                        publisher.publishEvent(new WebSocketDataReceived(sess, 
+                        publisher.publishEvent(new WebSocketDataReceived(sess,
                                 unmarshalTransmission(fullTrans.stream().reduce("", (s1, s2) -> s1.concat(s2)))));
                         fullTrans.clear();
                     }
@@ -256,7 +261,8 @@ public class IATServer implements SchedulingConfigurer {
     private ITemplateResolver textTemplateResolver() {
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setOrder(1);
-        templateResolver.setResolvablePatterns(new HashSet<>(Arrays.asList(new String[]{"email/*.txt", "email/*.js", "email/*.css"})));
+        templateResolver.setResolvablePatterns(
+                new HashSet<>(Arrays.asList(new String[] { "email/*.txt", "email/*.js", "email/*.css" })));
         templateResolver.setTemplateMode(TemplateMode.TEXT);
         templateResolver.setCharacterEncoding("UTF-8");
         templateResolver.setCacheable(false);
@@ -280,7 +286,6 @@ public class IATServer implements SchedulingConfigurer {
         templateResolver.setCacheable(false);
         return templateResolver;
     }
-
 
     @Bean
     public WebMvcConfigurer webMvcConfigurer() {
@@ -410,8 +415,13 @@ public class IATServer implements SchedulingConfigurer {
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         Map<String, Object> properties = new HashMap<>();
         properties.put("jakarta.persistence.schema-generation.database.action", "none");
+        properties.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+        properties.put("hibernate.jdbc.time_zone", "UTC");
+
         HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
         adapter.setGenerateDdl(false);
+        adapter.setDatabasePlatform("org.hibernate.dialect.MySQLDialect");
+
         LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
         factory.setJpaVendorAdapter(adapter);
         factory.setDataSource(dataSource());
@@ -469,34 +479,38 @@ public class IATServer implements SchedulingConfigurer {
         msgSource.setBasename("classpath:OauthExceptionMessages");
         return msgSource;
     }
-/*
-    @Bean
-    public IATDeployerFactory deployerFactory() {
-        return new IATDeployerFactory() {
-            public IATDeployer createDeployer(Long clientId, Long deploymentId, Long testId, String session) {
-                return iatDeployer(clientId, deploymentId, testId, session);
-
-                var deployer = (IATDeployer) applicationContext.getBean("IATDeployer");
-                deployer.setClientId(clientId);
-                deployer.setDeploymentId(deploymentId);
-                deployer.setTestId(testId);
-                deployer.setSessionId(session);
-                return deployer;
-
-            public IATRedeployer createRedeployer(Long clientId, Long deploymentId, Long replacementTestId,
-                    Long testId, String sessId) {
-                return iatRedeployer(clientId, deploymentId, replacementTestId, testId, sessId);
-                /*
-                var deployer = (IATRedeployer) applicationContext.getBean("IATRedeployer");
-                deployer.setClientId(clientId);
-                deployer.setDeploymentId(deploymentId);
-                deployer.setTestId(testId);
-                deployer.setSessionId(sessId);
-                deployer.setOldTestId(replacementTestId);
-                return deployer;
-            }
-        };
-    }*/
+    /*
+     * @Bean
+     * public IATDeployerFactory deployerFactory() {
+     * return new IATDeployerFactory() {
+     * public IATDeployer createDeployer(Long clientId, Long deploymentId, Long
+     * testId, String session) {
+     * return iatDeployer(clientId, deploymentId, testId, session);
+     * 
+     * var deployer = (IATDeployer) applicationContext.getBean("IATDeployer");
+     * deployer.setClientId(clientId);
+     * deployer.setDeploymentId(deploymentId);
+     * deployer.setTestId(testId);
+     * deployer.setSessionId(session);
+     * return deployer;
+     * 
+     * public IATRedeployer createRedeployer(Long clientId, Long deploymentId, Long
+     * replacementTestId,
+     * Long testId, String sessId) {
+     * return iatRedeployer(clientId, deploymentId, replacementTestId, testId,
+     * sessId);
+     * /*
+     * var deployer = (IATRedeployer) applicationContext.getBean("IATRedeployer");
+     * deployer.setClientId(clientId);
+     * deployer.setDeploymentId(deploymentId);
+     * deployer.setTestId(testId);
+     * deployer.setSessionId(sessId);
+     * deployer.setOldTestId(replacementTestId);
+     * return deployer;
+     * }
+     * };
+     * }
+     */
 
     @Override
     public void configureTasks(ScheduledTaskRegistrar registrar) {

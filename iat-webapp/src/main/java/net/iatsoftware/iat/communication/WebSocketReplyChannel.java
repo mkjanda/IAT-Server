@@ -5,7 +5,8 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.web.socket.WebSocketSession;
 
-import net.iatsoftware.iat.events.OutboundMessageEvent;
+import net.iatsoftware.iat.events.WebSocketFinalSendEvent;
+import net.iatsoftware.iat.events.WebSocketSendEvent;
 import net.iatsoftware.iat.events.OutboundFinalMessageEvent;
 import net.iatsoftware.iat.messaging.Message;
 
@@ -22,12 +23,12 @@ public class WebSocketReplyChannel implements ReplyChannel {
 
     @Override
     public void send(Message msg) {
-        publisher.publishEvent(new OutboundMessageEvent(session, msg));
+        publisher.publishEvent(new WebSocketSendEvent(session, msg));
     }
 
     @Override
     public void sendFinal(Message msg) {
-        publisher.publishEvent(new OutboundFinalMessageEvent(session, msg));
+        publisher.publishEvent(new WebSocketFinalSendEvent(session, msg));
     }
 
     @Override

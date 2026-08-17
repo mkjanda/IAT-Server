@@ -511,11 +511,8 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
         final List<IAT> iats = iatRepository.getIATsByClient(c);
         for (final IAT iat : iats) {
             final IATReport report = new IATReport();
-            report.setAuthorFName(iat.getUser().getFName());
-            report.setAuthorLName(iat.getUser().getLName());
-            report.setAuthorTitle(iat.getUser().getTitle());
-            report.setAuthorEMail(iat.getUser().getEMail());
-            report.setIATName(iat.getTestName());
+            report.setAuthorName(iat.getUser().getFName() + " " + iat.getUser().getLName());
+            report.setTestName(iat.getTestName());
             report.setNumAdministrations(iat.getNumAdministrations());
             report.setLastDataRetrieval(iat.getLastDataRetrieval().toString());
             report.setTestSizeKB(iat.getTestSizeKB());

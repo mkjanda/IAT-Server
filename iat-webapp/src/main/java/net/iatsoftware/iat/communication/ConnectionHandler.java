@@ -64,19 +64,25 @@ public class ConnectionHandler implements TransactionHandler {
                 GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
                 var cipher = Cipher.getInstance("AES/GCM/NoPadding");
                 cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
-                byte[] ciphertext = cipher.doFinal(challenge);
-                handshake.setValue(b64Encoder.encodeToString(ciphertext));
+                byte[] ciphertextandtag = cipher.doFinal(challenge);
+                var ciphertext = new byte[ciphertextandtag.length - 16];
+                var tag = new byte[16];
+                System.arraycopy(ciphertextandtag, 0, ciphertext, 0, ciphertext.length);
+                System.arraycopy(ciphertextandtag, ciphertext.length, tag, 0, 16);
+                handshake.setNonce(b64Encoder.encodeToString(iv));
+                handshake.setChallenge(b64Encoder.encodeToString(ciphertext));
+                handshake.setTag(b64Encoder.encodeToString(tag));
                 channel.send(handshake);
             }
         } else if (msg instanceof Handshake) {
             Handshake hs = (Handshake) msg;
-            if (hs.getValue().equals(sessionState.unencryptedValue())) {
+            if (hs.getChallenge().equals(sessionState.unencryptedValue())) {
                 var outTrans = new TransactionRequest(TransactionType.REQUEST_TRANSMISSION);
                 outTrans.setClientId(sessionState.client().getClientId());
                 channel.send(outTrans); 
                 return;
             }
-                channel.close();
+            channel.close();
         }
         } catch (Exception e) {
             logger.error("Error handling message", e);  

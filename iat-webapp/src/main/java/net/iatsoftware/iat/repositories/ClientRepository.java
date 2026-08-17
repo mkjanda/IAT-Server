@@ -35,6 +35,4 @@ public interface ClientRepository extends GenericRepository<Long, Client> {
     void updateDownloadsRemaining(int nDownloads);
     Client getClientByEmail(String email);
     boolean clientWithEmailExists(String email);
-    String generateAuthToken(Client c, long creationTime, long expirationTime);
-    boolean authTokenValid(long clientId, String token);
 }
