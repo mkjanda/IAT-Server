@@ -30,7 +30,6 @@ import jakarta.inject.Inject;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
 
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.Client;
@@ -41,8 +40,6 @@ import net.iatsoftware.iat.entities.TestResultFragment;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.UniqueResponse;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
-import net.iatsoftware.iat.events.WebSocketEvent;
-import net.iatsoftware.iat.events.WebSocketEventType;
 import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.AjaxResponse;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
@@ -84,9 +81,6 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
-import org.springframework.web.util.UriComponentsBuilder;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -564,9 +558,8 @@ public class AdminController {
 			return new ResponseEntity<>(test.getAESCode(), HttpStatus.OK);
 		}
 		catch (Exception ex) {
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return ResponseEntity.internalServerError().build();
 		}
-
 	}
 
 	@GetMapping(value = "/Ajax/RSA", produces = "text/json")

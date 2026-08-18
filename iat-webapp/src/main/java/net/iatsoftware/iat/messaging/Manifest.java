@@ -535,4 +535,11 @@ public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 	public void addFile(File f) {
 		this.getFile().add(f);
 	}
+
+	public int sizeInKb() {
+		long size = 0;
+		for (File f : this.getFiles())
+			size += f.getSize();
+		return (int) size >> 10;
+	}
 }

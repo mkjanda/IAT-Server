@@ -41,6 +41,7 @@ public class IATReport extends net.iatsoftware.iat.generated.GIATReport {
             lastDataRetrieval = "never";
         else
             lastDataRetrieval = df.format(test.getLastDataRetrieval().getTime());
+        this.uploadTimestamp = df.format(test.getUploadTimestamp().getTime());
         this.authorName = test.getUser().getFName() + " " + test.getUser().getLName();
         this.setNumResultSets(numResultSets);   
         this.setDeploying(deploying);

@@ -2674,12 +2674,14 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="AuthorName" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="URL" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="NumResultSets" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="TestSizeKB" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="UploadTimestamp" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="LastDataRetrieval" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="TestVersion" type="xs:string" minOccurs="1" maxOccurs="1" />
         </xs:sequence>

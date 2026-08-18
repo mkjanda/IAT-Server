@@ -114,6 +114,10 @@ public class DeploymentHandler implements TransactionHandler {
                 TransactionRequest outTrans;
                 if (ctx.wantedManifestType() == ManifestType.FILE_MANIFEST) {
                     ctx.sessionState().setFileManifest(manifest);
+                    var deployer = deploymentService.getDeployer(ctx.deploymentId());
+                    var test = iatRepositoryManager.getTest(deployer.getTestId());
+                    test.setTestSizeKB(manifest.sizeInKb());
+                    iatRepositoryManager.updateIAT(test);
                     outTrans = new TransactionRequest(TransactionType.REQUEST_FILES);
                     outTrans.setDeploymentId(ctx.deploymentId());
                     ctx.reply().send(outTrans);
