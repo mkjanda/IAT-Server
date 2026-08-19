@@ -28,7 +28,7 @@ import net.iatsoftware.iat.entities.UniqueResponse;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.entities.ResultSet;
 import net.iatsoftware.iat.entities.ResourceReference;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.entities.RSAKeyData;
 import net.iatsoftware.iat.entities.TestResultFragment;
 import net.iatsoftware.iat.entities.TestResource;
@@ -48,7 +48,6 @@ import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
 import net.iatsoftware.iat.messaging.IATList;
 import net.iatsoftware.iat.messaging.IATListEntry;
-import net.iatsoftware.iat.generated.KeyType;
 
 import org.springframework.stereotype.Service;
 
@@ -133,7 +132,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void storeEncryptionKey(final IAT test, final PartiallyEncryptedRSAKey key) {
+    public void storeEncryptionKey(final IAT test, final EncryptedRSAKey key) {
         key.setTest(test);
         partiallyEncryptedRSAKeyRepository.add(key);
     }
@@ -234,20 +233,12 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public void registerEncryptionKeys(final RSAKeyPair keyPair, final Long testID) {
-        final PartiallyEncryptedRSAKey dataKey = new PartiallyEncryptedRSAKey();
+        final EncryptedRSAKey dataKey = new EncryptedRSAKey();
         dataKey.setTest(iatRepository.get(testID));
         dataKey.setExponent(keyPair.getDataKey().getExponent());
         dataKey.setModulus(keyPair.getDataKey().getModulus());
         dataKey.setEncryptedKey(keyPair.getDataKey().getEncryptedKey());
-        dataKey.setKeyType(KeyType.DATA);
         partiallyEncryptedRSAKeyRepository.add(dataKey);
-        final PartiallyEncryptedRSAKey adminKey = new PartiallyEncryptedRSAKey();
-        adminKey.setTest(iatRepository.get(testID));
-        adminKey.setExponent(keyPair.getDataKey().getExponent());
-        adminKey.setModulus(keyPair.getDataKey().getModulus());
-        adminKey.setEncryptedKey(keyPair.getDataKey().getEncryptedKey());
-        adminKey.setKeyType(KeyType.ADMIN);
-        partiallyEncryptedRSAKeyRepository.add(adminKey);
     }
 
     @Transactional
@@ -372,7 +363,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public PartiallyEncryptedRSAKey getEncryptionKey(final IAT test) {
+    public EncryptedRSAKey getEncryptionKey(final IAT test) {
         return partiallyEncryptedRSAKeyRepository.getDataKey(test);
     }
 
@@ -454,7 +445,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public PartiallyEncryptedRSAKey getDataKey(final Long clientID, final String testName) {
+    public EncryptedRSAKey getDataKey(final Long clientID, final String testName) {
         final IAT test = iatRepository.get(testName, clientID);
         if (test == null) {
             return null;
@@ -639,13 +630,13 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void storeEncryptionKey(PartiallyEncryptedRSAKey key) {
+    public void storeEncryptionKey(EncryptedRSAKey key) {
         partiallyEncryptedRSAKeyRepository.add(key);
     }
 
     @Transactional
     @Override
-    public void updateEncryptionKey(PartiallyEncryptedRSAKey key) {
+    public void updateEncryptionKey(EncryptedRSAKey key) {
         partiallyEncryptedRSAKeyRepository.update(key);
     }
 
@@ -699,18 +690,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public RSAKeyPair getRSAKeyPair(Client c, String testName) {
-        try {
-            IAT test = iatRepository.get(testName, c.getClientId());
-            return new RSAKeyPair(partiallyEncryptedRSAKeyRepository.getDataKey(test),
-                    partiallyEncryptedRSAKeyRepository.getAdminKey(test));
-        } catch (Exception ex) {
-            log.error("Error retrieving encryption keys", ex);
-            return null;
-        }
-    }
-
-    @Transactional
     public List<String> getTestElemNames(IAT test) {
         return testSegmentRepository.getTestElemNames(test);
     }
@@ -719,6 +698,12 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     public void addSpecifierValue(SpecifierValue sv) {
         specifierValueRepository.add(sv);
         adminTimerRepository.update(sv.getAdmin());
+    }
+
+    @Transactional
+    public EncryptedRSAKey getRSAKey(Long clientID, String testName) {
+        IAT test = iatRepository.get(testName, clientID);
+        return partiallyEncryptedRSAKeyRepository.getDataKey(test);
     }
 
     @Transactional

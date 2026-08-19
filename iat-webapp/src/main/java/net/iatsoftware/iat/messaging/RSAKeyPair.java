@@ -10,7 +10,7 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlAccessType;
 public class RSAKeyPair extends net.iatsoftware.iat.generated.GRSAKeyPair {
     public RSAKeyPair(){}
     
-    public RSAKeyPair(PartiallyEncryptedRSAKey dataKey, PartiallyEncryptedRSAKey adminKey) {
+    public RSAKeyPair(EncryptedRSAKey dataKey, EncryptedRSAKey adminKey) {
         this.adminKey = adminKey;
         this.dataKey = dataKey;
     }

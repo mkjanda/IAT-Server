@@ -10,7 +10,7 @@ package net.iatsoftware.iat.admin;
  * @author Michael Janda
  */
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
 import org.apache.logging.log4j.Logger;
@@ -84,7 +84,7 @@ public abstract class ResultRecorder {
             cOut.close();
             encData = bOut.toByteArray();
 
-            PartiallyEncryptedRSAKey testsKey = iatRepositoryManager.getEncryptionKey(test);
+            EncryptedRSAKey testsKey = iatRepositoryManager.getEncryptionKey(test);
             BigInteger modulus = new BigInteger(testsKey.getModulusBytes());
             BigInteger exponent = new BigInteger(testsKey.getExponentBytes());
             RSAPublicKeySpec rsaKeySpec = new RSAPublicKeySpec(modulus, exponent);

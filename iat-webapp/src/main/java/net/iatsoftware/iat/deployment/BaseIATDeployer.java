@@ -13,13 +13,13 @@ package net.iatsoftware.iat.deployment;
 
 import net.iatsoftware.iat.communication.ReplyChannel;
 import net.iatsoftware.iat.communication.SessionState;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.generated.TokenType;
 
 
 
 public interface BaseIATDeployer  {
-    void storeRSAKeys(PartiallyEncryptedRSAKey adminKey, PartiallyEncryptedRSAKey dataKey);
+    void storeRSAKeys(EncryptedRSAKey adminKey, EncryptedRSAKey dataKey);
     void storeTokenDefinition(TokenType type, String tokenName);
     void abort();
     Long getTestId();

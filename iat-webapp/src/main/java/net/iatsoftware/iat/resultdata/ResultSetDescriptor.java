@@ -12,7 +12,7 @@ package net.iatsoftware.iat.resultdata;
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.generated.TokenType;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +25,7 @@ public class ResultSetDescriptor extends net.iatsoftware.iat.generated.GResultSe
     public ResultSetDescriptor() {
     }
 
-    public void load(IAT test, ConfigFile configFile, PartiallyEncryptedRSAKey dataKey, int numResults) throws java.io.IOException, java.net.URISyntaxException {
+    public void load(IAT test, ConfigFile configFile, EncryptedRSAKey dataKey, int numResults) throws java.io.IOException, java.net.URISyntaxException {
         this.tokenType = test.getTokenType();
         if (this.tokenType != TokenType.NONE)
             this.tokenName = test.getTokenName();

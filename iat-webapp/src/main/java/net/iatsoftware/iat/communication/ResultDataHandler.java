@@ -14,8 +14,7 @@ public class ResultDataHandler implements TransactionHandler {
             return false;
         var transaction = (TransactionRequest) ctx.inbound();
         return transaction.getType() == (net.iatsoftware.iat.generated.TransactionType.REQUEST_ITEM_SLIDE_MANIFEST) ||
-                transaction.getType() == (net.iatsoftware.iat.generated.TransactionType.REQUEST_ENCRYPTION_KEY) ||
-                transaction.getType() == (net.iatsoftware.iat.generated.TransactionType.REQUEST_RESULTS);
+                transaction.getType() == (net.iatsoftware.iat.generated.TransactionType.REQUEST_ENCRYPTION_KEY);
     }
 
     @Override
@@ -25,26 +24,29 @@ public class ResultDataHandler implements TransactionHandler {
             return;
         }
         var transaction = (TransactionRequest) ctx.inbound();
-        var outTrans = new TransactionRequest();
-        var test = ctx.sessionState().repositoryManager().getIATByNameAndClientID(transaction.getIATName(), ctx.client().getClientId());
-                if (test == null) {
+        var test = ctx.sessionState().repositoryManager().getIATByNameAndClientID(transaction.getIATName(),
+                ctx.client().getClientId());
+        if (test == null) {
+            ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
+            return;
+        }
+        try {
+            switch (transaction.getType()) {
+                case TransactionType.REQUEST_ITEM_SLIDE_MANIFEST:
+                    var manifest = ctx.sessionState().repositoryManager().getItemSlideManifest(test);
+                    ctx.reply().send(manifest);
+                    break;
+
+                case TransactionType.REQUEST_FILE_MANIFEST:
+                    ctx.reply().send(test.getManifest());
+                    break;
+
+                default:
                     ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
-                    return;
-                }
-        switch (transaction.getType()) {
-            case TransactionType.REQUEST_ITEM_SLIDE_MANIFEST: 
-                var manifest = ctx.sessionState().repositoryManager().getItemSlideManifest(test);
-                ctx.reply().send(manifest);
-                break;
-            
-            case TransactionType.REQUEST_RESULTS:
-                outTrans.setType(TransactionType.RESULTS_READY);
-                ctx.reply().send(outTrans);
-                break;
-            
-            default:
-                ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
-                break;
-        }                   
+                    break;
+            }
+        } catch (Exception ex) {
+            ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
+        }
     }
 }

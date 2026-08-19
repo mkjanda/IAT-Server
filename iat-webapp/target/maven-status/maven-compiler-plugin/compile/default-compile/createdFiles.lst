@@ -11,7 +11,6 @@ net\iatsoftware\iat\generated\GIATSurvey$SurveyItem.class
 net\iatsoftware\iat\generated\GMultipleResponse.class
 net\iatsoftware\iat\generated\GInstruction.class
 net\iatsoftware\iat\generated\GMultipleResponse$Choices$Choice.class
-net\iatsoftware\iat\generated\KeyType.class
 net\iatsoftware\iat\generated\GMaskSpecifier.class
 net\iatsoftware\iat\generated\GIATResultSetElementV1.class
 net\iatsoftware\iat\generated\GConfigFile.class
@@ -172,6 +171,7 @@ net\iatsoftware\iat\generated\ResourceType.class
 net\iatsoftware\iat\generated\GDecimalElement.class
 net\iatsoftware\iat\generated\GResultRequest.class
 net\iatsoftware\iat\generated\GAlterResources$DiskAlottmentMB.class
+net\iatsoftware\iat\generated\GEncryptedRSAKey.class
 net\iatsoftware\iat\generated\GIATSurveySummary.class
 net\iatsoftware\iat\generated\GGlobalVar.class
 net\iatsoftware\iat\generated\GUploadRequest.class
@@ -193,4 +193,3 @@ net\iatsoftware\iat\generated\GUsageReport.class
 net\iatsoftware\iat\generated\GIATSurvey$SurveyImage.class
 net\iatsoftware\iat\generated\GClientException.class
 net\iatsoftware\iat\generated\GHandshake.class
-net\iatsoftware\iat\generated\GPartiallyEncryptedRSAKey.class

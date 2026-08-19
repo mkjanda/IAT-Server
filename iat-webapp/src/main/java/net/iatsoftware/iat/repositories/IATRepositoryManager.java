@@ -18,7 +18,7 @@ import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.DeploymentPacket;
 import net.iatsoftware.iat.entities.EncCodeLine;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.entities.RSAKeyData;
 import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.User;
@@ -46,7 +46,7 @@ public interface IATRepositoryManager {
     Long registerIAT(IAT test);
     void storeDeploymentPacket(DeploymentPacket dp);
     boolean queryIATExists(String productKey, String iatName);
-    void storeEncryptionKey(IAT test, PartiallyEncryptedRSAKey key);
+    void storeEncryptionKey(IAT test, EncryptedRSAKey key);
     void deleteDeploymentPackets(List<DeploymentPacket> packets);
     void storeCodeLine(EncCodeLine cl);
     void addTestSegment(TestSegment ts);
@@ -73,7 +73,7 @@ public interface IATRepositoryManager {
     IAT getIATByAdminID(Long adminID);
     UniqueResponseItem findUniqueResponseItem(IAT test, String surveyName);
     int getElementPositionInTest(IAT test, String elemName);
-    PartiallyEncryptedRSAKey getEncryptionKey(IAT test);
+    EncryptedRSAKey getEncryptionKey(IAT test);
     boolean storeResultFragment(Long adminID, String testElem, byte[] encCipher, byte[] encIV, byte[] encData,
             boolean complete);
     List<TestResultFragment> getResultFragments(AdminTimer timer);
@@ -84,7 +84,7 @@ public interface IATRepositoryManager {
     void updateCodeLine(EncCodeLine line);
     List<EncCodeLine> getOrderedCodeLines(Long testSegmentID);
     IATList buildIATList(Long clientID);
-    PartiallyEncryptedRSAKey getDataKey(Long clientID, String testName);
+    EncryptedRSAKey getDataKey(Long clientID, String testName);
     long getNumResults(Long clientID, String testName);
     List<ResultSet> getResults(Long clientID, String testName);
     void deleteIATResults(Long clientID, String testName);
@@ -102,15 +102,15 @@ public interface IATRepositoryManager {
     Map<AdminTimer, List<TestResultFragment>> getCompletedResultSets();
     void storeResultSet(IAT test, String tocData, byte[] resultData, byte[] testeeToken);
     void storeDeploymentSession(DeploymentSession ds);
-    void storeEncryptionKey(PartiallyEncryptedRSAKey key);
-    void updateEncryptionKey(PartiallyEncryptedRSAKey key);
+    void storeEncryptionKey(EncryptedRSAKey key);
+    void updateEncryptionKey(EncryptedRSAKey key);
     void deleteDeploymentSession(IAT test);
     byte[] getDeploymentPacketData(IAT test, PacketType packetType, int ordinal);
     void storeEncryptedCode(TestSegment ts, List<EncCodeLine> code);
     TestSegment getTestSegmentByID(Long id);
     void addTest(IAT test);
     void deleteIAT(Long testID);
-    RSAKeyPair getRSAKeyPair(Client c, String iatName);
+    EncryptedRSAKey getRSAKey(Long clientID, String testName);
     List<String> getTestElemNames(IAT test);
     void addSpecifierValue(SpecifierValue sv);
     AdminTimer getAdminTimerById(Long id);

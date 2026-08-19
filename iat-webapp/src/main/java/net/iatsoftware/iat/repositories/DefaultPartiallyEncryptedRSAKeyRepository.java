@@ -9,9 +9,8 @@ package net.iatsoftware.iat.repositories;
  *
  * @author Michael Janda
  */
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.generated.KeyType;
 
 import org.springframework.stereotype.Repository;
 
@@ -22,46 +21,32 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Predicate;
 
 @Repository
-public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaRepository<Long, PartiallyEncryptedRSAKey>
+public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaRepository<Long, EncryptedRSAKey>
         implements PartiallyEncryptedRSAKeyRepository {
 
     @Override
-    public PartiallyEncryptedRSAKey getDataKey(IAT test) {
+    public EncryptedRSAKey getDataKey(IAT test) {
         try {
             CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-            CriteriaQuery<PartiallyEncryptedRSAKey> query = cb.createQuery(PartiallyEncryptedRSAKey.class);
-            Root<PartiallyEncryptedRSAKey> root = query.from(PartiallyEncryptedRSAKey.class);
-            Predicate pred1 = cb.equal(root.get("test"), test);
-            Predicate pred2 = cb.equal(root.get("entityKeyType"), KeyType.DATA);
-            return this.entityManager.createQuery(query.where(pred1, pred2)).getSingleResult();
+            CriteriaQuery<EncryptedRSAKey> query = cb.createQuery(EncryptedRSAKey.class);
+            Root<EncryptedRSAKey> root = query.from(EncryptedRSAKey.class);
+            Predicate pred = cb.equal(root.get("test"), test);
+            return this.entityManager.createQuery(query.where(pred)).getSingleResult();
         } catch (jakarta.persistence.NoResultException ex) {
             return null;
         }
     }
 
-    @Override
-    public PartiallyEncryptedRSAKey getAdminKey(IAT test) {
-        try {
-            CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-            CriteriaQuery<PartiallyEncryptedRSAKey> query = cb.createQuery(PartiallyEncryptedRSAKey.class);
-            Root<PartiallyEncryptedRSAKey> root = query.from(PartiallyEncryptedRSAKey.class);
-            Predicate pred1 = cb.equal(root.get("test"), test);
-            Predicate pred2 = cb.equal(root.get("entityKeyType"), KeyType.ADMIN);
-            return this.entityManager.createQuery(query.where(pred1, pred2)).getSingleResult();
-        } catch (jakarta.persistence.NoResultException ex) {
-            return null;
-        }
-    }
 
     @Override
     public void copyRSAKeys(IAT newTest, IAT oldTest) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-        CriteriaQuery<PartiallyEncryptedRSAKey> query = cb.createQuery(PartiallyEncryptedRSAKey.class);
-        Root<PartiallyEncryptedRSAKey> root = query.from(PartiallyEncryptedRSAKey.class);
+        CriteriaQuery<EncryptedRSAKey> query = cb.createQuery(EncryptedRSAKey.class);
+        Root<EncryptedRSAKey> root = query.from(EncryptedRSAKey.class);
         Predicate pred = cb.equal(root.get("test"), oldTest);
-        List<PartiallyEncryptedRSAKey> keys = this.entityManager.createQuery(query.where(pred)).getResultList();
-        for (PartiallyEncryptedRSAKey key : keys) {
-            PartiallyEncryptedRSAKey copy = new PartiallyEncryptedRSAKey();
+        List<EncryptedRSAKey> keys = this.entityManager.createQuery(query.where(pred)).getResultList();
+        for (EncryptedRSAKey key : keys) {
+            EncryptedRSAKey copy = new EncryptedRSAKey();
             copy.setEncryptedKeyBytes(key.getEncryptedKeyBytes());
             copy.setModulusBytes(key.getModulusBytes());
             copy.setExponentBytes(key.getExponentBytes());

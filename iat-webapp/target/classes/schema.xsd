@@ -887,7 +887,7 @@
                     <xs:element name="BeforeSurvey" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="AfterSurvey" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="NumResults" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="RSAKey" type="iat:partially-encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RSAKey" type="iat:encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="TokenType" type="iat:TokenType" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="TokenName" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
@@ -1082,6 +1082,7 @@
             <xs:enumeration value="NoActivationsRemain"/>
             <xs:enumeration value="NotifyDownloadLegacySoftware" />
             <xs:enumeration value="RSAKey"/>
+            <xs:enumeration value="AuthToken"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1102,14 +1103,6 @@
             <xs:enumeration value="ServerReport"/>
             <xs:enumeration value="ServerException"/>
             <xs:enumeration value="UploadRequest"/>
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="KeyType">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="None"/>
-            <xs:enumeration value="Data"/>
-            <xs:enumeration value="Admin"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -2762,27 +2755,25 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="partially-encrypted-rsa-key-impl">
+    <xs:complexType name="encrypted-rsa-key-impl">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey"/>
+                <jaxb:class ref="net.iatsoftware.iat.entities.EncryptedRSAKey"/>
             </xs:appinfo>
         </xs:annotation>
     </xs:complexType>
-    <xs:complexType name="GPartiallyEncryptedRSAKey" abstract="true">
+    <xs:complexType name="GEncryptedRSAKey" abstract="true">
         <xs:annotation>
             <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.resultdata.PartiallyEncryptedRSAKey"/>
+                <jaxb:class implClass="net.iatsoftware.iat.entities.EncryptedRSAKey"/>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
-                    <xs:element name="KeyType" type="iat:KeyType" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="Modulus" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="Exponent" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="EncryptedKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="TestValue" type="xs:string" minOccurs="0" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2874,8 +2865,8 @@
         <xs:complexContent>
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
-                    <xs:element name="DataKey" type="iat:partially-encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="AdminKey" type="iat:partially-encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="DataKey" type="iat:encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="AdminKey" type="iat:encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

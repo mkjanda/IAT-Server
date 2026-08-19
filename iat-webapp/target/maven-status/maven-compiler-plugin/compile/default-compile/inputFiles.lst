@@ -92,12 +92,12 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\DeploymentSession.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\DynamicSpecifier.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\EncCodeLine.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\EncryptedRSAKey.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\IAT.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\ItemSlide.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\JSKey.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\MaskSpecifier.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\OAuthAccess.java
-C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\PartiallyEncryptedRSAKey.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\ProductRequestEntity.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\Purchase.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\src\main\java\net\iatsoftware\iat\entities\PurchaseHistory.java
@@ -390,6 +390,7 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GDynamicSpecifier.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GEncCodeLine.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GEncryptedDESCipher.java
+C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GEncryptedRSAKey.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GEndIATBlock.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GEnvelope.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GErrorReportResponse.java
@@ -429,7 +430,6 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GMultiBoolean.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GMultipleResponse.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GPacket.java
-C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GPartiallyEncryptedRSAKey.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GPricing.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GProcessedCode.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GProductRequest.java
@@ -491,7 +491,6 @@ C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\GYearMonthDay.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\HtmlSpanReplacementType.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\IATEventType.java
-C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\KeyType.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\ManifestEntityType.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\ManifestType.java
 C:\Users\admin\source\repos\IAT-Server\iat-webapp\target\generated\src\main\java\net\iatsoftware\iat\generated\ObjectFactory.java

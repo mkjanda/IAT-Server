@@ -11,7 +11,7 @@ package net.iatsoftware.iat.validation;
  */
 
 import net.iatsoftware.iat.entities.Client;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.forms.RegisterTestForRestfulForm;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
@@ -31,7 +31,7 @@ public class OAuthRequestTestPasswordValidator implements ConstraintValidator<OA
         Client c = repositoryManager.getClient(form.getProductKey());
         if (c == null)
             return false;
-        PartiallyEncryptedRSAKey key = repositoryManager.getDataKey(c.getClientId(), form.getTestName());
+        EncryptedRSAKey key = repositoryManager.getDataKey(c.getClientId(), form.getTestName());
         if (key == null)
             return false;
         if (!key.testPassword(form.getTestPassword()))

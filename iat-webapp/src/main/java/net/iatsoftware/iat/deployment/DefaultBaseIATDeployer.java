@@ -18,7 +18,7 @@ import net.iatsoftware.iat.configfile.Survey;
 import net.iatsoftware.iat.dataservices.XsltService;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
@@ -136,7 +136,7 @@ public abstract class DefaultBaseIATDeployer implements BaseIATDeployer {
     public abstract void generateTest();
 
     @Override
-    public void storeRSAKeys(PartiallyEncryptedRSAKey adminKey, PartiallyEncryptedRSAKey dataKey) {
+    public void storeRSAKeys(EncryptedRSAKey adminKey, EncryptedRSAKey dataKey) {
         IAT test = iatRepositoryManager.getIAT(this.testId);
         logger.info("RSA key received");
         dataKey.setTest(test);

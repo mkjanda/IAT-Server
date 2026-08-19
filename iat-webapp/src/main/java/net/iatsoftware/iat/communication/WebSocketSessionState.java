@@ -9,7 +9,7 @@ import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.messaging.Handshake;
 import net.iatsoftware.iat.messaging.Manifest;
-import net.iatsoftware.iat.entities.PartiallyEncryptedRSAKey;
+import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.generated.ManifestType;
 import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
@@ -74,12 +74,12 @@ public final class WebSocketSessionState implements SessionState {
     }
 
     @Override
-    public PartiallyEncryptedRSAKey rsaKey() {
-        return (PartiallyEncryptedRSAKey) getAttribute("RSAKey");
+    public EncryptedRSAKey rsaKey() {
+        return (EncryptedRSAKey) getAttribute("RSAKey");
     }
 
     @Override
-    public void setRSAKey(PartiallyEncryptedRSAKey key) {
+    public void setRSAKey(EncryptedRSAKey key) {
         setAttribute("RSAKey", key);
     }
 
