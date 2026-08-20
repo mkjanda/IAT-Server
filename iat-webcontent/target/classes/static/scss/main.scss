@@ -1,0 +1,86 @@
+$brilliantWhite: rgb(237, 241, 254);
+$ultraViolet: rgb(95, 75, 139);
+$redViolet: rgb(163, 87, 118);
+$chateauRose: rgb(210, 115, 143);
+$prismPink: rgb(240, 161, 191);
+$grapeKiss: rgb(123, 67, 104);
+$redwood: rgb(166, 89, 76);
+$hydro: rgb(66, 105, 114);
+$redDahlia: rgb(152, 32, 39);
+$purpleHaze: rgb(128, 115, 150);
+$lovePotion: #c01352;
+$purpleWine: rgb(140, 53, 115);
+$roseWine: rgb(169, 89, 109);
+$blackberryWine: rgb(87, 67, 83);
+$knockoutPink: rgb(255, 62, 165);
+
+$serif: oxtail;
+
+@import url(https://use.typekit.net/xmu4wql.css);
+
+@mixin standardParagraph {
+    font-family: $serif, serif;
+    font-size: 20px;
+    line-height: 22px;
+
+    color: $purpleWine;
+
+    span.hilight {
+        color: $lovePotion;
+    }
+
+    span.hilightHover {
+        color: $lovePotion;
+        cursor: pointer;
+        &:hover {
+            color: $hydro;
+        }
+    }
+
+    span .attention,
+    .error {
+        font-family: coquette;
+        font-weight: 900;
+        font-size: 20px;
+        vertical-align: baseline;
+        color: $redViolet;
+        text-shadow: 1px 1px 0px $grapeKiss;
+    }
+}
+
+body {
+    text-align: center;
+    background: $brilliantWhite;
+
+    div#caption {
+        margin-top: 50px;
+        margin-bottom: 35px;
+    }
+
+    div {
+        width: 1200px;
+        margin: 0px auto;
+
+        div#content {
+            text-align: left;
+            max-width: 700px;
+            display: table-cell;
+            vertical-align: top;
+            padding-top: 30px;
+
+            p {
+                @include standardParagraph;
+            }
+        }
+
+        div#logo {
+            display: table-cell;
+            vertical-align: top;
+            width: 500px;
+        }
+    }
+
+    p {
+        @include standardParagraph;
+    }
+}

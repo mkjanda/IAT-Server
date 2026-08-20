@@ -883,9 +883,7 @@
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
                     <xs:element name="TestAuthor" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ConfigFile" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="BeforeSurvey" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="AfterSurvey" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="ConfigFile" type="iat:config-file-impl" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="NumResults" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="RSAKey" type="iat:encrypted-rsa-key-impl" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="TokenType" type="iat:TokenType" minOccurs="1" maxOccurs="1"/>
@@ -1617,7 +1615,6 @@
             <xs:element name="ID" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="ResourceId" type="xs:int" minOccurs="0" maxOccurs="1" />
             <xs:element name="Filename" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="Format" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="X" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Y" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Width" type="xs:int" minOccurs="1" maxOccurs="1"/>
@@ -2194,23 +2191,12 @@
                     <xs:element name="RedirectOnComplete" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="LeftResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RightResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="RandomizationType" minOccurs="1" maxOccurs="1">
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="None" />
-                                <xs:enumeration value="RandomOrder" />
-                                <xs:enumeration value="SetNumberOfPresentations" />
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:element>
                     <xs:element name="ErrorMarkID" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="LeftKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RightKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="PrefixSelfAlternatingSurveys" type="xs:boolean" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="DynamicSpecifier" type="iat:dynamic-specifier-impl" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="Survey" type="iat:survey-impl" minOccurs="0" maxOccurs="unbounded" />
-                    <xs:element name="SurveyB64Xml" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-                    <xs:element name="UniqueResponse" type="iat:unique-response-impl" />
+                    <xs:element name="UniqueResponse" type="iat:unique-response-impl" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="Layout" type="iat:layout-impl" minOccurs="1" maxOccurs="1" />
                     <xs:element name="EventList">
                         <xs:complexType>
@@ -2222,7 +2208,7 @@
                     <xs:element name="DisplayItemList" minOccurs="1" maxOccurs="1">
                         <xs:complexType>
                             <xs:sequence>
-                                <xs:element name="IATDisplayItem" type="iat:display-item-impl" minOccurs="0" maxOccurs="unbounded" />
+                                <xs:element name="DisplayItem" type="iat:display-item-impl" minOccurs="0" maxOccurs="unbounded" />
                             </xs:sequence>
                         </xs:complexType>
                     </xs:element>

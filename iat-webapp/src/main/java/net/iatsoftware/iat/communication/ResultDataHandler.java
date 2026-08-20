@@ -13,8 +13,8 @@ public class ResultDataHandler implements TransactionHandler {
         if (!(ctx.inbound() instanceof TransactionRequest))
             return false;
         var transaction = (TransactionRequest) ctx.inbound();
-        return transaction.getType() == (net.iatsoftware.iat.generated.TransactionType.REQUEST_ITEM_SLIDE_MANIFEST) ||
-                transaction.getType() == (net.iatsoftware.iat.generated.TransactionType.REQUEST_ENCRYPTION_KEY);
+        return transaction.getType() == net.iatsoftware.iat.generated.TransactionType.REQUEST_ITEM_SLIDE_MANIFEST ||
+                transaction.getType() == net.iatsoftware.iat.generated.TransactionType.REQUEST_FILE_MANIFEST;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class ResultDataHandler implements TransactionHandler {
                     ctx.reply().send(manifest);
                     break;
 
-                case TransactionType.REQUEST_FILE_MANIFEST:
+                case TransactionType.REQUEST_RESULT_DESCRIPTOR:
                     ctx.reply().send(test.getManifest());
                     break;
 

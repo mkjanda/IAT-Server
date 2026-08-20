@@ -16,6 +16,7 @@ import net.iatsoftware.iat.communication.PasswordHandler;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.ResultSet;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
+import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.resultdata.ResultSetEntry;
 import net.iatsoftware.iat.resultdata.ResultTOC;
 import net.iatsoftware.iat.resultdata.TestResults;
@@ -35,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.StringReader;
 import java.net.URI;
@@ -65,12 +67,10 @@ public class ResultRetrievalController {
 
     private static final Logger logger = LogManager.getLogger();
 
-
-
-    @GetMapping(value = "")
+    @GetMapping(value = "/Results")
     @ResponseBody
-    public ResponseEntity<byte[]> downloadResults(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId,
-            @RequestParam("AuthToken") String authToken) throws Exception {
+    public ResponseEntity<byte[]> downloadResults(@RequestParam("testName") String testName, @RequestParam("clientId") long clientId,
+            @RequestParam("authToken") String authToken) throws Exception {
 
         var ctx = PasswordHandler.authTokenCache.getIfPresent(authToken);
         if (ctx == null)
@@ -81,12 +81,11 @@ public class ResultRetrievalController {
         if (test == null) 
             return ResponseEntity.badRequest().build();
         TestResults testResults = new TestResults();
-        var configFileResource = repositoryManager.getTestResource(test, 0L);
-        var configFileString = new String(configFileResource.getResourceBytes(), java.nio.charset.StandardCharsets.UTF_8);
+        var configFileResource = new ByteArrayInputStream(repositoryManager.getTestResource(test, 0L).getResourceBytes());
+        var configFile = (ConfigFile)unmarshaller.unmarshal(new StreamSource(configFileResource));
         ResultSetDescriptor rsd = new ResultSetDescriptor(); 
-
         rsd.setTest(test);
-        rsd.setConfigFile(configFileString);
+        rsd.setConfigFile(configFile);
         rsd.setNumResults((int)repositoryManager.getNumResults(clientId, testName));
         rsd.setRSAKey(test.getDataKey());
 
@@ -116,8 +115,8 @@ public class ResultRetrievalController {
     }
 
     @GetMapping(value="/ItemSlides")
-    public ResponseEntity<byte[]> downloadItemSlides(@RequestParam("TestName") String testName, @RequestParam("ClientId") long clientId, 
-            @RequestParam("AuthToken") String authToken) {
+    public ResponseEntity<byte[]> downloadItemSlides(@RequestParam("testName") String testName, @RequestParam("clientId") long clientId, 
+            @RequestParam("authToken") String authToken) {
         var ctx = PasswordHandler.authTokenCache.getIfPresent(authToken);
         if (ctx == null)
             return ResponseEntity.badRequest().build();

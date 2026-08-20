@@ -1,0 +1,46 @@
+body {
+    padding: 20px;
+    background-color: #fff;
+    font-family: sans-serif;
+    text-align: center;
+    width: 600px;
+
+    div#header {
+        div.text {
+            width: 400px;
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+            img {
+                max-width: 100%;
+            }
+        }
+
+        div.logo {
+            width: 146px;
+            text-align: right;
+            display: inline-block;
+            vertical-align: middle;
+            img {
+                width: 112px;
+            }
+        }
+    }
+
+    div.notifiecation {
+        text-align: left;
+        padding: 25px 20px;
+        h1 {
+            font-size: 36px;
+            color: #000;
+            text-shadow: 2px 2px 0px #555;
+        }
+        p {
+            color: #000;
+            font-size: 14px;
+            text-align: left;
+        }
+    }
+
+    
+}

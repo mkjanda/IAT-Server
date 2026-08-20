@@ -38,7 +38,7 @@ public class PasswordHandler implements TransactionHandler {
             EncryptedRSAKey key = ctx.sessionState().repositoryManager().getRSAKey(ctx.client().getClientId(), transaction.getIATName());
             ctx.reply().send(key);
         } else {
-            var bytes = new byte[24];
+            var bytes = new byte[8];
             random.nextBytes(bytes);
             String authToken = b64Encoder.encodeToString(bytes);
             authTokenCache.put(authToken, ctx);
