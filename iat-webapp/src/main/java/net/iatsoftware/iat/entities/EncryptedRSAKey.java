@@ -45,7 +45,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 
-@XmlRootElement(name = "PartiallyEncryptedRSAKey")
+@XmlRootElement(name = "EncryptedRSAKey")
 @XmlAccessorType(XmlAccessType.NONE)
 @Entity
 @Table(name = "test_encryption_keys", indexes = {

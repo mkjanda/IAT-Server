@@ -65,7 +65,10 @@ public class DefaultWebSocketService implements WebSocketService {
             e.getSession().getAttributes().put("SessionState", new WebSocketSessionState(e.getSession()));
         }
         SessionState session = (SessionState) e.getSession().getAttributes().get("SessionState");
-        session.setClient(client);
+        if (session.client() == null) {
+            session.setClient(client);
+        }
+        client = session.client();
         session.setClientRepositoryManager(repositoryManager);
         session.setRepositoryManager(iatRepositoryManager);
         session.setMailService(mailService);
