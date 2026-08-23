@@ -79,4 +79,13 @@ public interface SessionState {
 
     String authToken();
     void setAuthToken(String authToken);
+
+    /**
+     * Clears all transaction-scoped attributes so a subsequent operation on the
+     * same WebSocket (or a half-closed session that Spring reuses) cannot inherit
+     * Authenticated, handshake challenge, auth token, IAT binding, or related
+     * leftovers from a prior attempt. Long-lived service references (repositories,
+     * marshaller, client once established) are left intact.
+     */
+    void clearTransientState();
 }

@@ -23,22 +23,25 @@ public class PasswordHandler implements TransactionHandler {
 
     @Override
     public boolean supports(TransactionContext ctx) {
+        // Must guard the cast — Handshake and other non-TransactionRequest messages
+        // also flow through the handler list. An unchecked cast aborts the whole
+        // forEach and leaves the client hanging with no response.
+        if (!(ctx.inbound() instanceof TransactionRequest))
+            return false;
         var transaction = (TransactionRequest) ctx.inbound();
-        if (transaction.getType() == TransactionType.REQUEST_RSA_KEY ||
-            transaction.getType() == TransactionType.PASSWORD_VALID) {
-            return true;
-        }
-        return false;
+        return transaction.getType() == TransactionType.REQUEST_RSA_KEY
+                || transaction.getType() == TransactionType.PASSWORD_VALID;
     }
 
     @Override
     public void handle(TransactionContext ctx) {
         var transaction = (TransactionRequest) ctx.inbound();
         if (transaction.getType() == TransactionType.REQUEST_RSA_KEY) {
-            EncryptedRSAKey key = ctx.sessionState().repositoryManager().getRSAKey(ctx.client().getClientId(), transaction.getIATName());
+            EncryptedRSAKey key = ctx.sessionState().repositoryManager().getRSAKey(
+                    ctx.client().getClientId(), transaction.getIATName());
             ctx.reply().send(key);
         } else {
-            var bytes = new byte[8];
+            var bytes = new byte[24];
             random.nextBytes(bytes);
             String authToken = b64Encoder.encodeToString(bytes);
             authTokenCache.put(authToken, ctx);

@@ -1081,6 +1081,7 @@
             <xs:enumeration value="NotifyDownloadLegacySoftware" />
             <xs:enumeration value="RSAKey"/>
             <xs:enumeration value="AuthToken"/>
+            <xs:enumeration value="ClearSessionState" />
         </xs:restriction>
     </xs:simpleType>
 

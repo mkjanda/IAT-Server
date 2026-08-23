@@ -35,7 +35,8 @@ public class ConnectionHandler implements TransactionHandler {
         var msg = ctx.inbound();
         if (msg instanceof TransactionRequest) {
             TransactionRequest trans = (TransactionRequest) msg;
-            if (trans.getType() == TransactionType.REQUEST_CONNECTION)
+            if (trans.getType() == TransactionType.REQUEST_CONNECTION ||
+                trans.getType() == TransactionType.CLEAR_SESSION_STATE)
                 return true;
         }
         if (msg instanceof Handshake)
@@ -47,45 +48,54 @@ public class ConnectionHandler implements TransactionHandler {
     @Override
     public void handle(TransactionContext ctx) {
         var msg = ctx.inbound();
-        var sessionState = ctx.sessionState();  
+        var sessionState = ctx.sessionState();
         var channel = ctx.reply();
         try {
-        if (msg instanceof TransactionRequest) {
-            TransactionRequest trans = (TransactionRequest) msg;
-            if (trans.getType() == TransactionType.REQUEST_CONNECTION) {
-                byte[] challenge = new byte[32];
-                random.nextBytes(challenge);
-                var text = b64Encoder.encodeToString(challenge);
-                sessionState.setUnencryptedValue(text);
-                var handshake = new Handshake();
-                byte[] iv = new byte[12];
-                random.nextBytes(iv);
-                var key = new SecretKeySpec(aesKey, "AES");
-                GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
-                var cipher = Cipher.getInstance("AES/GCM/NoPadding");
-                cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
-                byte[] ciphertextandtag = cipher.doFinal(challenge);
-                var ciphertext = new byte[ciphertextandtag.length - 16];
-                var tag = new byte[16];
-                System.arraycopy(ciphertextandtag, 0, ciphertext, 0, ciphertext.length);
-                System.arraycopy(ciphertextandtag, ciphertext.length, tag, 0, 16);
-                handshake.setNonce(b64Encoder.encodeToString(iv));
-                handshake.setChallenge(b64Encoder.encodeToString(ciphertext));
-                handshake.setTag(b64Encoder.encodeToString(tag));
-                channel.send(handshake);
-            }
-        } else if (msg instanceof Handshake) {
-            Handshake hs = (Handshake) msg;
-            if (hs.getChallenge().equals(sessionState.unencryptedValue())) {
-                var outTrans = new TransactionRequest(TransactionType.REQUEST_TRANSMISSION);
-                outTrans.setClientId(sessionState.client().getClientId());
-                channel.send(outTrans); 
-                return;
-            }
-            channel.close();
-        }
+            if (msg instanceof TransactionRequest) {
+                TransactionRequest trans = (TransactionRequest) msg;
+                if (trans.getType() == TransactionType.REQUEST_CONNECTION) {
+                    byte[] challenge = new byte[32];
+                    random.nextBytes(challenge);
+                    var text = b64Encoder.encodeToString(challenge);
+                    sessionState.setUnencryptedValue(text);
+                    var handshake = new Handshake();
+                    byte[] iv = new byte[12];
+                    random.nextBytes(iv);
+                    var key = new SecretKeySpec(aesKey, "AES");
+                    GCMParameterSpec gcmSpec = new GCMParameterSpec(128, iv);
+                    var cipher = Cipher.getInstance("AES/GCM/NoPadding");
+                    cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
+                    byte[] ciphertextandtag = cipher.doFinal(challenge);
+                    var ciphertext = new byte[ciphertextandtag.length - 16];
+                    var tag = new byte[16];
+                    System.arraycopy(ciphertextandtag, 0, ciphertext, 0, ciphertext.length);
+                    System.arraycopy(ciphertextandtag, ciphertext.length, tag, 0, 16);
+                    handshake.setNonce(b64Encoder.encodeToString(iv));
+                    handshake.setChallenge(b64Encoder.encodeToString(ciphertext));
+                    handshake.setTag(b64Encoder.encodeToString(tag));
+                    channel.send(handshake);
+                }
+                else if (trans.getType() == TransactionType.CLEAR_SESSION_STATE) {
+                    sessionState.clearTransientState();
+                }
+            } else if (msg instanceof Handshake) {
+                Handshake hs = (Handshake) msg;
+                String expected = sessionState.unencryptedValue();
+                if (expected != null && hs.getChallenge() != null
+                        && hs.getChallenge().equals(expected)) {
+                    sessionState.setHandsShaken(true);
+                    var outTrans = new TransactionRequest(TransactionType.REQUEST_TRANSMISSION);
+                    outTrans.setClientId(sessionState.client().getClientId());
+                    channel.send(outTrans);
+                    return;
+                }
+                // Stale or missing challenge — refuse rather than leave the client waiting.
+                logger.warn("Handshake challenge mismatch or missing UnencryptedValue; closing session {}",
+                        ctx.sessionId());
+                channel.close();
+            } 
         } catch (Exception e) {
-            logger.error("Error handling message", e);  
+            logger.error("Error handling connection message", e);
         }
     }
 }

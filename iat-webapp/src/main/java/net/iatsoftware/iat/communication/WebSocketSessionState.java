@@ -239,4 +239,33 @@ public final class WebSocketSessionState implements SessionState {
     public void setAuthToken(String authToken) {
         setAttribute("AuthToken", authToken);
     }
+
+    /**
+     * Removes every key that belongs to a single logical transaction. Leaves
+     * Client, repository managers, marshaller/unmarshaller, and MailService so
+     * the next message on this session does not have to re-inject infrastructure.
+     * Must be called at the start of REQUEST_CONNECTION (and after terminal
+     * operations such as delete/clear) so a second attempt never sees leftover
+     * Authenticated / handshake / auth-token state from the previous attempt.
+     */
+    @Override
+    public void clearTransientState() {
+        var attrs = session.getAttributes();
+        attrs.remove("Handshake");
+        attrs.remove("HandsShaken");
+        attrs.remove("Client");
+        attrs.remove("IATName");
+        attrs.remove("RSAKey");
+        attrs.remove("UnencryptedValue");
+        attrs.remove("DeploymentId");
+        attrs.remove("ConfigFile");
+        attrs.remove("IAT");
+        attrs.remove("Authenticated");
+        attrs.remove("LastTransactionType");
+        attrs.remove("WantedManifestType");
+        attrs.remove("FileManifest");
+        attrs.remove("SlideManifest");
+        attrs.remove("ReplacementTest");
+        attrs.remove("AuthToken");
+    }
 }
