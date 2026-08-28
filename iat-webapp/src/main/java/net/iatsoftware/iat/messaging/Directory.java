@@ -9,7 +9,7 @@ package net.iatsoftware.iat.messaging;
  *
  * @author Michael Janda
  */
-import net.iatsoftware.iat.generated.ManifestEntityType;
+import net.iatsoftware.iat.generated.FileEntityType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
@@ -20,12 +20,10 @@ public class Directory extends net.iatsoftware.iat.generated.GDirectory {
 
     public Directory() {
         name = "";
-        entityType = ManifestEntityType.DIRECTORY;
     }
 
     public Directory(String n) {
         name = n;
-        entityType = ManifestEntityType.DIRECTORY;
     }
 
     public FileEntity walkManifest() {
@@ -50,5 +48,9 @@ public class Directory extends net.iatsoftware.iat.generated.GDirectory {
             }
         }
         return false;
+    }
+
+    public FileEntityType getEntityType() {
+        return FileEntityType.DIRECTORY;
     }
 }

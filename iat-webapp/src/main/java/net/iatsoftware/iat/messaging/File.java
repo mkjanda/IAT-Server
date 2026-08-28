@@ -5,7 +5,7 @@
  */
 package net.iatsoftware.iat.messaging;
 
-import net.iatsoftware.iat.generated.ManifestEntityType;
+import net.iatsoftware.iat.generated.FileEntityType;
 
 /**
  *
@@ -18,14 +18,16 @@ public class File extends net.iatsoftware.iat.generated.GFile implements java.io
     {
         size = 0;
         name = "";
-        this.entityType = ManifestEntityType.FILE;
     }
     
     public File(String n, int s)
     {
         size = s;
         name = n;
-        entityType = ManifestEntityType.FILE;
         path =  n;
+    }
+
+    public FileEntityType getEntityType() {
+        return FileEntityType.FILE;
     }
 }

@@ -12,6 +12,7 @@ package net.iatsoftware.iat.services;
 
 import net.iatsoftware.iat.communication.ReplyChannel;
 import net.iatsoftware.iat.communication.SessionState;
+import net.iatsoftware.iat.deployment.DefaultIATDeployer;
 import net.iatsoftware.iat.deployment.IATDeployer;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.DeploymentSession;
@@ -33,6 +34,7 @@ import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
@@ -56,6 +58,8 @@ public class DefaultDeploymentService implements DeploymentService {
     Properties serverConfiguration;
     @Inject
     WebApplicationContext context;
+    @Inject
+    ObjectFactory<DefaultIATDeployer> deployerFactory;
 
     private final Cache<Long, IATDeployer> deploymentCache = Caffeine.newBuilder()
             .expireAfterAccess(DeploymentSession.DEPLOYMENT_TIMEOUT, java.util.concurrent.TimeUnit.MILLISECONDS)
@@ -63,7 +67,7 @@ public class DefaultDeploymentService implements DeploymentService {
                 if (deployer != null) {
                     critical.error("Deployment session " + key + " removed from cache due to " + cause);
                     deployer.abort();
-                    iatRepositoryManager.deleteIAT(deployer.getTestId());
+                    iatRepositoryManager.deleteDeploymentSession(deployer.getDeploymentId());
                 }
             }).build();
             
@@ -89,8 +93,9 @@ public class DefaultDeploymentService implements DeploymentService {
                     Calendar.getInstance());
             DeploymentSession ds = new DeploymentSession(c, u, test);
             iatRepositoryManager.addTest(test);
+            session.setTest(test);
             iatRepositoryManager.storeDeploymentSession(ds);
-            IATDeployer deployment = (IATDeployer) context.getBean("DefaultIATDeployer");
+            var deployment = deployerFactory.getObject();        
             deployment.setClientId(c.getClientId());
             deployment.setDeploymentId(ds.getId());
             deployment.setTestId(test.getId());
@@ -109,8 +114,8 @@ public class DefaultDeploymentService implements DeploymentService {
 
     @Override
     public void completeDeployment(DeploymentSession ds) {
-        deploymentCache.invalidate(ds.getId());
         iatRepositoryManager.finalizeDeployment(ds.getId());
+        deploymentCache.invalidate(ds.getId());
     }
 
     @EventListener
@@ -127,10 +132,9 @@ public class DefaultDeploymentService implements DeploymentService {
                 + e.getFailureCause().getStackTraceElement().stream()
                         .reduce(new StringBuffer(), (sb1, sb2) -> sb1.append("\n").append(sb2),
                                 (sb1, sb2) -> sb1.append("\n").append(sb2)));
-        deploymentCache.invalidate(e.getDeploymentID());
-        iatRepositoryManager.deleteIAT(e.getTestId());
         var deployer = deploymentCache.getIfPresent(e.getDeploymentID());
         deployer.replyChannel().send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
+        deploymentCache.invalidate(e.getDeploymentID());
     }
 
     @EventListener

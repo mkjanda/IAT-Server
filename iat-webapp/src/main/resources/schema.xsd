@@ -1105,11 +1105,10 @@
         </xs:restriction>
     </xs:simpleType>
 
-    <xs:simpleType name="ManifestEntityType">
+    <xs:simpleType name="FileEntityType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="File"/>
             <xs:enumeration value="Directory"/>
-            <xs:enumeration value="UpdateFile"/>
         </xs:restriction>
     </xs:simpleType>
 
@@ -1140,9 +1139,9 @@
             <xs:enumeration value="image" />
             <xs:enumeration value="itemSlide"/>
             <xs:enumeration value="javascript" />
-            <xs:enumeration value="updateFile" />
             <xs:enumeration value="testConfiguration" />
             <xs:enumeration value="errorMark" />
+            <xs:enumeration value="keyOutline" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -2186,7 +2185,6 @@
                     <xs:element name="ServerPath" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="ServerPort" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="ClientID" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="ScriptId" type="xs:int" minOccurs="0" maxOccurs="1" />
                     <xs:element name="NumIATItems" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="IsSevenBlock" type="xs:boolean" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RedirectOnComplete" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -2195,29 +2193,15 @@
                     <xs:element name="ErrorMarkID" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="LeftKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RightKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="PrefixSelfAlternatingSurveys" type="xs:boolean" minOccurs="1" maxOccurs="1" />
                     <xs:element name="Survey" type="iat:survey-impl" minOccurs="0" maxOccurs="unbounded" />
-                    <xs:element name="UniqueResponse" type="iat:unique-response-impl" minOccurs="0" maxOccurs="1"/>
                     <xs:element name="Layout" type="iat:layout-impl" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="EventList">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:group ref="iat:Events" minOccurs="1" maxOccurs="unbounded" />
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="DisplayItemList" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="DisplayItem" type="iat:display-item-impl" minOccurs="0" maxOccurs="unbounded" />
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
+                    <xs:group ref="iat:Events" minOccurs="1" maxOccurs="unbounded" />
+                    <xs:element name="DisplayItem" type="iat:display-item-impl" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="ScriptId" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="Globals" type="iat:globals-impl" minOccurs="0" maxOccurs="1" />
                 </xs:sequence>
                 <xs:attribute name="NumBeforeSurveys" type="xs:int" form="unqualified" use="required" />
                 <xs:attribute name="NumAfterSurveys" type="xs:int" form="unqualified" use="required" />
-                <xs:attribute name="HasUniqueResponse" type="xs:boolean" form="unqualified" use="required" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2432,9 +2416,8 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
+            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>              
             <xs:element name="Path" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="EntityType" type="iat:ManifestEntityType" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -2512,20 +2495,15 @@
         <xs:complexContent>
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
-                    <xs:group ref="iat:ManifestGroup"/>
+                    <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
                 <xs:attribute name="ManifestType" type="iat:ManifestType" form="unqualified" use="optional" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:group name="ManifestGroup">
-        <xs:sequence>
-            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded"/>
-            <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded"/>
-        </xs:sequence>
-    </xs:group>
 
     <xs:complexType name="encrypted-des-cipher-impl">
         <xs:annotation>
@@ -2545,29 +2523,6 @@
                 <xs:sequence>
                     <xs:element name="Cipher" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="IV" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="update-file-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.messaging.UpdateFile"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GUpdateFile" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.messaging.UpdateFile"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:file-entity-impl">
-                <xs:sequence>
-                    <xs:element name="SourcePath" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Size" type="xs:long" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

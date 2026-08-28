@@ -71,11 +71,9 @@ public class ResultRetrievalController {
     @ResponseBody
     public ResponseEntity<byte[]> downloadResults(@RequestParam("testName") String testName, @RequestParam("clientId") long clientId,
             @RequestParam("authToken") String authToken) throws Exception {
-
-        var ctx = PasswordHandler.authTokenCache.getIfPresent(authToken);
-        if (ctx == null)
-            return ResponseEntity.badRequest().build();
-        if (!ctx.sessionState().authToken().equals(authToken))
+        var client = clientRepositoryManager.getClientById(clientId);        
+        var expectedAuthToken = PasswordHandler.authTokenCache.getIfPresent(client.getProductKey());
+        if (!expectedAuthToken.equals(authToken))
             return ResponseEntity.badRequest().build();
         var test = repositoryManager.getIATByNameAndClientID(testName, clientId);
         if (test == null) 
@@ -117,10 +115,9 @@ public class ResultRetrievalController {
     @GetMapping(value="/ItemSlides")
     public ResponseEntity<byte[]> downloadItemSlides(@RequestParam("testName") String testName, @RequestParam("clientId") long clientId, 
             @RequestParam("authToken") String authToken) {
-        var ctx = PasswordHandler.authTokenCache.getIfPresent(authToken);
-        if (ctx == null)
-            return ResponseEntity.badRequest().build();
-        if (!ctx.sessionState().authToken().equals(authToken))
+        var client = clientRepositoryManager.getClientById(clientId);        
+        var expectedAuthToken = PasswordHandler.authTokenCache.getIfPresent(client.getProductKey());
+        if (!expectedAuthToken.equals(authToken))
             return ResponseEntity.badRequest().build();
         var test = repositoryManager.getIATByNameAndClientID(testName, clientId);
         if (test == null) 

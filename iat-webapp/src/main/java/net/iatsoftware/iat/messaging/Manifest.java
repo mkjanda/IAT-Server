@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import net.iatsoftware.iat.generated.ManifestEntityType;
+import net.iatsoftware.iat.generated.FileEntityType;
 import net.iatsoftware.iat.generated.ResourceType;
 import org.apache.logging.log4j.LogManager;
 /**
@@ -43,27 +43,17 @@ public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 	public Manifest(String testName) {
 		iatName = testName;
 	}
-
+/*
 	public Manifest(String iatName, java.io.File directory) {
 		iatName = "none";
 		for (FileEntity fe : accumulateManifest(directory)) {
-			if (fe.getEntityType().equals(ManifestEntityType.DIRECTORY))
+			if (fe.getEntityType().equals(FileEntityType.DIRECTORY))
 				getDirectory().add((Directory) fe);
 			else
 				getFile().add((File) fe);
 		}
 	}
 
-	/*
-	 * private long calcSize(Directory directory) {
-	 * long size = 0;
-	 * for (var d : directory.getDirectory())
-	 * size += calcSize(d);
-	 * for (var f : directory.getFile())
-	 * size += f.getSize();
-	 * return size;
-	 * }
-	 */
 	public List<FileEntity> accumulateManifest(java.io.File directory) {
 		var l = new ArrayList<FileEntity>();
 		for (java.io.File f : directory.listFiles()) {
@@ -71,16 +61,16 @@ public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 				var dir = new Directory();
 				dir.setName(f.getName());
 				dir.setPath(f.getAbsolutePath());
-				dir.setEntityType(ManifestEntityType.DIRECTORY);
+				dir.setEntityType(FileEntityType.DIRECTORY);
 				l.add(dir);
 				accumulateManifestDirectory(dir);
 			} else {
 				var file = new File();
 				file.setPath(f.getAbsolutePath());
 				file.setName(f.getName());
-				file.setEntityType(ManifestEntityType.UPDATE_FILE);
+				file.setEntityType(FileEntityType.UPDATE_FILE);
 				file.setResourceType(ResourceType.UPDATE_FILE);
-				file.setSize((int)f.getTotalSpace());
+				file.setSize((int)f.getLength());
 				l.add(file);
 			}
 		}
@@ -93,21 +83,21 @@ public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 				var dir = new Directory();
 				dir.setName(fe.getName());
 				dir.setPath(fe.getAbsolutePath());
-				dir.setEntityType(ManifestEntityType.DIRECTORY);
+				dir.setEntityType(FileEntityType.DIRECTORY);
 				directory.getDirectory().add(dir);
 				accumulateManifestDirectory(dir);
 			} else {
 				var file = new File();
 				file.setPath(fe.getAbsolutePath());
 				file.setName(fe.getName());
-				file.setEntityType(ManifestEntityType.UPDATE_FILE);
+				file.setEntityType(FileEntityType.UPDATE_FILE);
 				file.setResourceType(ResourceType.UPDATE_FILE);
-				file.setSize((int)fe.getTotalSpace());
+				file.setSize((int)fe.getLength());
 				directory.getFile().add(file);
 			}
 		}
 	}
-
+*/
 	public Manifest(java.io.File[] files) {
 	}
 
@@ -334,7 +324,7 @@ public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 		}
 		return bOut.toByteArray();
 	}
-
+/*
 	public static Manifest getDepreciatedUpdateManifest(
 			java.io.File rootPath,
 			String clientRelease) {
@@ -490,7 +480,7 @@ public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 						});
 		return updateNotification;
 	}
-
+*/
 	public List<File> getFiles(Directory dir) {
 		List<File> fList = new ArrayList<>();
 		for (var d : dir.getDirectory())

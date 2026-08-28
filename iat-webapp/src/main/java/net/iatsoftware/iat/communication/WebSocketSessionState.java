@@ -181,26 +181,6 @@ public final class WebSocketSessionState implements SessionState {
         setAttribute("Unmarshaller", unmarshaller);
     }
 
-    @Override 
-    public TransactionType lastTransactionType() {
-        return (TransactionType) getAttribute("LastTransactionType");
-    }
-
-    @Override
-    public void setLastTransactionType(TransactionType type) {
-        setAttribute("LastTransactionType", type);
-    }   
-
-    @Override
-    public ManifestType wantedManifestType() {
-        return (ManifestType) getAttribute("WantedManifestType");
-    }
-    
-    @Override
-    public void setWantedManifestType(ManifestType type) {
-        setAttribute("WantedManifestType", type);
-    }   
-
     @Override
     public Manifest fileManifest() {
         return (Manifest) getAttribute("FileManifest");
@@ -221,16 +201,6 @@ public final class WebSocketSessionState implements SessionState {
     }
 
     @Override
-    public IAT replacementTest() {
-        return (IAT) getAttribute("ReplacementTest");
-    }
-
-    @Override
-    public void setReplacementTest(IAT test) {
-        setAttribute("ReplacementTest", test);
-    }
-    
-    @Override
     public String authToken() {
         return (String) getAttribute("AuthToken");
     }
@@ -239,6 +209,16 @@ public final class WebSocketSessionState implements SessionState {
     public void setAuthToken(String authToken) {
         setAttribute("AuthToken", authToken);
     }
+
+    @Override
+    public IAT test() {
+        return (IAT) getAttribute("Test");
+    }   
+
+    @Override
+    public void setTest(IAT test) {
+        setAttribute("Test", test);
+    }   
 
     /**
      * Removes every key that belongs to a single logical transaction. Leaves

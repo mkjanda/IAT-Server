@@ -46,7 +46,7 @@ public interface IATRepositoryManager {
     Long registerIAT(IAT test);
     void storeDeploymentPacket(DeploymentPacket dp);
     boolean queryIATExists(String productKey, String iatName);
-    void storeEncryptionKey(IAT test, EncryptedRSAKey key);
+    void addEncryptionKey(IAT test, EncryptedRSAKey key);
     void deleteDeploymentPackets(List<DeploymentPacket> packets);
     void storeCodeLine(EncCodeLine cl);
     void addTestSegment(TestSegment ts);

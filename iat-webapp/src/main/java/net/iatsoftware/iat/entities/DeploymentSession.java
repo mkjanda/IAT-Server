@@ -31,7 +31,7 @@ import jakarta.persistence.TemporalType;
 @Table(name="deployment_sessions")
 public class DeploymentSession implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
-    public static final long DEPLOYMENT_TIMEOUT = 300_000L;
+    public static final long DEPLOYMENT_TIMEOUT = 120_000L;
     private IAT test;
     private Long id;
     private Calendar deploymentStart = Calendar.getInstance();

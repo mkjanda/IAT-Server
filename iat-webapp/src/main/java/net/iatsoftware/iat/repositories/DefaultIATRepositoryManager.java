@@ -132,7 +132,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void storeEncryptionKey(final IAT test, final EncryptedRSAKey key) {
+    public void addEncryptionKey(final IAT test, final EncryptedRSAKey key) {
         key.setTest(test);
         partiallyEncryptedRSAKeyRepository.add(key);
     }

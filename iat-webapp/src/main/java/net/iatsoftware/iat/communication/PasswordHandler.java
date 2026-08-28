@@ -16,7 +16,7 @@ import java.security.SecureRandom;
 public class PasswordHandler implements TransactionHandler {
     static final SecureRandom random = new SecureRandom();
     static final Base64.Encoder b64Encoder = Base64.getEncoder();
-    static public final Cache<String, TransactionContext> authTokenCache = Caffeine.newBuilder()
+    static public final Cache<String, String> authTokenCache = Caffeine.newBuilder()
     .maximumSize(10_000)
     .expireAfterWrite(Duration.ofMinutes(10))
     .build();
@@ -44,7 +44,7 @@ public class PasswordHandler implements TransactionHandler {
             var bytes = new byte[24];
             random.nextBytes(bytes);
             String authToken = b64Encoder.encodeToString(bytes);
-            authTokenCache.put(authToken, ctx);
+            authTokenCache.put(ctx.client().getProductKey(), authToken);
             var response = new TransactionRequest(TransactionType.AUTH_TOKEN);
             response.setAuthToken(authToken);
             ctx.sessionState().setAuthenticated(true);
