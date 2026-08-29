@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xs="http://www.w3.org/2001/XMLSchema"
-                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:mine="http://www.iatsoftware.net"
-                version="2.0"
-                exclude-result-prefixes="xs">
-
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:mine="http://www.iatsoftware.net"
+	version="2.0"
+	exclude-result-prefixes="xs">
+	
 	<xsl:output method="xml" encoding="utf-8" indent="yes"/>
-
+	
 	<xsl:variable name="root" select="/" />
-
-
+	
+	
 	<xsl:variable name="serverURLParts">
 		<xsl:analyze-string select="//ServerURL" regex="[^/]+">
 			<xsl:matching-substring>
@@ -40,14 +40,14 @@
 	<xsl:variable name="testURL">
 		<xsl:value-of select="concat($root//ServerPath, '/', //ClientID, '/', //IATName)" />
 	</xsl:variable>
-
+	
 	<xsl:variable name="GlobalCode">
 		<xsl:element name="Declaration">
-			<xsl:value-of select="concat('NumImages = ', count(//DisplayItemList/IATDisplayItem))"/>
+			<xsl:value-of select="concat('NumImages = ', count(distinct-values(//DisplayItem/ID)))"/>
 		</xsl:element>
-		<xsl:for-each select="//IATDisplayItem">
+		<xsl:for-each select="for $id in distinct-values(//DisplayItem/ID) return $id">
 			<xsl:element name="Declaration">
-				<xsl:value-of select="concat('img', ID)"/>
+				<xsl:value-of select="concat('img', .)"/>
 			</xsl:element>
 		</xsl:for-each>
 		<Declaration>imgTable</Declaration>
@@ -71,21 +71,21 @@
 			<xsl:value-of select="concat('var adminHost = &quot;', $root//ServerPath, '/Admin&quot;')" />
 		</Declaration>
 	</xsl:variable>
-
-
+	
+	
 	<xsl:variable name="functionPrefix">
 		<xsl:value-of select="'ihF'"/>
 	</xsl:variable>
-
+	
 	<xsl:variable name="globalVariablePrefix">
 		<xsl:value-of select="'gv'"/>
 	</xsl:variable>
-
+	
 	<xsl:variable name="globalCodePrefix">
 		<xsl:value-of select="'ihGC'"/>
 	</xsl:variable>
-
-
+	
+	
 	<xsl:variable name="Globals">
 		<xsl:for-each select="$GlobalCode/Declaration">
 			<xsl:variable name="ndx" select="position()" />
@@ -107,7 +107,7 @@
 			</xsl:analyze-string>
 		</xsl:for-each>
 	</xsl:variable>
-
+	
 	<xsl:variable name="Functions">
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'OnImageLoad'" />
@@ -130,7 +130,7 @@
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
-
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'OnImageLoadError'" />
 			<xsl:element name="Params">
@@ -156,13 +156,13 @@
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
-
-
+		
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'StartImageLoad'" />
 			<xsl:element name="Params" />
 			<xsl:variable name="functionBody">
-			<xsl:text>
+				<xsl:text>
 				var displayDiv = document.getElementById("IATDisplayDiv");
 				LoadingImagesElement = document.createElement("h3");
 				LoadingImagesElement.innerHTML = "Please Wait";
@@ -178,7 +178,7 @@
 					<xsl:variable name="imageTableEntry" select="concat('imgTable[&quot;', $imageUrl, '&quot;]')" />
 					<xsl:value-of select="concat($imageTableEntry, ' = new Image();&#x0A;')" />
 					<xsl:value-of select="concat($imageTableEntry, '.onload = OnImageLoad;&#x0A;')" />
-
+					
 					<xsl:value-of select="concat($imageTableEntry, '.onerror = OnImageLoadError;&#x0A;')" />
 					<xsl:value-of select="concat($imageTableEntry, '.src = &quot;', $imageUrl, '&quot;;&#x0A;')" />
 				</xsl:for-each>
@@ -193,7 +193,7 @@
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
-
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'ImageLoadCompleted'" />
 			<xsl:element name="Params" />
@@ -216,7 +216,7 @@
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
-
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'TestReady'" />
 			<xsl:element name="Params">
@@ -268,8 +268,8 @@
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
-
-
+		
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'OnUnload'" />
 			<xsl:element name="Params" />
@@ -281,7 +281,7 @@
 				<xsl:element name="Code">}</xsl:element>
 			</xsl:element>
 		</xsl:element>
-
+		
 		<xsl:if test="count(//DynamicSpecifier)">
 			<xsl:element name="Function">
 				<xsl:attribute name="FunctionName" select="'OnDynamicSpecLoad'" />
@@ -305,7 +305,7 @@
 				</xsl:element>
 			</xsl:element>
 		</xsl:if>
-
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'appendFormData'" />
 			<xsl:element name="Params">
@@ -321,7 +321,7 @@
 				<xsl:element name="Code">form.appendChild(elem);</xsl:element>
 			</xsl:element>
 		</xsl:element>
-
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'AbortTest'" />
 			<xsl:element name="Params" />
@@ -337,7 +337,7 @@
 				<xsl:element name="Code">form.submit();</xsl:element>
 			</xsl:element>
 		</xsl:element>
-
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'OnPopState'" />
 			<xsl:element name="Params">
@@ -362,8 +362,8 @@
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
-
-
+		
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'OnLoad'" />
 			<xsl:element name="Params" />
@@ -423,7 +423,7 @@
 				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
-
+		
 		<xsl:element name="Function">
 			<xsl:attribute name="FunctionName" select="'OnRetrieveScript'" />
 			<xsl:element name="Params" />
@@ -432,25 +432,25 @@
 			</xsl:element>
 		</xsl:element>
 	</xsl:variable>
-
-
-
+	
+	
+	
 	<xsl:template match="ConfigFile">
 		<xsl:element name="CodeFile">
 			<VarEntries>
 				<xsl:copy-of select="$Globals" />
 			</VarEntries>
-				<xsl:element name="Functions">
-					<xsl:for-each select="$Functions/Function">
-						<xsl:variable name="nodeName" select="name()" />
-						<xsl:element name="{$nodeName}">
-							<xsl:for-each select="attribute::*">
-								<xsl:copy-of select="."/>
-							</xsl:for-each>
-							<xsl:attribute name="FunctionPrefix" select="$functionPrefix" />
-							<xsl:copy-of select="child::*" />
-						</xsl:element>
-					</xsl:for-each>
+			<xsl:element name="Functions">
+				<xsl:for-each select="$Functions/Function">
+					<xsl:variable name="nodeName" select="name()" />
+					<xsl:element name="{$nodeName}">
+						<xsl:for-each select="attribute::*">
+							<xsl:copy-of select="."/>
+						</xsl:for-each>
+						<xsl:attribute name="FunctionPrefix" select="$functionPrefix" />
+						<xsl:copy-of select="child::*" />
+					</xsl:element>
+				</xsl:for-each>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>

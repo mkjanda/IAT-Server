@@ -33,6 +33,7 @@ public class DeploymentHandler implements TransactionHandler {
 
     private void handleDeploymentRequest(TransactionContext ctx) {
         var transaction = (TransactionRequest) ctx.inbound();
+
         var test = ctx.sessionState().repositoryManager().getIATByNameAndClientID(transaction.getIATName(),
                 ctx.client().getClientId());
         if (test != null) {
@@ -99,7 +100,6 @@ public class DeploymentHandler implements TransactionHandler {
                 } else {
                     try {
                         ds.generateTest();
-                        deploymentService.completeDeployment(ds.getDeploymentId());
                     } catch (Exception ex) {
                         critical.error("Error while generating test for deployment ID " + ds.getDeploymentId()
                                 + ": " + ex.getMessage(), ex);

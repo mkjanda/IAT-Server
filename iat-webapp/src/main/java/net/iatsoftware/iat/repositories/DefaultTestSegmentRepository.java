@@ -18,6 +18,7 @@ import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -42,6 +43,7 @@ public class DefaultTestSegmentRepository extends GenericJpaRepository<Long, Tes
 
     @Override
     public void rotateItems(IAT test) {
+        /*
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
         Root<TestSegment> root = query.from(TestSegment.class);
@@ -78,11 +80,21 @@ public class DefaultTestSegmentRepository extends GenericJpaRepository<Long, Tes
             this.entityManager.createQuery(update.set(root.get("numAlternations"), alternationNum).where(pred)).executeUpdate();
             pred = cb.and(cb.equal(root.get("test"), test), cb.lt(root.get("alternationPriority"), alternationPriority), cb.notEqual(root.get("alternationPriority"), -1));
             this.entityManager.createQuery(update.set(root.get("numAlternations"), 0).where(pred)).executeUpdate();
-        }
+        }*/
     }
 
     @Override
     public List<Long> getTestElems(IAT test) {
+        var cb = this.entityManager.getCriteriaBuilder();
+        var query = cb.createQuery(Long.class);
+        var root = query.from(TestSegment.class);
+        var pred = cb.equal(root.get("test"), test);
+        var results = this.entityManager.createQuery(query.select(root.get("id")).where(pred)).getResultList();
+        results.sort((x1, x2) -> Long.compare(x1, x2));
+        return results;
+    }
+
+        /*
         final Map<Double, Long> elemMap = new HashMap<>();
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> query = cb.createQuery(Tuple.class);
@@ -101,14 +113,18 @@ public class DefaultTestSegmentRepository extends GenericJpaRepository<Long, Tes
         Predicate havingPred = cb.gt(cb.count(root.get("alternationPriority")), 1);
         List<Integer> priorities = this.entityManager.createQuery(intQuery.select(root.get("alternationPriority")).where(pred).groupBy(root.get("alternationPriority")).having(havingPred)).getResultList();
         priorities.forEach((p) -> {
-            CriteriaQuery<Tuple> multipleAlternationQuery = cb.createQuery(Tuple.class);
-            Root<TestSegment> multipleAlternationRoot = multipleAlternationQuery.from(TestSegment.class);
-            Predicate multipleAlternationPred = cb.and(cb.equal(multipleAlternationRoot.get("test"), test), cb.equal(multipleAlternationRoot.get("alternationPriority"), p));
-            List<Tuple> segments = this.entityManager.createQuery(multipleAlternationQuery.multiselect(multipleAlternationRoot.get("initialPos"), multipleAlternationRoot.get("numAlternations"), multipleAlternationRoot.get("id")).where(multipleAlternationPred)).getResultList();
+            CriteriaQuery<Tuple> alternationQuery = cb.createQuery(Tuple.class);
+            Root<TestSegment> alternationRoot = alternationQuery.from(TestSegment.class);
+            Predicate alternationPred = cb.and(cb.equal(alternationRoot.get("test"), test), cb.equal(alternationRoot.get("alternationPriority"), p));
+            Path<Integer> initialPos = alternationRoot.get("initialPos");
+            Path<Integer> numAlternations = alternationRoot.get("numAlternations");
+            Path<Long> id = alternationRoot.get("id");
+            List<Tuple> segments = this.entityManager.createQuery(alternationQuery.select(cb.tuple(initialPos.alias("intialPos"),
+                numAlternations.alias("numAlternations"), id.alias("id"))).where(alternationPred)).getResultList();
             for (int ctr = 0; ctr < segments.size(); ctr++) {
-                int alternationNum = segments.get(ctr).get(1, Integer.class);
+                int alternationNum = segments.get(ctr).get("numAlternations", Integer.class);
                 int ndx = (ctr + alternationNum) % segments.size();
-                elemMap.put((double) segments.get(ndx).get(0, Integer.class), segments.get(ctr).get(2, Long.class));
+                elemMap.put((double) segments.get(ndx).get("initialPos", Integer.class), segments.get(ctr).get("id", Long.class));
             }
         });
         pred = cb.and(cb.equal(root.get("test"), test), cb.ge(root.get("alternationPriority"), 0));
@@ -119,18 +135,22 @@ public class DefaultTestSegmentRepository extends GenericJpaRepository<Long, Tes
             CriteriaQuery<Tuple> singleAlternationQuery = cb.createQuery(Tuple.class);
             Root<TestSegment> singleAlternationRoot = singleAlternationQuery.from(TestSegment.class);
             Predicate singleAlternationPred = cb.and(cb.equal(singleAlternationRoot.get("test"), test), cb.equal(singleAlternationRoot.get("alternationPriority"), p));
-            Tuple segment = this.entityManager.createQuery(singleAlternationQuery.multiselect(singleAlternationRoot.get("initialPos"), singleAlternationRoot.get("id"), singleAlternationRoot.get("numAlternations")).where(singleAlternationPred)).getSingleResult();
-            if (segment.get(2, Integer.class) == 1) {
-                if (segment.get(0, Integer.class) < iPos) {
-                    elemMap.put(iPos + p / 100.0, segment.get(1, Long.class));
+            Path<Integer> initialPos = singleAlternationRoot.get("initialPos");
+            Path<Integer> numAlternations = singleAlternationRoot.get("numAlternations");
+            Path<Long> id = singleAlternationRoot.get("id");
+            Tuple segment = this.entityManager.createQuery(singleAlternationQuery.select(cb.tuple(initialPos.alias("initialPos"), numAlternations.alias("numAlternations"), id.alias("id"))).where(singleAlternationPred)).getSingleResult();
+            if (segment.get("numAlternations", Integer.class) == 1) {
+                if (segment.get("initialPos", Integer.class) < iPos) {
+                    elemMap.put(iPos + p / 100.0, segment.get("id", Long.class));
                 } else {
-                    elemMap.put(iPos - .99 + p / 100, segment.get(1, Long.class));
+                    elemMap.put(iPos - .99 + p / 100, segment.get("id", Long.class));
                 }
             } else
-                elemMap.put((double)segment.get(0, Integer.class), segment.get(1, Long.class));
+                elemMap.put((double)segment.get("initialPos", Integer.class), segment.get("id", Long.class));
         });
         return elemMap.entrySet().stream().sorted((e1, e2) -> e1.getKey().compareTo(e2.getKey())).map(e -> e.getValue()).collect(Collectors.toList());
-    }
+        */
+    
 
     @Override
     public int getElementPositionInTest(IAT test, String elemName) {

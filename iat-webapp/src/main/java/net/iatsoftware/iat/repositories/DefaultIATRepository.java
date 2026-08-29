@@ -63,7 +63,6 @@ public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
             Predicate pred2 = cb.equal(iatRoot.get("testName"), testName);
             return this.entityManager.createQuery(iatQuery.where(pred1, pred2)).getSingleResult();
         } catch (jakarta.persistence.NonUniqueResultException | jakarta.persistence.NoResultException ex) {
-            logger.error("No such IAT", ex);
             return null;
         }
     }

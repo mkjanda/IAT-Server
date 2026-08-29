@@ -28,6 +28,18 @@
                 </Delete>
             </DefaultRolloverStrategy>
         </RollingFile>
+<RollingFile name="DebugLog" fileName="${logDir}/debug.log" filePattern="${logDir}/debug-%d{MM-dd-yyyy}.log.gz">
+    <PatternLayout pattern="%d{MM-dd-YYYY} %d{HH:mm:ss.SSS} %p %c{1.} [%t] %l: %m%n" />
+    <Policies>
+        <TimeBasedTriggeringPolicy modulate="true" interval="7"/>
+    </Policies>
+    <DefaultRolloverStrategy>
+        <Delete basePath="${logDir}" maxDepth="2">
+            <IfFileName regex="debug\-.*\.log\.gz$" />
+            <IfLastModified age="14d" />
+        </Delete>
+    </DefaultRolloverStrategy>
+</RollingFile>
         <RollingFile name="CriticalLog" fileName="${logDir}/critical.log" filePattern="${logDir}/critical-%d{MM-dd-yyyy}.log.gz">
             <PatternLayout pattern="%d{MM-dd-YYYY} %d{HH:mm:ss.SSS} %m%n" />
             <Policies>
@@ -45,11 +57,15 @@
         <Logger name="transactions" level="info" additivity="false">
             <AppenderRef ref="TransLog" />
         </Logger>
+        <Logger name="debug" level="debug" additivity="false">
+            <AppenderRef ref="DebugLog" />
+        </Logger>
         <Logger name="critical" additivity="false">
             <AppenderRef ref="CriticalLog" />
         </Logger>
         <Root level="warn">
             <AppenderRef ref="AppLog"/>
+            <AppenderRef ref="DebugLog"/>
         </Root>
     </Loggers>
 </Configuration>

@@ -317,15 +317,14 @@ public class DefaultIATDeployer implements IATDeployer {
         try {
             IAT test = iatRepositoryManager.getIAT(this.testId);
             doDeploy(test);
-            this.replyChannel.send(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS));
         } catch (DeploymentTerminationException ex) {
             criticalLogger.error("Error generating IAT", ex);
                 logger.error("deployment error", ex);
-            this.replyChannel.send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
+                this.eventPublisher.publishEvent(new DeploymentFailedEvent(this.deploymentSessionId, new ServerExceptionMessage("Deployment Failed", ex)));
         } catch (Exception ex) {
             criticalLogger.error("Error generating IAT", ex);
                 logger.error("deployment error", ex);
-            this.replyChannel.send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
+                this.eventPublisher.publishEvent(new DeploymentFailedEvent(this.deploymentSessionId, new ServerExceptionMessage("Deployment Failed", ex)));
         }
     }
 

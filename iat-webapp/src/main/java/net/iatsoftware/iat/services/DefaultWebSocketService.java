@@ -45,6 +45,7 @@ import jakarta.inject.Inject;
 public class DefaultWebSocketService implements WebSocketService {
 
     private static final Logger logger = LogManager.getLogger(DefaultWebSocketService.class);
+    private static final Logger debug = LogManager.getLogger("debug");
     private static final Logger critical = LogManager.getLogger("critical");
     @Inject
     ApplicationEventPublisher publisher;
@@ -102,12 +103,14 @@ public class DefaultWebSocketService implements WebSocketService {
     private TextMessage buildTextMessage(Message env) throws java.io.IOException {
         var stringWriter = new StringWriter();
         marshaller.marshal(env, new StreamResult(stringWriter));
+        debug.debug("Sending message to client: " + stringWriter.toString());
         return new TextMessage(stringWriter.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     @EventListener
     public void sendMessage(WebSocketSendEvent e) {
         try {
+            debug.debug(e.getSession().getId() + " is open: " + e.getSession().isOpen());
             e.getSession().sendMessage(buildTextMessage(e.getData()));
         } catch (Exception ex) {
             critical.error("Error sending message to client", ex);
