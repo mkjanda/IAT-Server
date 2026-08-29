@@ -38,7 +38,7 @@
             <Declaration>var Items1 = new Array();</Declaration>
             <Declaration>var Items2 = new Array();</Declaration>
             <Declaration>var ctr;</Declaration>
-            <xsl:for-each select="//DisplayItemList/IATDisplayItem">
+            <xsl:for-each select="$root//DisplayItem">
                 <Declaration>
                     <xsl:value-of select="concat('var DI', ./ID, ';')"/>
                 </Declaration>
@@ -1372,7 +1372,7 @@
             <xsl:attribute name="FunctionName" select="'InitImages'"/>
             <xsl:element name="Params"/>
             <xsl:variable name="functionBodyElems">
-                <xsl:for-each select="//DisplayItemList/IATDisplayItem">
+                <xsl:for-each select="$root//DisplayItem">
                     <xsl:element name="Code">
                         <xsl:value-of select="concat('DI', ID, ' = new IATDI(', ID, ', img', ID, ', ', X, ', ', Y, ', ', Width, ', ', Height, ');')"/>
                     </xsl:element>

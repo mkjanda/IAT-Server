@@ -11,7 +11,7 @@
             <head>
                 <xsl:element name="style">
                     <xsl:attribute name="type" select="'text/css'" />
-                    <xsl:apply-templates select="DisplayItemList" />
+                    <xsl:apply-templates  select="DisplayItem" />
                     .outlinedDI
                     {
                     <xsl:value-of select="concat('border: 1px solid #', ./Layout/OutlineColorR, ./Layout/OutlineColorG, ./Layout/OutlineColorB, ';')" 
@@ -20,7 +20,7 @@
                     
                     body {
                     <xsl:value-of select="concat('background: #', ./Layout/PageBackColorR, 
-                        ./Layout/PageBackColorG, ./Layout/PageBackColorB, ';&#x0A;')" />
+                            ./Layout/PageBackColorG, ./Layout/PageBackColorB, ';&#x0A;')" />
                     }
                     
                     #Message {
@@ -99,13 +99,13 @@
                     <xsl:attribute name="src" select="'/IAT/scripts/MiscUtils.js'" />
                     <xsl:value-of select="' '" />
                 </xsl:element>
-
+                
                 <xsl:element name="script">
                     <xsl:attribute name="type" select="'text/javascript'" />
                     <xsl:attribute name="src" select="'/IAT/scripts/SubFunct.js'" />
                     <xsl:value-of select="' '" />
                 </xsl:element>
-
+                
                 <xsl:element name="script">
                     <xsl:attribute name="type" select="'text/javascript'" />
                     <xsl:attribute name="src" select="string-join(('/IAT/resource', ClientID, IATName, ScriptId), '/')" />
@@ -126,7 +126,7 @@
                             <xsl:attribute name="id" select="'additionalPostData'" />
                             <xsl:value-of select="' '" />
                         </xsl:element>
-                        <xsl:apply-templates select="./DynamicSpecifiers" />
+                        <xsl:apply-templates  select="./DynamicSpecifiers" />
                         <xsl:element name="input">
                             <xsl:attribute name="type" select="'hidden'" />
                             <xsl:attribute name="id" select="'hexLen'" />
@@ -188,7 +188,7 @@
         </xsl:for-each>
     </xsl:variable>
     
-    <xsl:template match="IATDisplayItem">
+    <xsl:template match="DisplayItem">
         <xsl:value-of select="concat('#IATDI', ./ID)" />
         {
         position: absolute;

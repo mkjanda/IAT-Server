@@ -97,7 +97,14 @@ public class DeploymentHandler implements TransactionHandler {
                                     + ctx.deploymentId());
                     ctx.reply().send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
                 } else {
-                    ds.generateTest();
+                    try {
+                        ds.generateTest();
+                        deploymentService.completeDeployment(ds.getDeploymentId());
+                    } catch (Exception ex) {
+                        critical.error("Error while generating test for deployment ID " + ds.getDeploymentId()
+                                + ": " + ex.getMessage(), ex);
+                        ctx.reply().send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
+                    }
                 }
             }
         } else if (ctx.inbound() instanceof ConfigFile) {

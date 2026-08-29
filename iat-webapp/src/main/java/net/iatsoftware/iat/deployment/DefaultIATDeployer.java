@@ -295,8 +295,6 @@ public class DefaultIATDeployer implements IATDeployer {
 
     protected void doDeploy(IAT iat) throws DeploymentTerminationException {
         this.test = iat;
-        this.scheduler.submit(() -> {
-            try {
                 this.CF = (ConfigFile)this.session.configFile();
                 this.CF.setIATName(this.test.getTestName());
                 int numStages = (1 + this.CF.getNumAfterSurveys() + CF.getNumBeforeSurveys());
@@ -312,14 +310,6 @@ public class DefaultIATDeployer implements IATDeployer {
                 test.setDeploymentDescriptor(DeploymentDescriptor.digest());
                 iatRepositoryManager.updateIAT(test);
                 this.eventPublisher.publishEvent(new DeploymentSuccessEvent(this.deploymentSessionId, test.getId()));
-            } catch (NullPointerException | org.springframework.orm.jpa.JpaSystemException
-                    | DeploymentTerminationException ex) {
-                logger.error("deployment error", ex);
-                criticalLogger.error("Error reporting deployment error", ex);
-                this.eventPublisher.publishEvent(new DeploymentFailedEvent(this.deploymentSessionId,
-                        new ServerExceptionMessage("Deployment Error", ex), test.getId()));
-            }
-        });
     }
 
     @Override
@@ -330,9 +320,11 @@ public class DefaultIATDeployer implements IATDeployer {
             this.replyChannel.send(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS));
         } catch (DeploymentTerminationException ex) {
             criticalLogger.error("Error generating IAT", ex);
+                logger.error("deployment error", ex);
             this.replyChannel.send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
         } catch (Exception ex) {
             criticalLogger.error("Error generating IAT", ex);
+                logger.error("deployment error", ex);
             this.replyChannel.send(new TransactionRequest(TransactionType.TRANSACTION_FAIL));
         }
     }

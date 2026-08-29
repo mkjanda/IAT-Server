@@ -1136,12 +1136,12 @@
 
     <xs:simpleType name="ResourceType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="image" />
-            <xs:enumeration value="itemSlide"/>
-            <xs:enumeration value="javascript" />
-            <xs:enumeration value="testConfiguration" />
-            <xs:enumeration value="errorMark" />
-            <xs:enumeration value="keyOutline" />
+            <xs:enumeration value="Image" />
+            <xs:enumeration value="ItemSlide"/>
+            <xs:enumeration value="Javascript" />
+            <xs:enumeration value="TestConfiguration" />
+            <xs:enumeration value="ErrorMark" />
+            <xs:enumeration value="KeyOutline" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -1640,10 +1640,10 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="GIATItem">
+    <xs:complexType name="GTrial">
         <xs:annotation>
             <xs:appinfo>
-                <xs:jaxb implClass="net.iatsoftware.iat.configfile.IATItem"/>
+                <jaxb:class implClass="net.iatsoftware.iat.configfile.Trial"/>
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
@@ -1651,7 +1651,6 @@
                 <xs:sequence>
                     <xs:element name="ItemNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="BlockNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="StimulusDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="OriginatingBlock" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="KeyedDir" minOccurs="1" maxOccurs="1">
                         <xs:simpleType>
@@ -1663,6 +1662,7 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:element>
+                    <xs:element name="StimulusDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2099,7 +2099,7 @@
             <xs:element name="BeginIATBlock" type="iat:GBeginIATBlock" minOccurs="1" maxOccurs="1" />
             <xs:element name="BeginInstructionBlock" type="iat:GBeginInstructionBlock" minOccurs="1" maxOccurs="1" />
             <xs:element name="EndIATBlock" type="iat:GEndIATBlock" minOccurs="1" maxOccurs="1" />
-            <xs:element name="IATItem" type="iat:GIATItem" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Trial" type="iat:GTrial" minOccurs="1" maxOccurs="1" />
             <xs:element name="KeyedInstructionScreen" type="iat:GKeyedInstructionScreen" minOccurs="1" maxOccurs="1" />
             <xs:element name="TextInstructionScreen" type="iat:GTextInstructionScreen" minOccurs="1" maxOccurs="1" />
             <xs:element name="MockItemInstructionScreen" type="iat:GMockItemInstructionScreen" minOccurs="1" maxOccurs="1" />
@@ -2449,7 +2449,6 @@
                     <xs:element name="Size" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="ResourceType" type="iat:ResourceType" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="ResourceId" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ReferenceId" type="xs:int" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2496,7 +2495,6 @@
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
                     <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Directory" type="iat:directory-impl" minOccurs="0" maxOccurs="unbounded"/>
                     <xs:element name="File" type="iat:file-impl" minOccurs="0" maxOccurs="unbounded"/>
                 </xs:sequence>
                 <xs:attribute name="ManifestType" type="iat:ManifestType" form="unqualified" use="optional" />

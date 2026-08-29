@@ -23,7 +23,7 @@ import org.springframework.web.socket.WebSocketSession;
 
 public interface DeploymentService {
     long beginNewDeployment(Client c, User u, String testName, SessionState session, ReplyChannel replyChannel) throws java.io.IOException, java.net.URISyntaxException;
-    void completeDeployment(DeploymentSession ds) throws java.io.IOException, java.net.URISyntaxException;
+    void completeDeployment(Long deploymentId) throws java.io.IOException, java.net.URISyntaxException;
     IATDeployer getDeployer(long deploymentId);   
     void setWebSocketSessionState(long deploymentId, SessionState state);
 }

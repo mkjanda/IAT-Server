@@ -37,42 +37,41 @@ public class DeploymentUploadController {
 
 	@PostMapping("/Deployment")
 	public ResponseEntity<Void> deploymentUpload(@RequestParam("deploymentId") Long deploymentId,
-				@RequestBody byte[] data) throws java.io.IOException {
+			@RequestBody byte[] data) throws java.io.IOException {
 		var deploymentSession = repositoryManager.getDeploymentSession(deploymentId);
 		var deployer = deploymentService.getDeployer(deploymentId);
 		var sessionState = deployer.session();
 		var test = deploymentSession.getTest();
-			int offset = 0;
-			for (var f : sessionState.fileManifest().getFiles()) {
-				int fSize = f.getSize();
-				byte[] fData = new byte[fSize];
-				System.arraycopy(data, offset, fData, 0, fSize);
-				offset += fSize;
-				var testResource = new TestResource(test, f.getMimeType(), fData, f.getResourceType());
-				repositoryManager.addTestResource(testResource);
-			}
+		int offset = 0;
+		for (var f : sessionState.fileManifest().getFiles()) {
+			int fSize = f.getSize();
+			byte[] fData = new byte[fSize];
+			System.arraycopy(data, offset, fData, 0, fSize);
+			offset += fSize;
+			var testResource = new TestResource(test, f.getMimeType(), fData, f.getResourceType());
+			repositoryManager.addTestResource(testResource);
+		}
 		return ResponseEntity.ok().build();
 	}
 
 	@PostMapping("/ItemSlides")
 	public ResponseEntity<Void> itemSlidesUpload(@RequestParam("deploymentId") Long deploymentId,
-				@RequestBody byte[] data) throws java.io.IOException {
+			@RequestBody byte[] data) throws java.io.IOException {
 		var deploymentSession = repositoryManager.getDeploymentSession(deploymentId);
 		var deployer = deploymentService.getDeployer(deploymentId);
 		var sessionState = deployer.session();
 		var test = deploymentSession.getTest();
-			int offset = 0;
-			for (var f : sessionState.itemSlideManifest().getFiles()) {
-				int fSize = f.getSize();
-				byte[] fData = new byte[fSize];
-				System.arraycopy(data, offset, fData, 0, fSize);
-				offset += fSize;
-				var testResource = new TestResource(test, f.getMimeType(), fData, f.getResourceType());
-				repositoryManager.addTestResource(testResource);
-			}
+		int offset = 0;
+		for (var f : sessionState.itemSlideManifest().getFiles()) {
+			int fSize = f.getSize();
+			byte[] fData = new byte[fSize];
+			System.arraycopy(data, offset, fData, 0, fSize);
+			offset += fSize;
+			var testResource = new TestResource(test, f.getMimeType(), fData, f.getResourceType());
+			repositoryManager.addTestResource(testResource);
+		}
 		return ResponseEntity.ok().build();
 	}
-
 
 	@ExceptionHandler(java.io.IOException.class)
 	public ResponseEntity<Void> onException() {

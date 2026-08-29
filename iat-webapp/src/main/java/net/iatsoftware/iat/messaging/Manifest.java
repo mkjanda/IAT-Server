@@ -5,11 +5,8 @@
  */
 package net.iatsoftware.iat.messaging;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,8 +15,6 @@ import java.util.regex.Pattern;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
-import net.iatsoftware.iat.generated.FileEntityType;
-import net.iatsoftware.iat.generated.ResourceType;
 import org.apache.logging.log4j.LogManager;
 /**
  *
@@ -491,32 +486,12 @@ public class Manifest extends net.iatsoftware.iat.generated.GManifest {
 
 	public List<File> getFiles() {
 		List<File> fList = new ArrayList<File>();
-		for (Directory d : this.getDirectory()) {
-			fList.addAll(getFiles(d));
-		}
 		for (File f : this.getFile()) {
 			fList.add(f);
 		}
 		return fList;
 	}
 
-	private List<Directory> getSubDirectories(Directory d) {
-		List<Directory> dList = new ArrayList<>();
-		for (Directory dir : d.getDirectory()) {
-			dList.add(dir);
-			dList.addAll(getSubDirectories(dir));
-		}
-		return dList;
-	}
-
-	public List<Directory> getDirectories() {
-		List<Directory> dList = new ArrayList<>();
-		for (Directory dir : this.getDirectory()) {
-			dList.add(dir);
-			dList.addAll(getSubDirectories(dir));
-		}
-		return dList;
-	}
 
 	public boolean containsFileWithName(String filename) {
 		return getFiles().stream().anyMatch(f -> f.getName().equals(filename));

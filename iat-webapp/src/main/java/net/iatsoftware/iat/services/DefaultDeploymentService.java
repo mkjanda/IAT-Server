@@ -113,9 +113,9 @@ public class DefaultDeploymentService implements DeploymentService {
 
 
     @Override
-    public void completeDeployment(DeploymentSession ds) {
-        iatRepositoryManager.finalizeDeployment(ds.getId());
-        deploymentCache.invalidate(ds.getId());
+    public void completeDeployment(Long deploymentId) {
+        iatRepositoryManager.finalizeDeployment(deploymentId);
+        deploymentCache.invalidate(deploymentId);
     }
 
     @EventListener
@@ -139,10 +139,10 @@ public class DefaultDeploymentService implements DeploymentService {
 
     @EventListener
     public void onDeploymentSuccess(DeploymentSuccessEvent e) {
+        var deployer = deploymentCache.getIfPresent(e.getDeploymentID());
         var test = iatRepositoryManager.getIAT(e.getTestId());
         deploymentCache.invalidate(e.getDeploymentID());
         iatRepositoryManager.deleteDeploymentSession(test);
-        var deployer = deploymentCache.getIfPresent(e.getDeploymentID());
         deployer.replyChannel().send(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS));
     }
 
