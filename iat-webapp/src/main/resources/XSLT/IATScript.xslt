@@ -122,6 +122,7 @@
                 </xsl:element>
                 <xsl:variable name="constructorBodyElems">
                     <xsl:element name="Code">this.id = id;</xsl:element>
+                    <xsl:element name="Code">this.divTag = document.createElement("div");</xsl:element>
                     <xsl:element name="Code">this.imgTag = img;</xsl:element>
                     <xsl:element name="Code">this.imgSrc = img.src;</xsl:element>
                     <xsl:element name="Code">this.x = x;</xsl:element>
@@ -210,8 +211,9 @@
                         <xsl:element name="Param">parentNode</xsl:element>
                     </xsl:element>
                     <xsl:element name="FunctionBody">
-                        <xsl:element name="Code">this.imgTag.id = this.imgTagID;</xsl:element>
-                        <xsl:element name="Code">parentNode.appendChild(this.imgTag);</xsl:element>
+                        <xsl:element name="Code">this.divTag.id = this.imgTagID;</xsl:element>
+                        <xsl:element name="Code">this.divTag.appendChild(this.imgTag);</xsl:element>
+                        <xsl:element name="Code">parentNode.appendChild(this.divTag);</xsl:element>
                     </xsl:element>
                 </xsl:element>
                 
@@ -481,7 +483,7 @@
                     <xsl:variable name="functionBodyElems">
                         <xsl:element name="Code">var form = document.getElementById("IATForm");</xsl:element>
                         <xsl:element name="Code">this.appendFormData(form, "target", "adminV2");</xsl:element>
-                        <xsl:variable name="numItems" select="sum($root//IATEvent[@EventType eq 'BeginIATBlock']/NumPresentations)" />
+                        <xsl:variable name="numItems" select="sum($root//BeginIATBlock/NumPresentations)" />
                         <xsl:element name="Code">
                             <xsl:value-of select="concat('this.appendFormData(form, &quot;NumItems&quot;, &quot;', $numItems, '&quot;);')" />
                         </xsl:element>
@@ -1520,7 +1522,7 @@
     <xsl:template name="GenerateEventInit">
         <xsl:element name="Code">var iatBlock, instructionBlock, IATBlocks = new Array(), InstructionBlocks = new Array(), NumItemsAry = new Array(), piFunctions = new Array(), pifAry, blockCtr, ctr, ctr2, ctr3, randomNum, sourceAry = 1, iatItem, lesserAry, greaterAry, bAlternate, itemBlockCtr, instructionBlockCtr, itemBlockOrder, instructionBlockOrder, ndx;</xsl:element>
         <xsl:element name="Code">bAlternate = (CookieUtil.get("Alternate") == "yes") ? true : false;</xsl:element>
-        <xsl:for-each select="//EventList/BeginIATBlock">
+        <xsl:for-each select="//BeginIATBlock">
             <xsl:variable name="blockPos" select="count(preceding-sibling::BeginIATBlock) + count(preceding-sibling::BeginInstructionBlock)" />
             <xsl:variable name="numItems" select="NumItems" />
             <xsl:variable name="blockItems" select="following-sibling::Trial[position() le xs:integer($numItems)]" />
@@ -1542,7 +1544,7 @@
             <xsl:element name="Code">IATBlocks.push(iatBlock);</xsl:element>
         </xsl:for-each>
         <xsl:element name="Code">
-            <xsl:value-of select="concat('for (ctr = 0; ctr &lt; ', count(//EventList/child::BeginIATBlock), '; ctr++) {')" />
+            <xsl:value-of select="concat('for (ctr = 0; ctr &lt; ', count(//BeginIATBlock), '; ctr++) {')" />
         </xsl:element>
         <xsl:element name="Code">Items1 = new Array();</xsl:element>
         <xsl:element name="Code">Items2 = new Array();</xsl:element>
@@ -1574,7 +1576,7 @@
         <xsl:element name="Code">}</xsl:element>
         <xsl:element name="Code">IATBlocks[ctr].setEndBlockEvent(new IATEndBlock());</xsl:element>
         <xsl:element name="Code">}</xsl:element>
-        <xsl:for-each select="//EventList/child::*[name() eq 'BeginInstructionBlock']">
+        <xsl:for-each select="*[name() eq 'BeginInstructionBlock']">
             <xsl:variable name="blockPosition" select="count(preceding-sibling::BeginInstructionBlock) + count(preceding-sibling::BeginIATBlock) + 1" />
             <xsl:variable name="numScreens" select="xs:integer(NumInstructionScreens)" />
             <xsl:element name="Code">
@@ -1602,26 +1604,26 @@
             <xsl:element name="Code">InstructionBlocks.push(instructionBlock);</xsl:element>
         </xsl:for-each>
         <xsl:element name="Code">
-            <xsl:variable name="alternationValues" select="string-join(//EventList/child::BeginIATBlock/AlternatedWith, ', ')" />
+            <xsl:variable name="alternationValues" select="string-join(//BeginIATBlock/AlternatedWith, ', ')" />
             <xsl:value-of select="concat('itemBlockOrder = [', $alternationValues, '];')" />
         </xsl:element>
         <xsl:element name="Code">
-            <xsl:variable name="alternationValues" select="string-join(//EventList/child::BeginInstructionBlock/AlternatedWith, ', ')" />
+            <xsl:variable name="alternationValues" select="string-join(//BeginInstructionBlock/AlternatedWith, ', ')" />
             <xsl:value-of select="concat('instructionBlockOrder = [', $alternationValues, '];')"/>
         </xsl:element>
         <xsl:variable name="EventList">
-            <xsl:for-each select="//EventList/child::*[(name() eq 'BeginIATBlock') or (name() eq 'BeginInstructionBlock')]">
+            <xsl:for-each select="//*[(name() eq 'BeginIATBlock') or (name() eq 'BeginInstructionBlock')]">
                 <xsl:variable name="altWith" select="AlternatedWith" />
                 <xsl:variable name="bType" select="@EventType" />
                 <xsl:variable name="blockElems">
                     <xsl:copy-of select="." />
                     <xsl:if test="$bType eq 'BeginIATBlock'">
-                        <xsl:for-each select="for $elem in following-sibling::IATEvent[(@EventType eq 'EndIATBlock') or (@EventType eq 'EndInstructionBlock')][1]/preceding-sibling::IATEvent return $elem">
+                        <xsl:for-each select="for $elem in following-sibling::EndIATBlock[1]/preceding-sibling::* return $elem">
                             <xsl:copy-of select="." />
                         </xsl:for-each>
                     </xsl:if>
                     <xsl:if test="$bType eq 'BeginInstructionBlock'">
-                        <xsl:for-each select="following-sibling::IATEvent[position() le xs:integer(NumInstructionScreens)]">
+                        <xsl:for-each select="following-sibling::*[position() le xs:integer(NumInstructionScreens)]">
                             <xsl:copy-of select="." />
                         </xsl:for-each>
                     </xsl:if>
@@ -1680,12 +1682,12 @@
         <xsl:for-each select="$items" >
             <xsl:variable name="params"
                 select="concat('EventCtr++, DI', ./StimulusDisplayID, ', ', ./ItemNum, ',  &quot;',  KeyedDir, '&quot;, ', ./BlockNum, ', iatBlocks')"/>
-            <xsl:if test="OriginatingBlock eq '0'">
+            <xsl:if test="OriginatingBlock eq '1' or OriginatingBlock eq '0'">
                 <xsl:element name="Code">
                     <xsl:value-of select="concat('Items1.push(new Trial(', $params, '));')"/>
                 </xsl:element>
             </xsl:if>
-            <xsl:if test="OriginatingBlock eq '1'">
+            <xsl:if test="OriginatingBlock eq '2'">
                 <xsl:element name="Code">
                     <xsl:value-of select="concat('Items2.push(new Trial(', $params, '));')"/>
                 </xsl:element>
@@ -1832,7 +1834,7 @@
     
     
     <xsl:template name="GenerateProcessItemFunctions">
-        <xsl:for-each select="//EventList/BeginIATBlock">
+        <xsl:for-each select="//BeginIATBlock">
             <xsl:variable name="i" select="position()" />
             <xsl:variable name="block" select="." />
             <xsl:element name="ProcessItemsFunctions">

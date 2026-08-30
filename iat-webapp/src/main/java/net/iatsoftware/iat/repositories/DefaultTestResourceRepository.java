@@ -45,26 +45,19 @@ public class DefaultTestResourceRepository extends GenericJpaRepository<Long, Te
 	}
 
 	public void add(TestResource res) {
-		if (res.getResourceId() != null) {
-			if (res.getResourceId() != 0) 
-				throw new jakarta.persistence.PersistenceException("Non-null test resource added");
-			else {
-				super.add(res);
-				return;
-			}
-		}
-		var cb = this.entityManager.getCriteriaBuilder();
-		var query = cb.createQuery(Integer.class);
-		var root = query.from(TestResource.class);
+		if (res.getResourceId() == null) {
+			var cb = this.entityManager.getCriteriaBuilder();
+			var query = cb.createQuery(Integer.class);
+			var root = query.from(TestResource.class);
 
-		synchronized (this) {
-			var resourceIds = this.entityManager.createQuery(query.select(root.get("resourceId"))
+			synchronized (this) {
+				var resourceIds = this.entityManager.createQuery(query.select(root.get("resourceId"))
 					.where(cb.equal(root.get("test"), res.getTest())).orderBy(cb.asc(root.get("resourceId"))))
 					.getResultList();
-
-			res.setResourceId(resourceIds.stream().reduce(0, (a, b) -> (a < b) ? a : a + 1));
-			super.add(res);
+				res.setResourceId(resourceIds.stream().reduce(0, (a, b) -> (a < b) ? a : a + 1));
+			}
 		}
+		super.add(res);
 	}
 
 	public TestResource getTestImage(IAT test, int index) {

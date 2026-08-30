@@ -173,7 +173,7 @@
 				displayDiv.appendChild(elem);
 			</xsl:text>
 				<xsl:value-of select="'imgTable = [];&#x0A;'" />
-				<xsl:for-each select="$root//DisplayItemList/IATDisplayItem">
+				<xsl:for-each select="$root//DisplayItem">
 					<xsl:variable name="imageUrl" select="concat('/IAT/resource/', $root//ClientID, '/', $root//IATName, '/', ID, '/img')" />
 					<xsl:variable name="imageTableEntry" select="concat('imgTable[&quot;', $imageUrl, '&quot;]')" />
 					<xsl:value-of select="concat($imageTableEntry, ' = new Image();&#x0A;')" />
@@ -198,7 +198,7 @@
 			<xsl:attribute name="FunctionName" select="'ImageLoadCompleted'" />
 			<xsl:element name="Params" />
 			<xsl:variable name="functionBodyCode">
-				<xsl:for-each select="$root//DisplayItemList/IATDisplayItem">
+				<xsl:for-each select="$root//DisplayItem">
 					<xsl:variable name="imgSrc" select="string-join(('/IAT/resource', $root//ClientID, $root//IATName, ID, 'img'), '/')" />
 					<xsl:value-of select="concat('img', ID, ' = imgTable[&quot;', $imgSrc, '&quot;];&#x0A;')" />
 				</xsl:for-each>

@@ -48,7 +48,7 @@ public class DeploymentUploadController {
 			byte[] fData = new byte[fSize];
 			System.arraycopy(data, offset, fData, 0, fSize);
 			offset += fSize;
-			var testResource = new TestResource(test, f.getMimeType(), fData, f.getResourceType());
+			var testResource = new TestResource(test, f.getResourceId(), f.getMimeType(), fData, f.getResourceType());
 			repositoryManager.addTestResource(testResource);
 		}
 		return ResponseEntity.ok().build();

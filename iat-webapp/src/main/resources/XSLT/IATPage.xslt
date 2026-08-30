@@ -192,18 +192,21 @@
         <xsl:value-of select="concat('#IATDI', ./ID)" />
         {
         position: absolute;
-        <xsl:variable name="displayItem" select="." />
-        <xsl:variable name="id" select="ID" />
-        <xsl:if test="count($responseDisplayIDs[some $n in ResponseDisplayID satisfies xs:integer($n) eq xs:integer($id)]) gt 0">
-            <xsl:value-of select="concat('left: ', xs:integer(X), 'px;&#x0A;')" />
-            <xsl:value-of select="concat('top: ', xs:integer(Y), 'px;&#x0A;')" />
-        </xsl:if>
-        <xsl:if test="count($responseDisplayIDs[some $n in ResponseDisplayID satisfies xs:integer($n) eq xs:integer($id)]) eq 0">
-            <xsl:value-of select="concat('left: ', xs:integer(X), 'px;&#x0A;')" />
-            <xsl:value-of select="concat('top: ', xs:integer(Y), 'px;&#x0A;')" />
-            <xsl:value-of select="'padding: 0px;'" />
-        </xsl:if>
+        padding: 0px;
         margin: 0px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        <xsl:value-of select="concat('left: ', xs:integer(X), 'px;&#x0A;')" />
+        <xsl:value-of select="concat('top: ', xs:integer(Y), 'px;&#x0A;')" />
+        <xsl:value-of select="concat('width: ', xs:integer(Width), 'px;&#x0A;')" />
+        <xsl:value-of select="concat('height: ', xs:integer(Height), 'px;&#x0A;')" />
+        }
+        <xsl:value-of select="concat('#IATDI', ./ID, ' img')" />
+        {
+            max-width: 100%;    
+            max-height: 100%;
+            object-fit: contain;
         }
     </xsl:template>
 </xsl:stylesheet>
