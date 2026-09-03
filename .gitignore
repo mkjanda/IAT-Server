@@ -27,3 +27,7 @@ target/
 .git/
 *.hprof
 /.settings/
+
+# Google Drive for Desktop upload scratch
+.tmp.driveupload/
+**/.tmp.driveupload/
