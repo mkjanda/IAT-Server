@@ -38,9 +38,9 @@
             <Declaration>var Items1 = new Array();</Declaration>
             <Declaration>var Items2 = new Array();</Declaration>
             <Declaration>var ctr;</Declaration>
-            <xsl:for-each select="for $id in distinct-values($root//DisplayItem/ID) return xs:string($id)">
+            <xsl:for-each select="$root//DisplayItem">
                 <Declaration>
-                    <xsl:value-of select="concat('var DI', ., ';')"/>
+                    <xsl:value-of select="concat('var DI', position(), ';')"/>
                 </Declaration>
             </xsl:for-each>
             <Declaration>var instructionBlock;</Declaration>
@@ -122,7 +122,6 @@
                 </xsl:element>
                 <xsl:variable name="constructorBodyElems">
                     <xsl:element name="Code">this.id = id;</xsl:element>
-                    <xsl:element name="Code">this.divTag = document.createElement("div");</xsl:element>
                     <xsl:element name="Code">this.imgTag = img;</xsl:element>
                     <xsl:element name="Code">this.imgSrc = img.src;</xsl:element>
                     <xsl:element name="Code">this.x = x;</xsl:element>
@@ -211,9 +210,8 @@
                         <xsl:element name="Param">parentNode</xsl:element>
                     </xsl:element>
                     <xsl:element name="FunctionBody">
-                        <xsl:element name="Code">this.divTag.id = this.imgTagID;</xsl:element>
-                        <xsl:element name="Code">this.divTag.appendChild(this.imgTag);</xsl:element>
-                        <xsl:element name="Code">parentNode.appendChild(this.divTag);</xsl:element>
+                        <xsl:element name="Code">this.imgTag.id = this.imgTagID;</xsl:element>
+                        <xsl:element name="Code">parentNode.appendChild(this.imgTag);</xsl:element>
                     </xsl:element>
                 </xsl:element>
                 
@@ -253,12 +251,8 @@
                     <xsl:element name="Code">
                         <xsl:value-of select="concat('this.interiorHeight = ', //Layout/InteriorHeight, ';')"/>
                     </xsl:element>
-                    <xsl:element name="Code">
-                        <xsl:value-of select="concat('this.leftResponseKey = &quot;', //LeftResponseKey, '&quot;;')"/>
-                    </xsl:element>
-                    <xsl:element name="Code">
-                        <xsl:value-of select="concat('this.rightResponseKey = &quot;', //RightResponseKey, '&quot;;')"/>
-                    </xsl:element>
+                    <xsl:element name="Code">this.leftResponseKey = "E";</xsl:element>
+                    <xsl:element name="Code">this.rightResponseKey = "I";</xsl:element>
                     <xsl:element name="Code">this.divTag  = document.getElementById("IATDisplayDiv");</xsl:element>
                     <xsl:element name="Code">while (this.divTag.hasChildNodes())</xsl:element>
                     <xsl:element name="Code">this.divTag.removeChild(this.divTag.firstChild);</xsl:element>
@@ -559,19 +553,25 @@
                     </xsl:element>
                     <xsl:variable name="functionBodyElems">
                         <xsl:text>
-                        if (this.keyedDir === "Left") {
-                            if ((event.key === Display.getLeftResponse()) || (event.key === Display.getLeftResponse().toUpperCase())) 
+                        var pressed, left, right;
+                        if (event.key &amp;&amp; event.key.length == 1)
+                            pressed = event.key.toLowerCase();
+                        else
+                            pressed = String.fromCharCode(event.keyCode || event.which || 0).toLowerCase();
+                        left = Display.getLeftResponse().toLowerCase();
+                        right = Display.getRightResponse().toLowerCase();
+                        if (this.keyedDir == "Left") {
+                            if (pressed == left) 
                                 this.correct();
-                                 else if ((event.key === Display.getRightResponse()) || (event.key === Display.getRightResponse().toUpperCase())) 
-                            this.error();
-                            }
-
-                        if (this.keyedDir === "Right") {
-                            if ((event.key === Display.getLeftResponse()) || (event.key === Display.getLeftResponse().toUpperCase())) 
+                            else if (pressed == right) 
                                 this.error();
-                                 else if ((event.key === Display.getRightResponse()) || (event.key === Display.getRightResponse().toUpperCase())) 
-                            this.correct();
-                            }
+                        }
+                        if (this.keyedDir == "Right") {
+                            if (pressed == left) 
+                                this.error();
+                            else if (pressed == right) 
+                                this.correct();
+                        }
                         </xsl:text>
                     </xsl:variable>
                     <xsl:element name="FunctionBody">
@@ -910,6 +910,7 @@
                         <xsl:element name="Param">event</xsl:element>
                     </xsl:element>
                     <xsl:variable name="functionBodyElems">
+                        
                         if (event.keyCode == this.continueChar) {
                         this.continueInstructionsDI.getImgTag().removeEventListener("click", this.click);
                         document.body.removeEventListener("keypress", this.keypress);
@@ -1360,17 +1361,23 @@
             <xsl:attribute name="FunctionName" select="'InitImages'"/>
             <xsl:element name="Params"/>
             <xsl:variable name="functionBodyElems">
-                <xsl:for-each select="$root//DisplayItem">
+                <Code>hkjdgjkdj</Code>
+                <xsl:for-each select="//DisplayItem">
+                    <xsl:variable name="di" select="." />
+                    <xsl:variable name="ndx" select="position()"/>
+                    
                     <xsl:element name="Code">
-                        <xsl:value-of select="concat('DI', ID, ' = new IATDI(', ID, ', img', ID, ', ', X, ', ', Y, ', ', Width, ', ', Height, ');')"/>
+                        <xsl:value-of select="concat('DI', $ndx, ' = new IATDI(', $di/ID, ', img', $di/ID, ', ', $di/X, ', ', $di/Y, ', ', $di/Width, ', ', $di/Height, ');')"/>
                     </xsl:element>
+                    <xsl:if test="$di/ID eq //ErrorMarkID">
+                        <xsl:element name="Code">
+                            <xsl:value-of select="concat('ErrorMark = DI', $ndx, ';')"/>
+                        </xsl:element>
+                        <xsl:element name="Code">
+                            <xsl:value-of select="concat('ErrorMark.setImgTagID(DI', $ndx, '.getImgTagID());')"/>
+                        </xsl:element>
+                    </xsl:if>
                 </xsl:for-each>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('ErrorMark = DI', //ErrorMarkID, ';')"/>
-                </xsl:element>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('ErrorMark.setImgTagID(DI', //ErrorMarkID, '.getImgTagID());')"/>
-                </xsl:element>
             </xsl:variable>
             <xsl:element name="FunctionBody">
                 <xsl:for-each select="$functionBodyElems/Code">
@@ -1445,79 +1452,6 @@
     </xsl:template>
     
     
-    <xsl:template name="MaskSpecifierArrayAppend">
-        <xsl:param name="item"/>
-        <xsl:param name="specifier" />
-        <xsl:element name="Code">
-            <xsl:value-of select="concat('KeyedDirInput = DynamicSpecValues[', $specifier/TestSpecifierID, '];')"/>
-        </xsl:element>
-        <xsl:if test="$item/KeyedDir eq 'DynamicLeft'">
-            <xsl:element name="Code">if (KeyedDirInput == "True") {</xsl:element>
-            <xsl:element name="Code">MaskItemTrueArray.push(new Array());</xsl:element>
-            <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-            <xsl:element name="Code">} else {</xsl:element>
-            <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-            <xsl:element name="Code">MaskItemFalseArray.push(new Array());</xsl:element>
-            <xsl:element name="Code">}</xsl:element>
-        </xsl:if>
-        <xsl:if test="$item/KeyedDir eq 'DynamicRight'">
-            <xsl:element name="Code">if (KeyedDirInput == "True") {</xsl:element>
-            <xsl:element name="Code">MaskItemTrueArray.push(new Array());</xsl:element>
-            <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-            <xsl:element name="Code">} else {</xsl:element>
-            <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-            <xsl:element name="Code">MaskItemFalseArray.push(new Array());</xsl:element>
-            <xsl:element name="Code">}</xsl:element>
-        </xsl:if>
-        <xsl:variable name="params"
-            select="concat('itemCtr++, DI', $item/StimulusDisplayID, ', KeyedDir, ', $item/ItemNum, ', ', $item/OriginatingBlock, ', ',  $item/BlockNum)"/>
-        <xsl:element name="Code">if (KeyedDirInput == "True")</xsl:element>
-        <xsl:element name="Code">
-            <xsl:value-of select="concat('MaskItemTrueArray[MaskItemTrueArray.length - 1].push(new Array(', $params, '));')" />
-        </xsl:element>
-        <xsl:element name="Code">else</xsl:element>
-        <xsl:element name="Code">
-            <xsl:value-of select="concat('MaskItemFalseArray[MaskItemFalseArray.length - 1].push(new Array(', $params, '));')"/>
-        </xsl:element>
-    </xsl:template>
-    
-    <xsl:template name="MaskSpecifierArrayAppendRange">
-        <xsl:param name="items"/>
-        <xsl:param name="specifier" />
-        <xsl:element name="Code">
-            <xsl:value-of select="concat('KeyedDirInput = DynamicSpecValues[', $specifier/TestSpecifierID, '];')"/>
-        </xsl:element>
-        <xsl:for-each select="$items">
-            <xsl:if test="KeyedDir eq 'DynamicLeft'">
-                <xsl:element name="Code">if (KeyedDirInput == "True") {</xsl:element>
-                <xsl:element name="Code">MaskItemTrueArray.push(new Array());</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-                <xsl:element name="Code">} else {</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-                <xsl:element name="Code">MaskItemFalseArray.push(new Array());</xsl:element>
-                <xsl:element name="Code">}</xsl:element>
-            </xsl:if>
-            <xsl:if test="KeyedDir eq 'DynamicRight'">
-                <xsl:element name="Code">if (KeyedDirInput == "True") {</xsl:element>
-                <xsl:element name="Code">MaskItemTrueArray.push(new Array());</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-                <xsl:element name="Code">} else {</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-                <xsl:element name="Code">MaskItemFalseArray.push(new Array());</xsl:element>
-                <xsl:element name="Code">}</xsl:element>
-            </xsl:if>
-            <xsl:variable name="params"
-                select="concat('itemCtr++, DI', StimulusDisplayID, ', KeyedDir, ', ItemNum, ', ', OriginatingBlock, ', ', BlockNum)"/>
-            <xsl:element name="Code">if (KeyedDirInput == "True")</xsl:element>
-            <xsl:element name="Code">
-                <xsl:value-of select="concat('MaskItemTrueArray[MaskItemTrueArray.length - 1].push(new Array(', $params, '));')" />
-            </xsl:element>
-            <xsl:element name="Code">else</xsl:element>
-            <xsl:element name="Code">
-                <xsl:value-of select="concat('MaskItemFalseArray[MaskItemFalseArray.length - 1].push(new Array(', $params, '));')"/>
-            </xsl:element>
-        </xsl:for-each>
-    </xsl:template>
     
     <xsl:template name="GenerateEventInit">
         <xsl:element name="Code">var iatBlock, instructionBlock, IATBlocks = new Array(), InstructionBlocks = new Array(), NumItemsAry = new Array(), piFunctions = new Array(), pifAry, blockCtr, ctr, ctr2, ctr3, randomNum, sourceAry = 1, iatItem, lesserAry, greaterAry, bAlternate, itemBlockCtr, instructionBlockCtr, itemBlockOrder, instructionBlockOrder, ndx;</xsl:element>
@@ -1695,142 +1629,6 @@
         </xsl:for-each>
     </xsl:template>
     
-    <xsl:template name="ProcessTrueFalseSpecItems" >
-        <xsl:param name="items" />
-        <xsl:variable name="specifier" select="//DynamicSpecifier[every $i in $items satisfies $i/SpecifierID eq TestSpecifierID]" />
-        <xsl:element name="Code">var randomNum, TrueFalseAry = new Array();</xsl:element>
-        <xsl:element name="Code">
-            <xsl:value-of select="concat('KeyedDirInput = DynamicSpecValues[', $specifier/TestSpecifierID, '];')"/>
-        </xsl:element>
-        <xsl:for-each select="$items" >
-            <xsl:if test="KeyedDir eq 'DynamicLeft'">
-                <xsl:element name="Code">if (KeyedDirInput == "True")</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-                <xsl:element name="Code">else</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-            </xsl:if>
-            <xsl:if test="KeyedDir eq 'DynamicRight'">
-                <xsl:element name="Code">if (KeyedDirInput == "False")</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-                <xsl:element name="Code">else</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-            </xsl:if>
-            <xsl:variable name="params" select="concat('EventCtr++, DI', StimulusDisplayID, ', ', ItemNum, ', KeyedDir, ', OriginatingBlock, ', ', BlockNum)" />
-            <xsl:element name="Code">
-                <xsl:value-of select="concat('TrueFalseAry.push(new Array(', $params, '));')" />
-            </xsl:element>
-        </xsl:for-each>
-        <xsl:element name="Code">randomNum = Math.floor(Math.random() * TrueFalseAry.length);</xsl:element>
-        <xsl:element name="Code">if (TrueFalseAry[randomNum][4] == 1)</xsl:element>
-        <xsl:element name="Code">Items1.push(new Trial(TrueFalseAry[randomNum][0], TrueFalseAry[randomNum][1], TrueFalseAry[randomNum][2], TrueFalseAry[randomNum][3], TrueFalseAry[randomNum][5]));</xsl:element>
-        <xsl:element name="Code">if (TrueFalseAry[randomNum][4] == 2)</xsl:element>
-        <xsl:element name="Code">Items2.push(new Trial(TrueFalseAry[randomNum][0], TrueFalseAry[randomNum][1], TrueFalseAry[randomNum][2], TrueFalseAry[randomNum][3], TrueFalseAry[randomNum][5]));</xsl:element>
-    </xsl:template>
-    
-    <xsl:template name="ProcessRangeSpecItems" >
-        <xsl:param name="items" />
-        <xsl:variable name="specifier" select="//DynamicSpecifier[every $i in $items satisfies $i/SpecifierID eq TestSpecifierID]" />
-        <xsl:element name="Code">
-            <xsl:value-of select="concat('KeyedDirInput = DynamicSpecValues[', $specifier/TestSpecifierID, '];')"/>
-        </xsl:element>
-        <xsl:element name="Code">if (KeyedDirInput == "Exclude")</xsl:element>
-        <xsl:element name="Code">return;</xsl:element>
-        <xsl:element name="Code">var RangeItemAry = new Array();</xsl:element>
-        <xsl:for-each select="$items">
-            <xsl:if test="KeyedDir eq 'DynamicLeft'">
-                <xsl:element name="Code">if (KeyedDirInput == "True")</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-                <xsl:element name="Code">else</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-            </xsl:if>
-            <xsl:if test="KeyedDir eq 'DynamicRight'">
-                <xsl:element name="Code">if (KeyedDirInput == "False")</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-                <xsl:element name="Code">else</xsl:element>
-                <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-            </xsl:if>
-            <xsl:variable name="params">
-                <xsl:value-of select="concat('itemCtr++, DI', StimulusDisplayID, ', ', ItemNum, ', KeyedDir, ', OriginatingBlock, ', ', BlockNum, ');')" />
-            </xsl:variable>
-            <xsl:element name="Code">
-                <xsl:value-of select="concat('RangeItemAry.push(', $params, ');')"/>
-            </xsl:element>
-        </xsl:for-each>
-        <xsl:element name="Code">var randomNum = Math.floor(Math.random() * RangeItemAry.length);</xsl:element>
-        <xsl:element name="Code">if (RangeItemAry[randomNum][4] == 1)</xsl:element>
-        <xsl:element name="Code">Items1.push(new Trial(RangeItemAry[randomNum][0], RangeItemAry[randomNum][1], RangeItemAry[randomNum][2], RangeItemAry[randomNum][3], RangeItemAry[randomNum][5]));</xsl:element>
-        <xsl:element name="Code">if (RangeItemAry[randomNum][4] == 2)</xsl:element>
-        <xsl:element name="Code">Items2.push(new Trial(RangeItemAry[randomNum][0], RangeItemAry[randomNum][1], RangeItemAry[randomNum][2], RangeItemAry[randomNum][3], RangeItemAry[randomNum][5]));</xsl:element>
-    </xsl:template>
-    
-    
-    <xsl:template name="ProcessSelectionSpecItems" >
-        <xsl:param name="items" />
-        <xsl:variable name="specifier" select="//DynamicSpecifier[every $i in $items satisfies $i/SpecifierID eq TestSpecifierID]" />
-        <xsl:element name="Code">var SelectionStimulusArray = new Array(), ctr, lesser, lesserLen, ndx1, ndx2, itemBlock, SelectedItem;</xsl:element>
-        <xsl:element name="Code">
-            <xsl:value-of select="concat('SelectedItem = parseInt(DynamicSpecValues[', $specifier/TestSpecifierID, '], 10) - 1;')"/>
-        </xsl:element>
-        <xsl:element name="Code">var RandomItem = SelectedItem;</xsl:element>
-        <xsl:for-each-group select="$items[SpecifierID eq $specifier/TestSpecifierID]" group-by="SpecifierArg" >
-            <xsl:sort select="current-grouping-key()" order="ascending" />
-            <xsl:variable name="choiceNum" select="position()" />
-            <xsl:element name="Code">SelectionStimulusArray.push(new Array());</xsl:element>
-            <xsl:if test="count(current-group()) eq 1" >
-                <xsl:variable name="params"
-                    select="concat(./SpecifierArg, ', DI', StimulusDisplayID, ', &quot;', KeyedDir, '&quot;, ', ItemNum, ', ', ./OriginatingBlock, ', ', BlockNum)"/>
-                <xsl:element name="Code">
-                    <xsl:value-of select="concat('SelectionStimulusArray[', xs:integer($choiceNum) - 1, '].push(new Array(', $params, '));')" />
-                </xsl:element>
-            </xsl:if>
-            <xsl:if test="count(current-group()) gt 1" >
-                <xsl:for-each select="current-group()" >
-                    <xsl:variable name="params"
-                        select="concat(./SpecifierArg, ', DI', StimulusDisplayID, ', &quot;', KeyedDir, '&quot;, ', ItemNum, ', ', ./OriginatingBlock, ', ', BlockNum)"/>
-                    <xsl:element name="Code">
-                        <xsl:value-of select="concat('SelectionStimulusArray[', xs:integer($choiceNum) - 1, '].push(new Array(', $params, '));')" />
-                    </xsl:element>
-                </xsl:for-each>
-            </xsl:if>
-        </xsl:for-each-group>
-        <xsl:element name="Code">RandomItem = SelectedItem;</xsl:element>
-        <xsl:element name="Code">while (RandomItem == SelectedItem)</xsl:element>
-        <xsl:element name="Code">RandomItem = Math.floor(Math.random() * SelectionStimulusArray.length);</xsl:element>
-        <xsl:element name="Code">if (SelectionStimulusArray[RandomItem].length &gt; SelectionStimulusArray[SelectedItem].length) {</xsl:element>
-        <xsl:element name="Code">lesser = SelectedItem;</xsl:element>
-        <xsl:element name="Code">lesserLen = SelectionStimulusArray[SelectedItem].length;</xsl:element>
-        <xsl:element name="Code">} else if (SelectionStimulusArray[RandomItem].length &lt;= SelectionStimulusArray[SelectedItem].length) {</xsl:element>
-        <xsl:element name="Code">lesser = RandomItem;</xsl:element>
-        <xsl:element name="Code">lesserLen = SelectionStimulusArray[RandomItem].length;</xsl:element>
-        <xsl:element name="Code">}</xsl:element>
-        <xsl:element name="Code">for (ctr = 0; ctr &lt; lesserLen; ctr++) {</xsl:element>
-        <xsl:element name="Code">if (lesser == SelectedItem) {</xsl:element>
-        <xsl:element name="Code">ndx1 = ctr;</xsl:element>
-        <xsl:element name="Code">ndx2 = Math.floor(Math.random() * SelectionStimulusArray[RandomItem].length);</xsl:element>
-        <xsl:element name="Code">} else {</xsl:element>
-        <xsl:element name="Code">ndx1 = Math.floor(Math.random() * SelectionStimulusArray[SelectedItem].length);</xsl:element>
-        <xsl:element name="Code">ndx2 = ctr;</xsl:element>
-        <xsl:element name="Code">}</xsl:element>
-        <xsl:element name="Code">if (SelectionStimulusArray[SelectedItem][ndx1][4] == 1)</xsl:element>
-        <xsl:element name="Code">itemBlock = Items1;</xsl:element>
-        <xsl:element name="Code">else</xsl:element>
-        <xsl:element name="Code">itemBlock = Items2;</xsl:element>
-        <xsl:element name="Code">if (SelectionStimulusArray[SelectedItem][ndx1][2] == "DynamicLeft")</xsl:element>
-        <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-        <xsl:element name="Code">else</xsl:element>
-        <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-        <xsl:element name="Code">itemBlock.push(new Trial(EventCtr++, SelectionStimulusArray[SelectedItem][ndx1][1], SelectionStimulusArray[SelectedItem][ndx1][3], KeyedDir, SelectionStimulusArray[SelectedItem][ndx1][5]));</xsl:element>
-        <xsl:element name="Code">if (SelectionStimulusArray[RandomItem][ndx2][2] == "DynamicLeft")</xsl:element>
-        <xsl:element name="Code">KeyedDir = "Right";</xsl:element>
-        <xsl:element name="Code">else</xsl:element>
-        <xsl:element name="Code">KeyedDir = "Left";</xsl:element>
-        <xsl:element name="Code">itemBlock.push(new Trial(EventCtr++, SelectionStimulusArray[RandomItem][ndx2][1], SelectionStimulusArray[RandomItem][ndx2][3], KeyedDir, SelectionStimulusArray[SelectedItem][ndx1][5]));</xsl:element>
-        <xsl:element name="Code">if (lesser == SelectedItem)</xsl:element>
-        <xsl:element name="Code">SelectionStimulusArray[RandomItem].splice(ndx2, 1);</xsl:element>
-        <xsl:element name="Code">else</xsl:element>
-        <xsl:element name="Code">SelectionStimulusArray[SelectedItem].splice(ndx1, 1);</xsl:element>
-        <xsl:element name="Code">}</xsl:element>
-    </xsl:template>
     
     
     <xsl:template name="GenerateProcessItemFunctions">

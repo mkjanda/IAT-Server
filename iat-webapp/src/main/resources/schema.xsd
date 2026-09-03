@@ -1142,6 +1142,7 @@
             <xs:enumeration value="TestConfiguration" />
             <xs:enumeration value="ErrorMark" />
             <xs:enumeration value="KeyOutline" />
+            <xs:enumeration value="ResponseKey" />
         </xs:restriction>
     </xs:simpleType>
 
