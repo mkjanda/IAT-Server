@@ -24,7 +24,7 @@ public class KeyedInstructionScreen extends net.iatsoftware.iat.generated.GKeyed
     }
 
     private boolean continueSet = false, leftSet = false, rightSet = false, instrSet = false;
-
+/*
     @Override
     public boolean setResource(int id, int resourceId) {
         if ((this.continueInstructionsID == id) && !continueSet) {
@@ -45,5 +45,5 @@ public class KeyedInstructionScreen extends net.iatsoftware.iat.generated.GKeyed
         } else
             return false;
         return true;
-    }
+    }*/
 }

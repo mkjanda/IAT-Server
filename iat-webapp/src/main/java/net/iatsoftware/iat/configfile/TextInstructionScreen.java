@@ -25,7 +25,7 @@ public class TextInstructionScreen extends net.iatsoftware.iat.generated.GTextIn
 
     private boolean instrSet = false, continueSet = false;
 
-
+/*
     @Override
     public boolean setResource(int id, int resourceId) {
         if ((this.instructionsDisplayID == id) && !instrSet) {
@@ -38,5 +38,5 @@ public class TextInstructionScreen extends net.iatsoftware.iat.generated.GTextIn
         else
             return false;
         return true;
-    }
+    }*/
 }

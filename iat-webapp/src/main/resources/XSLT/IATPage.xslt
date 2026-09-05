@@ -189,11 +189,11 @@
     </xsl:variable>
     
     <xsl:template match="DisplayItem">
-        <xsl:value-of select="concat('#IATDI', ./ID)" />
+        <!-- Placement Guid is the IATDI DOM id (see IATScript IATDI constructor / Display()).
+             Resource ID stays on img{ID} and the /IAT/resource/.../{ID}/img URL. -->
+        <xsl:value-of select="concat('#IATDI', ./Guid)" />
         {
         position: absolute;
-        <xsl:variable name="displayItem" select="." />
-        <xsl:variable name="id" select="ID" />
         <xsl:value-of select="concat('left: ', xs:integer(X), 'px;&#x0A;')" />
         <xsl:value-of select="concat('top: ', xs:integer(Y), 'px;&#x0A;')" />
         <xsl:value-of select="concat('width: ', xs:integer(Width), 'px;&#x0A;')" />
@@ -204,7 +204,7 @@
         margin: 0px;
         overflow: hidden;
         }
-        <xsl:value-of select="concat('#IATDI', ./ID, ' img')" />
+        <xsl:value-of select="concat('#IATDI', ./Guid, ' img')" />
         {
         max-width: 100%;
         max-height: 100%;

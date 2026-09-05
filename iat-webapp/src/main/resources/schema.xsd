@@ -1594,7 +1594,7 @@
         </xs:annotation>
     </xs:complexType>
     <xs:complexType name="GIATEvent" abstract="true">
-        <xs:attribute name="EventType" type="iat:IATEventType" form="unqualified" use="required"/>
+        <xs:attribute name="EventType" type="iat:IATEventType" form="unqualified" use="optional" />
     </xs:complexType>
 
 
@@ -1614,8 +1614,7 @@
         </xs:annotation>
         <xs:sequence>
             <xs:element name="ID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="ResourceId" type="xs:int" minOccurs="0" maxOccurs="1" />
-            <xs:element name="Filename" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="Guid" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="X" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Y" type="xs:int" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Width" type="xs:int" minOccurs="1" maxOccurs="1"/>
@@ -1635,7 +1634,7 @@
             <xs:extension base="iat:iat-event-impl">
                 <xs:sequence>
                     <xs:element name="ContinueASCIIKeyCode" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ContinueInstructionsID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="ContinueInstructions" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -1663,7 +1662,7 @@
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:element>
-                    <xs:element name="StimulusDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Stimulus" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -1678,9 +1677,9 @@
         <xs:complexContent>
             <xs:extension base="iat:instruction-screen-impl">
                 <xs:sequence>
-                    <xs:element name="LeftResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="RightResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LeftResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Instructions" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -1717,10 +1716,10 @@
         <xs:complexContent>
             <xs:extension base="iat:instruction-screen-impl">
                 <xs:sequence>
-                    <xs:element name="LeftResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="RightResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="StimulusDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LeftResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Stimulus" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Instructions" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="ErrorMarkIsDisplayed" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="OutlineLeftResponse" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="OutlineRightResponse" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
@@ -2119,11 +2118,12 @@
                     <xs:element name="NumPresentations" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="AlternatedWith" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="BlockNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="NumInstructionScreens" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="NumItems" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="PracticeBlock" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="LeftResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="RightResponseDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Instructions" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="LeftResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="RightResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2159,7 +2159,7 @@
         <xs:complexContent>
             <xs:extension base="iat:instruction-screen-impl">
                 <xs:sequence>
-                    <xs:element name="InstructionsDisplayID" type="xs:int" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Instructions" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -2191,9 +2191,9 @@
                     <xs:element name="RedirectOnComplete" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="LeftResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RightResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="ErrorMarkID" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="LeftKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="RightKeyOutlineID" type="xs:int" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="ErrorMark" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="LeftKeyOutline" type="xs:string" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="RightKeyOutline" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="Survey" type="iat:survey-impl" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="Layout" type="iat:layout-impl" minOccurs="1" maxOccurs="1" />
                     <xs:group ref="iat:Events" minOccurs="1" maxOccurs="unbounded" />

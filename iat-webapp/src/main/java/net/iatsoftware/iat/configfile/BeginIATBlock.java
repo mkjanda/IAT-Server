@@ -25,7 +25,7 @@ public class BeginIATBlock extends net.iatsoftware.iat.generated.GBeginIATBlock 
     }
 
     private boolean instrSet = false, leftRespSet = false, rightRespSet = false;
-
+/* 
     @Override
     public boolean setResource(int id, int resourceId) {
         if ((this.instructionsDisplayID == id) && !instrSet) {
@@ -43,5 +43,5 @@ public class BeginIATBlock extends net.iatsoftware.iat.generated.GBeginIATBlock 
         else
             return false;
         return true;
-    }
+    }*/
 }

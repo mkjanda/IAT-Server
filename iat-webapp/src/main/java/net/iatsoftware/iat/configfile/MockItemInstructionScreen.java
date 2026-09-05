@@ -25,6 +25,7 @@ public class MockItemInstructionScreen extends net.iatsoftware.iat.generated.GMo
 
     private boolean continueSet = false, stimSet = false, rightSet = false, leftSet = false, instrSet = false;
 
+    /*
     @Override
     public boolean setResource(int id, int resourceId) {
         if ((this.continueInstructionsID == id) && !continueSet) {
@@ -49,5 +50,5 @@ public class MockItemInstructionScreen extends net.iatsoftware.iat.generated.GMo
         else
             return false;
         return true;
-    }
+    }*/
 }

@@ -24,7 +24,7 @@ public class Trial extends net.iatsoftware.iat.generated.GTrial {
     }
 
     private boolean instrSet = false;
-
+/*
     @Override
     public boolean setResource(int id, int resourceId) {
         if ((this.stimulusDisplayID == id) && !instrSet) {
@@ -34,5 +34,5 @@ public class Trial extends net.iatsoftware.iat.generated.GTrial {
         else
             return false;
         return true;
-    }
+    }*/
 }

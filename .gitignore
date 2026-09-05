@@ -30,6 +30,7 @@ target/
 
 # Google Drive for Desktop upload scratch
 .tmp.driveupload/
+.tmp.driveupload
 **/.tmp.driveupload/
 .tmp.drivedownload/
 **/.tmp.drivedownload/

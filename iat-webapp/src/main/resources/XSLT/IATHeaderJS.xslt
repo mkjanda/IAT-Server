@@ -43,7 +43,7 @@
 	
 	<xsl:variable name="GlobalCode">
 		<xsl:element name="Declaration">
-			<xsl:value-of select="concat('NumImages = ', count(distinct-values(//DisplayItem/ID)))"/>
+			<xsl:value-of select="concat('NumImages = ', count(//DisplayItem))"/>
 		</xsl:element>
 		<xsl:for-each select="for $id in distinct-values(//DisplayItem/ID) return $id">
 			<xsl:element name="Declaration">
@@ -116,7 +116,7 @@
 				<xsl:text>
                     ImageLoadCtr++;
 					document.getElementById("h4Msg").innerHTML = "Loading image #" + (ImageLoadCtr + 1).toString() + " of " + NumImages.toString(); 
-                    if (ImageLoadCtr == NumImages) 
+                    if (ImageLoadCtr >= NumImages) 
                     ImageLoadCompleted();
                 </xsl:text>
 			</xsl:variable>
