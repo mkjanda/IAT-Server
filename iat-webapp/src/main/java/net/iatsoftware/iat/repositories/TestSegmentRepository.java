@@ -18,7 +18,7 @@ import java.util.List;
 public interface TestSegmentRepository extends GenericRepository<Long, TestSegment> {
     String getHtmlBytes(Long testSegmentID);
     void rotateItems(IAT test);
-    List<Long> getTestElems(IAT test);
+    List<TestSegment> getTestElems(IAT test);
     int getElementPositionInTest(IAT test, String elemName);
     List<String> getTestElemNames(IAT test);
     List<TestSegment> getTestSegments(IAT test);

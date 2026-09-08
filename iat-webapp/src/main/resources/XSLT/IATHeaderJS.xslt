@@ -38,7 +38,7 @@
 		<xsl:value-of select="string-join($serverURLParts/serverURLPart, '')" />
 	</xsl:variable>
 	<xsl:variable name="testURL">
-		<xsl:value-of select="concat($root//ServerPath, '/', //ClientID, '/', //IATName)" />
+		<xsl:value-of select="concat($root//ServerPath, '/', $root//ConfigFile/ClientID, '/', $root//ConfigFile/IATName)" />
 	</xsl:variable>
 	
 	<xsl:variable name="GlobalCode">
@@ -174,7 +174,7 @@
 			</xsl:text>
 				<xsl:value-of select="'imgTable = [];&#x0A;'" />
 				<xsl:for-each select="$root//DisplayItem">
-					<xsl:variable name="imageUrl" select="concat('/IAT/resource/', $root//ClientID, '/', $root//IATName, '/', ID, '/img')" />
+					<xsl:variable name="imageUrl" select="concat('/IAT/resource/', $root//ConfigFile/ClientID, '/', $root//ConfigFile/IATName, '/', ID, '/img')" />
 					<xsl:variable name="imageTableEntry" select="concat('imgTable[&quot;', $imageUrl, '&quot;]')" />
 					<xsl:value-of select="concat($imageTableEntry, ' = new Image();&#x0A;')" />
 					<xsl:value-of select="concat($imageTableEntry, '.onload = OnImageLoad;&#x0A;')" />
@@ -199,7 +199,7 @@
 			<xsl:element name="Params" />
 			<xsl:variable name="functionBodyCode">
 				<xsl:for-each select="$root//DisplayItem">
-					<xsl:variable name="imgSrc" select="string-join(('/IAT/resource', $root//ClientID, $root//IATName, ID, 'img'), '/')" />
+					<xsl:variable name="imgSrc" select="string-join(('/IAT/resource', $root//ConfigFile/ClientID, $root//ConfigFile/IATName, ID, 'img'), '/')" />
 					<xsl:value-of select="concat('img', ID, ' = imgTable[&quot;', $imgSrc, '&quot;];&#x0A;')" />
 				</xsl:for-each>
 				<xsl:text>
@@ -368,7 +368,7 @@
 			<xsl:attribute name="FunctionName" select="'OnLoad'" />
 			<xsl:element name="Params" />
 			<xsl:variable name="functionBody">
-				<xsl:value-of select="concat('var corruptAdminCookie = &quot;', //ClientID, '-', //IATName, '-corrupt&quot;;&#x0A;')"/>
+				<xsl:value-of select="concat('var corruptAdminCookie = &quot;', $root//ConfigFile/ClientID, '-', $root//ConfigFile/IATName, '-corrupt&quot;;&#x0A;')"/>
 				<xsl:text>
                     var adminPhase, localAdminPhase, testSegment;
                     if (!sessionStorage.getItem("IATSESSIONID")) {
@@ -391,8 +391,8 @@
                     CookieUtil.deleteCookie("TestSegment");
                     CookieUtil.deleteCookie("Alternate");
                 </xsl:text>
-				<xsl:value-of select="concat('var requestSrc = window.location.protocol + &quot;//&quot; + window.location.hostname + (window.location.port ? &quot;:&quot; + window.location.port.toString() : &quot;&quot;) + &quot;', $root//ServerPath, '&quot; + &quot;/Resource/', //ClientID, '/', //IATName, '/', //IATName, '.html&quot;;&#x0A;')"/>
-				<xsl:value-of select="concat('var testElem = &quot;', //IATName, '&quot;;&#x0A;')" />
+				<xsl:value-of select="concat('var requestSrc = window.location.protocol + &quot;//&quot; + window.location.hostname + (window.location.port ? &quot;:&quot; + window.location.port.toString() : &quot;&quot;) + &quot;', $root//ServerPath, '&quot; + &quot;/Resource/', $root//ConfigFile/ClientID, '/', $root//Configfile/IATName, '/', $root//ConfigFile/IATName, '.html&quot;;&#x0A;')"/>
+				<xsl:value-of select="concat('var testElem = &quot;', $root//ConfigFile/IATName, '&quot;;&#x0A;')" />
 				<xsl:if test="count(//DynamicSpecifier) gt 0">
 					<xsl:text>
                         var dynamicSpecCall = new AjaxCallv2(adminHost + "/Ajax/DynamicSpecifiers.json", requestSrc, testSegment, "text/json");

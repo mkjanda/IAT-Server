@@ -9,11 +9,15 @@
 		<xsl:param name="format" />
 		<xsl:value-of select="xs:integer(ceiling(xs:integer($numChars) * xs:integer($format/FontSize) * 9 div 8))" />
 	</xsl:function>
-
-
-	<xsl:variable name="responseTypeList" select="tokenize('MultipleResponse,WeightedMultipleResponse,Boolean,Likert,MultiBoolean,BoundedLength,BoundedNumber,FixedDigit,RegularExpression,Date', ',')" />
+	
+	
+	<xsl:variable name="responseTypeList" select="tokenize('MultiChoice,TrueFalse,Likert,MultiSelect,BoundedText,BoundedNumber,FixedDigit,RegEx,Date', ',')" />
+	<xsl:function name="mine:getResponse">
+		<xsl:param name="item" />
+		<xsl:value-of select="$item/child::*[name() = $responseTypeList]/name()" />
+	</xsl:function>
+	
 	<xsl:template match="Survey">
-		<xsl:variable name="survey" select="." />
 		<xsl:element name="html">
 			<head>
 				<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -41,20 +45,33 @@ body {
           padding: 0px 0px 20px 0px;
           color: #000000;
           }
+form {
+	margin: auto 5vw;
+}
 
-          @media screen and (max-aspect-ratio: 1) {
+input[type='radio'], input[type='checkbox'] {
+	height: 1rem;
+	width: 1rem;
+	margin-left: 1vw;
+}
+
+td:nth-of-type(2n - 1) {
+	width: 1rem;
+}
+
+
+          @media (pointer: coarse;) {
 			div#mainContent {
           	max-width: 100%;
+						margin: 10px auto;
           }
           }
-          @media only screen and (min-aspect-ratio: 1)  {
+          @media (pointer: fine)  {
           div#mainContent {
           	max-width: 1200px;
+						margin: 50px auto;
           	}
           }
-          div#mainContent {
-				margin: 0px auto;
-			}
 
           .oneColFixCtrHdr #container {
           text-align: left;
@@ -73,7 +90,7 @@ body {
           }
           
 </xsl:text>
-					<xsl:if test="count(./Caption) eq 1">
+					<xsl:if test="count(./Caption) eq 1">	
 						<xsl:text>
               body div.svgOuter {
               </xsl:text>
@@ -86,9 +103,6 @@ body {
 					</xsl:if>
 					<xsl:text>
 
-						td {
-							padding: 5px 5px;
-						}
                         .oneColFixCtrHdr #mainContent ul {
                           padding: 0px 5px;
                         list-style: none;
@@ -134,7 +148,6 @@ body {
                         .RadioInputCell {
                         vertical-align: middle;
                         padding: 0px;
-                        width: 25px;
                         }
 
                         p.RadioLabelParagraph {
@@ -142,84 +155,59 @@ body {
                           padding: 0px;
                         }
                     </xsl:text>
+					
 					<xsl:for-each select="SurveyItem">
 						<xsl:variable name="itemNum" select="position() + count(preceding-sibling::SurveyImage)" />
 						<xsl:variable name="questionNum" select="@QuestionNum" />
-						<xsl:value-of select="concat('h3#itemText', $itemNum, ' div div { margin: 2% 5% 0% 5%; } &#x0A;')" />
-
+						<xsl:variable name="question" select="." />
+						<xsl:variable name="response">
+							<xsl:copy-of select="$question/child::*[name() eq mine:getResponse($question)]" />
+						</xsl:variable>
+						<xsl:value-of select="concat('h3#itemText', $itemNum, ' div div {&#x0A;')" />
+						<xsl:value-of select="'&#x09;margin: 2vh 5vw 2vh 5vw;&#x0A;'" />
+						<xsl:value-of select="'}&#x0A;'" />
 						<xsl:value-of select="concat('h3#itemText', $itemNum, ' {&#x0A;')" />
-						<xsl:if test="Response/@Type ne 'Instruction'">
-							<xsl:value-of select="'margin: 2px 5px 3px 20px;&#x0A;'" />
+						<xsl:if test="mine:getResponse(.) ne 'Instruction'">
+							<xsl:value-of select="'&#x09;margin: 2px 5px 3px 20px;&#x0A;'" />
 						</xsl:if>
-						<xsl:if test="Response/@Type eq 'Instruction'">
-							<xsl:if test="count(following-sibling::SurveyItem) ge 1">
-								<xsl:if test="following-sibling::SurveyItem[position() eq 1]/Response/@Type ne 'Instruction'">
-									<xsl:value-of select="'margin: 2px 5px 8px 20px;&#x0A;'" />
-								</xsl:if>
-								<xsl:if test="following-sibling::SurveyItem[position() eq 1]/Response/@Type eq 'Instruction'">
-									<xsl:value-of select="'margin: 2px 5px 8px 20px;&#x0A;'" />
-								</xsl:if>
-							</xsl:if>
-							<xsl:if test="count(following-sibling::SurveyItem) eq 0">
-								<xsl:value-of select="'margin: 2px 5px 8px 20px;&#x0A;'" />
-							</xsl:if>
+						<xsl:if test="mine:getResponse(.) eq 'Instruction'">
+							<xsl:value-of select="'margin: 2px 5px 8px 20px;&#x0A;'" />
 						</xsl:if>
-						
-
 						<xsl:call-template name="writeFormatCSS">
 							<xsl:with-param name="format" select="Format" />
 						</xsl:call-template>
-						<xsl:value-of select="'margin: 0px;'" />
 						<xsl:value-of select="'}&#x0A;'" />
-						<xsl:variable name="selectionBasedResponses">
-							<xsl:sequence select="tokenize('MultipleResponse,WeightedMultipleResponse,Boolean,Likert,MultiBoolean', ',')" />
-						</xsl:variable>
-						<xsl:for-each select="child::*[contains($selectionBasedResponses, name())]">
+						<xsl:variable name="selectionBasedResponses" select="for $i in ('MultiChoice', 'TrueFalse', 'Likert', 'MultiSelect') return $i" />
+						<xsl:if test="mine:getResponse($question) = $selectionBasedResponses">
 							<xsl:value-of select="concat('p.response', $questionNum, '{&#x0A;')" />
 							<xsl:call-template name="writeFormatCSS">
-								<xsl:with-param name="format" select="./Format" />
+								<xsl:with-param name="format" select="$response//Format" />
 							</xsl:call-template>
 							<xsl:value-of select="'padding: 0px;&#x0A;'" />
 							<xsl:value-of select="'margin: 0px;&#x0A;'" />
 							<xsl:value-of select="'vertical-align: top;&#x0A;'" />
 							<xsl:value-of select="'text-align: left;&#x0A;'" />
 							<xsl:value-of select="'}&#x0A;'" />
-							<xsl:value-of select="concat('li#ItemLITag', $itemNum, ' input {&#x0A;')" />
-							<xsl:value-of select="concat('width: ', xs:integer(Format/FontSize) * 2 div 3, 'px;&#x0A;')" />
-							<xsl:value-of select="concat('height: ', xs:integer(Format/FontSize) * 2 div 3, 'px;&#x0A;')" />
-							<xsl:value-of select="'}&#x0A;'" />
-
-						</xsl:for-each>
-						<xsl:variable name="nonSelectionBasedResponses">
-							<xsl:sequence select="tokenize('BoundedLength,BoundedNumber,FixedDigit,RegularExpression,Date', ',')" />
-						</xsl:variable>
-
-						<xsl:for-each select="child::*[contains($nonSelectionBasedResponses, name())]">
-							<xsl:value-of select="concat('div#response', $questionNum,' input {&#x0A;')" />
+						</xsl:if>
+						<xsl:variable name="nonSelectionBasedResponses" select="for $i in ('BoundedText', 'BoundedNumber', 'FixedDigit', 'RegEx', 'Date') return $i" />
+						<xsl:if test="mine:getResponse($question) = $nonSelectionBasedResponses">
+							<xsl:if test="mine:getResponse($question) ne 'BoundedText'">
+								<xsl:value-of select="concat('div#response', $questionNum,' input {&#x0A;')" />
+							</xsl:if>
+							<xsl:if test="mine:getResponse($question) eq 'BoundedText'">
+								<xsl:value-of select="concat('div#response', $questionNum,' textarea {&#x0A;')" />
+							</xsl:if>
 							<xsl:call-template name="writeFormatCSS">
-								<xsl:with-param name="format" select="./Format" />
+								<xsl:with-param name="format" select="$response//Format" />
 							</xsl:call-template>
-							<xsl:value-of select="'padding: 0px;&#x0A;'" />
+							<xsl:value-of select="'padding: 2px 1px;&#x0A;'" />
+							<xsl:value-of select="'margin-left: 1vw;&#x0A;'" />
 							<xsl:value-of select="'text-align: left;&#x0A;'" />
 							<xsl:value-of select="'}&#x0A;'" />
-							<xsl:value-of select="concat('div#response', $questionNum, ' p {&#x0A;')" />
-							<xsl:call-template name="writeFormatCSS">
-								<xsl:with-param name="format" select="./Format" />
-							</xsl:call-template>
-							<xsl:value-of select="'vertical-align: middle;&#x0A;'" />
-							<xsl:value-of select="'text-align: left;&#x0A;'" />
-							<xsl:value-of select="'}&#x0A;'" />
-							<xsl:value-of select="concat('div#response', $questionNum, ' textarea {&#x0A;')" />
-							<xsl:call-template name="writeFormatCSS">
-								<xsl:with-param name="format" select="./Format" />
-							</xsl:call-template>
-							<xsl:value-of select="'vertical-align: middle;&#x0A;'" />
-							<xsl:value-of select="'text-align: left;&#x0A;'" />
-							<xsl:value-of select="'}&#x0A;'" />
-
-
-						</xsl:for-each>
+						</xsl:if>
 					</xsl:for-each>
+					
+					
 					<xsl:text>
 
 
@@ -275,20 +263,17 @@ body {
                     </xsl:text>
 				</style>
 				<xsl:element name="script">
-					<xsl:attribute name="type" select="'text/javascript'" />
 					<xsl:attribute name="src" select="'/IAT/scripts/MiscUtils.js'" />
-					<xsl:value-of select="' '" />
-				</xsl:element>	
+					<xsl:text> </xsl:text>
+				</xsl:element>
 				<xsl:element name="script">
-					<xsl:attribute name="type" select="'text/javascript'" />
 					<xsl:attribute name="src" select="'/IAT/scripts/SubFunct.js'" />
-					<xsl:value-of select="' '" />
-				</xsl:element>	
+					<xsl:text> </xsl:text>
+				</xsl:element>
 				<xsl:element name="script">
-					<xsl:attribute name="type" select="'text/javascript'" />
-					<xsl:attribute name="src" select="string-join(('/IAT/resource', ClientId, IAT, ScriptId), '/')" />
-					<xsl:value-of select="' '" />
-				</xsl:element>	
+					<xsl:attribute name="src" select="'/IAT/scripts/SurveyValidate.js'" />
+					<xsl:text> </xsl:text>
+				</xsl:element>
 			</head>
 			<body class="oneColFixCtrHdr" id="body" onload="OnLoad()">
 				<div id="container">
@@ -298,55 +283,53 @@ body {
 						</xsl:call-template>
 					</xsl:if>
 					<div id="mainContent">
-					<form id="SurveyForm" method="POST">
-						<xsl:element name="ul">
-							<xsl:attribute name="id" select="'QuestionList'" />
-							<xsl:variable name="pos" select="position()" />
-							<xsl:variable name="Items">
-								<xsl:for-each select="//Survey/child::*[(name() eq 'SurveyItem') or (name() eq 'SurveyImage')]">
-									<xsl:if test="name() eq 'SurveyImage'">
-										<xsl:element name="SurveyImage">
-											<xsl:copy-of select="child::*" />
-										</xsl:element>
-									</xsl:if>
-									<xsl:if test="name() eq 'SurveyItem'">
-									<xsl:element name="SurveyItem">
-										<xsl:variable name="ndx" select="position()" as="xs:integer" />
-										<xsl:attribute name="QuestionNum" select="@QuestionNum" />
-										<xsl:attribute name="ItemNum" select="@ItemNum" />
+						<xsl:element name="form">
+							<xsl:attribute name="method" select="'POST'" />
+							<xsl:attribute name="data-timeout" select="//Survey/@TimeoutMillis" />
+							<xsl:element name="ul">
+								<xsl:attribute name="id" select="'QuestionList'" />
+								<xsl:variable name="pos" select="position()" />
+								<xsl:variable name="Items">
+									<xsl:for-each select="//Survey/child::*[(name() eq 'SurveyItem') or (name() eq 'SurveyImage')]">
 										<xsl:if test="name() eq 'SurveyImage'">
-											<xsl:attribute name="Image" select="'true'" />
+											<xsl:element name="SurveyImage">
+												<xsl:copy-of select="child::*" />
+											</xsl:element>
 										</xsl:if>
 										<xsl:if test="name() eq 'SurveyItem'">
-											<xsl:attribute name="Image" select="'false'" />
-										</xsl:if>	
-										<xsl:copy-of select="child::*" />
-									</xsl:element>
-									</xsl:if>
-								</xsl:for-each>
-							</xsl:variable>
-							<xsl:apply-templates select="$Items/child::node()" />
-						</xsl:element>
-						<xsl:element name="h3">
-							<xsl:attribute name="id" select="'ErrorsExistMsgDiv'" />
-							<xsl:value-of select="' '" />
-						</xsl:element>
-						<xsl:element name="div">
-							<xsl:attribute name="id" select="'SubmitButtonDiv'" />
-							<xsl:element name="input">
-								<xsl:attribute name="id" select="'SubmitButton'" />
-								<xsl:attribute name="type" select="'button'" />
-								<xsl:attribute name="value" select="'Submit'" />
-								<xsl:attribute name="onclick" select="'OnSubmit()'" />
+											<xsl:element name="SurveyItem">
+												<xsl:variable name="ndx" select="position()" as="xs:integer" />
+												<xsl:attribute name="QuestionNum" select="@QuestionNum" />
+												<xsl:attribute name="optional" select="lower-case(string(@Optional))" />
+												<xsl:attribute name="ItemNum" select="@ItemNum" />
+												<xsl:attribute name="Image" select="'false'" />
+												<xsl:copy-of select="child::*" />
+											</xsl:element>
+										</xsl:if>
+									</xsl:for-each>
+								</xsl:variable>
+								<xsl:apply-templates select="$Items/child::node()" />
+							</xsl:element>
+							<xsl:element name="h3">
+								<xsl:attribute name="id" select="'ErrorsExistMsgDiv'" />
+								<xsl:value-of select="' '" />
+							</xsl:element>
+							<xsl:element name="div">
+								<xsl:attribute name="id" select="'SubmitButtonDiv'" />
+								<xsl:element name="input">
+									<xsl:attribute name="id" select="'SubmitButton'" />
+									<xsl:attribute name="type" select="'button'" />
+									<xsl:attribute name="value" select="'Submit'" />
+									<xsl:attribute name="onclick" select="'OnSubmit()'" />
+								</xsl:element>
 							</xsl:element>
 						</xsl:element>
-						</form>
 					</div>
 				</div>
 			</body>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:function name="mine:pow">
 		<xsl:param name="value" />
 		<xsl:param name="power" />
@@ -360,7 +343,7 @@ body {
 			<xsl:value-of select="1" />
 		</xsl:if>
 	</xsl:function>
-
+	
 	<xsl:function name="mine:hexToDecimal">
 		<xsl:param name="hexValue" />
 		<xsl:variable name="hexDigits">
@@ -385,8 +368,8 @@ body {
 		</xsl:variable>
 		<xsl:copy-of select="sum($decimalDigitValues/digitValue)" />
 	</xsl:function>
-
-
+	
+	
 	<xsl:template name="GenerateCaption">
 		<xsl:param name="caption" />
 		<xsl:element name="div">
@@ -408,7 +391,7 @@ body {
 								<xsl:attribute name="text-anchor" select="'middle'" />
 								<xsl:attribute name="x" select="1000" />
 								<xsl:attribute name="y" select="$textY" />
-								<xsl:attribute name="style" select="concat('font-size: ', $fontSize, 'px; font-family:', $caption/FontName, ';')" />
+								<xsl:attribute name="style" select="concat('font-size: ', $fontSize, 'px; font-family:', $caption/FontName, '; font-weight: 700;')" />
 								<xsl:value-of select="$caption/Text" />
 							</xsl:element>
 							<filter id="captionInnerShadow" x="-20%" y="-20%" width="140%" height="140%">
@@ -460,7 +443,7 @@ body {
 							<xsl:attribute name="y" select="$textY" />
 							<xsl:attribute name="filter" select="'url(#captionInnerShadow)'" />
 							<xsl:attribute name="fill" select="'url(#captionGradient)'" />
-							<xsl:attribute name="style" select="concat('font-size: ', $fontSize, 'px; font-family:', $caption/FontName, ';')" />
+							<xsl:attribute name="style" select="concat('font-weight: 700; font-size: ', $fontSize, 'px; font-family:', $caption/FontName, ';')" />
 							<xsl:value-of select="$caption/Text" />
 						</xsl:element>
 					</g>
@@ -477,30 +460,32 @@ body {
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template match="SurveyImage">
 		<xsl:element name="li">
-		<xsl:attribute name="id" select="concat('ItemLITag', position())" />
+			<xsl:attribute name="id" select="concat('ItemLITag', position())" />
 			<xsl:element name="div">
 				<xsl:attribute name="class" select="'PictureDiv'" />
 				<xsl:element name="img">
 					<xsl:attribute name="style" select="'max-width: 100%'" />
 					<xsl:attribute name="type" select="MimeType" />
-					<xsl:attribute name="src" select="concat('data:', MimeType, ';base64,', ImageData)" />
-					<xsl:attribute name="id" select="Id" />
+					<xsl:attribute name="src" select="concat('/IAT/resource/', $root//ClientId, '/', $root//IATName, '/', ResourceId, '/img')" />
 				</xsl:element>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template match="SurveyItem">
 		<xsl:variable name="questionNum" select="xs:integer(@QuestionNum)"/>
 		<xsl:variable name="itemNum" select="position()" />
+		<xsl:variable name="responseType" select="mine:getResponse(.)" />	
+		<xsl:variable name="response" select="child::*[name() eq $responseType]" />
+		<xsl:variable name="optional" select="@optional" />
 		<xsl:element name="li">
 			<xsl:if test="some $n in child::* satisfies index-of($responseTypeList, $n/name()) ne 0">
 				<xsl:attribute name="id" select="concat('ItemLITag', $itemNum)" />
 			</xsl:if>	
-			<xsl:if test="Response/@Type ne 'Instruction'">
+			<xsl:if test="$responseType ne 'Instruction'">
 				<xsl:choose>
 					<xsl:when test="(xs:integer($questionNum) mod 2) eq 0">
 						<xsl:attribute name="class" select="'ItemEven'" />
@@ -511,40 +496,42 @@ body {
 				</xsl:choose>
 			</xsl:if>
 			<xsl:element name="div">
-				<xsl:if test="Response/@Type eq 'Instruction'">
+				<xsl:if test="$responseType eq 'Instruction'">
 					<xsl:attribute name="class" select="'InstructionsDiv'" />
 				</xsl:if>
-				<xsl:if test="Response/@Type ne 'Instruction'">
+				<xsl:if test="$responseType ne 'Instruction'">
 					<xsl:attribute name="class" select="'SurveyItemDiv'" />
 				</xsl:if>
 				<xsl:element name="h3">
 					<xsl:attribute name="id" select="concat('itemText', $itemNum)" />
 					<xsl:value-of select="Text" />
 				</xsl:element>
-
 				<xsl:element name="div">
-					<xsl:variable name="childResponse" select="for $i in child::* return $i[index-of($responseTypeList, name()) ne 0]" />
-					<xsl:attribute name="style" select="'margin: 1% 5% 0% 5%;'" />
-					<xsl:attribute name="name" select="$childResponse/name()" />
-					<xsl:apply-templates select="$childResponse">
-						<xsl:with-param name="itemNum" as="xs:integer" select="$questionNum" />
-					</xsl:apply-templates>
-
+					<xsl:attribute name="name" select="$response/name()" />
+						<xsl:apply-templates select="$response">
+							<xsl:with-param name="questionNum" as="xs:integer" select="$questionNum" />
+							<xsl:with-param name="optional" select="$optional" />
+						</xsl:apply-templates>
+					
 				</xsl:element>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template match="Likert">
-		<xsl:param name="itemNum" as="xs:integer" />
-		<xsl:variable name="reverseScored" select="./IsReverseScored" />
-		<xsl:variable name="numChoices" select="xs:integer(./NumChoices)" />
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
+		<xsl:variable name="reverseScored" select="@ReverseScored" />
+		<xsl:variable name="numChoices" select="xs:integer(@NumChoices)" />
 		<xsl:element name="table">
 			<xsl:attribute name="width" select="'90%'" />
 			<xsl:attribute name="class" select="'RadioButtonTable'" />
-			<xsl:for-each select="./ChoiceDescriptions/Choice">
+			<xsl:attribute name="data-item" select="$questionNum" />
+			<xsl:attribute name="data-optional" select="$optional" />
+			<xsl:attribute name="data-type" select="'likert'" />
+			<xsl:for-each select="Choice">
 				<xsl:call-template name="writeRadioButton">
-					<xsl:with-param name="itemNum" select="$itemNum" />
+					<xsl:with-param name="questionNum" select="$questionNum" />
 					<xsl:with-param name="radioValue">
 						<xsl:if test="$reverseScored eq 'true'">
 							<xsl:value-of select="$numChoices + 1 - position()" />
@@ -558,63 +545,62 @@ body {
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-
-	<xsl:template match="Boolean">
-		<xsl:param name="itemNum" as="xs:integer" />
+	
+	<xsl:template match="TrueFalse">
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
 		<xsl:element name="table">
 			<xsl:attribute name="width" select="'90%'" />
 			<xsl:attribute name="class" select="'RadioButtonTable'" />
+			<xsl:attribute name="data-type" select="'truefalse'" />
+			<xsl:attribute name="data-item" select="$questionNum" />
+			<xsl:attribute name="data-optional" select="$optional" />
 			<xsl:call-template name="writeRadioButton">
-				<xsl:with-param name="itemNum" select="$itemNum" />
+				<xsl:with-param name="questionNum" select="$questionNum" />
 				<xsl:with-param name="radioValue" select="'1'" />
-				<xsl:with-param name="radioLabel" select="./TrueStatement" />
+				<xsl:with-param name="radioLabel" select="TrueStatement" />
 			</xsl:call-template>
 			<xsl:call-template name="writeRadioButton">
-				<xsl:with-param name="itemNum" select="$itemNum" />
+				<xsl:with-param name="questionNum" select="$questionNum" />
 				<xsl:with-param name="radioValue" select="'0'" />
-				<xsl:with-param name="radioLabel" select="./FalseStatement" />
+				<xsl:with-param name="radioLabel" select="FalseStatement" />
 			</xsl:call-template>
 		</xsl:element>
 	</xsl:template>
-
-	<xsl:template match="MultipleResponse">
-		<xsl:param name="itemNum" as="xs:integer" />
+	
+	<xsl:template match="MultiChoice">
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
 		<xsl:element name="table">
 			<xsl:attribute name="width" select="'90%'" />
 			<xsl:attribute name="class" select="'RadioButtonTable'" />
-			<xsl:for-each select="./Choices/Choice">
+			<xsl:attribute name="data-type" select="'multichoice'" />
+			<xsl:attribute name="data-item" select="$questionNum" />
+			<xsl:attribute name="data-optional" select="$optional" />
+			<xsl:for-each select="./Choice">
 				<xsl:call-template name="writeRadioButton">
-					<xsl:with-param name="itemNum" select="$itemNum" />
+					<xsl:with-param name="questionNum" select="$questionNum" />
 					<xsl:with-param name="radioValue" select="position()" />
 					<xsl:with-param name="radioLabel" select="." />
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-
-	<xsl:template match="WeightedMultipleResponse">
-		<xsl:param name="itemNum" as="xs:integer" />
-		<xsl:element name="table">
-			<xsl:attribute name="width" select="'90%'" />
-			<xsl:attribute name="class" select="'RadioButtonTable'" />
-			<xsl:for-each select="./WeightedChoices/WeightedChoice">
-				<xsl:call-template name="writeRadioButton">
-					<xsl:with-param name="itemNum" select="$itemNum" />
-					<xsl:with-param name="radioValue" select="./Weight" />
-					<xsl:with-param name="radioLabel" select="./Choice" />
-				</xsl:call-template>
-			</xsl:for-each>
-		</xsl:element>
-	</xsl:template>
-
-	<xsl:template match="MultiBoolean">
-		<xsl:param name="itemNum" as="xs:integer" />
-		<xsl:variable name="numTableRows" select="xs:integer(ceiling((count(./Labels/Label)) div 2))" />
-		<xsl:variable name="labels" select="./Labels" />
+	
+	<xsl:template match="MultiSelect">
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
+		<xsl:variable name="numTableRows" select="xs:integer(ceiling((count(Label)) div 2))" />
+		<xsl:variable name="response" select="." />
 		<xsl:element name="input">
-			<xsl:attribute name="name" select="concat('Item', $itemNum)" />
+			<xsl:attribute name="name" select="concat('Item', $questionNum)" />
 			<xsl:attribute name="type" select="'hidden'" />
-			<xsl:attribute name="id" select="concat('Item', $itemNum)" />
+			<xsl:attribute name="id" select="concat('Item', $questionNum)" />
+			<xsl:attribute name="data-type" select="'multiselect'" />
+			<xsl:attribute name="data-min" select="MinSelections" />
+			<xsl:attribute name="data-max" select="MaxSelections" />
+			<xsl:attribute name="data-item" select="$questionNum" />
+			<xsl:attribute name="data-optional" select="$optional" />
 		</xsl:element>	
 		<xsl:element name="table">
 			<xsl:attribute name="width" select="'90%'" />
@@ -626,47 +612,48 @@ body {
 					<td style="width: 0px;">
 						<xsl:element name="input">
 							<xsl:attribute name="type" select="'checkbox'" />
-							<xsl:attribute name="name" select="concat('Item', $itemNum, '_', $col1Index)" />
-							<xsl:attribute name="ID" select="concat('Item', $itemNum, '_', $col1Index)" />
+							<xsl:attribute name="name" select="concat('Item', $questionNum, '_', $col1Index)" />
+							<xsl:attribute name="ID" select="concat('Item', $questionNum, '_', $col1Index)" />
 						</xsl:element>
 					</td>
 					<td>
 						<xsl:element name="p">
-							<xsl:attribute name="class" select="concat('response', $itemNum)" />
+							<xsl:attribute name="class" select="concat('response', $questionNum)" />
 							<xsl:element name="label">
-								<xsl:attribute name="for" select="concat('Item', $itemNum, '_', $col1Index)" />
-								<xsl:value-of select="$labels/Label[position() = $col1Index]" />
+								<xsl:attribute name="for" select="concat('Item', $questionNum, '_', $col1Index)" />
+								<xsl:value-of select="$response/Label[position() = $col1Index]" />
 							</xsl:element>
 						</xsl:element>
 					</td>
-					<xsl:if test="position() + $numTableRows le count($labels/Label)">
+					<xsl:if test="position() + $numTableRows le count($response/Label)">
 						<td style="width: 0px;">
 							<xsl:element name="input">
 								<xsl:attribute name="type" select="'checkbox'" />
-								<xsl:attribute name="name" select="concat('Item', $itemNum, '_', $col2Index)" />
-								<xsl:attribute name="ID" select="concat('Item', $itemNum, '_', $col2Index)" />
+								<xsl:attribute name="name" select="concat('Item', $questionNum, '_', $col2Index)" />
+								<xsl:attribute name="ID" select="concat('Item', $questionNum, '_', $col2Index)" />
 							</xsl:element>
 						</td>
 						<td>
 							<xsl:element name="div">
 								<xsl:element name="p">
-									<xsl:attribute name="class" select="concat('response', $itemNum)" />
+									<xsl:attribute name="class" select="concat('response', $questionNum)" />
 									<xsl:element name="label">
-										<xsl:attribute name="for" select="concat('Item', $itemNum, '_', $col2Index)" />
-										<xsl:value-of select="$labels/Label[position() = $col2Index]" />
+										<xsl:attribute name="for" select="concat('Item', $questionNum, '_', $col2Index)" />
+										<xsl:value-of select="$response/Label[position() = $col2Index]" />
 									</xsl:element>
 								</xsl:element>
 							</xsl:element>
 						</td>
-
+						
 					</xsl:if>
 				</tr>
 			</xsl:for-each>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template match="Date">
-		<xsl:param name="itemNum" as="xs:integer" />
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
 		<xsl:variable name="monthNames">
 			<month number="1">January</month>
 			<month number="2">February</month>
@@ -682,147 +669,135 @@ body {
 			<month number="12">December</month>
 		</xsl:variable>
 		<xsl:element name="div">
-			<xsl:attribute name="id" select="concat('response', $itemNum)" />
+			<xsl:attribute name="id" select="concat('response', $questionNum)" />
 			<xsl:element name="input">
 				<xsl:attribute name="type" select="'text'" />
-				<xsl:attribute name="name" select="concat('Item', $itemNum)" />
-				<xsl:attribute name="id" select="concat('Item', $itemNum)" />
+				<xsl:attribute name="name" select="concat('Item', $questionNum)" />
+				<xsl:attribute name="id" select="concat('Item', $questionNum)" />
 				<xsl:attribute name="class" select="'DateInput'" />
+				<xsl:attribute name="data-item" select="$questionNum" />
+				<xsl:attribute name="data-optional" select="$optional" />
+				<xsl:attribute name="data-type" select="'date'" />
+				<xsl:attribute name="data-has-start" select="@HasStartDate" />
+				<xsl:attribute name="data-has-end" select="@HasEndDate" />
+				<xsl:attribute name="data-start-date" select="concat(StartYear, '-', StartMonth, '-', StartDay)" />
+				<xsl:attribute name="data-end-date" select="concat(EndYear, '-', EndMonth, '-', EndDay)" />
 			</xsl:element>
 			<xsl:element name="p">
-				<xsl:attribute name="class" select="DateInputLabel" />
-				<xsl:attribute name="id" select="concat('DateInputLabel', $itemNum)" />
-				<xsl:if test="StartDate[@HasValue eq 'True']">
-					<xsl:variable name="startMonth" select="StartDate/Month" />
-					<xsl:if test="EndDate[@HasValue eq 'True']">
-						<xsl:variable name="endMonth" select="EndDate/Month" />
-						Please enter a date between
-						<xsl:value-of select="concat($monthNames/month[@number eq $startMonth], ' ')" />
-						<xsl:value-of select="StartDate/Day" />
-						,
-						<xsl:value-of select="StartDate/Year" />
-						and
-						<xsl:value-of select="concat($monthNames/month[@number eq $endMonth], ' ')" />
-						<xsl:value-of select="EndDate/Day" />
-						,
-						<xsl:value-of select="EndDate/Year" />
-						in MM/DD/YYYY format.
-					</xsl:if>
-					<xsl:if test="EndDate[@HasValue ne 'True']">
-						Please enter a date after
-						<xsl:value-of select="concat($monthNames/month[@number eq $startMonth], ' ')" />
-						<xsl:value-of select="StartDate/Day" />
-						,
-						<xsl:value-of select="StartDate/Year" />
-						in MM/DD/YYYY format.
-					</xsl:if>
-				</xsl:if>
-				<xsl:if test="StartDate[@HasValue ne 'True']">
-					<xsl:if test="EndDate[@HasValue eq 'True']">
-						<xsl:variable name="endMonth" select="EndDate/Month" />
-						Please enter a date before
-						<xsl:value-of select="concat($monthNames/month[@number eq $endMonth], ' ')" />
-						<xsl:value-of select="EndDate/Day" />
-						,
-						<xsl:value-of select="EndDate/Year" />
-						in MM/DD/YYYY format.
-					</xsl:if>
-					<xsl:if test="EndDate[@HasValue ne 'True']">
-						Please enter a date in MM/DD/YYYY format.
-					</xsl:if>
-				</xsl:if>
+				<xsl:attribute name="class" select="'DateInputLabel'" />
+				<xsl:attribute name="id" select="concat('DateInputLabel', $questionNum)" />
+				<xsl:choose>
+					<xsl:when test="(@HasStartDate eq 'True') and (@HasEndDate eq 'True')">
+						<xsl:value-of select="concat('Please enter a date between ',
+							$monthNames/month[@number eq StartMonth], ' ', StartDay, ', ', StartYear,
+							' and ',
+							$monthNames/month[@number eq EndMonth], ' ', EndDay, ', ', EndYear,
+							' in MM/DD/YYYY format.')" />
+					</xsl:when>
+					<xsl:when test="(@HasStartDate eq 'True') and (@HasEndDate eq 'False')">
+						<xsl:value-of select="concat('Please enter a date after ',
+							$monthNames/month[@number eq StartMonth], ' ', StartDay, ', ', StartYear,
+							' in MM/DD/YYYY format.')" />
+					</xsl:when>
+					<xsl:when test="(@HasStartDate eq 'False') and (@HasEndDate eq 'True')">
+						<xsl:value-of select="concat('Please enter a date before ',
+							$monthNames/month[@number eq EndMonth], ' ', EndDay, ', ', EndYear,
+							' in MM/DD/YYYY format.')" />
+					</xsl:when>
+					<xsl:when test="(@HasStartDate eq 'False') and (@HasEndDate eq 'False')">
+						<xsl:value-of select="'Please enter a date in MM/DD/YYYY format.'" />
+					</xsl:when>
+				</xsl:choose>
 			</xsl:element>
 		</xsl:element>
 		<br class="Clear" />
 	</xsl:template>
-
-	<xsl:template match="BoundedLength">
-		<xsl:param name="itemNum" as="xs:integer" />
+	
+	<xsl:template match="BoundedText">
+		<xsl:param name="optional" as="xs:string" />
+		<xsl:param name="questionNum" as="xs:integer" />
 		<xsl:variable name="maxTextLength" as="xs:integer" select="mine:textWidth(MaxLength, Format)" />
 		<xsl:element name="div">
-			<xsl:attribute name="id" select="concat('response', $itemNum)" />
-			<xsl:if test="$maxTextLength le 600">
-				<xsl:element name="input">
-					<xsl:attribute name="name" select="concat('Item', $itemNum)" />
-					<xsl:attribute name="id" select="concat('Item', $itemNum)" />
-					<xsl:attribute name="style" select="concat('width: ', xs:string(xs:integer($maxTextLength) div 9 * 8), 'px;')" />
-					<xsl:if test="$itemNum eq xs:integer(//Survey/@UniqueResponseItem)">
-						<xsl:attribute name="onblur" select="'CheckUniqueResponse(event);'" />
-					</xsl:if>
-				</xsl:element>
-			</xsl:if>
-			<xsl:if test="$maxTextLength gt 600">
+			<xsl:attribute name="id" select="concat('response', $questionNum)" />
 				<xsl:element name="textarea">
-					<xsl:attribute name="name" select="concat('Item', $itemNum)" />
-					<xsl:attribute name="id" select="concat('Item', $itemNum)" />
+					<xsl:attribute name="name" select="concat('Item', $questionNum)" />
+					<xsl:attribute name="id" select="concat('Item', $questionNum)" />
 					<xsl:attribute name="class" select="'BoundedLengthTextArea'" />
 					<xsl:attribute name="style" select="'width: 90%;'" />
-					<xsl:variable name="nRows" select="ceiling($maxTextLength div 600)" />
+					<xsl:attribute name="data-item" select="$questionNum" />
+					<xsl:attribute name="data-optional" select="$optional" />
+					<xsl:attribute name="data-type" select="'boundedtext'" />
+					<xsl:attribute name="data-min-length" select="MinLength" />
+					<xsl:attribute name="data-max-length" select="MaxLength" />
+					<xsl:variable name="nRows" select="ceiling($maxTextLength div 500)" />
 					<xsl:if test="$nRows le 8">
 						<xsl:attribute name="rows" select="$nRows" />
 					</xsl:if>
 					<xsl:if test="$nRows gt 8">
 						<xsl:attribute name="rows" select="'8'" />
 					</xsl:if>
-					<xsl:if test="$itemNum eq xs:integer(//Survey/@UniqueResponseItem)">
-						<xsl:attribute name="onblur" select="'CheckUniqueResponse(event);'" />
-					</xsl:if>
 					<xsl:value-of select="' '" />
 				</xsl:element>
-			</xsl:if>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template match="BoundedNumber">
-		<xsl:param name="itemNum" as="xs:integer" />
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
 		<xsl:element name="div">
-			<xsl:attribute name="id" select="concat('response', $itemNum)" />
+			<xsl:attribute name="id" select="concat('response', $questionNum)" />
 			<xsl:element name="input">
 				<xsl:attribute name="type" select="'text'" />
-				<xsl:attribute name="name" select="concat('Item', $itemNum)" />
-				<xsl:attribute name="ID" select="concat('Item', $itemNum)" />
+				<xsl:attribute name="name" select="concat('Item', $questionNum)" />
+				<xsl:attribute name="id" select="concat('Item', $questionNum)" />
 				<xsl:attribute name="class" select="'BoundedNumberInput'" />
-				<xsl:if test="$itemNum eq xs:integer(//Survey/@UniqueResponseItem)">
-					<xsl:attribute name="onblur" select="'CheckUniqueResponse(event);'" />
-				</xsl:if>
+				<xsl:attribute name="data-item" select="$questionNum" />
+				<xsl:attribute name="data-optional" select="$optional" />
+				<xsl:attribute name="data-type" select="'boundednumber'" />
+				<xsl:attribute name="data-min" select="MinValue" />
+				<xsl:attribute name="data-max" select="MaxValue" />
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template match="FixedDigit">
-		<xsl:param name="itemNum" as="xs:integer" />
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
 		<xsl:element name="div">
-			<xsl:attribute name="id" select="concat('response', $itemNum)" />
+			<xsl:attribute name="id" select="concat('response', $questionNum)" />
 			<xsl:element name="input">
 				<xsl:attribute name="type" select="'text'" />
-				<xsl:attribute name="name" select="concat('Item', $itemNum)" />
-				<xsl:attribute name="ID" select="concat('Item', $itemNum)" />
+				<xsl:attribute name="name" select="concat('Item', $questionNum)" />
+				<xsl:attribute name="id" select="concat('Item', $questionNum)" />
 				<xsl:attribute name="class" select="'FixedDigitInput'" />
-				<xsl:if test="$itemNum eq xs:integer(//Survey/@UniqueResponseItem)">
-					<xsl:attribute name="onblur" select="'CheckUniqueResponse(event);'" />
-				</xsl:if>
+				<xsl:attribute name="data-item" select="$questionNum" />
+				<xsl:attribute name="data-optional" select="$optional" />
+				<xsl:attribute name="data-type" select="'fixeddigit'" />
+				<xsl:attribute name="data-length" select="NumDigs" />
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-
-	<xsl:template match="RegularExpression">
-		<xsl:param name="itemNum" as="xs:integer" />
+	
+	<xsl:template match="RegEx">
+		<xsl:param name="questionNum" as="xs:integer" />
+		<xsl:param name="optional" as="xs:string" />
 		<xsl:element name="div">
-			<xsl:attribute name="id" select="concat('response', $itemNum)" />
+			<xsl:attribute name="id" select="concat('response', $questionNum)" />
 			<xsl:element name="input">
 				<xsl:attribute name="type" select="'text'" />
-				<xsl:attribute name="name" select="concat('Item', $itemNum)" />
-				<xsl:attribute name="ID" select="concat('Item', $itemNum)" />
+				<xsl:attribute name="name" select="concat('Item', $questionNum)" />
+				<xsl:attribute name="id" select="concat('Item', $questionNum)" />
 				<xsl:attribute name="class" select="'RegExInput'" />
-				<xsl:if test="$itemNum eq xs:integer(//Survey/@UniqueResponseItem)">
-					<xsl:attribute name="onblur" select="'CheckUniqueResponse(event);'" />
-				</xsl:if>
+				<xsl:attribute name="data-item" select="$questionNum" />
+				<xsl:attribute name="data-optional" select="$optional" />
+				<xsl:attribute name="data-type" select="'regex'" />
+				<xsl:attribute name="data-pattern" select="Expression" />
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template name="writeRadioButton">
-		<xsl:param name="itemNum" />
+		<xsl:param name="questionNum" as="xs:integer" />
 		<xsl:param name="radioValue" />
 		<xsl:param name="radioLabel" />
 		<xsl:element name="tr">
@@ -831,26 +806,25 @@ body {
 				<xsl:element name="input">
 					<xsl:attribute name="class" select="'RadioInput'" />
 					<xsl:attribute name="type" select="'radio'" />
-					<xsl:attribute name="name" select="concat('Item', $itemNum)" />
+					<xsl:attribute name="name" select="concat('Item', $questionNum)" />
 					<xsl:attribute name="value" select="$radioValue" />
 				</xsl:element>
 			</xsl:element>
 			<xsl:element name="td">
 				<xsl:element name="div">
 					<xsl:element name="p">
-						<xsl:attribute name="class" select="'RadioLabelParagraph'" />
-						<xsl:attribute name="class" select="concat('response', $itemNum)" />
+						<xsl:attribute name="class" select="concat('RadioLabelParagraph response', $questionNum)" />
 						<xsl:value-of select="$radioLabel" />
 					</xsl:element>
 				</xsl:element>
 			</xsl:element>
 		</xsl:element>
 	</xsl:template>
-
+	
 	<xsl:template name="writeFormatCSS">
 		<xsl:param name="format" />
-		<xsl:value-of select="concat('font-size: ', xs:integer($format/FontSize) * 7 div 4, 'px;&#x0A;')" />
-		<xsl:value-of select="concat('color: #', $format/ColorR, $format/ColorG, $format/ColorB, ';&#x0A;')" />
+		<xsl:value-of select="concat('font-size: ', xs:integer($format/FontSize), 'px;&#x0A;')" />
+		<xsl:value-of select="concat('color: ', $format/Color, ';&#x0A;')" />
 		<xsl:if test="$format/Bold eq 'True'">
 			<xsl:value-of select="'font-weight: bold;&#x0A;'" />
 		</xsl:if>

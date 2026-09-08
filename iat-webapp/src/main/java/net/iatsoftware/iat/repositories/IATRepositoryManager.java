@@ -68,7 +68,7 @@ public interface IATRepositoryManager {
     int getResultDataFormat(IAT test);
     void creditAdministration(IAT test);
     boolean debitAdministration(IAT test);
-    List<Long> getTestElems(IAT test);
+    List<TestSegment> getTestElems(IAT test);
     IAT updateIAT(IAT test);
     IAT getIATByAdminID(Long adminID);
     UniqueResponseItem findUniqueResponseItem(IAT test, String surveyName);

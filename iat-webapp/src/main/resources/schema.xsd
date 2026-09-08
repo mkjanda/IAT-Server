@@ -982,12 +982,12 @@
             <xs:enumeration value="VerifyUniqueResponse"/>
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="ManifestType">
         <xs:restriction base="xs:string">
             <xs:enumeration value="FileManifest"/>
             <xs:enumeration value="ItemSlideManifest"/>
-        </xs:restriction>  
+        </xs:restriction>
     </xs:simpleType>
 
 
@@ -1310,16 +1310,14 @@
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
                                     <xs:enumeration value="None"/>
-                                    <xs:enumeration value="Boolean"/>
+                                    <xs:enumeration value="TrueFalse"/>
                                     <xs:enumeration value="Likert"/>
                                     <xs:enumeration value="Date"/>
-                                    <xs:enumeration value="Multiple"/>
-                                    <xs:enumeration value="WeightedMultiple"/>
+                                    <xs:enumeration value="MultiChoice"/>
                                     <xs:enumeration value="RegEx"/>
-                                    <xs:enumeration value="MultiBoolean"/>
+                                    <xs:enumeration value="MultiSelect"/>
                                     <xs:enumeration value="FixedDig"/>
                                     <xs:enumeration value="BoundedNum"/>
-                                    <xs:enumeration value="Likert"/>
                                 </xs:restriction>
                             </xs:simpleType>
                         </xs:element>
@@ -1404,185 +1402,82 @@
 
 
 
-    <xs:complexType name="GSurveyMultiBoolean">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="NumValues" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="MinSelections" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="MaxSelections" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="Labels" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="Label" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyMultipleResponse">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="NumChoice" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="Choices" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyLikertResponse">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="NumChoice" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="IsReverseScored" type="xs:boolean" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="ChoiceDescriptions" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyBoolean">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="TrueStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="FalseStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyWeightedMultiple">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="WeightedChoices">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="WeightedChoice" minOccurs="1" maxOccurs="unbounded">
-                                    <xs:complexType>
-                                        <xs:sequence>
-                                            <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="1" />
-                                            <xs:element name="Weight" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                                        </xs:sequence>
-                                    </xs:complexType>
-                                </xs:element>
-                            </xs:sequence>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-                <xs:attribute name="NumChoices" type="xs:integer" use="required" />
-                <xs:attribute name="Scored" type="xs:boolean" use="optional" />
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyRegularExpression">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="Expression" type="xs:string" minOccurs="1" maxOccurs="1" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyFixedDigit">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="NumDigs" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyBoundedNumber">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="MinLength" type="xs:decimal" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="MaxLength" type="xs:decimal" minOccurs="1" maxOccurs="1" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-
-    <xs:complexType name="GSurveyDate">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="StartDate" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="Year" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                                <xs:element name="Month" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                                <xs:element name="Day" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                            </xs:sequence>
-                            <xs:attribute name="HasValue" type="xs:boolean" use="required" />
-                        </xs:complexType>
-                    </xs:element>
-                    <xs:element name="EndDate" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="Year" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                                <xs:element name="Month" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                                <xs:element name="Day" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                            </xs:sequence>
-                            <xs:attribute name="HasValue" type="xs:boolean" use="required" />
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyBoundedLength">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyResponse">
-                <xs:sequence>
-                    <xs:element name="MinLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="MaxLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyResponse">
-        <xs:complexContent>
-            <xs:extension base="iat:GSurveyFormat">
-                <xs:attribute name="Type" type="xs:string" use="required" />
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="GSurveyFormat">
+    <xs:complexType name="MultiSelect">
         <xs:sequence>
-            <xs:element name="Font" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="FontSize" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="ColorR" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="ColorG" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="ColorB" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="Bold" type="xs:boolean" minOccurs="1" maxOccurs="1" />
-            <xs:element name="Italic" type="xs:boolean" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MinSelections" type="xs:integer" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MaxSelections" type="xs:integer" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Label" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="MultiChoice">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="Likert">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Choice" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="ReverseScored" type="xs:boolean" use="required" />
+        <xs:attribute name="NumChoices" type="xs:integer" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="TrueFalse">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="TrueStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="FalseStatement" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="RegEx">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Expression" type="xs:string" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="FixedDigit">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="NumDigs" type="xs:integer" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="BoundedNumber">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MinValue" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MaxValue" type="xs:decimal" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+
+    <xs:complexType name="Date">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="StartMonth" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="StartDay" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="StartYear" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="EndDay" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="EndMonth" type="xs:int" minOccurs="1" maxOccurs="1" />
+            <xs:element name="EndYear" type="xs:int" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+        <xs:attribute name="HasStartDate" type="xs:boolean" use="required" />
+        <xs:attribute name="HasEndDate" type="xs:boolean" use="required" />
+    </xs:complexType>
+
+    <xs:complexType name="BoundedText">
+        <xs:sequence>
+            <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MinLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
+            <xs:element name="MaxLength" type="xs:integer" minOccurs="1" maxOccurs="1" />
         </xs:sequence>
     </xs:complexType>
 
@@ -1685,28 +1580,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="mask-specifier-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.entities.MaskSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GMaskSpecifier" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.entities.MaskSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:dynamic-specifier-impl">
-                <xs:sequence>
-                    <xs:element name="Mask" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
     <xs:complexType name="GMockItemInstructionScreen">
         <xs:annotation>
             <xs:appinfo>
@@ -1729,113 +1602,20 @@
     </xs:complexType>
 
 
-    <xs:complexType name="range-specifier-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.entities.RangeSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GRangeSpecifier" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.entities.RangeSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:dynamic-specifier-impl">
-                <xs:sequence>
-                    <xs:element name="Cutoff" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ReverseScored" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="CutoffExcludes" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
 
-    <xs:complexType name="dynamic-specifier-impl" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.entities.DynamicSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GDynamicSpecifier" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.entities.DynamicSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:message-impl">
-                <xs:sequence>
-                    <xs:element name="TestSpecifierID" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ItemNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="true-false-specifier-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.entities.TrueFalseSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GTrueFalseSpecifier" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.entities.TrueFalseSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:dynamic-specifier-impl"/>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="selection-specifier-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.entities.SelectionSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GSelectionSpecifier" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.entities.SelectionSpecifier"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:dynamic-specifier-impl">
-                <xs:sequence>
-                    <xs:element name="KeySpecifiers" minOccurs="1" maxOccurs="1">
-                        <xs:complexType>
-                            <xs:sequence>
-                                <xs:element name="KeySpecifier" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
-                            </xs:sequence>
-                            <xs:attribute name="NumKeySpecifiers" type="xs:int" form="unqualified" use="required"/>
-                        </xs:complexType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
 
     <xs:simpleType name="ResponseType">
         <xs:restriction base="xs:string">
-            <xs:enumeration value="Boolean" />
-            <xs:enumeration value="Bounded Length" />
-            <xs:enumeration value="Bounded Number" />
+            <xs:enumeration value="TrueFalse" />
+            <xs:enumeration value="BoundedText" />
+            <xs:enumeration value="BoundedText" />
             <xs:enumeration value="Date" />
-            <xs:enumeration value="Fixed Digit" />
+            <xs:enumeration value="FixedDigit" />
             <xs:enumeration value="Instruction" />
             <xs:enumeration value="Likert" />
-            <xs:enumeration value="Multiple Selection" />
-            <xs:enumeration value="Weighted Multiple Choice" />
-            <xs:enumeration value="Regular Expression" />
+            <xs:enumeration value="MultiSelect" />
+            <xs:enumeration value="MultiChoice" />
+            <xs:enumeration value="RegEx" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -1843,159 +1623,12 @@
         <xs:sequence>
             <xs:element name="Font" type="xs:string" />
             <xs:element name="FontSize" type="xs:string" />
-            <xs:element name="ColorR" type="xs:string" />
-            <xs:element name="ColorG" type="xs:string" />
-            <xs:element name="ColorB" type="xs:string" />
+            <xs:element name="Color" type="xs:string" />
             <xs:element name="Bold" type="xs:boolean" />
             <xs:element name="Italic" type="xs:boolean" />
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="GYearMonthDay">
-        <xs:sequence>
-            <xs:element name="Year" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="Month" type="xs:string" minOccurs="1" maxOccurs="1" />
-            <xs:element name="Day" type="xs:string" minOccurs="1" maxOccurs="1" />
-        </xs:sequence>
-        <xs:attribute name="HasValue" type="xs:boolean" use="required" form="unqualified" />
-    </xs:complexType>
-
-    <xs:complexType name="GDateResponse">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="StartDate" type="iat:GYearMonthDay" />
-            <xs:element name="EndDate" type="iat:GYearMonthDay" />
-        </xs:sequence>
-    </xs:complexType>
-
-
-    <xs:complexType name="GBoolean">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="TrueStatement" type="xs:string" />
-            <xs:element name="FalseStatement" type="xs:string" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GInstruction">
-        <xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
-    </xs:complexType>
-
-    <xs:complexType name="GLikert">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="NumChoices" type="xs:int" />
-            <xs:element name="IsReverseScored" type="xs:boolean" />
-            <xs:element name="ChoiceDescriptions">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Choice" minOccurs="0" maxOccurs="unbounded">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="xs:string" />
-                                </xs:simpleContent>
-                            </xs:complexType>
-                        </xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GMultiBoolean">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="NumValues" type="xs:int" />
-            <xs:element name="MinSelections" type="xs:int" />
-            <xs:element name="MaxSelections" type="xs:int" />
-            <xs:element name="Labels">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Label" minOccurs="0" maxOccurs="unbounded">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="xs:string" />
-                                </xs:simpleContent>
-                            </xs:complexType>
-                        </xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GBoundedLength">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="MinLength" type="xs:int" />
-            <xs:element name="MaxLength" type="xs:int" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GBoundedNumber">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="MinValue" type="xs:int" />
-            <xs:element name="MaxValue" type="xs:int" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GFixedDigit">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="NumDigs" type="xs:int" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GMultipleResponse">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="NumChoices" type="xs:int" />
-            <xs:element name="Choices">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="Choice" minOccurs="0" maxOccurs="unbounded">
-                            <xs:complexType>
-                                <xs:simpleContent>
-                                    <xs:extension base="xs:string" />
-                                </xs:simpleContent>
-                            </xs:complexType>
-                        </xs:element>
-                    </xs:sequence>
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GRegularExpression">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="Expression" type="xs:string" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="GWeightedMultiple">
-        <xs:sequence>
-            <xs:element name="Format" type="iat:GFormat" />
-            <xs:element name="WeightedChoices">
-                <xs:complexType>
-                    <xs:sequence>
-                        <xs:element name="WeightedChoice" minOccurs="0" maxOccurs="unbounded">
-                            <xs:complexType>
-                                <xs:sequence>
-                                    <xs:element name="Choice" type="xs:string" />
-                                    <xs:element name="Weight" type="xs:int" />
-                                </xs:sequence>
-                            </xs:complexType>
-                        </xs:element>
-                    </xs:sequence>
-                    <xs:attribute name="Type" type="iat:ResponseType" use="required" form="unqualified" />
-                    <xs:attribute name="NumChoices" type="xs:int" use="required" form="unqualified" />
-                    <xs:attribute name="Scored" type="xs:boolean" use="required" form="unqualified" />
-                </xs:complexType>
-            </xs:element>
-        </xs:sequence>
-    </xs:complexType>
 
 
     <xs:group name="SurveyItemType">
@@ -2004,23 +1637,20 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="Text" type="xs:string" minOccurs="1" maxOccurs="1" />
+                        <xs:element name="Format" type="iat:GFormat" minOccurs="1" maxOccurs="1" />
                         <xs:choice minOccurs="0" maxOccurs="1">
-                            <xs:element name="Boolean" type="iat:GBoolean" />
-                            <xs:element name="Date" type="iat:GDateResponse" />
-                            <xs:element name="Instruction" type="iat:GInstruction" />
-                            <xs:element name="Likert" type="iat:GLikert" />
-                            <xs:element name="MultiBoolean" type="iat:GMultiBoolean" />
-                            <xs:element name="BoundedLength" type="iat:GBoundedLength" />
-                            <xs:element name="BoundedNumber" type="iat:GBoundedNumber" />
-                            <xs:element name="FixedDigit" type="iat:GFixedDigit" />
-                            <xs:element name="MultipleResponse" type="iat:GMultipleResponse" />
-                            <xs:element name="WeightedMultipleResponse" type="iat:GWeightedMultiple" />
-                            <xs:element name="RegularExpression" type="iat:GRegularExpression" />
+                            <xs:element name="TrueFalse" type="iat:TrueFalse" />
+                            <xs:element name="Date" type="iat:Date" />
+                            <xs:element name="Likert" type="iat:Likert" />
+                            <xs:element name="MultiSelect" type="iat:MultiSelect" />
+                            <xs:element name="BoundedText" type="iat:BoundedText" />
+                            <xs:element name="BoundedNumber" type="iat:BoundedNumber" />
+                            <xs:element name="FixedDigit" type="iat:FixedDigit" />
+                            <xs:element name="MultiChoice" type="iat:MultiChoice" />
+                            <xs:element name="RegEx" type="iat:RegEx" />
                         </xs:choice>
-                        <xs:element name="Format" type="iat:GFormat" />
                     </xs:sequence>
                     <xs:attribute name="Optional" type="xs:boolean" form="unqualified" use="required" />
-                    <xs:attribute name="Image" type="xs:boolean" form="unqualified" use="required" />
                     <xs:attribute name="ItemNum" type="xs:int" form="unqualified" use="optional" />
                     <xs:attribute name="QuestionNum" type="xs:int" form="unqualified" use="optional" />
                 </xs:complexType>
@@ -2037,7 +1667,7 @@
                         <xs:element name="FontSize" type="xs:string" />
                         <xs:element name="FontColorR" type="xs:string" />
                         <xs:element name="FontColorG" type="xs:string" />
-                        <xs:element name="FontColorB" type="xs:string" />
+                        <xs:element name="FontColorB" type="xs:string" />   
                         <xs:element name="BackColorR" type="xs:string" />
                         <xs:element name="BackColorG" type="xs:string" />
                         <xs:element name="BackColorB" type="xs:string" />
@@ -2045,8 +1675,6 @@
                         <xs:element name="BorderColorG" type="xs:string" />
                         <xs:element name="BorderColorB" type="xs:string" />
                     </xs:sequence>
-                    <xs:attribute name="Optional" type="xs:boolean" />
-                    <xs:attribute name="Image" type="xs:boolean" />
                 </xs:complexType>
             </xs:element>
 
@@ -2054,11 +1682,8 @@
                 <xs:complexType>
                     <xs:sequence>
                         <xs:element name="MimeType" type="xs:string" />
-                        <xs:element name="ImageData" type="xs:string" />
-                        <xs:element name="ResourceId" type="xs:long" />
+                        <xs:element name="ResourceId" type="xs:int" />
                     </xs:sequence>
-                    <xs:attribute name="Optional" type="xs:boolean" form="unqualified" use="required" />
-                    <xs:attribute name="Image" type="xs:boolean" form="unqualified" use="required" />
                 </xs:complexType>
             </xs:element>
 
@@ -2080,18 +1705,15 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="IAT" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="ClientId" type="xs:long" minOccurs="0" maxOccurs="1" />
-            <xs:element name="FileName" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1" />
             <xs:element name="InitialPosition" type="xs:int" minOccurs="1" maxOccurs="1" />
-            <xs:element name="AlternationGroup" type="xs:int" minOccurs="1" maxOccurs="1" />
             <xs:element name="ScriptId" type="xs:int" minOccurs="0" maxOccurs="1" />
             <xs:element name="Globals" type="iat:globals-impl" minOccurs="0" maxOccurs="1" />
             <xs:group ref="iat:SurveyItemType" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute name="TimeoutMillis" type="xs:long" use="required" form="unqualified" />
-        <xs:attribute name="UniqueResponse" type="xs:int" use="required" form="unqualified" />
     </xs:complexType>
 
     <xs:group name="Events">
@@ -2120,7 +1742,6 @@
                     <xs:element name="BlockNum" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="NumInstructionScreens" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="NumItems" type="xs:int" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="PracticeBlock" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="Instructions" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="LeftResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="RightResponse" type="xs:string" minOccurs="1" maxOccurs="1"/>
@@ -2187,22 +1808,20 @@
                     <xs:element name="ServerPort" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="ClientID" type="xs:int" minOccurs="1" maxOccurs="1" />
                     <xs:element name="NumIATItems" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="IsSevenBlock" type="xs:boolean" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RedirectOnComplete" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="LeftResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RightResponseKey" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="ErrorMark" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="LeftKeyOutline" type="xs:string" minOccurs="1" maxOccurs="1" />
                     <xs:element name="RightKeyOutline" type="xs:string" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="Survey" type="iat:survey-impl" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="Layout" type="iat:layout-impl" minOccurs="1" maxOccurs="1" />
                     <xs:group ref="iat:Events" minOccurs="1" maxOccurs="unbounded" />
                     <xs:element name="DisplayItem" type="iat:display-item-impl" minOccurs="0" maxOccurs="unbounded" />
-                    <xs:element name="ScriptId" type="xs:int" minOccurs="1" maxOccurs="1" />
+                    <xs:element name="Survey" type="iat:survey-impl" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="Globals" type="iat:globals-impl" minOccurs="0" maxOccurs="1" />
+                    <xs:element name="ScriptId" type="xs:int" minOccurs="0" maxOccurs="1" />
                 </xs:sequence>
-                <xs:attribute name="NumBeforeSurveys" type="xs:int" form="unqualified" use="required" />
-                <xs:attribute name="NumAfterSurveys" type="xs:int" form="unqualified" use="required" />
+                <xs:attribute name="ResultDataVersion" type="xs:int" form="unqualified" use="required" />
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
@@ -2235,30 +1854,6 @@
         </xs:sequence>
     </xs:complexType>
 
-    <xs:complexType name="unique-response-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.configfile.UniqueResponse" />
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GUniqueResponse">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.configfile.UniqueResponse" />
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:message-impl">
-                <xs:sequence>
-                    <xs:element name="SurveyName" type="xs:string" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="ItemNum" type="xs:int" minOccurs="1" maxOccurs="1" />
-                    <xs:element name="Value" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-                </xs:sequence>
-                <xs:attribute name="Additive" type="xs:boolean" form="unqualified" use="required" />
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
 
     <xs:complexType name="activation-response-impl">
         <xs:annotation>
@@ -2417,7 +2012,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>              
+            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="Path" type="xs:string" minOccurs="1" maxOccurs="1"/>
         </xs:sequence>
     </xs:complexType>
@@ -3202,7 +2797,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="iat:message-base-impl"> 
+            <xs:extension base="iat:message-base-impl">
                 <xs:sequence>
                     <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1" />
                 </xs:sequence>

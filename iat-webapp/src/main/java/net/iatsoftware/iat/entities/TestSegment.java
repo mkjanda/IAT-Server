@@ -33,18 +33,16 @@ public class TestSegment implements java.io.Serializable {
     private long id;
     private IAT test;
     private String elementName;
-    private String html, jskeys_xml;
+    private String html;
     private boolean iat = false;
-    private int alternationPriority, initialPos, numAlternations;
+    private int initialPos; 
     public TestSegment() {
     }
 
-    public TestSegment(IAT test, String elementName, String html, int alternationPriority, int initialPos) {
+    public TestSegment(IAT test, String elementName, String html, int initialPos) {
         this.test = test;
         this.elementName = elementName;
         this.html = html; 
-        this.alternationPriority = alternationPriority;
-        this.numAlternations = 0;
         this.initialPos = initialPos;
         if (elementName.equals(test.getTestName())) {
             this.iat = true;
@@ -83,17 +81,6 @@ public class TestSegment implements java.io.Serializable {
     }
 
     @Lob
-    @Column(name = "jskeys_xml", nullable=true)
-    public String getJsKeyXml() {
-        if (this.jskeys_xml == null)
-            return null;
-        return this.jskeys_xml.intern();
-    }
-    public void setJsKeyXml(String val) {
-        this.jskeys_xml = val;
-    }
-
-    @Lob
     @Column(name = "html")
     public String getHtml() {
         return this.html;
@@ -102,15 +89,6 @@ public class TestSegment implements java.io.Serializable {
         this.html = val;
     }
 
-    @Basic
-    @Column(name = "alternation_priority")
-    public int getAlternationPriority() {
-        return this.alternationPriority;
-    }
-
-    public void setAlternationPriority(int val) {
-        this.alternationPriority = val;
-    }
 
     @Basic
     @Column(name = "initial_pos")
@@ -122,16 +100,6 @@ public class TestSegment implements java.io.Serializable {
         this.initialPos = val;
     }
 
-    @Basic
-    @Column(name = "num_alternations")
-    public int getNumAlternations() {
-        return this.numAlternations;
-    }
-
-    public void setNumAlternations(int val) {
-        this.numAlternations = val;
-    }
-    
     @Basic
     @Column(name="iat")
     public boolean isIat() {

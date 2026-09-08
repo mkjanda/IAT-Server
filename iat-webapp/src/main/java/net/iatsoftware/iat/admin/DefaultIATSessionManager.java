@@ -13,17 +13,21 @@ package net.iatsoftware.iat.admin;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.Cache;
+import java.time.Duration;
+
 import java.util.Base64;
-import java.util.Enumeration;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class DefaultIATSessionManager implements IATSessionManager {
-    private static final ConcurrentHashMap<String, IATSession> sessions = new ConcurrentHashMap<>();
     private static final Random random = new Random();
     private static final Base64.Encoder b64Encoder = Base64.getEncoder();
     private static final long SESSION_LIFE = 3_600_000L;
+    static public final Cache<String, IATSession> sessionCache = Caffeine.newBuilder()
+        .maximumSize(10_000).expireAfterAccess(Duration.ofHours(1))
+        .build();
    
     @Override
     public IATSession createSession() {
@@ -32,29 +36,27 @@ public class DefaultIATSessionManager implements IATSessionManager {
         do {
             random.nextBytes(idBytes);
             sessId = b64Encoder.encodeToString(idBytes);
-        } while (sessions.containsKey(sessId));
+        } while (sessionCache.getIfPresent(sessId) != null);
         IATSession session = new IATSession(sessId);
-        sessions.put(sessId, session);
+        sessionCache.put(sessId, session);
         return session;
     }
     
     @Override
     public IATSession getSession(String sessId) {
-        return sessions.get(sessId);
+        return sessionCache.getIfPresent(sessId);
     }
     
     @Override
     public void destroySession(String sessId) {
-        sessions.remove(sessId);
+        sessionCache.invalidate(sessId);
     }
     
     @Scheduled(initialDelay=60_000L, fixedDelay=60_000L)
     public void cleanupProc() {
-        Enumeration<String> ids = sessions.keys();
         long time = System.currentTimeMillis();
-        while (ids.hasMoreElements()) {
-            String id = ids.nextElement();
-            IATSession sess = sessions.get(id);
+        for (String id : sessionCache.asMap().keySet()) {
+            IATSession sess = sessionCache.getIfPresent(id);
             if (sess.getLastAccessTime() + SESSION_LIFE < time)
                 destroySession(sess.getId());
         }

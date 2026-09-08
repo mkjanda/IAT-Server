@@ -48,6 +48,8 @@ import net.iatsoftware.iat.resultdata.ResultTOCEntry;
 import net.iatsoftware.iat.services.MailService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,6 +91,8 @@ import org.springframework.web.context.WebApplicationContext;
 @PropertySource("classpath:iat.webapp.properties")
 @RequestMapping(value = "/Admin")
 public class AdminController {
+
+
 	@SuppressWarnings("unused")
 	private abstract class TokenException extends Exception {
 		private static final long serialVersionUID = 1L;
@@ -278,20 +282,22 @@ public class AdminController {
 		sess.setAttribute(SessionProperties.HTTP_REFERER, httpReferer);
 		Map<String, Object> model = new HashMap<String, Object>();
 		model.put(SessionProperties.IAT_SESSION_ID, sess.getId());
-		List<Long> segmentList = iatRepositoryManager.getTestElems(test);
+		List<TestSegment> segmentList = iatRepositoryManager.getTestElems(test);
 		sess.setAttribute(SessionProperties.SEGMENT_LIST, segmentList);
-		sess.setAttribute(SessionProperties.TEST_SEGMENT, segmentList.get(0));
+		sess.setAttribute(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		sess.setAttribute(SessionProperties.ADMIN_PHASE, 0);
 		model.put(SessionProperties.TEST, test);
 		model.put(SessionProperties.CLIENT_ID, test.getClient().getClientId());
-		model.put(SessionProperties.TEST_SEGMENT, segmentList.get(0));
+		model.put(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		model.put(SessionProperties.ADMIN_PHASE, 0);
 		if (segmentList.size() == 1) {
 			model.put(SessionProperties.LAST_ADMIN_PHASE, "true");
 		} else {
 			model.put(SessionProperties.LAST_ADMIN_PHASE, "false");
 		}
-		return new ModelAndView("Admin/" + segmentList.get(0).toString(), model);
+		Long id = segmentList.get(0).getId();
+		segmentList.removeFirst();
+		return new ModelAndView("Admin/" + id.toString(), model);
 	}
 
 	public String fetchToken(IAT test, HttpServletRequest request) {
@@ -386,16 +392,15 @@ public class AdminController {
 		}
 		String httpReferer = (String) sess.getAttribute(SessionProperties.HTTP_REFERER);
 		Long adminID = (Long) sess.getAttribute(SessionProperties.ADMIN_ID);
-		TestSegment ts = iatRepositoryManager.getTestSegmentByID(testSegmentID);
-		List<Long> segmentList = (List<Long>) sess.getAttribute(SessionProperties.SEGMENT_LIST);
+		List<TestSegment> segmentList = (List<TestSegment>) sess.getAttribute(SessionProperties.SEGMENT_LIST);
 		int adminPhase = (Integer) sess.getAttribute(SessionProperties.ADMIN_PHASE) + 1;
 		boolean lastSegment = adminPhase == segmentList.size();
 		iatRepositoryManager.refreshAdminTimer(adminID);
-		if (ts.getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
+		if (segmentList.get(0).getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
 			IATResultRecorder irr = context.getBean(DefaultIATResultRecorder.class);
 			irr.setAdminID(adminID);
 			irr.setNumItems(numItems);
-			irr.setTestSegment(ts);
+			irr.setTestSegment(segmentList.get(0));
 			irr.setResponseData(parameterMap);
 			irr.setLastFragment(segmentList.size() == adminPhase);
 			this.scheduler.submit(irr);
@@ -403,7 +408,7 @@ public class AdminController {
 			SurveyResultRecorder srr = this.context.getBean(DefaultSurveyResultRecorder.class);
 			srr.setAdminID(adminID);
 			srr.setNumItems(numItems);
-			srr.setTestSegment(ts);
+			srr.setTestSegment(segmentList.get(0));
 			srr.setResponseData(parameterMap);
 			srr.setLastFragment(segmentList.size() == adminPhase);
 			this.scheduler.submit(srr);
@@ -413,7 +418,7 @@ public class AdminController {
 		}
 
 		Map<String, Object> model = new HashMap<>();
-		sess.setAttribute(SessionProperties.TEST_SEGMENT, segmentList.get(adminPhase));
+		sess.setAttribute(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		sess.setAttribute(SessionProperties.ADMIN_PHASE, adminPhase);
 		if (adminPhase == segmentList.size() - 1) {
 			model.put("LastAdminPhase", "true");
@@ -424,9 +429,11 @@ public class AdminController {
 		model.put(SessionProperties.IAT_SESSION_ID, sess.getId());
 		model.put(SessionProperties.TEST, test);
 		model.put(SessionProperties.CLIENT_ID, clientId);
-		model.put(SessionProperties.TEST_SEGMENT, segmentList.get(adminPhase));
+		model.put(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		model.put(SessionProperties.HTTP_REFERER, httpReferer);
-		return new ModelAndView("Admin/" + segmentList.get(adminPhase).toString(), model);
+		Long testSegmentId = segmentList.get(0).getId();
+		segmentList.removeFirst();
+		return new ModelAndView("Admin/" + testSegmentId.toString(), model);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -449,13 +456,12 @@ public class AdminController {
 		Long adminID = (Long) sess.getAttribute("AdminID");
 		iatRepositoryManager.refreshAdminTimer(adminID);
 		int adminPhase = (Integer) sess.getAttribute("AdminPhase") + 1;
-		TestSegment ts = iatRepositoryManager.getTestSegmentByID(administeredElemID);
-		List<Long> segmentList = (List<Long>) sess.getAttribute("SegmentList");
-		if (ts.getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
+		List<TestSegment> segmentList = (List<TestSegment>) sess.getAttribute("SegmentList");
+		if (segmentList.get(0).getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
 			IATResultRecorder irr = context.getBean(DefaultIATResultRecorder.class);
 			irr.setAdminID(adminID);
 			irr.setNumItems(numItems);
-			irr.setTestSegment(ts);
+			irr.setTestSegment(segmentList.get(0));
 			irr.setResponseData(parameterMap);
 			irr.setLastFragment(segmentList.size() == adminPhase);
 			this.scheduler.submit(irr);
@@ -463,7 +469,7 @@ public class AdminController {
 			SurveyResultRecorder srr = this.context.getBean(DefaultSurveyResultRecorder.class);
 			srr.setAdminID(adminID);
 			srr.setNumItems(numItems);
-			srr.setTestSegment(ts);
+			srr.setTestSegment(segmentList.get(0));
 			srr.setResponseData(parameterMap);
 			srr.setLastFragment(segmentList.size() == adminPhase);
 			this.scheduler.submit(srr);
@@ -484,9 +490,11 @@ public class AdminController {
 		model.put("IATSESSIONID", sess.getId());
 		model.put("Test", test);
 		model.put("ClientID", clientID);
-		model.put("TestSegment", segmentList.get(adminPhase));
+		model.put("TestSegmentId", segmentList.get(0).getId());
 		model.put("referer", request.getHeader("referer"));
-		return new ModelAndView("Admin/" + segmentList.get(adminPhase).toString(), model);
+		Long testSegmentId = segmentList.get(0).getId();
+		segmentList.removeFirst();
+		return new ModelAndView("Admin/" + testSegmentId.toString(), model);
 	}
 
 	@GetMapping(value = "/resources/{clientId}/{testName}/{resourceId}")

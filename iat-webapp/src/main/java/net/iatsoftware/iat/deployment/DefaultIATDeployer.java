@@ -242,6 +242,7 @@ public class DefaultIATDeployer implements IATDeployer {
    //         var streamSrc = new StreamSource(new StringReader(globalsText));
      //       var globals = (Globals) unmarshaller.unmarshal(streamSrc);
             this.CF.setGlobals(globals);
+            this.CF.setScriptId(testResource.getResourceId());
             strWriter = new StringWriter();
             marshaller.marshal(this.CF, new StreamResult(strWriter));
             var segment2 = transformAndMungeCode(strWriter.toString(), compiledXSLT.getIATScriptX());
@@ -251,11 +252,14 @@ public class DefaultIATDeployer implements IATDeployer {
             writer.flush();
             testResource.setResourceBytes(bOut.toByteArray());
             iatRepositoryManager.updateTestResource(testResource);
-            CF.setScriptId(testResource.getResourceId());
             strWriter = new StringWriter();
             marshaller.marshal(this.CF, new StreamResult(strWriter));
             var html = transform(strWriter.toString(), compiledXSLT.getIATPageX());
-            var iatTS = new TestSegment(this.test, test.getTestName(), html, 0, this.CF.getNumBeforeSurveys());
+            TestSegment iatTS;
+            if (this.CF.getSurvey() == null)
+                iatTS = new TestSegment(this.test, test.getTestName(), html, 0);
+            else
+                iatTS = new TestSegment(this.test, test.getTestName(), html, this.CF.getSurvey().size());
             iatRepositoryManager.addTestSegment(iatTS);
         } catch (net.sf.saxon.s9api.SaxonApiException | java.io.IOException ex) {
             throw new DeploymentTerminationException("XSLT Error while generating files for an IAT", ex);
@@ -283,8 +287,7 @@ public class DefaultIATDeployer implements IATDeployer {
             strWriter = new StringWriter();
             marshaller.marshal(survey, new StreamResult(strWriter));
             var surveyHTML = transform(strWriter.toString().getBytes(StandardCharsets.UTF_8), compiledXSLT.getSurveyPageX());
-            var ts = new TestSegment(this.test, survey.getSurveyName(), new String(surveyHTML),
-                    survey.getAlternationGroup(), survey.getInitialPosition());
+            var ts = new TestSegment(this.test, survey.getSurveyName(), new String(surveyHTML), survey.getInitialPosition());
             ts.setIat(false);
             iatRepositoryManager.addTestSegment(ts);
         } catch (net.sf.saxon.s9api.SaxonApiException | java.io.IOException ex) {
@@ -297,7 +300,11 @@ public class DefaultIATDeployer implements IATDeployer {
         this.test = iat;
                 this.CF = (ConfigFile)this.session.configFile();
                 this.CF.setIATName(this.test.getTestName());
-                int numStages = (1 + this.CF.getNumAfterSurveys() + CF.getNumBeforeSurveys());
+                int numStages;
+                if (this.CF.getSurvey() == null)
+                    numStages = 1;
+                else
+                    numStages = 1 + this.CF.getSurvey().size();
                 test.setRedirectOnComplete(CF.getRedirectOnComplete());
                 test.setAlternated(true);
                 test.setNumElements(numStages);

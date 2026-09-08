@@ -41,7 +41,7 @@ public class AdminViewResolver extends AbstractCachingViewResolver implements Or
     @Override
     protected View loadView(String viewName, Locale locale) {
         AdminView view = new AdminView();
-        Pattern patt = Pattern.compile("Admin/([1-9][0-9]+)");
+        Pattern patt = Pattern.compile("Admin/([1-9][0-9]*)");
         Matcher m = patt.matcher(viewName);
         if (!m.matches()) {
             return null;

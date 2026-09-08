@@ -10,15 +10,9 @@ package net.iatsoftware.iat.repositories;
  * @author Michael Janda
  */
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.CriteriaUpdate;
-import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 
@@ -84,14 +78,12 @@ public class DefaultTestSegmentRepository extends GenericJpaRepository<Long, Tes
     }
 
     @Override
-    public List<Long> getTestElems(IAT test) {
+    public List<TestSegment> getTestElems(IAT test) {
         var cb = this.entityManager.getCriteriaBuilder();
-        var query = cb.createQuery(Long.class);
+        var query = cb.createQuery(TestSegment.class);
         var root = query.from(TestSegment.class);
         var pred = cb.equal(root.get("test"), test);
-        var results = this.entityManager.createQuery(query.select(root.get("id")).where(pred)).getResultList();
-        results.sort((x1, x2) -> Long.compare(x1, x2));
-        return results;
+        return this.entityManager.createQuery(query.select(root).where(pred).orderBy(cb.asc(root.get("initialPos")))).getResultList();
     }
 
         /*

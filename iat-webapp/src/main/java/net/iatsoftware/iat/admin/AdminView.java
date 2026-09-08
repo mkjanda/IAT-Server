@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.springframework.web.servlet.view.AbstractView;
 
 import net.iatsoftware.iat.entities.IAT;
+import net.iatsoftware.iat.entities.TestSegment;
 
 import java.io.PrintWriter;
 import java.util.Map;
@@ -36,7 +37,7 @@ public class AdminView extends AbstractView {
             response.setHeader("Cache-Control", "no-store");
             IAT test = (IAT) model.get("Test");
             Long clientID = (Long) model.get("ClientID");
-            Long testElemID = (Long)model.get("TestSegment");
+            Long testElemID = (Long)model.get("TestSegmentId");
             addCookie(response, "TestSegment", testElemID.toString());
             addCookie(response, "IATSESSIONID", (String)model.get("IATSESSIONID"));
             if (AdminVersion.compare(new AdminVersion(test.getVersion()), new AdminVersion("iat-1.0.5")) < 0) {

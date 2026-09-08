@@ -9,7 +9,7 @@ public class SessionProperties {
 	public static final String TEST_NAME_LABEL = "testName";
 	public static final String TEST_LINK_LABEL = "testLink";
 	public static final String GENERAL_ERROR = "GeneralError";
-	public static final String TEST_SEGMENT = "TestSegment";
+	public static final String TEST_SEGMENT_ID = "TestSegmentId";
 	public static final String SEGMENT_LIST = "SegmentList";
 	public static final String ADMIN_PHASE = "AdminPhase";
 	public static final String ADMIN_ID = "AdminID";

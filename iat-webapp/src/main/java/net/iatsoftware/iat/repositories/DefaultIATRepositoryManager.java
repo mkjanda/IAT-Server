@@ -320,12 +320,11 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public List<Long> getTestElems(final IAT test) {
-        final List<Long> segmentIDs = testSegmentRepository.getTestElems(test);
+    public List<TestSegment> getTestElems(final IAT test) {
+        final List<TestSegment> segments = testSegmentRepository.getTestElems(test);
         if (test.getAlternated()) {
             if (test.isAlternate()) {
                 test.setAlternate(false);
-                testSegmentRepository.rotateItems(test);
             } else {
                 test.setAlternate(true);
             }
@@ -333,7 +332,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
             testSegmentRepository.rotateItems(test);
         }
         iatRepository.update(test);
-        return segmentIDs;
+        return segments;
     }
 
     @Transactional
