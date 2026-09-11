@@ -12,7 +12,7 @@ package net.iatsoftware.iat.repositories;
 
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.TestResultFragment;
-import net.iatsoftware.iat.entities.ResultSet;
+import net.iatsoftware.iat.entities.EncryptedResultSet;
 
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +30,7 @@ public class DefaultTestResultFragmentRepository extends GenericJpaRepository<Lo
         implements TestResultFragmentRepository
 {
     @Override
-    public List<TestResultFragment> getResultFragments(ResultSet rs) {
+    public List<TestResultFragment> getResultFragments(EncryptedResultSet rs) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<TestResultFragment> query = cb.createQuery(TestResultFragment.class);
         Root<TestResultFragment> root = query.from(TestResultFragment.class);
@@ -41,7 +41,7 @@ public class DefaultTestResultFragmentRepository extends GenericJpaRepository<Lo
     }
     
     @Override
-    public void deleteResultFragments(ResultSet rs) {
+    public void deleteResultFragments(EncryptedResultSet rs) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaDelete<TestResultFragment> deletion = cb.createCriteriaDelete(TestResultFragment.class);
         Root<TestResultFragment> root = deletion.from(TestResultFragment.class);

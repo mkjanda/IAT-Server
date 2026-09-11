@@ -10,7 +10,6 @@ package net.iatsoftware.iat.entities;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.Manifest;
 
 import jakarta.persistence.Entity;
@@ -58,8 +57,7 @@ public class IAT implements java.io.Serializable {
     private User user;
     private UniqueResponseItem uniqueResponseItem;
     private EncryptedRSAKey dataKey = null;
-    private String itemSlideDownloadKey = null, version;
-    private TokenType tokenType = TokenType.NONE;
+    private String version;
     private String tokenName = "";
     private JAXBContext marshaller = null;
     private String manifestXml;    
@@ -266,23 +264,6 @@ public class IAT implements java.io.Serializable {
         this.numElements = val;
     }
     
-    @OneToOne(optional=true, mappedBy="test", fetch=FetchType.EAGER)
-    public UniqueResponseItem getUniqueResponseItem() {
-        return this.uniqueResponseItem;
-    }
-    public void setUniqueResponseItem(UniqueResponseItem val) {
-        this.uniqueResponseItem = val;
-    }
-    
-    @Basic
-    @Column(name="item_slide_download_key")
-    public String getItemSlideDownloadKey() {
-        return this.itemSlideDownloadKey;
-    }
-    public void setItemSlideDownloadKey(String val) {
-        this.itemSlideDownloadKey = val;
-    }
-    
     @Basic
     @Column(name="url")
     public String getURL() {
@@ -292,79 +273,7 @@ public class IAT implements java.io.Serializable {
         this.URL = val;
     }
     
-    @Basic
-    @Column(name="oauth_client_redirect")
-    public String getOauthClientRedirect() {
-        return this.oauthClientRedirect;
-    }
-    public void setOauthClientRedirect(String val) {
-        this.oauthClientRedirect = val;
-    }
-    
-    @Basic
-    @Column(name="oauth_subpath_redirects")
-    public boolean isOauthSubpathRedirects() {
-        return this.oauthSubpathRedirects;
-    }
-    public void setOauthSubpathRedirects(boolean val) {
-        this.oauthSubpathRedirects = val;
-    }
-
-    @Basic
-    @Column(name="oauth_client_id")
-    public String getOauthClientId() {
-        return this.oauthClientId;
-    }
-    public void setOauthClientId(String val) {
-        this.oauthClientId = val;
-    }
-    
-    @Basic
-    @Column(name="oauth_client_secret")
-    public String getOauthClientSecret()
-    {
-        return this.oauthClientSecret;
-    }
-    public void setOauthClientSecret(String val) {
-        this.oauthClientSecret = val;
-    }
-    
-    @Enumerated(EnumType.STRING)
-    @Column(name="token_type")
-    public TokenType getTokenType() {
-        return this.tokenType;
-    }
-    public void setTokenType(TokenType val) {
-        this.tokenType = val;
-    }
-    
-    @Basic
-    @Column(name="token_name")
-    public String getTokenName() {
-        return this.tokenName;
-    }
-    public void setTokenName(String val) {
-        this.tokenName = val;
-    }
-    
-    @Lob
-    @Column(name="result_retrieval_token")
-    public byte[] getResultRetrievalToken() {
-        return this.resultRetrievalToken;
-    }
-    public void setResultRetrievalToken(byte[] val) {
-        this.resultRetrievalToken = val;
-    }
-    
-    @Temporal(TemporalType.TIMESTAMP)
-    @Column(name="result_retrieval_token_age")
-    public Calendar getResultRetrievalTokenAge() {
-        return resultRetrievalTokenAge;
-    }
-    public void setResultRetrievalTokenAge(Calendar val) {
-        resultRetrievalTokenAge = val;
-    }
-
+ 
     @Lob
     @Column(name="manifest")
     public String getManifestXml() {
@@ -385,14 +294,5 @@ public class IAT implements java.io.Serializable {
         var w = new StringWriter();
         m.marshal(val, w);
         setManifestXml(w.toString());
-    }
-
-    @Basic
-    @Column(name="redeployed")
-    public boolean isRedeployed() {
-        return this.redeployed;
-    }
-    public void setRedeployed(boolean val) {
-        redeployed = val;
     }
 }

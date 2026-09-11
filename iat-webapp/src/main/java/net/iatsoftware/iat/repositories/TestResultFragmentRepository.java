@@ -12,13 +12,13 @@ package net.iatsoftware.iat.repositories;
 
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.TestResultFragment;
-import net.iatsoftware.iat.entities.ResultSet;
+import net.iatsoftware.iat.entities.EncryptedResultSet;
 
 import java.util.List;
 
 public interface TestResultFragmentRepository extends GenericRepository<Long, TestResultFragment> {
-    List<TestResultFragment> getResultFragments(ResultSet rs);
-    void deleteResultFragments(ResultSet rs);
+    List<TestResultFragment> getResultFragments(EncryptedResultSet rs);
+    void deleteResultFragments(EncryptedResultSet rs);
     List<TestResultFragment> get(AdminTimer timer);
     void setComplete(AdminTimer timer);
 }

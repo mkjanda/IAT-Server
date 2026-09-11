@@ -24,14 +24,12 @@ import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestResultFragment;
-import net.iatsoftware.iat.entities.OAuthAccess;
 import net.iatsoftware.iat.entities.UniqueResponse;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
-import net.iatsoftware.iat.entities.ResultSet;
+import net.iatsoftware.iat.entities.EncryptedResultSet;
 import net.iatsoftware.iat.entities.SpecifierValue;
 import net.iatsoftware.iat.events.CommunicationEvent;
 import net.iatsoftware.iat.generated.CodeType;
-import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.generated.PacketType;
 import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.messaging.RSAKeyPair;
@@ -77,8 +75,8 @@ public interface IATRepositoryManager {
     boolean storeResultFragment(Long adminID, String testElem, byte[] encCipher, byte[] encIV, byte[] encData,
             boolean complete);
     List<TestResultFragment> getResultFragments(AdminTimer timer);
-    ResultSet getResultSet(Long adminID);
-    void updateResultSet(ResultSet rs);
+    EncryptedResultSet getResultSet(Long adminID);
+    void updateResultSet(EncryptedResultSet rs);
     void deleteResultFragments(Long adminID);
     List<EncCodeLine> getEncryptedLines(TestSegment testSegment, CodeType codeType);
     void updateCodeLine(EncCodeLine line);
@@ -86,7 +84,7 @@ public interface IATRepositoryManager {
     IATList buildIATList(Long clientID);
     EncryptedRSAKey getDataKey(Long clientID, String testName);
     long getNumResults(Long clientID, String testName);
-    List<ResultSet> getResults(Long clientID, String testName);
+    List<EncryptedResultSet> getResults(Long clientID, String testName);
     void deleteIATResults(Long clientID, String testName);
     int getResultDataFormat(String testName, Long clientID);
     ServerReport retrieveClientReport(Long clientID);
@@ -100,7 +98,6 @@ public interface IATRepositoryManager {
     long getClientDiskUsageKB(Client c);
     int getNumResultSets(IAT test);
     Map<AdminTimer, List<TestResultFragment>> getCompletedResultSets();
-    void storeResultSet(IAT test, String tocData, byte[] resultData, byte[] testeeToken);
     void storeDeploymentSession(DeploymentSession ds);
     void storeEncryptionKey(EncryptedRSAKey key);
     void updateEncryptionKey(EncryptedRSAKey key);
@@ -121,7 +118,6 @@ public interface IATRepositoryManager {
     void addTestBackupFile(String fName, byte[] fileData, Long testID, Long deploymentId);
     void deleteTestBackupFiles(IAT test);
     void restoreTestBackup(IAT test) throws java.net.URISyntaxException, java.io.IOException;
-    void reassociateResults(Long newTestID, Long oldTestID);
     void copyRSAKey(Long newTestID, Long oldTestID);
     DeploymentSession updateDeploymentSession(DeploymentSession ds);
     void updateClient(Client c);
@@ -129,19 +125,8 @@ public interface IATRepositoryManager {
     int getNumRemainingIATs(Client c);
     AdminTimer updateTestAdmin(AdminTimer admin);
     void finalizeDeployment(Long dsId);
-    String createOAuthToken(Client c, IAT test);
-    int verifyAuthToken(String authToken, String clientId, String clientSecret);
-    OAuthAccess performOAuth(String authToken);
-    OAuthAccess validateAccessToken(String accessToken);
-    OAuthAccess getOAuthAccess(long id);
     int getIatPositionInTest(IAT test);
-    ResultSet getResultSetsWithToken(IAT test, byte[] token);
-    void updateOAuthRegistration(Long testId, String url, boolean allowExplicitRedirects);
     void recordClientException(ClientExceptionReport ex);
-    void setTokenDefinition(Long testId, TokenType tokType, String tokenName);
-    int verifyRefreshToken(String refreshToken, String clientId, String clientSecret);
-    String refreshOAuthAccessToken(String refreshToken);
-    void cleanupExpiredOAuthTokens();
     List<IAT> getExpiredTestResults(long timeout);
     List<Client> getClientsWithCors();
     List<CorsOrigin> getCorsOriginsForClient(Client c);
@@ -164,4 +149,5 @@ public interface IATRepositoryManager {
     TestResource getTestImage(IAT test, int index);
     List<byte[]> getItemSlides(IAT test);
     Manifest getItemSlideManifest(IAT test);
+    void addResultSet(EncryptedResultSet encResultSet);
 }

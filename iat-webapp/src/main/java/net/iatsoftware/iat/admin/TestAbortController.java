@@ -29,15 +29,16 @@ public class TestAbortController {
     @Named("ServerConfiguration")
     @Inject
     Properties serverConfiguration;
-    @Inject
-    IATSessionManager sessionManager;
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     public ModelAndView onTestAbort(@RequestParam(value = "IATName", required = true) String IATName, @RequestParam(value = "ClientID", required = true) Long clientID,
             @RequestParam(value = "token", required = false, defaultValue = "") String token, @RequestParam(name="IATSESSIONID") String sessID,
             HttpServletRequest request, HttpServletResponse response) {
         
-        IATSession sess = this.sessionManager.getSession(sessID);
+        IATSession sess = AdminController.sessions.getIfPresent(sessID);
+        if (sess == null) {
+            return new ModelAndView("AdministrationTimeout");
+        }
         ModelAndView mv = new ModelAndView("AbortTest");
         mv.addObject("IATName", IATName);
         mv.addObject("ClientID", clientID.toString());
@@ -47,6 +48,7 @@ public class TestAbortController {
         }
         mv.addObject("HTTP_REFERER", sess.getAttribute(SessionProperties.HTTP_REFERER));
         mv.addObject("CorruptAdministration", Boolean.TRUE);
+        AdminController.sessions.invalidate(sess.getId());
         return mv;
     }
 }

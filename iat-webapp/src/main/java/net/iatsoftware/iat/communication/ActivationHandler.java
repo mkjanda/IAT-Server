@@ -29,10 +29,10 @@ public class ActivationHandler implements TransactionHandler {
         try {
             ctx.mailService().sendEmail(emailParams);
         } catch (Exception e) {
-            ctx.reply().sendFinal(new ActivationResponse(ctx.client().getContactFName() + " " + ctx.client().getContactLName(), ctx.client().getEmail(), ctx.client(), ActivationResult.SERVER_FAILURE));
+            ctx.reply().sendFinal(new ActivationResponse(ctx.client().getFirstName() + " " + ctx.client().getLastName(), ctx.client().getEmail(), ctx.client(), ActivationResult.SERVER_FAILURE));
             return;
         }
-        ctx.reply().sendFinal(new ActivationResponse(ctx.client().getContactFName() + " " + ctx.client().getContactLName(), ctx.client().getEmail(), ctx.client(), ActivationResult.SUCCESS));
+        ctx.reply().sendFinal(new ActivationResponse(ctx.client().getFirstName() + " " + ctx.client().getLastName(), ctx.client().getEmail(), ctx.client(), ActivationResult.SUCCESS));
     }
 
 }

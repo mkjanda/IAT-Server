@@ -9,7 +9,6 @@ package net.iatsoftware.iat.controllers;
  *
  * @author michael
  */
-import net.iatsoftware.iat.admin.IATSessionManager;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.ClientExceptionReport;
 import net.iatsoftware.iat.entities.User;
@@ -72,8 +71,6 @@ public class ReportClientError {
     IATRepositoryManager iatRepositoryManager;
     @Inject
     Marshaller marshaller;
-    @Inject
-    IATSessionManager sessionManager;
 
     @Value("${error-report-recipient}")
     private String errorReportRecipient;

@@ -29,4 +29,5 @@ public class SessionProperties {
 	public static final String WEB_SOCKET_SESSION = "WebSocketSession";
 	public static final String WEB_SOCKET_PATH = "WebSocketPath";
 	public static final String TEST_PATH = "TestPath";
+	public static final String RESULTS = "Results";
 }

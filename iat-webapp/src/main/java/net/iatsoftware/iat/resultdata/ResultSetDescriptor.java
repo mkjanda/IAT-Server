@@ -11,7 +11,6 @@ package net.iatsoftware.iat.resultdata;
  */
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.entities.EncryptedRSAKey;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -25,24 +24,11 @@ public class ResultSetDescriptor extends net.iatsoftware.iat.generated.GResultSe
     public ResultSetDescriptor() {
     }
 
-    public void load(IAT test, ConfigFile configFile, EncryptedRSAKey dataKey, int numResults) throws java.io.IOException, java.net.URISyntaxException {
-        this.tokenType = test.getTokenType();
-        if (this.tokenType != TokenType.NONE)
-            this.tokenName = test.getTokenName();
-        else
-            this.tokenName = null;
-        this.testAuthor = test.getUser().getFName() + " " + test.getUser().getLName();
+    public void load(IAT test, ConfigFile configFile, EncryptedRSAKey dataKey, int numResults) {
+        this.testAuthor = test.getClient().getFirstName() + " " + test.getClient().getLastName();
         this.dataVersion = test.getResultFormat();
-        this.tokenName = test.getTokenName();
-        this.tokenType = test.getTokenType();
         this.rsaKey = dataKey;
         this.numResults = numResults;
     }
 
-    public void setTest(IAT test) {
-        this.testAuthor = test.getUser().getFName() + " " + test.getUser().getLName();
-        this.dataVersion = test.getResultFormat();
-        this.tokenName = test.getTokenName();
-        this.tokenType = test.getTokenType();
-    }    
 }

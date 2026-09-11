@@ -14,10 +14,8 @@ import net.iatsoftware.iat.dataservices.ProductKey;
 import net.iatsoftware.iat.entities.Client;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.List;
-import java.security.SecureRandom;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaUpdate;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -27,7 +25,6 @@ import jakarta.persistence.criteria.Root;
 @Repository
 public class DefaultClientRepository extends GenericJpaRepository<Long, Client>
         implements ClientRepository {
-    private static final SecureRandom random = new SecureRandom();        
 
     @Override
     public boolean productKeyExists(String productKey) {
@@ -79,7 +76,7 @@ public class DefaultClientRepository extends GenericJpaRepository<Long, Client>
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Client> query = cb.createQuery(Client.class);
         Root<Client> root = query.from(Client.class);
-        Predicate pred = cb.and(cb.equal(root.get("contactFName"), fname), cb.equal(root.get("contactLName"), lname));
+        Predicate pred = cb.and(cb.equal(root.get("firstName"), fname), cb.equal(root.get("lastName"), lname));
         return this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
     }
 
@@ -88,7 +85,7 @@ public class DefaultClientRepository extends GenericJpaRepository<Long, Client>
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Client> query = cb.createQuery(Client.class);
         Root<Client> root = query.from(Client.class);
-        Predicate pred = cb.equal(root.get("contactFName"), fname);
+        Predicate pred = cb.equal(root.get("firstName"), fname);
         return this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
     }
 
@@ -97,7 +94,7 @@ public class DefaultClientRepository extends GenericJpaRepository<Long, Client>
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Client> query = cb.createQuery(Client.class);
         Root<Client> root = query.from(Client.class);
-        Predicate pred = cb.equal(root.get("contactLName"), lname);
+        Predicate pred = cb.equal(root.get("lastName"), lname);
         return this.entityManager.createQuery(query.select(root).where(pred)).getResultList();
     }
 

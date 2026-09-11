@@ -27,8 +27,8 @@ public class ServerReport extends net.iatsoftware.iat.generated.GServerReport {
     public void load(long clientID, IATRepositoryManager iatRepositoryManager)
     {
         Client client = iatRepositoryManager.getClient(clientID);
-        contactFName = client.getContactFName();
-        contactLName = client.getContactLName();
+        contactFName = client.getFirstName();
+        contactLName = client.getLastName();
         organization = client.getOrganization();
         if (client.getNumIATsAlotted() == null)
             numIATsAlotted = -1;

@@ -10,8 +10,6 @@ package net.iatsoftware.iat.entities;
  * @author Michael Janda
  */
 
-import org.springframework.web.socket.WebSocketSession;
-
 
 import java.util.Calendar;
 import jakarta.persistence.Basic;

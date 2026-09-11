@@ -13,8 +13,6 @@ package net.iatsoftware.iat.repositories;
 
 import org.springframework.stereotype.Repository;
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -31,8 +29,6 @@ import net.iatsoftware.iat.entities.IAT;
 @Repository
 public class DefaultIATRepository extends GenericJpaRepository<Long, IAT>
         implements IATRepository {
-
-    private static final Logger logger = LogManager.getLogger();
 
     @Override
     public boolean containsByProductKey(String productKey, String iatName) {

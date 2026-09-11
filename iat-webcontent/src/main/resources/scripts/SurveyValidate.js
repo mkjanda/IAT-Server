@@ -487,6 +487,7 @@
             form.onsubmit = OnSubmit;
         }
 
+            /*
         try {
             if (!sessionStorage.getItem("HTTP_REFERER")) {
                 if (typeof CookieUtil !== "undefined" && CookieUtil.checkCookie && CookieUtil.checkCookie("HTTP_REFERER")) {
@@ -511,12 +512,12 @@
                 CookieUtil.deleteCookie("Alternate");
                 CookieUtil.deleteCookie("TestSegment");
             }
-        } catch (e) { /* private mode / missing CookieUtil */ }
-
+        } catch (e) {  private mode / missing CookieUtil  }
+            
         if (typeof EventUtil !== "undefined" && EventUtil.addHandler && typeof OnPopState === "function") {
             EventUtil.addHandler(window, "popstate", OnPopState);
         }
-
+    */
         var timeoutMs = form ? parseInt(form.getAttribute("data-timeout"), 10) : 0;
         if (timeoutMs > 0) {
             timeoutHandle = setTimeout(DoForceSubmit, timeoutMs);

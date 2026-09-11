@@ -19,7 +19,6 @@ import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
 public interface IATDeployer  {
     void storeRSAKeys(EncryptedRSAKey adminKey, EncryptedRSAKey dataKey);
-    void storeTokenDefinition(TokenType type, String tokenName);
     void abort();
     Long getTestId();
     void setClientId(Long id);

@@ -26,7 +26,7 @@ import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestBackupFile;
 import net.iatsoftware.iat.entities.UniqueResponse;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
-import net.iatsoftware.iat.entities.ResultSet;
+import net.iatsoftware.iat.entities.EncryptedResultSet;
 import net.iatsoftware.iat.entities.ResourceReference;
 import net.iatsoftware.iat.entities.EncryptedRSAKey;
 import net.iatsoftware.iat.entities.RSAKeyData;
@@ -35,13 +35,11 @@ import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.entities.DynamicSpecifier;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.DeploymentSession;
-import net.iatsoftware.iat.entities.OAuthAccess;
 import net.iatsoftware.iat.entities.SpecifierValue;
 import net.iatsoftware.iat.events.CommunicationEvent;
 import net.iatsoftware.iat.generated.CodeType;
 import net.iatsoftware.iat.generated.PacketType;
 import net.iatsoftware.iat.generated.ResourceType;
-import net.iatsoftware.iat.generated.TokenType;
 import net.iatsoftware.iat.messaging.ServerReport;
 import net.iatsoftware.iat.messaging.IATReport;
 import net.iatsoftware.iat.messaging.Manifest;
@@ -49,12 +47,15 @@ import net.iatsoftware.iat.messaging.RSAKeyPair;
 import net.iatsoftware.iat.messaging.IATList;
 import net.iatsoftware.iat.messaging.IATListEntry;
 
+import org.springframework.oxm.Marshaller;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.ByteArrayOutputStream;
+import javax.xml.transform.stream.StreamResult;
 import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
@@ -64,7 +65,6 @@ import java.util.Calendar;
 @Service
 public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
-    private final Logger log = LogManager.getLogger();
     private final Logger critical = LogManager.getLogger("critical");
     @Inject
     AdminTimerRepository adminTimerRepository;
@@ -101,8 +101,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Inject
     TestBackupFileRepository testBackupFileRepository;
     @Inject
-    OAuthAccessRepository oauthAccessRepository;
-    @Inject
     ClientExceptionRepository clientExceptionRepository;
     @Inject
     CorsOriginRepository corsOriginRepository;
@@ -110,6 +108,8 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     TestResourceRepository testResourceRepository;
     @Inject
     ResourceReferenceRepository resourceReferenceRepository;
+    @Inject
+    Marshaller marshaller;
 
     @Transactional
     @Override
@@ -322,15 +322,11 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Override
     public List<TestSegment> getTestElems(final IAT test) {
         final List<TestSegment> segments = testSegmentRepository.getTestElems(test);
-        if (test.getAlternated()) {
             if (test.isAlternate()) {
                 test.setAlternate(false);
             } else {
                 test.setAlternate(true);
             }
-        } else {
-            testSegmentRepository.rotateItems(test);
-        }
         iatRepository.update(test);
         return segments;
     }
@@ -344,7 +340,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     @Override
     public IAT getIATByAdminID(final Long adminID) {
-        final ResultSet rs = resultSetRepository.get(adminID);
+        final EncryptedResultSet rs = resultSetRepository.get(adminID);
         return rs.getTest();
     }
 
@@ -391,20 +387,20 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public ResultSet getResultSet(final Long adminID) {
+    public EncryptedResultSet getResultSet(final Long adminID) {
         return resultSetRepository.get(adminID);
     }
 
     @Transactional
     @Override
-    public void updateResultSet(final ResultSet rs) {
+    public void updateResultSet(final EncryptedResultSet rs) {
         resultSetRepository.update(rs);
     }
 
     @Transactional
     @Override
     public void deleteResultFragments(final Long adminID) {
-        final ResultSet rs = resultSetRepository.get(adminID);
+        final EncryptedResultSet rs = resultSetRepository.get(adminID);
         testResultFragmentRepository.deleteResultFragments(rs);
     }
 
@@ -463,7 +459,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public List<ResultSet> getResults(final Long clientID, final String testName) {
+    public List<EncryptedResultSet> getResults(final Long clientID, final String testName) {
         final IAT test = iatRepository.get(testName, clientID);
         test.setLastDataRetrieval(Calendar.getInstance());
         iatRepository.update(test);
@@ -491,8 +487,8 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     public ServerReport retrieveClientReport(final Long clientID) {
         final ServerReport sr = new ServerReport();
         final Client c = clientRepository.get(clientID);
-        sr.setContactFName(c.getContactFName());
-        sr.setContactLName(c.getContactLName());
+        sr.setContactFName(c.getFirstName());
+        sr.setContactLName(c.getLastName());
         sr.setDiskAlottmentMB(c.getDiskAlottmentMB());
         sr.setNumAdministrations(c.getNumAdministrations());
         sr.setNumAdministrationsRemaining(c.getAdministrationsRemaining());
@@ -593,14 +589,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
             timerMap.put(t, testResultFragmentRepository.get(t));
         });
         return timerMap;
-    }
-
-    @Transactional
-    @Override
-    public void storeResultSet(final IAT test, final String toc, final byte[] results, final byte[] testeeToken) {
-        final ResultSet rs = new ResultSet(test, toc, results);
-        rs.setTesteeToken(testeeToken);
-        resultSetRepository.add(rs);
     }
 
     @Transactional
@@ -754,11 +742,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public void reassociateResults(Long newTestID, Long oldTestID) {
-        resultSetRepository.reassociateResults(iatRepository.get(newTestID), iatRepository.get(oldTestID));
-    }
-
-    @Transactional
     @Override
     public void copyRSAKey(Long newTestID, Long oldTestID) {
         partiallyEncryptedRSAKeyRepository.copyRSAKeys(iatRepository.get(newTestID), iatRepository.get(oldTestID));
@@ -797,88 +780,18 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public String createOAuthToken(Client c, IAT test) {
-        return oauthAccessRepository.createOAuth(c, test).getAuthToken();
-    }
-
-    @Transactional
-    @Override
-    public int verifyAuthToken(final String authToken, final String clientId, final String clientSecret) {
-        return oauthAccessRepository.verifyAuthToken(authToken, clientId, clientSecret);
-    }
-
-    @Transactional
-    @Override
-    public OAuthAccess performOAuth(final String authToken) {
-        return oauthAccessRepository.performOAuth(authToken);
-    }
-
-    @Transactional
-    @Override
-    public OAuthAccess validateAccessToken(final String accessToken) {
-        return oauthAccessRepository.verifyAccessToken(accessToken);
-    }
-
-    @Transactional
-    @Override
-    public OAuthAccess getOAuthAccess(final long id) {
-        return oauthAccessRepository.get(id);
-    }
-
-    @Transactional
-    @Override
     public int getIatPositionInTest(final IAT test) {
         return testSegmentRepository.getInitialIatPositionInTest(test);
     }
 
-    @Transactional
-    @Override
-    public ResultSet getResultSetsWithToken(final IAT test, final byte[] token) {
-        return resultSetRepository.getResultSetWithToken(test, token);
-    }
-
-    @Transactional
-    @Override
-    public void updateOAuthRegistration(final Long testId, final String url, final boolean allowExplicitRedirects) {
-        final IAT test = iatRepository.get(testId);
-        test.setOauthClientRedirect(url);
-        test.setOauthSubpathRedirects(allowExplicitRedirects);
-        iatRepository.update(test);
-    }
-
+    
     @Transactional
     @Override
     public void recordClientException(final ClientExceptionReport ex) {
         clientExceptionRepository.add(ex);
     }
 
-    @Transactional
-    @Override
-    public void setTokenDefinition(final Long testId, final TokenType tokType, final String tokenName) {
-        final IAT test = iatRepository.get(testId);
-        test.setTokenType(tokType);
-        test.setTokenName(tokenName);
-        iatRepository.update(test);
-    }
-
-    @Transactional
-    @Override
-    public int verifyRefreshToken(final String refreshToken, final String clientId, final String clientSecret) {
-        return this.oauthAccessRepository.verifyRefreshRequest(clientId, clientSecret, refreshToken);
-    }
-
-    @Transactional
-    @Override
-    public String refreshOAuthAccessToken(final String refreshToken) {
-        return this.oauthAccessRepository.refreshAccessToken(refreshToken);
-    }
-
-    @Transactional
-    @Override
-    public void cleanupExpiredOAuthTokens() {
-        this.oauthAccessRepository.cleanupExpiredTokens();
-    }
-
+    
     @Transactional
     @Override
     public List<IAT> getExpiredTestResults(final long timeout) {
@@ -986,10 +899,9 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
         return iatRepository.get(testID);
     }
 
-    @Scheduled(initialDelay = 5_000L, fixedDelay = 5_000L)
     @Transactional
-    protected void cleanupAbandonedDeployments() {
-        deploymentSessionRepository.cleanupAbandonedDeployments();
+    public void addResultSet(EncryptedResultSet encResults) {
+        resultSetRepository.add(encResults);
     }
 
 }

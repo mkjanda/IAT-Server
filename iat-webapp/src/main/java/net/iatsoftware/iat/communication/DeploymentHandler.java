@@ -136,7 +136,7 @@ public class DeploymentHandler implements TransactionHandler {
                 ctx.sessionState().setFileManifest(manifest);
                 var deployer = deploymentService.getDeployer(ctx.deploymentId());
                 var test = iatRepositoryManager.getTest(deployer.getTestId());
-                test.setTestSizeKB(manifest.sizeInKb());
+                test.setTestSizeKB(test.getTestSizeKB() + manifest.sizeInKb());
                 iatRepositoryManager.updateIAT(test);
                 outTrans = new TransactionRequest(TransactionType.REQUEST_FILES);
                 outTrans.setDeploymentId(ctx.deploymentId());
@@ -144,6 +144,10 @@ public class DeploymentHandler implements TransactionHandler {
                 ctx.reply().send(new TransactionRequest(TransactionType.REQUEST_ITEM_SLIDE_MANIFEST));
             } else if (manifest.getManifestType() == ManifestType.ITEM_SLIDE_MANIFEST) {
                 ctx.sessionState().setItemSlideManifest(manifest);
+                var deployer = deploymentService.getDeployer(ctx.deploymentId());
+                var test = iatRepositoryManager.getTest(deployer.getTestId());
+                test.setTestSizeKB(test.getTestSizeKB() + manifest.sizeInKb());
+                iatRepositoryManager.updateIAT(test);
                 outTrans = new TransactionRequest(TransactionType.REQUEST_ITEM_SLIDES);
                 outTrans.setDeploymentId(ctx.deploymentId());
                 ctx.reply().send(outTrans);

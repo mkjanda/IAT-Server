@@ -121,11 +121,6 @@ public class DefaultIATDeployer implements IATDeployer {
         logger.info("RSA Key recorded");
     }
 
-    @Override
-    public void storeTokenDefinition(TokenType tokType, String tokenName) {
-        iatRepositoryManager.setTokenDefinition(this.testId, tokType, tokenName);
-    }
-
     public Long getTestId() {
         return this.testId;
     }

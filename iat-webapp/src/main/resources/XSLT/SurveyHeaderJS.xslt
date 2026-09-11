@@ -153,7 +153,6 @@
                 <xsl:value-of select="concat('answers = [ ', string-join(for $i in 1 to $n return 
                     concat('document.getElementsByName(&quot;Item', $i, '&quot;)'), ', '), '];&#x0A;')" />
                 <xsl:text>
-                document.getElementById("SubmitButton").onclick = OnSubmit;
                 questionListNode = document.getElementById("QuestionList");
                     if (!sessionStorage.getItem("HTTP_REFERER")) {
                        if (CookieUtil.checkCookie("HTTP_REFERER")) {
@@ -170,6 +169,8 @@
                     EventUtil.addHandler(window, "popstate", OnPopState);
                     sessionStorage.setItem("corrupted", "false");
                     sessionStorage.setItem("TestSegment", CookieUtil.get("TestSegment"));
+                    let formData = new FormData(document.querySelector("form"));
+                    formData.set("IATSESSIONID", sessionStorage.getItem("IATSESSIONID"));
                     CookieUtil.deleteCookie("IATSESSIONID");
                     CookieUtil.deleteCookie("AdminPhase");
                     CookieUtil.deleteCookie("LastAdminPhase");

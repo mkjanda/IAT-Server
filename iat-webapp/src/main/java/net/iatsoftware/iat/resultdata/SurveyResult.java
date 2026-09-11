@@ -10,23 +10,41 @@ package net.iatsoftware.iat.resultdata;
  * @author Michael Janda
  */
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.IntStream;
+
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;      
+import jakarta.xml.bind.annotation.XmlRootElement;      
 
+@XmlRootElement(name="SurveyResult")
 @XmlAccessorType(XmlAccessType.NONE)
-public class SurveyResult {
-    private List<String> answers = new ArrayList<>();
+public class SurveyResult extends net.iatsoftware.iat.generated.GSurveyResult {
     
-    public SurveyResult(List<String> answers)
+    public SurveyResult() {}
+
+    public SurveyResult(String surveyName, List<String> answers)
     {
-        this.answers.addAll(answers);
+        this.surveyName = surveyName;
+        this.getAnswer().addAll(answers);
     }
-    
-    @XmlElement(name="answers")
-    public List<String> getAnswers() {
-        return this.answers;
+
+    public SurveyResult(String surveyName, Map<String, String> parameters) {
+        IntStream.rangeClosed(1, parameters.size()).forEach((ndx) -> {
+            if (parameters.containsKey("Item" + Integer.toString(ndx))) {
+                final String resp = parameters.get("Item" + Integer.toString(ndx));
+                this.getAnswer().add(resp);
+            }
+        });
+    }
+
+    public void parseAnswers(Map<String, String> parameters) {
+        IntStream.rangeClosed(1, parameters.size()).forEach((ndx) -> {
+            if (parameters.containsKey("Item" + Integer.toString(ndx))) {
+                final String resp = parameters.get("Item" + Integer.toString(ndx));
+                this.getAnswer().add(resp);
+            }
+        });
     }
 }

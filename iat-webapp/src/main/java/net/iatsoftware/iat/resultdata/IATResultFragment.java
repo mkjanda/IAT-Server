@@ -15,14 +15,15 @@ import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
 
-@XmlRootElement(name="IATResultSetElement")
+@XmlRootElement(name="IATResultFragment")
 @XmlAccessorType(XmlAccessType.NONE)
-public class IATResultSetElementV1 extends net.iatsoftware.iat.generated.GIATResultSetElementV1 {
-    public IATResultSetElementV1(){}
-    public IATResultSetElementV1(int item, int block, long latency, int presentationNum) {
+public class IATResultFragment extends net.iatsoftware.iat.generated.GIATResultFragment {
+    public IATResultFragment(){}
+    public IATResultFragment(int item, int block, long latency, int presentationNum, boolean error) {
         this.itemNum = item;
         this.blockNum = block;
         this.responseTime = latency;
         this.presentationNum = presentationNum;
+        this.error = error;
     }
 }

@@ -274,6 +274,7 @@
 			<xsl:attribute name="FunctionName" select="'OnUnload'" />
 			<xsl:element name="Params" />
 			<xsl:element name="FunctionBody">
+				<xsl:element name="Code">appendFormData("IATSESSIONID", sessionStorage.getItem("IATSESSIONID"));</xsl:element>
 				<xsl:element name="Code">var lastAdminPhase = false;</xsl:element>
 				<xsl:element name="Code">if (sessionStorage.getItem("LastAdminPhase") == "true") {</xsl:element>
 				<xsl:element name="Code">sessionStorage.clear();</xsl:element>
@@ -345,11 +346,8 @@
 			</xsl:element>
 			<xsl:variable name="functionBody">
 				<xsl:text>
-				if (evt.state.path === undefined) {
-					return;
-					}
-					sessionStorage.clear();
-                   window.location.assign("/");
+				const referer = sessionStorage.getItem("HTTP_REFERER");
+					window.location.assign(referer || "/");
                 </xsl:text>
 			</xsl:variable>
 			<xsl:element name="FunctionBody">
@@ -370,46 +368,15 @@
 			<xsl:variable name="functionBody">
 				<xsl:value-of select="concat('var corruptAdminCookie = &quot;', $root//ConfigFile/ClientID, '-', $root//ConfigFile/IATName, '-corrupt&quot;;&#x0A;')"/>
 				<xsl:text>
-                    var adminPhase, localAdminPhase, testSegment;
-                    if (!sessionStorage.getItem("IATSESSIONID")) {
-                    	var obj = JSON.parse("{ \"path\" : \"/\" }");
-						window.history.replaceState(obj, "IAT Software", window.location.toString());
-                    	sessionStorage.setItem("IATSESSIONID", CookieUtil.get("IATSESSIONID"));
-                    	sessionStorage.setItem("AdminPhase", "0");
-						adminPhase = 0;
-					} else {
-						adminPhase = parseInt(sessionStorage.getItem("AdminPhase"), 10);
-                    	sessionStorage.setItem("AdminPhase", (adminPhase + 1).toString());
-					}
-                    sessionStorage.setItem("TestSegment", CookieUtil.get("TestSegment"));
-                    sessionStorage.setItem("LastAdminPhase", CookieUtil.get("LastAdminPhase"));
-                    testSegment = CookieUtil.get("TestSegment");
-                    CookieUtil.deleteCookie("IATSESSIONID");
-                    CookieUtil.deleteCookie("AdminPhase");
-                    CookieUtil.deleteCookie("LastAdminPhase");
-                    CookieUtil.deleteCookie("HTTP_REFERER");
-                    CookieUtil.deleteCookie("TestSegment");
-                    CookieUtil.deleteCookie("Alternate");
-                </xsl:text>
-				<xsl:value-of select="concat('var requestSrc = window.location.protocol + &quot;//&quot; + window.location.hostname + (window.location.port ? &quot;:&quot; + window.location.port.toString() : &quot;&quot;) + &quot;', $root//ServerPath, '&quot; + &quot;/Resource/', $root//ConfigFile/ClientID, '/', $root//Configfile/IATName, '/', $root//ConfigFile/IATName, '.html&quot;;&#x0A;')"/>
-				<xsl:value-of select="concat('var testElem = &quot;', $root//ConfigFile/IATName, '&quot;;&#x0A;')" />
-				<xsl:if test="count(//DynamicSpecifier) gt 0">
-					<xsl:text>
-                        var dynamicSpecCall = new AjaxCallv2(adminHost + "/Ajax/DynamicSpecifiers.json", requestSrc, testSegment, "text/json");
-                        dynamicSpecCall.call(OnDynamicSpecLoad, null, "GET");
-                    </xsl:text>
-				</xsl:if>
-				<xsl:text>
+				const alternateTag = document.getElementById("Alternate");
+					alternateTag.setAttribute("value", CookieUtil.get("Alternate"));
+				const adminPhase = parseInt(CookieUtil.get("AdminPhase"), 10);
+				if (adminPhase === 0)   {
+					sessionStorage.setItem("HTTP_REFERER", document.referrer);
+					sessionStorage.setItem("IATSESSIONID", CookieUtil.get("IATSESSIONID"));
+				}
                     DisplayDiv = document.getElementById("IATDisplayDiv");
 					window.onpopstate = OnPopState;
-                    var alternateTag = document.getElementById("Alternate");
-                    alternateTag.setAttribute("value", CookieUtil.get("Alternate"));
-                    CookieUtil.deleteCookie("IATSESSIONID");
-                    CookieUtil.deleteCookie("AdminPhase");
-                    CookieUtil.deleteCookie("LastAdminPhase");
-                    CookieUtil.deleteCookie("HTTP_REFERER");
-                    CookieUtil.deleteCookie("TestSegment");
-                    CookieUtil.deleteCookie("Alternate");
                     StartImageLoad();
                 </xsl:text>
 			</xsl:variable>

@@ -1,13 +1,19 @@
 package net.iatsoftware.iat.communication;
 
+import net.iatsoftware.iat.controllers.ResultRetrievalController;
 import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.TransactionRequest;
 
 import org.springframework.stereotype.Component;
 
+import java.security.SecureRandom;
+import java.util.Base64;
+
+
 @Component
 public class ResultDataHandler implements TransactionHandler {
-
+    private static final SecureRandom secureRandom = new SecureRandom();
+    private static final Base64.Encoder base64Encoder = Base64.getEncoder();
     @Override
     public boolean supports(TransactionContext ctx) {
         if (!(ctx.inbound() instanceof TransactionRequest))
@@ -37,8 +43,19 @@ public class ResultDataHandler implements TransactionHandler {
                     ctx.reply().send(manifest);
                     break;
 
-                case TransactionType.REQUEST_RESULT_DESCRIPTOR:
-                    ctx.reply().send(test.getManifest());
+                case TransactionType.REQUEST_RESULTS:    
+                    if (ResultRetrievalController.authTokenCache.getIfPresent(ctx.client().getProductKey()) == null) {
+                        byte[] token = new byte[64];
+                        secureRandom.nextBytes(token);
+                        var tokenString = base64Encoder.encodeToString(token);
+                        ResultRetrievalController.authTokenCache.put(ctx.client().getProductKey(), tokenString);
+                    } else {
+                        ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
+                        return;
+                    } 
+                    var outTrans = new TransactionRequest(TransactionType.AUTH_TOKEN);
+                    outTrans.setAuthToken(ResultRetrievalController.authTokenCache.getIfPresent(ctx.client().getProductKey()));
+                    ctx.reply().send(outTrans);
                     break;
 
                 default:

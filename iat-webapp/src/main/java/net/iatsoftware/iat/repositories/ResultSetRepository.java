@@ -10,17 +10,17 @@ package net.iatsoftware.iat.repositories;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.entities.ResultSet;
+import net.iatsoftware.iat.entities.EncryptedResultSet;
 import net.iatsoftware.iat.entities.IAT;
+import net.iatsoftware.iat.resultdata.ResultSet;
 
 import java.util.Calendar;
 import java.util.List;
 
-public interface ResultSetRepository extends GenericRepository<Long, ResultSet> {
+public interface ResultSetRepository extends GenericRepository<Long, EncryptedResultSet> {
     long getNumResults(IAT test);
-    List<ResultSet> getResults(IAT test);
+    List<EncryptedResultSet> getResults(IAT test);
     void deleteResults(IAT test);
-    void reassociateResults(IAT newTest, IAT oldTest);
     Calendar getLastIATAdminDate(List<IAT> iats);
-    ResultSet getResultSetWithToken(IAT test, byte[] token);
+    void saveResultSet(IAT test, ResultSet results);
 }

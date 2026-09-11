@@ -11,7 +11,6 @@ package net.iatsoftware.iat.entities;
  */
 
 import net.iatsoftware.iat.dataservices.StartingResources;
-import net.iatsoftware.iat.forms.RequestProductForm;
 import net.iatsoftware.iat.messaging.AcceptRequest;
 
 import java.util.Calendar;
@@ -36,79 +35,16 @@ import jakarta.persistence.Transient;
         = @Index(name = "clients_product_key", columnList = "product_key"))
 public class Client implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
-    private long id, authCreated, authTokenExpiration;
-    private String productKey, contactFName, contactLName, phone, city, province, country, organization, email, address1, address2;
-    private String organizationId = null, postalCode, productUse, downloadPassword, authToken;
+    private long id;
+    private String productKey, firstName, lastName, phone, city, province, country, organization, email, address1, address2;
+    private String organizationId = null, postalCode, productUse, downloadPassword;
     private int activationsConsumed, diskAlottmentMB, numIATsAlotted, administrations, administrationsRemaining, downloadsConsumed;
-    private Calendar registrationDate, oauthAccessExpiration = null;
+    private Calendar registrationDate = Calendar.getInstance();
     private boolean frozen, deleted, isolateUsers, killFiled = false;
     private Integer activationsRemaining, downloadsRemaining;
     private int invalidSaveFileOpenAttempts = 0;
     private List<User> users;
     public Client() {}
-    
-    public Client(String productKey, String downloadPassword, ProductRequestEntity request, AcceptRequest acceptance) {
-        this.productKey = productKey;
-        this.contactFName = request.getFName();
-        this.contactLName = request.getLName();
-        this.phone = request.getPhone();
-        this.city = request.getCity();
-        this.province = request.getProvince();
-        this.country = request.getCountry();
-        this.organization = request.getOrganization();
-        this.email = request.getEMail().toLowerCase();
-        this.address1 = request.getAddress1();
-        this.address2 = request.getAddress2();
-        this.postalCode = request.getPostalCode();
-        this.productUse = request.getProductUse();
-        this.activationsRemaining = acceptance.getNumActivations();
-        this.activationsConsumed = 0;
-        this.diskAlottmentMB = acceptance.getDiskAlottmentMB();
-        this.numIATsAlotted = acceptance.getNumIATs();
-        this.administrations = 0;
-        this.administrationsRemaining = acceptance.getNumAdministrations();
-        this.registrationDate = Calendar.getInstance();
-        this.frozen = false;
-        this.deleted = false;
-        this.downloadPassword = downloadPassword;
-        this.downloadsRemaining = acceptance.getNumDownloads();
-        this.downloadsConsumed = 0;
-        this.authTokenExpiration = 0;
-        this.authCreated = 0;
-        this.authToken = "";
-    }
-    
-    public Client(String productKey, String downloadPassword, RequestProductForm f, StartingResources resources) {
-        this.productKey = productKey;
-        this.contactFName = f.getFirstName();
-        this.contactLName = f.getLastName();
-        this.phone = "";
-        this.city = "";
-        this.province = "";
-        this.country = "";
-        this.organization = "";
-        this.email = f.getEmail().toLowerCase();
-        this.address1 = "";
-        this.address2 = "";
-        this.postalCode = "";
-        this.productUse = f.getUse();
-        this.activationsRemaining = resources.getActivations();
-        this.activationsConsumed = 0;
-        this.diskAlottmentMB = resources.getDiskSpace();
-        this.numIATsAlotted = resources.getNumIATs();
-        this.administrations = 0;
-        this.administrationsRemaining = resources.getNumAdministrations();
-        this.registrationDate = Calendar.getInstance();
-        this.frozen = false;
-        this.deleted = false;
-        this.downloadPassword = downloadPassword;
-        this.downloadsRemaining = resources.getDownloads();
-        this.downloadsConsumed = 0;
-        this.authTokenExpiration = 0;
-        this.authCreated = 0;
-        this.authToken = "";
-    }
-
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -151,21 +87,21 @@ public class Client implements java.io.Serializable {
 
     @Basic
     @Column(name = "contact_fname")
-    public String getContactFName() {
-        return this.contactFName;
+    public String getFirstName() {
+        return this.firstName;
     }
 
-    public void setContactFName(String val) {
-        this.contactFName = val;
+    public void setFirstName(String val) {
+        this.firstName = val;
     }
 
     @Basic
     @Column(name = "contact_lname")
-    public String getContactLName() {
-        return this.contactLName;
+    public String getLastName() {
+        return this.lastName;
     }
-    public void setContactLName(String val) {
-        this.contactLName = val;
+    public void setLastName(String val) {
+        this.lastName = val;
     }
 
     @Basic
@@ -425,7 +361,7 @@ public class Client implements java.io.Serializable {
 
     @Transient
     public String getFullName() {
-        return contactFName + " " + contactLName;
+        return this.firstName + " " + this.lastName;
     }
 
 }

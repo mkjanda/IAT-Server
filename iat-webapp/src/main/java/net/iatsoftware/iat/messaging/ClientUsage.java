@@ -49,8 +49,8 @@ public class ClientUsage extends net.iatsoftware.iat.generated.GClientUsage {
             this.setAdministrationsRemaining(Integer.toString(c.getAdministrationsRemaining()));
         this.setClientID(c.getClientId());
         this.setProductKey(c.getProductKey());
-        this.setContactFName(c.getContactFName());
-        this.setContactLName(c.getContactLName());
+        this.setContactFName(c.getFirstName());
+        this.setContactLName(c.getLastName());
         this.setDeleted(c.isDeleted());
         if (c.getDiskAlottmentMB() == null)
             this.setDiskAlottmentMB("unlimited");

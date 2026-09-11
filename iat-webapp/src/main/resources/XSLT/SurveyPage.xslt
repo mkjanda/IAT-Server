@@ -3,11 +3,12 @@
 	<xsl:output method="xml" omit-xml-declaration="yes" encoding="UTF-8" indent="yes" />
 	<xsl:variable name="root" select="/" />
 	<xsl:variable name="pageWidth" select="'100%'" />
-	<xsl:variable name="surveyWidth" select="'80%'" />
+	<xsl:variable name="fontFace" select="'system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif'" />
+	<xsl:variable name="fontFamily" select="concat('font-family: ', $fontFace, ';&#x0A;')" />
 	<xsl:function name="mine:textWidth">
-		<xsl:param name="numChars" />
+		<xsl:param name="numChars" as="xs:integer"/>
 		<xsl:param name="format" />
-		<xsl:value-of select="xs:integer(ceiling(xs:integer($numChars) * xs:integer($format/FontSize) * 9 div 8))" />
+		<xsl:value-of select="xs:integer(ceiling($numChars * xs:integer($format/FontSize) * 9 div 8))" />
 	</xsl:function>
 	
 	
@@ -36,10 +37,9 @@
 				</title>
 				<style type="text/css">
 					<xsl:text>
-@import url("/IAT/css/fonts.css");
 
 body {
-          font: 100% Verdana, Arial, Helvetica, sans-serif;
+          font-family: system-ui, -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif;
           background: #FFFFFF;
           margin: 0px;
           padding: 0px 0px 20px 0px;
@@ -50,13 +50,26 @@ form {
 }
 
 input[type='radio'], input[type='checkbox'] {
-	height: 1rem;
-	width: 1rem;
-	margin-left: 1vw;
+								width: 1.75vh;
+								height: 1.75vh;
+								margin-left: 1vw;
 }
 
-td:nth-of-type(2n - 1) {
-	width: 1rem;
+input[type='text'], textarea {
+
+		line-height: 1.7vh;				
+    font-size: 1.7vh;
+    color: rgba(0, 0, 0, .9);
+    padding: 2px 1px;
+    margin-left: 1vw;
+    text-align: left;
+    font-weight: 400;
+	width: 90%;
+}	
+
+
+table tr td:nth-of-type(2n - 1) {
+	width: calc(1.75vh + 1vw);
 }
 
 
@@ -73,20 +86,9 @@ td:nth-of-type(2n - 1) {
           	}
           }
 
-          .oneColFixCtrHdr #container {
-          text-align: left;
-          }
 
           body div#container div#mainContent ul#QuestionList li div.PictureDiv {
           text-align: center;
-          }
-          body div#container div#mainContent ul#QuestionList li div.PictureDiv img {
-			max-width: 1000px;
-          width: 80%;
-		  min-width: 400px;
-		  max-height: 500px;
-          padding: 10px 15px 10px 30px;
-
           }
           
 </xsl:text>
@@ -127,35 +129,48 @@ td:nth-of-type(2n - 1) {
                         }
 
 
-                        .oneColFixCtrHdr #mainContent ul p.Error, li.Error {
-                        font-family: sans-serif;
-					</xsl:text>
-					<xsl:variable name="sifs">
-						<xsl:copy-of select="//SurveyItem/Format" />
-					</xsl:variable>	
-					<xsl:variable name="errorFontSize">
-						<xsl:value-of select="distinct-values(//Survey/SurveyItem[every $fs in (preceding-sibling::SurveyItem/Format, following-sibling::SurveyItem/Format) satisfies xs:integer($fs/FontSize) ge xs:integer(Format/FontSize)]/Format/FontSize)" /> 
-					</xsl:variable>
-					<xsl:copy-of select="concat('font-size: ', xs:integer($errorFontSize) * 3 div 2, 'px;&#x0A;')" />
-					<xsl:text>
-                        color: #ff0000;
-                        font-style: italic;
-                        font-weight: normal;
-                        margin: 5px 0px 0px 0px;
-                        }
-
-
-                        .RadioInputCell {
-                        vertical-align: middle;
-                        padding: 0px;
-                        }
-
-                        p.RadioLabelParagraph {
-                           margin: 0px;
-                          padding: 0px;
-                        }
-                    </xsl:text>
 					
+						h3 {
+							margin: 1vh 1vw;
+							font-weight: 700;
+						}
+
+						td {
+							vertical-align: top;
+
+							&amp; p {
+								margin-bottom: .5vh;
+								margin-top: .225vh;
+								font-weight: 300;
+								padding: 0;
+								margin: 0;
+								line-height: 1.7vh;
+								font-size: 1.7vh;
+								padding-top: .075vh;
+								padding-bottom: .5vh;
+							}
+						}
+						@media (pointer: coarse) {
+							h3 {
+								font-size: 2.15vh;
+							}
+							
+							tr td p {
+								margin-left: .5vw;
+								font-weight: 400;
+							}
+						}	
+						@media (pointer:	fine) {
+							h3 {
+								font-size: 1.9vh;
+							}
+							tr td {
+								font-weight: 300;
+							}	
+						}
+						</xsl:text>	
+					
+<!--
 					<xsl:for-each select="SurveyItem">
 						<xsl:variable name="itemNum" select="position() + count(preceding-sibling::SurveyImage)" />
 						<xsl:variable name="questionNum" select="@QuestionNum" />
@@ -165,10 +180,11 @@ td:nth-of-type(2n - 1) {
 						</xsl:variable>
 						<xsl:value-of select="concat('h3#itemText', $itemNum, ' div div {&#x0A;')" />
 						<xsl:value-of select="'&#x09;margin: 2vh 5vw 2vh 5vw;&#x0A;'" />
+						<xsl:value-of select="'width: 100%;&#x0A;'" />
 						<xsl:value-of select="'}&#x0A;'" />
 						<xsl:value-of select="concat('h3#itemText', $itemNum, ' {&#x0A;')" />
 						<xsl:if test="mine:getResponse(.) ne 'Instruction'">
-							<xsl:value-of select="'&#x09;margin: 2px 5px 3px 20px;&#x0A;'" />
+							<xsl:value-of select="'&#x09;margin: 1vh 1vw;&#x0A;'" />
 						</xsl:if>
 						<xsl:if test="mine:getResponse(.) eq 'Instruction'">
 							<xsl:value-of select="'margin: 2px 5px 8px 20px;&#x0A;'" />
@@ -200,20 +216,22 @@ td:nth-of-type(2n - 1) {
 							<xsl:call-template name="writeFormatCSS">
 								<xsl:with-param name="format" select="$response//Format" />
 							</xsl:call-template>
+							<xsl:value-of select="'font-weight: 300;&#x0A;'" />
 							<xsl:value-of select="'padding: 2px 1px;&#x0A;'" />
 							<xsl:value-of select="'margin-left: 1vw;&#x0A;'" />
 							<xsl:value-of select="'text-align: left;&#x0A;'" />
 							<xsl:value-of select="'}&#x0A;'" />
 						</xsl:if>
 					</xsl:for-each>
-					
-					
+				
+-->					
 					<xsl:text>
 
 
 
           .ErrorMessageDiv h3 {
-                        font-family: "Times New Roman", Times, serif;
+                        font-family: system-ui, -apple-system, BlinkMacSystemFont,             
+													"Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Times New Roman", Times, serif;
                         font-size: 16px;
                         color: #dd0000;
                         font-style: italic;
@@ -263,6 +281,10 @@ td:nth-of-type(2n - 1) {
                     </xsl:text>
 				</style>
 				<xsl:element name="script">
+					<xsl:attribute name="src" select="'/IAT/scripts/SurveyHeader.js'" />
+					<xsl:text> </xsl:text>
+				</xsl:element>
+				<xsl:element name="script">
 					<xsl:attribute name="src" select="'/IAT/scripts/MiscUtils.js'" />
 					<xsl:text> </xsl:text>
 				</xsl:element>
@@ -275,7 +297,7 @@ td:nth-of-type(2n - 1) {
 					<xsl:text> </xsl:text>
 				</xsl:element>
 			</head>
-			<body class="oneColFixCtrHdr" id="body" onload="OnLoad()">
+			<body class="oneColFixCtrHdr" id="body">
 				<div id="container">
 					<xsl:if test="count(//Caption) eq 1">
 						<xsl:call-template name="GenerateCaption">
@@ -451,7 +473,7 @@ td:nth-of-type(2n - 1) {
 			</xsl:element>
 			<xsl:element name="div">
 				<xsl:variable name="width" select="'width: 100%;'" />
-				<xsl:variable name="height" select="concat('height: ', xs:integer($caption/BorderWidth) * 10 div 8, 'px;')" />
+				<xsl:variable name="height" select="concat('height: ', xs:integer($caption/BorderWidth * 10 div 8), 'px;')" />
 				<xsl:variable name="borderColor" select="concat('#', $caption/BorderColorR, $caption/BorderColorG, $caption/BorderColorB)" />
 				<xsl:variable name="minHeight" select="concat('min-height: ', $caption/BorderWidth, 'px;')" />
 				<xsl:variable name="backgroundImage" select="concat('background-image: linear-gradient(to bottom, #000 0%, ', $borderColor, ' 15%, ', $borderColor, ' 70%, #000 100%);')" />

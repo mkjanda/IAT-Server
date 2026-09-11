@@ -5,54 +5,35 @@
  */
 package net.iatsoftware.iat.admin;
 
-import java.io.ByteArrayOutputStream;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.math.BigInteger;
-import java.net.URLDecoder;
-import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Formatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
-import java.util.function.BinaryOperator;
-import java.util.concurrent.Callable;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import jakarta.inject.Named;
 import jakarta.inject.Inject;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.xml.transform.stream.StreamResult;
 
-import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.Client;
-import net.iatsoftware.iat.entities.EncCodeLine;
+import net.iatsoftware.iat.entities.EncryptedResultSet;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.RSAKeyData;
-import net.iatsoftware.iat.entities.TestResultFragment;
 import net.iatsoftware.iat.entities.TestSegment;
-import net.iatsoftware.iat.entities.UniqueResponse;
-import net.iatsoftware.iat.entities.UniqueResponseItem;
-import net.iatsoftware.iat.generated.TokenType;
-import net.iatsoftware.iat.messaging.AjaxResponse;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
-import net.iatsoftware.iat.resultdata.ResultTOC;
-import net.iatsoftware.iat.resultdata.ResultTOCEntry;
+import net.iatsoftware.iat.resultdata.ResultSet;
+import net.iatsoftware.iat.resultdata.IATResult;
+import net.iatsoftware.iat.resultdata.SurveyResult;
 import net.iatsoftware.iat.services.MailService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
+
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties.Http;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
@@ -64,26 +45,25 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.scheduling.SchedulingTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.io.ByteArrayOutputStream;
+import java.time.Duration;
+import javax.xml.transform.stream.StreamResult;
 
 
 @Controller
@@ -91,7 +71,6 @@ import org.springframework.web.context.WebApplicationContext;
 @PropertySource("classpath:iat.webapp.properties")
 @RequestMapping(value = "/Admin")
 public class AdminController {
-
 
 	@SuppressWarnings("unused")
 	private abstract class TokenException extends Exception {
@@ -106,18 +85,6 @@ public class AdminController {
 
 		public IAT getTest() {
 			return this.test;
-		}
-	}
-
-	private class NoTokenException extends TokenException {
-		private static final long serialVersionUID = 1L;
-
-		public NoTokenException(IAT test) {
-			super(test);
-		}
-
-		public String getCaption() {
-			return tokenNotSuppliedCaption;
 		}
 	}
 
@@ -174,9 +141,7 @@ public class AdminController {
 	private static final Logger criticalLogger = LogManager.getLogger("critical");
 
 	@Inject
-	IATSessionManager sessionManager;
-
-	@Inject WebApplicationContext context;
+	WebApplicationContext context;
 
 	@Inject
 	IATRepositoryManager iatRepositoryManager;
@@ -224,15 +189,21 @@ public class AdminController {
 	@Value("${iat.webapp.malformed-token-data-caption}")
 	public String malformedTokenDataCaption;
 
-	@GetMapping(value = "", params = { "IATName", "ClientID" }, produces="text/html")
+	static public final Cache<String, IATSession> sessions = Caffeine.newBuilder()
+			.maximumSize(100_000)
+			.expireAfterWrite(Duration.ofHours(1))
+			.build();
+
+	@GetMapping(value = "", params = { "IATName", "ClientID" }, produces = "text/html")
 	public ModelAndView startIATAdmin(@RequestParam(name = "IATName") String iatName,
 			@RequestParam(name = "ClientID") Long clientId,
-			@RequestParam(name = "HTTP_REFERER", required = false, defaultValue = "-") String httpReferer,
+			@RequestHeader(name = "HTTP_REFERER", required = false, defaultValue = "-") String httpReferer,
 			@RequestParam Map<String, String> allParams, HttpServletRequest request) throws TokenException {
-		IATSession sess = sessionManager.createSession();
+		var sess = new IATSession(String.valueOf(System.currentTimeMillis()));
+		sessions.put(sess.getId(), sess);
 		var test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientId);
 		if (test == null) {
-			sessionManager.destroySession(sess.getId());
+			sessions.invalidate(sess.getId());
 			ModelAndView mv = new ModelAndView(SessionProperties.GENERAL_ERROR);
 			mv.addObject(SessionProperties.TITLE, SessionProperties.NO_SUCH_TEST);
 			mv.addObject(SessionProperties.CAPTION, SessionProperties.NO_SUCH_TEST);
@@ -243,53 +214,35 @@ public class AdminController {
 		}
 		Client c = test.getUser().getClient();
 		if (c.isFrozen()) {
-			sessionManager.destroySession(sess.getId());
+			sessions.invalidate(sess.getId());
 			ModelAndView mv = new ModelAndView(SessionProperties.GENERAL_ERROR);
 			mv.addObject(SessionProperties.TITLE, SessionProperties.CLIENT_FROZEN);
 			mv.addObject(SessionProperties.CAPTION, SessionProperties.CLIENT_FROZEN);
 			mv.addObject(SessionProperties.PAGE, SessionProperties.CLIENT_FROZEN_PAGE);
-			sessionManager.destroySession(sess.getId());
 			return mv;
 		}
 		if (!iatRepositoryManager.debitAdministration(test)) {
-			sessionManager.destroySession(sess.getId());
+			sessions.invalidate(sess.getId());
 			ModelAndView mv = new ModelAndView(SessionProperties.GENERAL_ERROR);
 			mv.addObject(SessionProperties.TITLE, SessionProperties.NO_ADMINISTRATIONS);
 			mv.addObject(SessionProperties.CAPTION, SessionProperties.NO_ADMINISTRATIONS);
 			mv.addObject(SessionProperties.PAGE, SessionProperties.NO_ADMINISTRATIONS_PAGE);
-			sessionManager.destroySession(sess.getId());
 			return mv;
 		}
-		Long adminId = null;
-		if (test.getTokenType() != TokenType.NONE) {
-			String encTokenVal = allParams.get(test.getTokenName());
-			try {
-				if (encTokenVal == null)
-					throw new NoTokenException(test);
-				String tokenVal = URLDecoder.decode(encTokenVal, StandardCharsets.UTF_8);
-				byte[] tokenData = checkToken(test, tokenVal);
-				sess.setAttribute(SessionProperties.TOKEN_VALUE, tokenVal);
-				adminId = iatRepositoryManager.createAdminTimer(test, sess.getId(), tokenData);
-			} catch (TokenException ex) {
-				sessionManager.destroySession(sess.getId());
-				throw ex;
-			}
-		} else {
-			adminId = iatRepositoryManager.createAdminTimer(test, sess.getId());
-		}
 		sess.setAttribute(SessionProperties.TEST, test);
-		sess.setAttribute(SessionProperties.ADMIN_ID, adminId);
 		sess.setAttribute(SessionProperties.HTTP_REFERER, httpReferer);
+		sess.setAttribute(SessionProperties.RESULTS, new ResultSet());
 		Map<String, Object> model = new HashMap<String, Object>();
-		model.put(SessionProperties.IAT_SESSION_ID, sess.getId());
 		List<TestSegment> segmentList = iatRepositoryManager.getTestElems(test);
 		sess.setAttribute(SessionProperties.SEGMENT_LIST, segmentList);
 		sess.setAttribute(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		sess.setAttribute(SessionProperties.ADMIN_PHASE, 0);
+		model.put(SessionProperties.IAT_SESSION_ID, sess.getId());
 		model.put(SessionProperties.TEST, test);
 		model.put(SessionProperties.CLIENT_ID, test.getClient().getClientId());
 		model.put(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		model.put(SessionProperties.ADMIN_PHASE, 0);
+		model.put(SessionProperties.HTTP_REFERER, httpReferer);
 		if (segmentList.size() == 1) {
 			model.put(SessionProperties.LAST_ADMIN_PHASE, "true");
 		} else {
@@ -300,131 +253,49 @@ public class AdminController {
 		return new ModelAndView("Admin/" + id.toString(), model);
 	}
 
-	public String fetchToken(IAT test, HttpServletRequest request) {
-		TokenType tokenType = test.getTokenType();
-		String tokenName, tokenValue = null;
-		if (tokenType != TokenType.NONE) {
-			tokenName = test.getTokenName();
-			tokenValue = request.getParameter(tokenName);
-		}
-		return tokenValue;
-	}
-
-	public String buildTestLink(IAT test) {
-		StringBuilder sb = new StringBuilder();
-		Formatter fmt = new Formatter(sb);
-		fmt.format("%s%s%s%s%d", webappPath, "?IATName=", test.getTestName(), "&ClientID=",
-				test.getClient().getClientId());
-		fmt.close();
-		return sb.toString();
-	}
-
-	public String buildTestLink(IAT test, String tokenValue) {
-		StringBuilder sb = new StringBuilder();
-		Formatter fmt = new Formatter(sb);
-		fmt.format("%s%s%s%s%d%s%s", webappPath, "?IATName=", test.getTestName(), "&ClientID=",
-				test.getClient().getClientId(), test.getTokenName(), tokenValue);
-		fmt.close();
-		return sb.toString();
-	}
-
-	private byte[] checkToken(IAT test, String tokenValue)
-			throws NoTokenException, InvalidTokenNameException, TokenValueException {
-		var tokenType = test.getTokenType();
-		Pattern tokenPat;
-		if (tokenType == TokenType.VALUE) {
-			byte[] tokenData = tokenValue.getBytes(StandardCharsets.UTF_8);
-			if (tokenData.length >= 1024) {
-				throw new TokenValueException(test, tokenValue, TokenValueException.EXCESSIVE_DATA);
-			}
-			return tokenData;
-		} else if (tokenType == TokenType.BASE_64) {
-			tokenPat = Pattern.compile("[0-9A-Za-z/\\+=]+");
-			Matcher m = tokenPat.matcher(tokenValue);
-			if (!m.matches()) {
-				throw new TokenValueException(test, tokenValue, TokenValueException.MALFORMED_DATA);
-			} else {
-				Base64.Decoder decoder = Base64.getDecoder();
-				byte[] tokenData = decoder.decode(tokenValue);
-				if (tokenData.length > 1024) {
-					throw new TokenValueException(test, tokenValue, TokenValueException.EXCESSIVE_DATA);
-				}
-				return tokenData;
-			}
-		}
-		return null;
-	}
-
-	public View completeTest(IATSession sess) {
-		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-				.getRequest();
-		IAT test = (IAT) sess.getAttribute(SessionProperties.TEST);
-		if (sess.checkAttribute("UniqueResponse")) {
-			UniqueResponse ur = (UniqueResponse) sess.getAttribute("UniqueResponse");
-			ur.setTaken(false);
-			ur.setConsumed(true);
-			iatRepositoryManager.updateUniqueResponse(ur);
-		}
-		String tokenName = (String) sess.getAttribute(SessionProperties.TOKEN_NAME);
-		String tokenValue = (String) sess.getAttribute(SessionProperties.TOKEN_VALUE);
-		String redirect = null;
-		if (test.getTokenType() == TokenType.NONE)
-			return new RedirectView(test.getRedirectOnComplete());
-		else
-			return new RedirectView(String.format("%s?%s=%s", test.getRedirectOnComplete(), tokenName,
-				tokenValue));		
-	}
-
 	@SuppressWarnings("unchecked")
 	@PostMapping(value = "", params = { "IATName", "ClientID", "target=adminV2", "!ABORT" })
 	public ModelAndView submitIATAdminV2(@RequestParam("IATName") String iatName,
-			@RequestParam("ClientID") long clientId, @RequestParam("TestSegment") Long testSegmentID,
-			@RequestParam("NumItems") int numItems, @RequestParam("IATSESSIONID") String sessId,
-			@RequestParam(value = "corrupted", required = false, defaultValue = "false") String corrupted,
-			@RequestParam(value = "HTTP_REFERER", required = false, defaultValue = "-") String reportedHttpReferer,
+			@RequestParam("ClientID") long clientId, @RequestParam("IATSESSIONID") String sessId,
 			@RequestParam Map<String, String> parameterMap) {
-		IAT test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientId);
-		IATSession sess = this.sessionManager.getSession(sessId);
+		IATSession sess = sessions.getIfPresent(sessId);
 		if (sess == null) {
 			var view = new ModelAndView("AdministrationTimeout");
 			view.addObject(SessionProperties.HTTP_REFERER, "-");
 			return view;
 		}
+		var test = (IAT) sess.getAttribute(SessionProperties.TEST);
 		String httpReferer = (String) sess.getAttribute(SessionProperties.HTTP_REFERER);
-		Long adminID = (Long) sess.getAttribute(SessionProperties.ADMIN_ID);
 		List<TestSegment> segmentList = (List<TestSegment>) sess.getAttribute(SessionProperties.SEGMENT_LIST);
-		int adminPhase = (Integer) sess.getAttribute(SessionProperties.ADMIN_PHASE) + 1;
-		boolean lastSegment = adminPhase == segmentList.size();
-		iatRepositoryManager.refreshAdminTimer(adminID);
-		if (segmentList.get(0).getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
-			IATResultRecorder irr = context.getBean(DefaultIATResultRecorder.class);
-			irr.setAdminID(adminID);
-			irr.setNumItems(numItems);
-			irr.setTestSegment(segmentList.get(0));
-			irr.setResponseData(parameterMap);
-			irr.setLastFragment(segmentList.size() == adminPhase);
-			this.scheduler.submit(irr);
-		} else {
-			SurveyResultRecorder srr = this.context.getBean(DefaultSurveyResultRecorder.class);
-			srr.setAdminID(adminID);
-			srr.setNumItems(numItems);
-			srr.setTestSegment(segmentList.get(0));
-			srr.setResponseData(parameterMap);
-			srr.setLastFragment(segmentList.size() == adminPhase);
-			this.scheduler.submit(srr);
+		var results = (ResultSet) sess.getAttribute(SessionProperties.RESULTS);
+		if (segmentList.isEmpty()) {
+			var iatResults = new IATResult();
+			iatResults.parseResults(parameterMap);
+			results.setIATResult(iatResults);
+			try {
+				var encResultSet = new EncryptedResultSet(marshaller, test, results);
+				encResultSet.encryptResults();
+				iatRepositoryManager.addResultSet(encResultSet);
+			} catch (Exception e) {
+				criticalLogger.error("Critical error marshalling results", e);
+				var mv = new ModelAndView();
+				mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+				return mv;
+			}
+			sessions.invalidate(sess.getId());
+			return new ModelAndView(new RedirectView(test.getRedirectOnComplete()));
 		}
-		if (lastSegment) {
-			return new ModelAndView(completeTest(sess));
+		else if (segmentList.isEmpty()) 
+		{
+		} else {
+			var surveyResult = new SurveyResult(segmentList.get(0).getElemName(), parameterMap);
+			results.getSurveyResult().add(surveyResult);
 		}
 
 		Map<String, Object> model = new HashMap<>();
+		var adminPhase = (Integer) sess.getAttribute(SessionProperties.ADMIN_PHASE) + 1;
 		sess.setAttribute(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		sess.setAttribute(SessionProperties.ADMIN_PHASE, adminPhase);
-		if (adminPhase == segmentList.size() - 1) {
-			model.put("LastAdminPhase", "true");
-		} else {
-			model.put("LastAdminPhase", "false");
-		}
 		model.put(SessionProperties.ADMIN_PHASE, adminPhase);
 		model.put(SessionProperties.IAT_SESSION_ID, sess.getId());
 		model.put(SessionProperties.TEST, test);
@@ -435,52 +306,42 @@ public class AdminController {
 		segmentList.removeFirst();
 		return new ModelAndView("Admin/" + testSegmentId.toString(), model);
 	}
-
+/*
 	@SuppressWarnings("unchecked")
 	@PostMapping(value = "", params = { "IATName", "ClientID", "!target", "!ABORT", "NumItems" })
 	public ModelAndView submitIATAdminV1(@RequestParam(value = "IATName") String iatName,
 			@CookieValue(value = "TestSegment", required = true) Long administeredElemID,
 			@RequestParam(value = "ClientID") long clientID,
 			@CookieValue(value = "IATSESSIONID", required = true) String sessId,
-			@RequestParam(value = "NumItems", required = true) int numItems,
 			@CookieValue(value = "AdminPhase") int submittedAdminPhase,
 			@CookieValue(value = "CurrentIATID", required = false, defaultValue = "-1") long iatId,
 			@RequestParam Map<String, String> parameterMap) {
 		HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
 				.getRequest();
 		IAT test = iatRepositoryManager.getIATByNameAndClientID(iatName, clientID);
-		IATSession sess = sessionManager.getSession(sessId);
+		IATSession sess = sessions.getIfPresent(sessId);
 		if (sess == null) {
-			return new ModelAndView(new RedirectView("/IAT/html/AdministrationTimeout.html"));
+			return new ModelAndView("AdministrationTimeout");
 		}
-		Long adminID = (Long) sess.getAttribute("AdminID");
-		iatRepositoryManager.refreshAdminTimer(adminID);
-		int adminPhase = (Integer) sess.getAttribute("AdminPhase") + 1;
-		List<TestSegment> segmentList = (List<TestSegment>) sess.getAttribute("SegmentList");
+		var segmentList = (List<TestSegment>) sess.getAttribute(SessionProperties.SEGMENT_LIST);
+		var results = (ResultSet) sess.getAttribute(SessionProperties.RESULTS);
+		long adminPhase = (long) sess.getAttribute("AdminPhase") + 1;
 		if (segmentList.get(0).getElemName().equals(iatName.replace("[^A-Za-z0-9_\\-]", ""))) {
-			IATResultRecorder irr = context.getBean(DefaultIATResultRecorder.class);
-			irr.setAdminID(adminID);
-			irr.setNumItems(numItems);
-			irr.setTestSegment(segmentList.get(0));
-			irr.setResponseData(parameterMap);
-			irr.setLastFragment(segmentList.size() == adminPhase);
-			this.scheduler.submit(irr);
+			var iatResults = new IATResult();
+			iatResults.parseResults(parameterMap);
+			results.setIATResult(iatResults);
 		} else {
-			SurveyResultRecorder srr = this.context.getBean(DefaultSurveyResultRecorder.class);
-			srr.setAdminID(adminID);
-			srr.setNumItems(numItems);
-			srr.setTestSegment(segmentList.get(0));
-			srr.setResponseData(parameterMap);
-			srr.setLastFragment(segmentList.size() == adminPhase);
-			this.scheduler.submit(srr);
+			var surveyResult = new SurveyResult(segmentList.get(0).getElemName(), parameterMap);
+			results.getSurveyResult().add(surveyResult);
 		}
-		if (adminPhase == segmentList.size()) {
-			return new ModelAndView(completeTest(sess));
+		if (segmentList.size() == 0) {
+			iatRepositoryManager.saveResultSet(test, results);	
+			sessions.invalidate(sess.getId());
+			return new ModelAndView(new RedirectView(test.getRedirectOnComplete()));
 		}
 
 		Map<String, Object> model = new HashMap<>();
-		sess.setAttribute("TestSegment", segmentList.get(adminPhase));
-		sess.setAttribute("AdminPhase", adminPhase);
+		sess.setAttribute(SessionProperties.ADMIN_PHASE, adminPhase);
 		if (adminPhase == segmentList.size() - 1) {
 			model.put("LastAdminPhase", "true");
 		} else {
@@ -497,64 +358,40 @@ public class AdminController {
 		return new ModelAndView("Admin/" + testSegmentId.toString(), model);
 	}
 
-	@GetMapping(value = "/resources/{clientId}/{testName}/{resourceId}")
-	public ResponseEntity<byte[]> getTestResource(@PathVariable(name = "clientId", required = true) Long clientId,
-			@PathVariable(name = "testName", required = true) String testName,
-			@PathVariable(name = "resourceId", required = true) Long resourceId) {
-		var test = iatRepositoryManager.getIATByNameAndClientID(testName, clientId);
-		var res = iatRepositoryManager.getTestResource(test, resourceId);
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(new MediaType(res.getMimeType()));
-		return new ResponseEntity<>(res.getResourceBytes(), headers, HttpStatus.OK);
-	}
-
-	@GetMapping(value = "/Ajax/DynamicSpecifiers.json", produces = "application/json")
-	@ResponseBody
-	public Callable<Object> getDynamicSpecifiers(
-			@CookieValue(value = "IATSESSIONID", required = false, defaultValue = "-") String cookieSessId,
-			@RequestHeader(value = "IATSESSIONID", required = false, defaultValue = "-") String headerSessId) {
-		return () -> {
-			IATSession sess;
-			if (cookieSessId.equals("-")) {
-				sess = this.sessionManager.getSession(headerSessId);
-			} else {
-				sess = this.sessionManager.getSession(cookieSessId);
-			}
-			return sess.getAttribute("SpecifierValues");
-		};
-	}
-
-/*
-	@PostMapping(value = "/Ajax/KeySet", consumes = "text/json", produces = "text/json")
-	@ResponseBody
-	public String getKeyJSON(@RequestHeader("IATSESSIONID") String sessId,
-			@RequestBody List<String> encWords) throws java.io.IOException {
-			IATSession sess = this.sessionManager.getSession(sessId);
-			var rsaData = (RSAKeyData)sess.getAttribute("RSA");
-			var cipherWords = new ArrayList<BigInteger>();
-			for (var eWord: encWords) {
-				byte[] kWord = rsaData.decrypt(new BigInteger(eWord, 16));
-				byte[] zpkWord = new byte[kWord.length + 1];
-				zpkWord[0] = 0;
-				System.arraycopy(kWord, 0, zpkWord, 1, kWord.length);
-				cipherWords.add(new BigInteger(zpkWord));
-			}
-			Long tsID = (Long) sess.getAttribute("TestSegment");
-			TestSegment ts = iatRepositoryManager.getTestSegmentByID(tsID);
-			StringReader sReader = new StringReader(ts.getJsKeyXml());
-			StreamSource sSource = new StreamSource(sReader);
-			JSKeys keySet = beanFactory.jsKeys((JSKeys)unmarshaller.unmarshal(sSource));
-			return keySet.getEncryptedKeySet(cipherWords).getKeySetJSON();
-	}
-*/
+	
+	 * @PostMapping(value = "/Ajax/KeySet", consumes = "text/json", produces =
+	 * "text/json")
+	 * 
+	 * @ResponseBody
+	 * public String getKeyJSON(@RequestHeader("IATSESSIONID") String sessId,
+	 * 
+	 * @RequestBody List<String> encWords) throws java.io.IOException {
+	 * IATSession sess = this.sessionManager.getSession(sessId);
+	 * var rsaData = (RSAKeyData)sess.getAttribute("RSA");
+	 * var cipherWords = new ArrayList<BigInteger>();
+	 * for (var eWord: encWords) {
+	 * byte[] kWord = rsaData.decrypt(new BigInteger(eWord, 16));
+	 * byte[] zpkWord = new byte[kWord.length + 1];
+	 * zpkWord[0] = 0;
+	 * System.arraycopy(kWord, 0, zpkWord, 1, kWord.length);
+	 * cipherWords.add(new BigInteger(zpkWord));
+	 * }
+	 * Long tsID = (Long) sess.getAttribute("TestSegment");
+	 * TestSegment ts = iatRepositoryManager.getTestSegmentByID(tsID);
+	 * StringReader sReader = new StringReader(ts.getJsKeyXml());
+	 * StreamSource sSource = new StreamSource(sReader);
+	 * JSKeys keySet = beanFactory.jsKeys((JSKeys)unmarshaller.unmarshal(sSource));
+	 * return keySet.getEncryptedKeySet(cipherWords).getKeySetJSON();
+	 * }
+	 
 	@PostMapping(value = "/Ajax/AES", consumes = "text/xml", produces = "text/xml")
 	@ResponseBody
 	public ResponseEntity<AjaxResponse> getAesFile() throws java.io.IOException {
-			ByteBuffer buff = ByteBuffer.allocate((int) aesJs.contentLength());
-			int bytesRead = 0;
-			while (bytesRead < aesJs.contentLength())
-				bytesRead += aesJs.readableChannel().read(buff);
-			return new ResponseEntity<>(new AjaxResponse(buff.asCharBuffer().toString()), HttpStatus.OK);
+		ByteBuffer buff = ByteBuffer.allocate((int) aesJs.contentLength());
+		int bytesRead = 0;
+		while (bytesRead < aesJs.contentLength())
+			bytesRead += aesJs.readableChannel().read(buff);
+		return new ResponseEntity<>(new AjaxResponse(buff.asCharBuffer().toString()), HttpStatus.OK);
 	}
 
 	@GetMapping(value = "/Ajax/AES", produces = "text/javascript")
@@ -562,10 +399,9 @@ public class AdminController {
 	public ResponseEntity<String> getAes(@RequestParam("IATSESSIONID") String sessId) {
 		try {
 			var sess = sessionManager.getSession(sessId);
-			var test = (IAT)sess.getAttribute(SessionProperties.TEST);
+			var test = (IAT) sess.getAttribute(SessionProperties.TEST);
 			return new ResponseEntity<>(test.getAESCode(), HttpStatus.OK);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			return ResponseEntity.internalServerError().build();
 		}
 	}
@@ -723,15 +559,11 @@ public class AdminController {
 		}
 		return false;
 	}
-
+*/
 	public ModelAndView buildInvalidAdminView(IAT test, String sessId, String tokenValue, String httpReferer,
 			boolean isCorrupt) {
 		TestAbortParams params = new TestAbortParams();
 		params.setClientId(Long.toString(test.getClient().getClientId()));
-		if (tokenValue != null) {
-			params.setTokenName(test.getTokenName());
-			params.setTokenValue(tokenValue);
-		}
 		params.setCorruptAdministration(isCorrupt);
 		params.setMultipleAdministrations(!isCorrupt);
 		params.setHttpReferer(httpReferer);
