@@ -879,7 +879,6 @@
             <xs:enumeration value="ActivationConfirmation"/>
             <xs:enumeration value="RequestEMailVerification"/>
             <xs:enumeration value="RequestNewVerificationEMail"/>
-            <xs:enumeration value="RequestRSAKey"/>
             <xs:enumeration value="RetrieveSurveys"/>
             <xs:enumeration value="RequestRemainingResources"/>
             <xs:enumeration value="IATBeingDeployed"/>
@@ -1578,7 +1577,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="iat:message-base-impl">
+            <xs:extension base="iat:message-impl">
                 <xs:sequence>
                     <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1" />
@@ -1968,7 +1967,7 @@
             </xs:appinfo>
         </xs:annotation>
         <xs:complexContent>
-            <xs:extension base="iat:message-base-impl">
+            <xs:extension base="iat:message-impl">
                 <xs:sequence>
                     <xs:element name="Modulus" type="xs:string" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="Exponent" type="xs:string" minOccurs="1" maxOccurs="1"/>

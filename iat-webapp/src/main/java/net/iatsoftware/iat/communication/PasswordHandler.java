@@ -29,14 +29,14 @@ public class PasswordHandler implements TransactionHandler {
         if (!(ctx.inbound() instanceof TransactionRequest))
             return false;
         var transaction = (TransactionRequest) ctx.inbound();
-        return transaction.getType() == TransactionType.REQUEST_RSA_KEY
+        return transaction.getType() == TransactionType.REQUEST_ENCRYPTION_KEY
                 || transaction.getType() == TransactionType.PASSWORD_VALID;
     }
 
     @Override
     public void handle(TransactionContext ctx) {
         var transaction = (TransactionRequest) ctx.inbound();
-        if (transaction.getType() == TransactionType.REQUEST_RSA_KEY) {
+        if (transaction.getType() == TransactionType.REQUEST_ENCRYPTION_KEY) {
             Crypt key = ctx.sessionState().repositoryManager().getRSAKey(
                     ctx.client().getClientId(), transaction.getIATName());
             ctx.reply().send(key);

@@ -104,21 +104,13 @@ public class ReportClientError {
 
     private static final String PNG_MIME_TYPE = "image/png";
 
-    private byte[] zeroPrepend(byte[] input) {
-        byte[] bytes = new byte[input.length + 1];
-        bytes[0] = 0;
-        System.arraycopy(input, 0, bytes, 1, input.length);
-        return bytes;
-    }
-
-
     private Cipher getCipher()
             throws java.security.NoSuchAlgorithmException, java.security.spec.InvalidKeySpecException,
             javax.crypto.NoSuchPaddingException, java.security.InvalidKeyException {
         var modulusData = b64Decoder.decode(rsaModulus);
         var exponentData = b64Decoder.decode(rsaExponent);
-        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(zeroPrepend(modulusData)),
-                new BigInteger(zeroPrepend(exponentData)));
+        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(1, modulusData),
+                new BigInteger(1, exponentData));
         KeyFactory fact = KeyFactory.getInstance("RSA");
         PublicKey pubKey = fact.generatePublic(keySpec);
         Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");
