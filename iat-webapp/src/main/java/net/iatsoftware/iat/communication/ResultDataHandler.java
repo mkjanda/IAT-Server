@@ -20,15 +20,12 @@ public class ResultDataHandler implements TransactionHandler {
             return false;
         var transaction = (TransactionRequest) ctx.inbound();
         return transaction.getType() == net.iatsoftware.iat.generated.TransactionType.REQUEST_ITEM_SLIDE_MANIFEST ||
-                transaction.getType() == net.iatsoftware.iat.generated.TransactionType.REQUEST_FILE_MANIFEST;
+                transaction.getType() == net.iatsoftware.iat.generated.TransactionType.REQUEST_FILE_MANIFEST ||
+                transaction.getType() == net.iatsoftware.iat.generated.TransactionType.REQUEST_RESULTS;
     }
 
     @Override
     public void handle(TransactionContext ctx) {
-        if (!ctx.isAuthenticated()) {
-            ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
-            return;
-        }
         var transaction = (TransactionRequest) ctx.inbound();
         var test = ctx.sessionState().repositoryManager().getIATByNameAndClientID(transaction.getIATName(),
                 ctx.client().getClientId());
@@ -44,14 +41,12 @@ public class ResultDataHandler implements TransactionHandler {
                     break;
 
                 case TransactionType.REQUEST_RESULTS:    
+                    Long token = -1L;
                     if (ResultRetrievalController.authTokenCache.getIfPresent(ctx.client().getProductKey()) == null) {
-                        byte[] token = new byte[64];
-                        secureRandom.nextBytes(token);
-                        var tokenString = base64Encoder.encodeToString(token);
-                        ResultRetrievalController.authTokenCache.put(ctx.client().getProductKey(), tokenString);
+                        token = System.currentTimeMillis();
+                        ResultRetrievalController.authTokenCache.put(ctx.client().getProductKey(), token);
                     } else {
-                        ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
-                        return;
+                        token = ResultRetrievalController.authTokenCache.getIfPresent(ctx.client().getProductKey());
                     } 
                     var outTrans = new TransactionRequest(TransactionType.AUTH_TOKEN);
                     outTrans.setAuthToken(ResultRetrievalController.authTokenCache.getIfPresent(ctx.client().getProductKey()));

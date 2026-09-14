@@ -17,21 +17,16 @@ import net.iatsoftware.iat.configfile.Globals;
 import net.iatsoftware.iat.configfile.Survey;
 import net.iatsoftware.iat.dataservices.XsltService;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.EncryptedRSAKey;
+import net.iatsoftware.iat.entities.Crypt;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestResource;
-import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
 import net.iatsoftware.iat.generated.ResourceType;
-import net.iatsoftware.iat.generated.TokenType;
-import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.messaging.ServerExceptionMessage;
-import net.iatsoftware.iat.messaging.TransactionRequest;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 import net.iatsoftware.iat.services.DeploymentService;
 import net.iatsoftware.iat.services.MailService;
-import net.iatsoftware.iat.services.WebSocketService;
 
 import net.sf.saxon.s9api.Processor;
 import net.sf.saxon.s9api.Serializer;
@@ -73,7 +68,6 @@ public class DefaultIATDeployer implements IATDeployer {
     protected byte[] IATSource;
     protected byte[][] SurveySources;
     protected Processor XsltProcessor;
-    protected GlobalVarNameTable GlobalVars = new GlobalVarNameTable(), AESGlobals;
     protected MessageDigest DeploymentDescriptor;
     protected boolean complete = false;
     protected Future<?> generationFuture = null;
@@ -111,7 +105,7 @@ public class DefaultIATDeployer implements IATDeployer {
     }
     
     @Override
-    public void storeRSAKeys(EncryptedRSAKey adminKey, EncryptedRSAKey dataKey) {
+    public void storeRSAKeys(Crypt adminKey, Crypt dataKey) {
         IAT test = iatRepositoryManager.getIAT(this.testId);
         logger.info("RSA key received");
         dataKey.setTest(test);

@@ -10,18 +10,6 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.LogManager;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
-
-import java.math.BigInteger;
-import java.security.KeyFactory;
-import java.util.Base64;
-import java.security.spec.RSAPublicKeySpec;
-import java.security.PublicKey;
-import javax.crypto.Cipher;
-import java.util.Properties;
-import java.util.Random;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;

@@ -39,6 +39,5 @@ public class IATResult extends net.iatsoftware.iat.generated.GIATResult {
             boolean error = Boolean.parseBoolean(responseData.get("Error" + ndx));
             this.getFragment().add(new IATResultFragment(itemNum, block, latency, i, error));
         });
-        this.setNumElements(this.getFragment().size());
     }
 }

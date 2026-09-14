@@ -12,6 +12,7 @@ package net.iatsoftware.iat.repositories;
 
 import net.iatsoftware.iat.resultdata.ResultSet;
 
+import org.springframework.oxm.Marshaller;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -20,6 +21,7 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.CriteriaDelete;
 
+
 import net.iatsoftware.iat.entities.EncryptedResultSet;
 import net.iatsoftware.iat.entities.IAT;
 
@@ -27,7 +29,6 @@ import java.util.Calendar;
 import java.util.List;
 import jakarta.inject.Inject;
 
-import org.springframework.oxm.Marshaller;
 
 @Repository
 public class DefaultResultSetRepository extends GenericJpaRepository<Long, EncryptedResultSet>

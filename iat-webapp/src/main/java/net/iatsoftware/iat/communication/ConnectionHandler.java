@@ -92,6 +92,7 @@ public class ConnectionHandler implements TransactionHandler {
                 // Stale or missing challenge — refuse rather than leave the client waiting.
                 logger.warn("Handshake challenge mismatch or missing UnencryptedValue; closing session {}",
                         ctx.sessionId());
+                channel.send(new TransactionRequest(TransactionType.FAIL));        
                 channel.close();
             } 
         } catch (Exception e) {

@@ -25,5 +25,6 @@ window.onload = async function() {
 
 window.onbeforeunload = function() {
     const sessId = sessionStorage.getItem("IATSESSIONID");
+    const adminPhase = sessionStorage.getItem("AdminPhase");
     appendFormData("IATSESSIONID", sessId);
 }

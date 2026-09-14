@@ -35,7 +35,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.persistence.Transient;
-import jakarta.xml.bind.annotation.XmlType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import javax.xml.transform.stream.StreamResult;
@@ -46,7 +45,6 @@ import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 @Entity
-@XmlType(name = "EncryptedResultSet")
 @XmlAccessorType(XmlAccessType.NONE)   
 @Table(name = "results", indexes = {
         @Index(name = "test_id", columnList = "TestID")
@@ -58,8 +56,9 @@ public class EncryptedResultSet extends net.iatsoftware.iat.generated.GEncrypted
     private long id;
     private Marshaller marshaller;
     private IAT test = null;
-    private byte[] resultBytes, encryptedCipherBytes, tagBytes, nonceBytes;
+    private byte[] resultBytes, cipherBytes, tagBytes, nonceBytes;
     private Calendar adminTime;
+    private static final Base64.Encoder encoder = Base64.getEncoder();
     private static final SecureRandom random = new SecureRandom();
     private static final Logger logger = LogManager.getLogger();
 
@@ -86,22 +85,20 @@ public class EncryptedResultSet extends net.iatsoftware.iat.generated.GEncrypted
         try {
             var aesBytes = new byte[32];
             random.nextBytes(aesBytes);
-            this.nonceBytes = new byte[12];
+            this.setNonceBytes(new byte[12]);
             random.nextBytes(this.nonceBytes);
             var key = new SecretKeySpec(aesBytes, "AES");
             GCMParameterSpec gcmSpec = new GCMParameterSpec(128, this.nonceBytes);
             var cipher = Cipher.getInstance("AES/GCM/NoPadding");
             cipher.init(Cipher.ENCRYPT_MODE, key, gcmSpec);
             byte[] ciphertextandtag = cipher.doFinal(this.resultBytes);
-            this.resultBytes = new byte[ciphertextandtag.length - 16];
-            this.tagBytes = new byte[16];
+            this.setResultBytes(new byte[ciphertextandtag.length - 16]);
+            this.setTagBytes(new byte[16]);
             var rBytes = new byte[ciphertextandtag.length - 16];
             System.arraycopy(ciphertextandtag, 0, rBytes, 0, rBytes.length);
             System.arraycopy(ciphertextandtag, rBytes.length, tagBytes, 0, 16);
             this.setResultBytes(rBytes);
-            this.setEncryptedCipherBytes(this.getTest().getDataKey().publicEncrypt(aesBytes));
-            this.setTagBytes(this.getTest().getDataKey().publicEncrypt(this.tagBytes));
-            this.setNonceBytes(this.getTest().getDataKey().publicEncrypt(this.nonceBytes));
+            this.setCipherBytes(this.getTest().getDataKey().publicEncrypt(aesBytes));
         } catch (Exception e) {
             logger.error("Error encrypting results", e);
             throw new RuntimeException("Error encrypting results", e);
@@ -147,16 +144,18 @@ public class EncryptedResultSet extends net.iatsoftware.iat.generated.GEncrypted
 
     public void setResultBytes(byte[] val) {
         this.resultBytes = val;
+        this.results = encoder.encodeToString(this.resultBytes);
     }
 
     @Basic
     @Column(name = "encrypted_cipher")
-    public byte[] getEncryptedCipherBytes() {
-        return this.encryptedCipherBytes;
+    public byte[] getCipherBytes() {
+        return this.cipherBytes;
     }
 
-    public void setEncryptedCipherBytes(byte[] val) {
-        this.encryptedCipherBytes = val;
+    public void setCipherBytes(byte[] val) {
+        this.cipherBytes = val;
+        this.cipher = encoder.encodeToString(this.cipherBytes);
     }
 
     @Basic
@@ -167,6 +166,7 @@ public class EncryptedResultSet extends net.iatsoftware.iat.generated.GEncrypted
 
     public void setTagBytes(byte[] val) {
         this.tagBytes = val;
+        this.tag = encoder.encodeToString(this.tagBytes);
     }
 
     @Basic
@@ -177,15 +177,15 @@ public class EncryptedResultSet extends net.iatsoftware.iat.generated.GEncrypted
 
     public void setNonceBytes(byte[] val) {
         this.nonceBytes = val;
+        this.nonce = encoder.encodeToString(this.nonceBytes);
     }
 
-    @Transient
+    @Override
     public boolean beforeMarshal(Marshaller m) {
         setNonce(base64Encoder.encodeToString(this.nonceBytes));
-        setEncryptedCipher(base64Encoder.encodeToString(this.encryptedCipherBytes));
+        setCipher(base64Encoder.encodeToString(this.cipherBytes));
         setTag(base64Encoder.encodeToString(this.tagBytes));
         setResults(base64Encoder.encodeToString(this.resultBytes));
         return true;
     }
-
 }

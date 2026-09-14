@@ -4,7 +4,7 @@ package net.iatsoftware.iat.communication;
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.EncryptedRSAKey;
+import net.iatsoftware.iat.entities.Crypt;
 import net.iatsoftware.iat.messaging.Handshake;
 import net.iatsoftware.iat.messaging.Manifest;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
@@ -48,8 +48,8 @@ public interface SessionState {
     MailService mailService();
     void setMailService(MailService mailService);
 
-    EncryptedRSAKey rsaKey();
-    void setRSAKey(EncryptedRSAKey key);
+    Crypt rsaKey();
+    void setRSAKey(Crypt key);
     
     boolean isAuthenticated();
     void setAuthenticated(boolean value);

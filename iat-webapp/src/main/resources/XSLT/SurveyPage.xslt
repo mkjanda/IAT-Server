@@ -248,7 +248,11 @@ table tr td:nth-of-type(2n - 1) {
                         margin-left: 20px;
                         }
 
-
+												li.Error {
+													color: #B42318;
+													font-size: 1.6vh;
+													font-style: italic;
+												}
 
 
                         .Clear

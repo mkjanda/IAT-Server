@@ -10,19 +10,19 @@ package net.iatsoftware.iat.events;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.messaging.Message;
+import net.iatsoftware.iat.messaging.MessageBase;
 
 import org.springframework.web.socket.WebSocketSession;
 
 public class WebSocketSendEvent extends WebSocketEvent {
-    private final Message message;
+    private final MessageBase message;
     
-    public WebSocketSendEvent(WebSocketSession session, Message message) {
+    public WebSocketSendEvent(WebSocketSession session, MessageBase message) {
         super(session, WebSocketEventType.DATA_SENT);
         this.message = message;
     }
     
-    public Message getData() {
+    public MessageBase getData() {
         return this.message;
     }
 }

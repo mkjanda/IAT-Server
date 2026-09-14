@@ -10,8 +10,8 @@ package net.iatsoftware.iat.messaging;
  * @author Michael Janda
  */
 
-import jakarta.xml.bind.Marshaller;
-import jakarta.xml.bind.Unmarshaller;
+import org.springframework.oxm.Marshaller;
+import org.springframework.oxm.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 
@@ -26,5 +26,5 @@ public abstract class MessageBase {
     }
     
     protected boolean doBeforeMarshal(Marshaller m) { return true; };
-    public void doAfterUnmarshal(Unmarshaller um, Object parent){};
+    protected void doAfterUnmarshal(Unmarshaller um, Object parent){};
 }

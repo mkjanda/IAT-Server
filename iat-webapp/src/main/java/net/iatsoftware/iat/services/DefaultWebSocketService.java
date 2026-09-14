@@ -13,6 +13,7 @@ package net.iatsoftware.iat.services;
 import net.iatsoftware.iat.communication.SessionState;
 import net.iatsoftware.iat.communication.TransactionContext;
 import net.iatsoftware.iat.messaging.Message;
+import net.iatsoftware.iat.messaging.MessageBase;
 import net.iatsoftware.iat.communication.TransactionHandler;
 import net.iatsoftware.iat.communication.WebSocketReplyChannel;
 import net.iatsoftware.iat.communication.WebSocketSessionState;
@@ -20,7 +21,6 @@ import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.events.WebSocketDataReceived;
 import net.iatsoftware.iat.events.WebSocketFinalSendEvent;
 import net.iatsoftware.iat.events.WebSocketSendEvent;
-import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.messaging.ActivationRequest;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
@@ -59,8 +59,8 @@ public class DefaultWebSocketService implements WebSocketService {
     @EventListener
     public void onMessageReceived(WebSocketDataReceived e) {
         try {
-        Message message = (Message)e.getMessage();
-        String productKey = message.getProductKey();
+        MessageBase message = (MessageBase)e.getMessage();
+        String productKey = ((Message)message).getProductKey();
         Client client = repositoryManager.getClientByProductKey(productKey);
         if (!e.getSession().getAttributes().containsKey("SessionState")) {
             e.getSession().getAttributes().put("SessionState", new WebSocketSessionState(e.getSession()));
@@ -100,9 +100,9 @@ public class DefaultWebSocketService implements WebSocketService {
         }
     }
 
-    private TextMessage buildTextMessage(Message env) throws java.io.IOException {
+    private TextMessage buildTextMessage(MessageBase msg) throws java.io.IOException {
         var stringWriter = new StringWriter();
-        marshaller.marshal(env, new StreamResult(stringWriter));
+        marshaller.marshal(msg, new StreamResult(stringWriter));
         debug.debug("Sending message to client: " + stringWriter.toString());
         return new TextMessage(stringWriter.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }

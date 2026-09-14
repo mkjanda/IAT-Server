@@ -25,45 +25,31 @@ import net.iatsoftware.iat.services.MailService;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.Caffeine;
-
 import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
-
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.micrometer.observation.autoconfigure.ObservationProperties.Http;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.scheduling.SchedulingTaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.ByteArrayOutputStream;
 import java.time.Duration;
-import javax.xml.transform.stream.StreamResult;
 
 
 @Controller
@@ -249,7 +235,6 @@ public class AdminController {
 			model.put(SessionProperties.LAST_ADMIN_PHASE, "false");
 		}
 		Long id = segmentList.get(0).getId();
-		segmentList.removeFirst();
 		return new ModelAndView("Admin/" + id.toString(), model);
 	}
 
@@ -257,18 +242,19 @@ public class AdminController {
 	@PostMapping(value = "", params = { "IATName", "ClientID", "target=adminV2", "!ABORT" })
 	public ModelAndView submitIATAdminV2(@RequestParam("IATName") String iatName,
 			@RequestParam("ClientID") long clientId, @RequestParam("IATSESSIONID") String sessId,
-			@RequestParam Map<String, String> parameterMap) {
+			@RequestParam Map<String, String> parameterMap) { 
 		IATSession sess = sessions.getIfPresent(sessId);
 		if (sess == null) {
 			var view = new ModelAndView("AdministrationTimeout");
 			view.addObject(SessionProperties.HTTP_REFERER, "-");
 			return view;
 		}
+		int adminPhase = (int) sess.getAttribute(SessionProperties.ADMIN_PHASE) + 1;
 		var test = (IAT) sess.getAttribute(SessionProperties.TEST);
 		String httpReferer = (String) sess.getAttribute(SessionProperties.HTTP_REFERER);
 		List<TestSegment> segmentList = (List<TestSegment>) sess.getAttribute(SessionProperties.SEGMENT_LIST);
 		var results = (ResultSet) sess.getAttribute(SessionProperties.RESULTS);
-		if (segmentList.isEmpty()) {
+		if (segmentList.size() == adminPhase) {
 			var iatResults = new IATResult();
 			iatResults.parseResults(parameterMap);
 			results.setIATResult(iatResults);
@@ -284,26 +270,19 @@ public class AdminController {
 			}
 			sessions.invalidate(sess.getId());
 			return new ModelAndView(new RedirectView(test.getRedirectOnComplete()));
-		}
-		else if (segmentList.isEmpty()) 
-		{
 		} else {
-			var surveyResult = new SurveyResult(segmentList.get(0).getElemName(), parameterMap);
+			var surveyResult = new SurveyResult(segmentList.get(adminPhase - 1).getElemName(), parameterMap);
 			results.getSurveyResult().add(surveyResult);
 		}
-
 		Map<String, Object> model = new HashMap<>();
-		var adminPhase = (Integer) sess.getAttribute(SessionProperties.ADMIN_PHASE) + 1;
-		sess.setAttribute(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
 		sess.setAttribute(SessionProperties.ADMIN_PHASE, adminPhase);
 		model.put(SessionProperties.ADMIN_PHASE, adminPhase);
 		model.put(SessionProperties.IAT_SESSION_ID, sess.getId());
 		model.put(SessionProperties.TEST, test);
 		model.put(SessionProperties.CLIENT_ID, clientId);
-		model.put(SessionProperties.TEST_SEGMENT_ID, segmentList.get(0).getId());
+		model.put(SessionProperties.TEST_SEGMENT_ID, segmentList.get(adminPhase).getId());
 		model.put(SessionProperties.HTTP_REFERER, httpReferer);
-		Long testSegmentId = segmentList.get(0).getId();
-		segmentList.removeFirst();
+		Long testSegmentId = segmentList.get(adminPhase).getId();
 		return new ModelAndView("Admin/" + testSegmentId.toString(), model);
 	}
 /*

@@ -104,19 +104,21 @@ public class ReportClientError {
 
     private static final String PNG_MIME_TYPE = "image/png";
 
+    private byte[] zeroPrepend(byte[] input) {
+        byte[] bytes = new byte[input.length + 1];
+        bytes[0] = 0;
+        System.arraycopy(input, 0, bytes, 1, input.length);
+        return bytes;
+    }
+
+
     private Cipher getCipher()
             throws java.security.NoSuchAlgorithmException, java.security.spec.InvalidKeySpecException,
             javax.crypto.NoSuchPaddingException, java.security.InvalidKeyException {
         var modulusData = b64Decoder.decode(rsaModulus);
-        var modulusBytes = new byte[modulusData.length + 1];
-        modulusBytes[0] = 0;
-        System.arraycopy(modulusData, 0, modulusBytes, 1, modulusData.length);
         var exponentData = b64Decoder.decode(rsaExponent);
-        var exponentBytes = new byte[exponentData.length + 1];
-        exponentBytes[0] = 0;
-        System.arraycopy(exponentData, 0, exponentBytes, 1, exponentData.length);
-        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(modulusBytes),
-                new BigInteger(exponentBytes));
+        RSAPublicKeySpec keySpec = new RSAPublicKeySpec(new BigInteger(zeroPrepend(modulusData)),
+                new BigInteger(zeroPrepend(exponentData)));
         KeyFactory fact = KeyFactory.getInstance("RSA");
         PublicKey pubKey = fact.generatePublic(keySpec);
         Cipher c = Cipher.getInstance("RSA/ECB/PKCS1Padding");

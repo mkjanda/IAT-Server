@@ -8,7 +8,7 @@ import org.springframework.web.socket.WebSocketSession;
 import net.iatsoftware.iat.events.WebSocketFinalSendEvent;
 import net.iatsoftware.iat.events.WebSocketSendEvent;
 import net.iatsoftware.iat.events.OutboundFinalMessageEvent;
-import net.iatsoftware.iat.messaging.Message;
+import net.iatsoftware.iat.messaging.MessageBase;
 
 
 public class WebSocketReplyChannel implements ReplyChannel {
@@ -22,12 +22,12 @@ public class WebSocketReplyChannel implements ReplyChannel {
     }
 
     @Override
-    public void send(Message msg) {
+    public void send(MessageBase msg) {
         publisher.publishEvent(new WebSocketSendEvent(session, msg));
     }
 
     @Override
-    public void sendFinal(Message msg) {
+    public void sendFinal(MessageBase msg) {
         publisher.publishEvent(new WebSocketFinalSendEvent(session, msg));
     }
 

@@ -7,13 +7,11 @@ package net.iatsoftware.iat;
 
 import net.iatsoftware.iat.admin.AdminViewResolver;
 import net.iatsoftware.iat.events.WebSocketDataReceived;
-import net.iatsoftware.iat.messaging.Envelope;
 import net.iatsoftware.iat.repositories.IATRepositoryManager;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.mysql.cj.jdbc.MysqlConnectionPoolDataSource;
 import com.zaxxer.hikari.HikariDataSource;
 
 import org.apache.logging.log4j.LogManager;

@@ -13,7 +13,8 @@ package net.iatsoftware.iat.messaging;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.generated.ActivationResult;
 
-import jakarta.xml.bind.Marshaller;
+import org.springframework.oxm.Marshaller;
+
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
@@ -64,7 +65,7 @@ public class ActivationResponse extends net.iatsoftware.iat.generated.GActivatio
     }
 
     @Override
-    public boolean doBeforeMarshal(Marshaller m)
+    protected boolean doBeforeMarshal(Marshaller m)
     {
         if (activationResult != ActivationResult.SUCCESS) {
             this.verificationCode = "FAILED";

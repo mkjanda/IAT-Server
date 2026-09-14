@@ -2,7 +2,7 @@ package net.iatsoftware.iat.messaging;
 
 import java.util.ArrayList;
 import java.util.Base64;
-import jakarta.xml.bind.Marshaller;
+import org.springframework.oxm.Marshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;

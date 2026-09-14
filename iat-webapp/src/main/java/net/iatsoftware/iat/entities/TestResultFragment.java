@@ -25,6 +25,7 @@ import jakarta.persistence.Lob;
 @Entity
 @Table(name = "test_result_fragments")
 public class TestResultFragment implements java.io.Serializable {
+    public static final long serialVersionUID = 1;
     private long id;
     private AdminTimer adminTimer;
     private byte[] resultFragment = null, cipher = null, IV = null;

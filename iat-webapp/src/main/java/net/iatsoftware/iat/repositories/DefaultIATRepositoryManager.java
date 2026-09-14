@@ -12,7 +12,6 @@ package net.iatsoftware.iat.repositories;
 
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.LogManager;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.Transactional;
 
 import net.iatsoftware.iat.entities.Client;
@@ -28,11 +27,9 @@ import net.iatsoftware.iat.entities.UniqueResponse;
 import net.iatsoftware.iat.entities.UniqueResponseItem;
 import net.iatsoftware.iat.entities.EncryptedResultSet;
 import net.iatsoftware.iat.entities.ResourceReference;
-import net.iatsoftware.iat.entities.EncryptedRSAKey;
-import net.iatsoftware.iat.entities.RSAKeyData;
+import net.iatsoftware.iat.entities.Crypt;
 import net.iatsoftware.iat.entities.TestResultFragment;
 import net.iatsoftware.iat.entities.TestResource;
-import net.iatsoftware.iat.entities.DynamicSpecifier;
 import net.iatsoftware.iat.entities.AdminTimer;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.SpecifierValue;
@@ -43,7 +40,6 @@ import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.messaging.ServerReport;
 import net.iatsoftware.iat.messaging.IATReport;
 import net.iatsoftware.iat.messaging.Manifest;
-import net.iatsoftware.iat.messaging.RSAKeyPair;
 import net.iatsoftware.iat.messaging.IATList;
 import net.iatsoftware.iat.messaging.IATListEntry;
 
@@ -54,8 +50,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.ByteArrayOutputStream;
-import javax.xml.transform.stream.StreamResult;
 import java.util.stream.Collectors;
 
 import jakarta.inject.Inject;
@@ -91,13 +85,9 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Inject
     TestResultFragmentRepository testResultFragmentRepository;
     @Inject
-    DynamicSpecifierRepository dynamicSpecifierRepository;
-    @Inject
     DeploymentSessionRepository deploymentSessionRepository;
     @Inject
     SpecifierValueRepository specifierValueRepository;
-    @Inject
-    RSADataRepository rsaDataRepository;
     @Inject
     TestBackupFileRepository testBackupFileRepository;
     @Inject
@@ -132,7 +122,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void addEncryptionKey(final IAT test, final EncryptedRSAKey key) {
+    public void addEncryptionKey(final IAT test, final Crypt key) {
         key.setTest(test);
         partiallyEncryptedRSAKeyRepository.add(key);
     }
@@ -228,17 +218,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
             critical.error("Unable to create JAXBContext", ex);
             return -1L;
         }
-    }
-
-    @Transactional
-    @Override
-    public void registerEncryptionKeys(final RSAKeyPair keyPair, final Long testID) {
-        final EncryptedRSAKey dataKey = new EncryptedRSAKey();
-        dataKey.setTest(iatRepository.get(testID));
-        dataKey.setExponent(keyPair.getDataKey().getExponent());
-        dataKey.setModulus(keyPair.getDataKey().getModulus());
-        dataKey.setEncryptedKey(keyPair.getDataKey().getEncryptedKey());
-        partiallyEncryptedRSAKeyRepository.add(dataKey);
     }
 
     @Transactional
@@ -358,7 +337,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public EncryptedRSAKey getEncryptionKey(final IAT test) {
+    public Crypt getEncryptionKey(final IAT test) {
         return partiallyEncryptedRSAKeyRepository.getDataKey(test);
     }
 
@@ -440,7 +419,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public EncryptedRSAKey getDataKey(final Long clientID, final String testName) {
+    public Crypt getDataKey(final Long clientID, final String testName) {
         final IAT test = iatRepository.get(testName, clientID);
         if (test == null) {
             return null;
@@ -506,14 +485,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
             sr.getIATReport().add(report);
         }
         return sr;
-    }
-
-    @Transactional
-    @Override
-    public void addDynamicSpecifier(final DynamicSpecifier dSpec, final IAT test) {
-        dSpec.setTest(test);
-        dSpec.setTestSegment(testSegmentRepository.getByTestAndElemName(test, dSpec.getSurveyName()));
-        dynamicSpecifierRepository.add(dSpec);
     }
 
     @Transactional
@@ -617,13 +588,13 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public void storeEncryptionKey(EncryptedRSAKey key) {
+    public void storeEncryptionKey(Crypt key) {
         partiallyEncryptedRSAKeyRepository.add(key);
     }
 
     @Transactional
     @Override
-    public void updateEncryptionKey(EncryptedRSAKey key) {
+    public void updateEncryptionKey(Crypt key) {
         partiallyEncryptedRSAKeyRepository.update(key);
     }
 
@@ -688,7 +659,7 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     }
 
     @Transactional
-    public EncryptedRSAKey getRSAKey(Long clientID, String testName) {
+    public Crypt getRSAKey(Long clientID, String testName) {
         IAT test = iatRepository.get(testName, clientID);
         return partiallyEncryptedRSAKeyRepository.getDataKey(test);
     }
@@ -706,11 +677,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     @Transactional
     public void updateUniqueResponse(UniqueResponse ur) {
         uniqueResponseRepository.update(ur);
-    }
-
-    @Transactional
-    public RSAKeyData getRandomRSAData() {
-        return rsaDataRepository.getRandomRSA();
     }
 
     @Transactional
@@ -858,11 +824,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
         return testResourceRepository.getDeploymentResources(test);
     }
 
-    @Scheduled(initialDelay = 86_400_000L, fixedDelay = 86_400_000L)
-    @Transactional
-    public void cleanRSARepository() {
-        rsaDataRepository.clean();
-    }
 
     @Transactional
     public void deleteDeploymentSession(Long id) {

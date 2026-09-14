@@ -11,7 +11,7 @@ package net.iatsoftware.iat.resultdata;
  */
 import net.iatsoftware.iat.configfile.ConfigFile;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.EncryptedRSAKey;
+import net.iatsoftware.iat.entities.Crypt;
 
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
@@ -24,11 +24,12 @@ public class ResultSetDescriptor extends net.iatsoftware.iat.generated.GResultSe
     public ResultSetDescriptor() {
     }
 
-    public void load(IAT test, ConfigFile configFile, EncryptedRSAKey dataKey, int numResults) {
+    public ResultSetDescriptor(IAT test, ConfigFile configFile, Crypt dataKey, int numResults) {
         this.testAuthor = test.getClient().getFirstName() + " " + test.getClient().getLastName();
         this.dataVersion = test.getResultFormat();
-        this.rsaKey = dataKey;
+        this.encRsaParams = dataKey;
         this.numResults = numResults;
+        this.configFile = configFile;        
     }
 
 }

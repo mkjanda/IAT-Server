@@ -6,17 +6,17 @@ import org.springframework.web.socket.WebSocketSession;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.User;
-import net.iatsoftware.iat.messaging.Message;
+import net.iatsoftware.iat.messaging.MessageBase;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 import net.iatsoftware.iat.services.MailService;
 
 public final class TransactionContext {
     private final WebSocketSession session;;
-    private final Message inbound;
+    private final MessageBase inbound;
     private final ReplyChannel reply;
     private final SessionState sessionState;
 
-    public TransactionContext(WebSocketSession session, Message inbound,
+    public TransactionContext(WebSocketSession session, MessageBase inbound,
                               ReplyChannel reply, SessionState sessionState) {
         this.inbound = inbound;
         this.reply = reply;
@@ -25,7 +25,7 @@ public final class TransactionContext {
     }
 
     public String sessionId() { return session.getId(); }
-    public Message inbound() { return inbound; }
+    public MessageBase  inbound() { return inbound; }
     public ReplyChannel reply() { return reply; }
     public SessionState sessionState() { return sessionState; }
 

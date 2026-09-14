@@ -46,7 +46,6 @@ public class IAT implements java.io.Serializable {
     private long id = -1;
     private int numAdministrations = 0, testSizeKB = 0;
     private String testName, URL, oauthClientSecret = null, oauthClientRedirect = null, oauthClientId = null;
-    private TestType testType = TestType.SetNumberOfPresentations;
     private Calendar uploadTimestamp, lastDataRetrieval, resultRetrievalTokenAge;
     private boolean alternate = false, alternated = false, oauthSubpathRedirects = false, redeployed = false;
     private byte[] deploymentDescriptor, resultRetrievalToken;
@@ -56,7 +55,7 @@ public class IAT implements java.io.Serializable {
     private int resultFormat, numElements = -1;
     private User user;
     private UniqueResponseItem uniqueResponseItem;
-    private EncryptedRSAKey dataKey = null;
+    private Crypt dataKey = null;
     private String version;
     private String tokenName = "";
     private JAXBContext marshaller = null;
@@ -121,10 +120,10 @@ public class IAT implements java.io.Serializable {
     }
 
     @OneToOne(fetch=FetchType.EAGER, optional=true, mappedBy="test")
-    public EncryptedRSAKey getDataKey() {
+    public Crypt getDataKey() {
         return this.dataKey;
     }
-    public void setDataKey(EncryptedRSAKey val) {
+    public void setDataKey(Crypt val) {
         this.dataKey = val;
     }
     
@@ -156,15 +155,6 @@ public class IAT implements java.io.Serializable {
         this.testSizeKB = val;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "test_type")
-    public TestType getTestType() {
-        return this.testType;
-    }
-
-    public void setTestType(TestType val) {
-        this.testType = val;
-    }
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "upload_timestamp")

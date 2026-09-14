@@ -10,7 +10,7 @@ package net.iatsoftware.iat.messaging;
  * @author michael
  */
 
- import jakarta.xml.bind.Marshaller;
+import org.springframework.oxm.Marshaller;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlType;
@@ -21,7 +21,7 @@ public class ClientActivityEvent extends net.iatsoftware.iat.generated.GClientAc
 
 
     @Override
-    public boolean doBeforeMarshal(Marshaller m) {
+    protected boolean doBeforeMarshal(Marshaller m) {
         this.logMessage = super.getTime() + " " + super.getEventType() + " " + super.getTargetType() + "[" + super.id + "]";
         if (super.getParameter().size() > 0) {
             this.logMessage += " (";

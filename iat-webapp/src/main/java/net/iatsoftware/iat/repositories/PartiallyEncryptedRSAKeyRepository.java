@@ -11,9 +11,9 @@ package net.iatsoftware.iat.repositories;
  */
 
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.EncryptedRSAKey;
+import net.iatsoftware.iat.entities.Crypt;
 
-public interface PartiallyEncryptedRSAKeyRepository extends GenericRepository<Long, EncryptedRSAKey> {
-    EncryptedRSAKey getDataKey(IAT test);
+public interface PartiallyEncryptedRSAKeyRepository extends GenericRepository<Long, Crypt> {
+    Crypt getDataKey(IAT test);
     void copyRSAKeys(IAT newTest, IAT oldTest);
 }

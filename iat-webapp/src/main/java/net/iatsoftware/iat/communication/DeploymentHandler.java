@@ -6,7 +6,7 @@ import org.springframework.oxm.Marshaller;
 import org.springframework.stereotype.Component;
 
 import net.iatsoftware.iat.configfile.ConfigFile;
-import net.iatsoftware.iat.entities.EncryptedRSAKey;
+import net.iatsoftware.iat.entities.Crypt;
 import net.iatsoftware.iat.entities.TestResource;
 import net.iatsoftware.iat.generated.ManifestType;
 import net.iatsoftware.iat.generated.ResourceType;
@@ -65,7 +65,7 @@ public class DeploymentHandler implements TransactionHandler {
             return true;
         } else if (msg instanceof ConfigFile) {
             return true;
-        } else if (msg instanceof EncryptedRSAKey)
+        } else if (msg instanceof Crypt)
             return true;
         else if (msg instanceof TransactionRequest) {
             if (((TransactionRequest) msg).getType() == TransactionType.DO_IAT_DEPLOY ||
@@ -77,8 +77,8 @@ public class DeploymentHandler implements TransactionHandler {
 
     @Override
     public void handle(TransactionContext ctx) {
-        if (ctx.inbound() instanceof EncryptedRSAKey) {
-            var key = (EncryptedRSAKey) ctx.inbound();
+        if (ctx.inbound() instanceof Crypt) {
+            var key = (Crypt) ctx.inbound();
             ctx.sessionState().setRSAKey(key);
             key.setTest(ctx.test());
             ctx.test().setDataKey(key);

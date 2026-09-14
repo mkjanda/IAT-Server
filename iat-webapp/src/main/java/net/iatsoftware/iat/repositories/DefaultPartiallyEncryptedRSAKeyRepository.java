@@ -9,7 +9,7 @@ package net.iatsoftware.iat.repositories;
  *
  * @author Michael Janda
  */
-import net.iatsoftware.iat.entities.EncryptedRSAKey;
+import net.iatsoftware.iat.entities.Crypt;
 import net.iatsoftware.iat.entities.IAT;
 
 import org.springframework.stereotype.Repository;
@@ -21,15 +21,15 @@ import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.Predicate;
 
 @Repository
-public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaRepository<Long, EncryptedRSAKey>
+public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaRepository<Long, Crypt>
         implements PartiallyEncryptedRSAKeyRepository {
 
     @Override
-    public EncryptedRSAKey getDataKey(IAT test) {
+    public Crypt getDataKey(IAT test) {
         try {
             CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-            CriteriaQuery<EncryptedRSAKey> query = cb.createQuery(EncryptedRSAKey.class);
-            Root<EncryptedRSAKey> root = query.from(EncryptedRSAKey.class);
+            CriteriaQuery<Crypt> query = cb.createQuery(Crypt.class);
+            Root<Crypt> root = query.from(Crypt.class);
             Predicate pred = cb.equal(root.get("test"), test);
             return this.entityManager.createQuery(query.where(pred)).getSingleResult();
         } catch (jakarta.persistence.NoResultException ex) {
@@ -41,13 +41,13 @@ public class DefaultPartiallyEncryptedRSAKeyRepository extends GenericJpaReposit
     @Override
     public void copyRSAKeys(IAT newTest, IAT oldTest) {
         CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
-        CriteriaQuery<EncryptedRSAKey> query = cb.createQuery(EncryptedRSAKey.class);
-        Root<EncryptedRSAKey> root = query.from(EncryptedRSAKey.class);
+        CriteriaQuery<Crypt> query = cb.createQuery(Crypt.class);
+        Root<Crypt> root = query.from(Crypt.class);
         Predicate pred = cb.equal(root.get("test"), oldTest);
-        List<EncryptedRSAKey> keys = this.entityManager.createQuery(query.where(pred)).getResultList();
-        for (EncryptedRSAKey key : keys) {
-            EncryptedRSAKey copy = new EncryptedRSAKey();
-            copy.setEncryptedKeyBytes(key.getEncryptedKeyBytes());
+        List<Crypt> keys = this.entityManager.createQuery(query.where(pred)).getResultList();
+        for (Crypt key : keys) {
+            Crypt copy = new Crypt();
+            copy.setRSAParamsBytes(key.getRSAParamsBytes());
             copy.setModulusBytes(key.getModulusBytes());
             copy.setExponentBytes(key.getExponentBytes());
             copy.setTest(newTest);

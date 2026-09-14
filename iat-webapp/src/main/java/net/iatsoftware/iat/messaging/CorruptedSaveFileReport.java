@@ -10,11 +10,11 @@ package net.iatsoftware.iat.messaging;
  * @author michael
  */
 
+import org.springframework.oxm.Unmarshaller;
 
 import java.time.format.FormatStyle;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import jakarta.xml.bind.Unmarshaller;
 import jakarta.xml.bind.annotation.XmlAccessType;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -26,7 +26,7 @@ public class CorruptedSaveFileReport extends net.iatsoftware.iat.generated.GCorr
     private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.LONG);
     
     @Override
-    public void doAfterUnmarshal(Unmarshaller um, Object parent) {
+    protected void doAfterUnmarshal(Unmarshaller um, Object parent) {
     	setReportTime(dateFormat.format(Calendar.getInstance().toInstant()));
     }
 }
