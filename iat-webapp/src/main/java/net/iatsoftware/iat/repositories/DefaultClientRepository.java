@@ -13,6 +13,8 @@ import net.iatsoftware.iat.dataservices.DownloadPassword;
 import net.iatsoftware.iat.dataservices.ProductKey;
 import net.iatsoftware.iat.entities.Client;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger; 
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,6 +27,8 @@ import jakarta.persistence.criteria.Root;
 @Repository
 public class DefaultClientRepository extends GenericJpaRepository<Long, Client>
         implements ClientRepository {
+
+    private static final Logger logger = LogManager.getLogger(DefaultClientRepository.class);
 
     @Override
     public boolean productKeyExists(String productKey) {
@@ -222,7 +226,8 @@ public class DefaultClientRepository extends GenericJpaRepository<Long, Client>
             root = clientQuery.from(Client.class);
             pred = cb.equal(root.get("clientId"), id);
             return this.entityManager.createQuery(clientQuery.select(root).where(pred)).getSingleResult();
-        } catch (Exception ex) {
+        } catch (jakarta.persistence.NoResultException | jakarta.persistence.NonUniqueResultException ex) {
+            logger.warn("No client found with email: " + email, ex);
             return null;
         }
     }

@@ -19,7 +19,7 @@
             <tr>
                 <td colspan="2">
                     <div id="content">
-                        <p style="font-family: oxtail, serif; font-size: 16px;" th:text="${user.fullName + ','}"></p>
+                        <p style="font-family: oxtail, serif; font-size: 16px;" th:text="${client.fullName + ','}"></p>
                         <p style="font-family: oxtail, serif; font-size: 16px;">
                             You are receiving this email because a copy of <span
                                 style="font-weight: bold; color: rgb(163, 87, 118);">IAT Design</span> was recently registered
@@ -31,8 +31,8 @@
                             address below.
                         </p>
                         <p style="font-family: oxtail, serif; font-size: 16px;">
-                            <a th:href="@{https://www.iatsoftware.net/IAT/EMailVerification(VerificationKey=${user.verificationKey})}"
-                               th:text="${'https://www.iatsoftware.net/IAT/EMailVerification?VerificationKey=' + user.verificationKey}"></a>
+                            <a th:href="@{https://www.iatsoftware.net/IAT/EMailVerification(VerificationKey=${client.productKey})}"
+                               th:text="${'https://www.iatsoftware.net/IAT/EMailVerification?VerificationKey=' + client.productKey}"></a>
                         </p>
                     </div>
                 </td>

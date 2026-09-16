@@ -58,29 +58,6 @@ public class User extends net.iatsoftware.iat.generated.GUserInfo implements jav
     public User() {
     }
 
-    public User(ActivationRequest req, int userNum, Client c) {
-        super.setTitle(req.getTitle());
-        super.setFName(req.getFName());
-        super.setLName(req.getLName());
-        super.setEMail(req.getEMail().toLowerCase());
-        this.activationKey = generateActivationKey(c.getProductKey());
-        byte[] bytes = new byte[24];
-        rand.nextBytes(bytes);
-        this.verificationKey = Base64.getEncoder().encodeToString(bytes) + "." + Long.toString(c.getClientId());
-        List<User> users = c.getUsers();
-        if (users != null) {
-            while (users.stream().map(u -> u.getActivationKey()).collect(Collectors.toList()).contains(this.activationKey)) {
-                this.activationKey = generateActivationKey(c.getProductKey());
-            }
-            while (users.stream().map(u -> u.getVerificationKey()).collect(Collectors.toList()).contains(this.verificationKey)) {
-                rand.nextBytes(bytes);
-                this.verificationKey = Base64.getEncoder().encodeToString(bytes) + "." + Long.toString(c.getClientId());
-            }
-        }
-        this.activationKey = generateActivationKey(c.getProductKey());
-        this.userNum = userNum;
-        this.client = c;
-    }
 
     public static String encodeKey(String key) {
         String str = encoder.encodeToString(key.getBytes(StandardCharsets.UTF_8));

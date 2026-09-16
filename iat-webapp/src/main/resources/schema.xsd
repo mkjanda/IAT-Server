@@ -862,6 +862,7 @@
             <xs:enumeration value="InsufficientDiskSpace"/>
             <xs:enumeration value="InsufficientIATS"/>
             <xs:enumeration value="IATExists"/>
+            <xs:enumeration value="RequestProductKey" />
             <xs:enumeration value="RequestPacket"/>
             <xs:enumeration value="RequestEncryptionKey"/>
             <xs:enumeration value="RequestRetrievalReady"/>
@@ -884,7 +885,7 @@
             <xs:enumeration value="IATBeingDeployed"/>
             <xs:enumeration value="IATDeployHaltFailed"/>
             <xs:enumeration value="NoSuchClient"/>
-            <xs:enumeration value="EMailAlreadyVerified"/>
+            <xs:enumeration value="EmailAlreadyVerified"/>
             <xs:enumeration value="RequestServerReport"/>
             <xs:enumeration value="RetrieveIATItemSize"/>
             <xs:enumeration value="RequestLegacyIATData"/>
@@ -894,39 +895,26 @@
             <xs:enumeration value="PasswordValid"/>
             <xs:enumeration value="PasswordInvalid"/>
             <xs:enumeration value="RequestItemSlides"/>
-            <xs:enumeration value="CannotRestoreBackup"/>
             <xs:enumeration value="BackupRestored"/>
-            <xs:enumeration value="RequestIATRedeploy"/>
-            <xs:enumeration value="RequestReconnection"/>
             <xs:enumeration value="RetrieveProductRequests"/>
             <xs:enumeration value="Success"/>
             <xs:enumeration value="Fail"/>
-            <xs:enumeration value="QueryRemainingIATS"/>
-            <xs:enumeration value="RemainingIATS"/>
             <xs:enumeration value="RequestDataUpload"/>
-            <xs:enumeration value="TestBeingDeployed"/>
             <xs:enumeration value="ItemSlidesReady"/>
-            <xs:enumeration value="DeploymentDescriptorMismatch"/>
-            <xs:enumeration value="CannotCreateBackup"/>
             <xs:enumeration value="EncryptionKeysReceived"/>
             <xs:enumeration value="DeploymentFileManifestReceived"/>
-            <xs:enumeration value="TokenDefinitionReceived"/>
             <xs:enumeration value="ItemSlideManifestReceived"/>
             <xs:enumeration value="AbortDeployment"/>
-            <xs:enumeration value="QueryPublicityIAT"/>
-            <xs:enumeration value="PublicityIAT"/>
-            <xs:enumeration value="UpdateUserInformation"/>
             <xs:enumeration value="ServerError"/>
             <xs:enumeration value="EmailVerificationMismatch"/>
-            <xs:enumeration value="TestFilesMissing"/>
             <xs:enumeration value="DeploymentAbortFailed"/>
             <xs:enumeration value="DeploymentAborted"/>
             <xs:enumeration value="ResultsReady"/>
             <xs:enumeration value="NoActivationsRemain"/>
-            <xs:enumeration value="NotifyDownloadLegacySoftware" />
             <xs:enumeration value="RSAKey"/>
             <xs:enumeration value="AuthToken"/>
             <xs:enumeration value="ClearSessionState" />
+            <xs:enumeration value="ProductKey" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -1665,13 +1653,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="activation-request-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.ActivationRequest"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
     <xs:complexType name="GActivationRequest">
         <xs:annotation>
             <xs:appinfo>
@@ -1681,10 +1662,8 @@
         <xs:complexContent>
             <xs:extension base="iat:message-impl">
                 <xs:sequence>
-                    <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Title" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="FName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="LName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                    <xs:element name="Email" type="xs:string" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

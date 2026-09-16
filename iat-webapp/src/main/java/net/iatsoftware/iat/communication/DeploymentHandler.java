@@ -39,6 +39,10 @@ public class DeploymentHandler implements TransactionHandler {
         if (test != null) {
             ctx.reply().send(new TransactionRequest(TransactionType.IAT_EXISTS));
         } else {
+            if (ctx.sessionState().repositoryManager().getNumRemainingIATs(ctx.client()) <= 0) {
+                ctx.reply().send(new TransactionRequest(TransactionType.INSUFFICIENT_IATS));
+                return;
+            }
             try {
                 long deploymentId = deploymentService.beginNewDeployment(ctx.client(), ctx.user(),
                         transaction.getIATName(), ctx.sessionState(), ctx.reply());
@@ -85,7 +89,7 @@ public class DeploymentHandler implements TransactionHandler {
             iatRepositoryManager.addEncryptionKey(ctx.test(), key);
             var outTrans = new TransactionRequest(TransactionType.REQUEST_CONFIG_FILE);
             outTrans.setDeploymentId(ctx.deploymentId());
-            ctx.reply().send(outTrans);
+            ctx.reply().sendFinal(outTrans);
         } else if (ctx.inbound() instanceof TransactionRequest) {
             var msg = (TransactionRequest) ctx.inbound();
             if (msg.getType() == TransactionType.REQUEST_IAT_UPLOAD) {
@@ -137,6 +141,10 @@ public class DeploymentHandler implements TransactionHandler {
                 var deployer = deploymentService.getDeployer(ctx.deploymentId());
                 var test = iatRepositoryManager.getTest(deployer.getTestId());
                 test.setTestSizeKB(test.getTestSizeKB() + manifest.sizeInKb());
+                if (ctx.sessionState().repositoryManager().getFreeDiskSpaceKB(ctx.client()) < test.getTestSizeKB()) {
+                    ctx.reply().sendFinal(new TransactionRequest(TransactionType.INSUFFICIENT_DISK_SPACE));
+                    return;
+                }
                 iatRepositoryManager.updateIAT(test);
                 outTrans = new TransactionRequest(TransactionType.REQUEST_FILES);
                 outTrans.setDeploymentId(ctx.deploymentId());

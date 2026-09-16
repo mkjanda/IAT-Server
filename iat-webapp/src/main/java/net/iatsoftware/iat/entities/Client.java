@@ -37,7 +37,7 @@ public class Client implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
     private long id;
     private String productKey, firstName, lastName, phone, city, province, country, organization, email, address1, address2;
-    private String organizationId = null, postalCode, productUse, downloadPassword;
+    private String organizationId = null, postalCode, productUse, downloadPassword, name;
     private int activationsConsumed, diskAlottmentMB, numIATsAlotted, administrations, administrationsRemaining, downloadsConsumed;
     private Calendar registrationDate = Calendar.getInstance();
     private boolean frozen, deleted, isolateUsers, killFiled = false;
@@ -103,6 +103,17 @@ public class Client implements java.io.Serializable {
     public void setLastName(String val) {
         this.lastName = val;
     }
+
+    @Basic
+    @Column(name = "name")
+    public String getName() {
+        return this.name;
+    }
+
+    public void setName(String val) {
+        this.name = val;
+    }
+
 
     @Basic
     @Column(name = "organization")

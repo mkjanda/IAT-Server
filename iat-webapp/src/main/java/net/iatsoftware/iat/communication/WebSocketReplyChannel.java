@@ -7,7 +7,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 import net.iatsoftware.iat.events.WebSocketFinalSendEvent;
 import net.iatsoftware.iat.events.WebSocketSendEvent;
-import net.iatsoftware.iat.events.OutboundFinalMessageEvent;
 import net.iatsoftware.iat.messaging.MessageBase;
 
 

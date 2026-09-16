@@ -66,35 +66,30 @@ public class DefaultWebSocketService implements WebSocketService {
             e.getSession().getAttributes().put("SessionState", new WebSocketSessionState(e.getSession()));
         }
         SessionState session = (SessionState) e.getSession().getAttributes().get("SessionState");
-        if (session.client() == null) {
+        if (session.client() == null && client != null) {
             session.setClient(client);
+            client = session.client();
         }
-        client = session.client();
         session.setClientRepositoryManager(repositoryManager);
         session.setRepositoryManager(iatRepositoryManager);
         session.setMailService(mailService);
         session.setMarshaller(marshaller);
         session.setUnmarshaller(unmarshaller);
         var ctx = new TransactionContext(e.getSession(), message, new WebSocketReplyChannel(e.getSession(), this.publisher), session);
-        if (client == null) {
+        if (client == null && !(message instanceof ActivationRequest)) {
             logger.error("Received message from unknown client with product key " + productKey);
             e.getSession().close();
             return;
-        }
-        if (!(message instanceof ActivationRequest) && client.getUsers().isEmpty()) {
-            e.getSession().close();
-            return;
-        }
-        if (client.isFrozen() || client.isDeleted() || client.isKillFiled()) {
+        } else if (client != null && (client.isFrozen() || client.isDeleted() || client.isKillFiled())) {
             logger.error("Received message from frozen or deleted client with product key " + productKey);
             e.getSession().close();
             return;
         }
-            handlers.forEach(h -> {
-                if (h.supports(ctx)) {
-                    h.handle(ctx);
-                }
-            });
+        handlers.forEach(h -> {
+            if (h.supports(ctx)) {
+                h.handle(ctx);
+            }
+        });
         } catch (Exception ex) {
             critical.error("Error processing client message", ex);
         }

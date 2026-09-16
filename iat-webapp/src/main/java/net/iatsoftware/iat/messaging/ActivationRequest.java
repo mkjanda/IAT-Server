@@ -21,7 +21,7 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
 
-@XmlRootElement(name = "AcitvationRequest")
+@XmlRootElement(name = "ActivationRequest")
 @XmlAccessorType(XmlAccessType.NONE)
 public class ActivationRequest extends net.iatsoftware.iat.generated.GActivationRequest {
     private static final Random random = new Random();

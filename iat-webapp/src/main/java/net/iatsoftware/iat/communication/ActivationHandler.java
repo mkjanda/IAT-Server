@@ -1,38 +1,84 @@
 package net.iatsoftware.iat.communication;
 
-import net.iatsoftware.iat.entities.User;
-import net.iatsoftware.iat.generated.ActivationResult;
+import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.messaging.ActivationRequest;
-import net.iatsoftware.iat.messaging.ActivationResponse;
+import net.iatsoftware.iat.messaging.TransactionRequest;
+import net.iatsoftware.iat.generated.TransactionType;
 import net.iatsoftware.iat.services.EmailParameters;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
-@Component
-public class ActivationHandler implements TransactionHandler {
-    private final String logoClasspathLocation = "classpath:email/images/logo.png";
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
+import java.util.Random;
 
-    public boolean supports(TransactionContext ctx) {
-        return (ctx.inbound() instanceof ActivationRequest);    
+@Component
+@PropertySource("classpath:email/email-config.properties")
+public class ActivationHandler implements TransactionHandler {
+    static final Random RANDOM = new Random();
+    private static final Logger critical = LogManager.getLogger("critical");
+    
+    @Value("${mail.images.logo-classpath-location}")
+    private String logoClasspathLocation;
+
+    private String generateProductKey() {
+        List<String> codeDigits = new ArrayList<>();
+        List<String> chars = Arrays.asList("01234567890ABCDEFGHIJKLMNOPQRSTUVXYZ".split(""));
+        for (int ctr = 0; ctr < 20; ctr++) 
+            codeDigits.add(chars.get(RANDOM.nextInt(chars.size())));
+        return codeDigits.stream().reduce("", (a, b) -> a + b, (a, b) -> a + b).toString();
     }
 
-    public void handle(TransactionContext ctx) {
-        User user = ctx.user();
-        if (user == null) {
-            user = new User((ActivationRequest)ctx.inbound(), 1, ctx.client());
-            ctx.clientRepositoryManager().addUser(user);
+    private void handle(ActivationRequest request, TransactionContext ctx) {
+        Client client = ctx.clientRepositoryManager().getClientByEmail(request.getEmail().toLowerCase());
+        if (client != null)
+        {
+            ctx.reply().sendFinal(new TransactionRequest(TransactionType.EMAIL_ALREADY_VERIFIED));
+            return;
         }
-        EmailParameters emailParams = new EmailParameters(user.getEMail(), "IAT Software eMail Verification",
+        client = new Client();
+        client.setName(request.getName());
+        client.setEmail(request.getEmail().toLowerCase());
+        client.setActivationsRemaining(100);
+        client.setNumIATsAlotted(1);
+        client.setAdministrationsRemaining(5000);
+        client.setDiskAlottmentMB(50);
+        String productKey = generateProductKey();
+        while (ctx.sessionState().repositoryManager().getClient(productKey) != null)
+            productKey = generateProductKey();
+        client.setProductKey(productKey);
+        ctx.clientRepositoryManager().addClient(client);
+
+        EmailParameters emailParams = new EmailParameters(request.getEmail(), "IAT Software eMail Verification",
                 "email/email-verification.html");
-        emailParams.addParameter("user", user);
+        emailParams.addParameter("client", client);
         emailParams.addInlineImage("logo", logoClasspathLocation, "image/png");
         try {
             ctx.mailService().sendEmail(emailParams);
         } catch (Exception e) {
-            ctx.reply().sendFinal(new ActivationResponse(ctx.client().getFirstName() + " " + ctx.client().getLastName(), ctx.client().getEmail(), ctx.client(), ActivationResult.SERVER_FAILURE));
+            critical.error("Could not send activation email.", e);
+            ctx.reply().sendFinal(new TransactionRequest(TransactionType.FAIL));
             return;
         }
-        ctx.reply().sendFinal(new ActivationResponse(ctx.client().getFirstName() + " " + ctx.client().getLastName(), ctx.client().getEmail(), ctx.client(), ActivationResult.SUCCESS));
+        ctx.reply().send(new TransactionRequest(TransactionType.PRODUCT_KEY));
+    }
+
+    @Override
+    public boolean supports(TransactionContext ctx) {
+        return (ctx.inbound() instanceof ActivationRequest);    
+    }
+
+    @Override
+    public void handle(TransactionContext ctx) {
+        if (ctx.inbound() instanceof ActivationRequest) {
+            handle((ActivationRequest) ctx.inbound(), ctx);
+            return;
+        }
     }
 
 }
