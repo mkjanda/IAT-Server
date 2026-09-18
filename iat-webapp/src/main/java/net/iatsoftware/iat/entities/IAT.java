@@ -43,38 +43,33 @@ import javax.xml.transform.stream.StreamSource;
 })
 public class IAT implements java.io.Serializable {
     private static final long serialVersionUID = 1;
-    private long id = -1;
-    private int numAdministrations = 0, testSizeKB = 0;
-    private String testName, URL, oauthClientSecret = null, oauthClientRedirect = null, oauthClientId = null;
-    private Calendar uploadTimestamp, lastDataRetrieval, resultRetrievalTokenAge;
-    private boolean alternate = false, alternated = false, oauthSubpathRedirects = false, redeployed = false;
-    private byte[] deploymentDescriptor, resultRetrievalToken;
-    private String aesCode, redirectOnComplete;
+    private long id = -1; 
+    private int numAdministrations = 0, testSizeKB = 0, resultFormat, numElements = -1;
+    private String testName, URL, aesCode, redirectOnComplete;
+    private Calendar uploadTimestamp, lastDataRetrieval;
+    private boolean alternate = false, alternated = false;
+    private byte[] deploymentDescriptor;
     private DeploymentSession deploymentSession = null;
     private Client client;
-    private int resultFormat, numElements = -1;
-    private User user;
-    private UniqueResponseItem uniqueResponseItem;
     private Crypt dataKey = null;
     private String version;
-    private String tokenName = "";
     private JAXBContext marshaller = null;
     private String manifestXml;    
+
     public IAT() throws jakarta.xml.bind.JAXBException {
         marshaller = JAXBContext.newInstance(Manifest.class);        
     }
     
-    public IAT(Client c, User u, String testName, String version, int resultFormat, Calendar uploadStart) 
+    public IAT(Client c, String testName, String version, int resultFormat, Calendar uploadStart) 
             throws jakarta.xml.bind.JAXBException {
         this.resultFormat = resultFormat;
         this.version = version;
         this.client = c;
-        this.user = u;
         this.testName = testName;
         uploadTimestamp = uploadStart;
         lastDataRetrieval = null;
         alternate = false;
-        URL = "http://www.iatsoftware.net/IAT?IATName=" + testName + "&ClientID=" + c.getClientId();
+        URL = "https://iatsoftware.net/IAT?IATName=" + testName + "&ClientID=" + c.getClientId();
         marshaller = JAXBContext.newInstance(Manifest.class);
     }
 
@@ -110,14 +105,6 @@ public class IAT implements java.io.Serializable {
         this.client = val;
     }
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="user_id", referencedColumnName="UserID")
-    public User getUser() {
-        return this.user;
-    }
-    public void setUser(User val) {
-        this.user = val;
-    }
 
     @OneToOne(fetch=FetchType.EAGER, optional=true, mappedBy="test")
     public Crypt getDataKey() {
@@ -257,6 +244,7 @@ public class IAT implements java.io.Serializable {
     @Basic
     @Column(name="url")
     public String getURL() {
+        URL = "https://iatsoftware.net/IAT?IATName=" + testName + "&ClientID=" + client.getClientId();
         return URL;
     }
     public void setURL(String val) {

@@ -18,7 +18,6 @@ import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.ProductRequestEntity;
 import net.iatsoftware.iat.entities.Purchase;
 import net.iatsoftware.iat.entities.ResourcePrice;
-import net.iatsoftware.iat.entities.User;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +37,6 @@ public class DefaultClientRepositoryManager implements ClientRepositoryManager {
     IATRepository iatRepository;
     @Inject
     ResourcePriceRepository resourcePriceRepository;
-    @Inject
-    UserRepository userRepository;
     @Inject
     ResultSetRepository resultSetRepository;
     @Inject
@@ -276,46 +273,4 @@ public class DefaultClientRepositoryManager implements ClientRepositoryManager {
         return clientRepository.clientWithEmailExists(email);
     }
     
-    @Override
-    @Transactional
-    public User getFirstUserWithEmail(String email) throws ConflictingUsersException {
-        return userRepository.getFirstUserWithEmail(email);
-    }
-
-    @Override   
-    @Transactional
-    public void addUser(final User u) {
-        userRepository.add(u);
-    }
-
-    @Override
-    @Transactional
-    public void updateUser(final User u) {
-        userRepository.update(u);
-    }
-
-    @Override
-    @Transactional
-    public User getUserByClientAndActivationKey(Client c, String activationKey)
-            throws jakarta.persistence.NonUniqueResultException {
-        return userRepository.getUserByClientAndActivationKey(c, activationKey);
-    }
-
-    @Override
-    @Transactional
-    public void deleteUser(final User u) {
-        userRepository.delete(u);
-    }
-
-    @Override
-    @Transactional
-    public User getUserByVerificationKey(final String key) {
-        return this.userRepository.getUserByVerificationKey(key);
-    }
-
-    @Override
-    @Transactional
-    public User getUserByClientAndEmail(final Client c, final String email) throws jakarta.persistence.NoResultException {
-        return this.userRepository.getUserByClientAndEmail(c, email);
-    }
 }

@@ -10,8 +10,6 @@ package net.iatsoftware.iat.entities;
  * @author Michael Janda
  */
 
-import net.iatsoftware.iat.dataservices.StartingResources;
-import net.iatsoftware.iat.messaging.AcceptRequest;
 
 import java.util.Calendar;
 import java.util.List;
@@ -43,7 +41,7 @@ public class Client implements java.io.Serializable {
     private boolean frozen, deleted, isolateUsers, killFiled = false;
     private Integer activationsRemaining, downloadsRemaining;
     private int invalidSaveFileOpenAttempts = 0;
-    private List<User> users;
+    private boolean emailVerified = false;
     public Client() {}
     
     @Id
@@ -361,13 +359,15 @@ public class Client implements java.io.Serializable {
         this.downloadsConsumed = val;
     }
 
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn(name="ClientID")
-    public List<User> getUsers() {
-        return users;
+
+    @Basic
+    @Column(name="email_verified")
+    public boolean isEmailVerified() {
+        return this.emailVerified;
     }
-    public void setUsers(List<User> val) {
-        users = val;
+
+    public void setEmailVerified(boolean val) {
+        this.emailVerified = val;
     }
 
     @Transient

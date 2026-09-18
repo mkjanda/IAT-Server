@@ -17,7 +17,6 @@ import net.iatsoftware.iat.deployment.IATDeployer;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.DeploymentSession;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.events.BeginDeploymentEvent;
 import net.iatsoftware.iat.events.DeploymentFailedEvent;
 import net.iatsoftware.iat.events.DeploymentSuccessEvent;
@@ -86,12 +85,12 @@ public class DefaultDeploymentService implements DeploymentService {
 
 
     @Override
-    public long beginNewDeployment(Client c, User u, String testName, SessionState session, ReplyChannel replyChannel) throws java.io.IOException, java.net.URISyntaxException {
+    public long beginNewDeployment(Client c, String testName, SessionState session, ReplyChannel replyChannel) throws java.io.IOException, java.net.URISyntaxException {
         try {
-            IAT test = new IAT(c, u, testName, serverConfiguration.getProperty("admin-version"),
+            IAT test = new IAT(c, testName, serverConfiguration.getProperty("admin-version"),
                     Integer.parseInt(serverConfiguration.getProperty("data-format-version")),
                     Calendar.getInstance());
-            DeploymentSession ds = new DeploymentSession(c, u, test);
+            DeploymentSession ds = new DeploymentSession(test);
             iatRepositoryManager.addTest(test);
             session.setTest(test);
             iatRepositoryManager.storeDeploymentSession(ds);

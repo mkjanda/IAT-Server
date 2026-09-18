@@ -152,50 +152,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="GClientUsage" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.ClientUsage"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:message-impl">
-                <xs:sequence>
-                    <xs:element name="UserData" type="iat:user-data-impl" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="TestUsage" type="iat:test-usage-impl" minOccurs="0" maxOccurs="unbounded"/>
-                    <xs:element name="ClientID" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Frozen" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Deleted" type="xs:boolean" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ContactFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ContactLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="RegistrationDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="LastIATUploadDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="LastIATAdministrationDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="LastDataRetrievalDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="DiskAlottmentMB" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="NumIATsAlotted" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="Administrations" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="AdministrationsRemaining" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="TotalDiskUsageMB" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="NumIATs" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ActivationsRemaining" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ActivationsConsumed" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="DownloadsRemaining" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="DownloadsConsumed" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="DownloadPassword" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="ProductUse" type="xs:string" minOccurs="1" maxOccurs="1"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="client-usage-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.ClientUsage"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
 
     <xs:complexType name="GCorruptedSaveFileReport" abstract="true">
         <xs:annotation>
@@ -464,30 +420,6 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="GTestUsage" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.TestUsage"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorTitle" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorFName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorLName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="TestSizeKB" type="xs:int" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="UploadTimestamp" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="LastDataRetrieval" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="test-usage-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.TestUsage"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
 
     <xs:complexType name="GTransaction" abstract="true">
         <xs:annotation>
@@ -511,27 +443,6 @@
         </xs:annotation>
     </xs:complexType>
 
-    <xs:complexType name="GUsageReport">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.UsageReport"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:message-impl">
-                <xs:sequence>
-                    <xs:element name="ClientUsage" type="iat:client-usage-impl" minOccurs="0" maxOccurs="unbounded"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:complexType name="usage-report-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.UsageReport"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
 
     <xs:complexType name="GPurchaseInitiation" abstract="true">
         <xs:annotation>
@@ -555,28 +466,6 @@
         </xs:simpleContent>
     </xs:complexType>
 
-    <xs:complexType name="GUserData" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.UserData"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="Title" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="FName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="LName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="EMail" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="ActivationDate" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="user-data-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.UserData"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-
     <xs:element name="GClientManagementEnvelope">
         <xs:annotation>
             <xs:appinfo>
@@ -589,7 +478,6 @@
                     <xs:element name="AcceptConfirmation" type="iat:accept-confirmation-impl" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="ProductRequests" type="iat:product-requests-impl" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="Transaction" type="iat:transaction-impl" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="UsageReport" type="iat:usage-report-impl" minOccurs="1" maxOccurs="1"/>
                 </xs:sequence>
             </xs:choice>
         </xs:complexType>
@@ -878,13 +766,14 @@
             <xs:enumeration value="RequestIATList"/>
             <xs:enumeration value="RequestItemSlideManifest"/>
             <xs:enumeration value="ActivationConfirmation"/>
-            <xs:enumeration value="RequestEMailVerification"/>
-            <xs:enumeration value="RequestNewVerificationEMail"/>
+            <xs:enumeration value="RequestEmailVerification"/>
+            <xs:enumeration value="RequestNewVerificationEmail"/>
             <xs:enumeration value="RetrieveSurveys"/>
             <xs:enumeration value="RequestRemainingResources"/>
             <xs:enumeration value="IATBeingDeployed"/>
             <xs:enumeration value="IATDeployHaltFailed"/>
             <xs:enumeration value="NoSuchClient"/>
+            <xs:enumeration value="EmailVerified" />
             <xs:enumeration value="EmailAlreadyVerified"/>
             <xs:enumeration value="RequestServerReport"/>
             <xs:enumeration value="RetrieveIATItemSize"/>
@@ -1812,76 +1701,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-    <xs:complexType name="iat-list-entry-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.IATListEntry"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GIATListEntry" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.IATListEntry"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="IATName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="UserInfo" type="iat:user-info-impl" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="iat-list-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.IATList"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GIATList" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.IATList"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:complexContent>
-            <xs:extension base="iat:message-impl">
-                <xs:sequence>
-                    <xs:element name="IAT" type="iat:iat-list-entry-impl" minOccurs="0" maxOccurs="unbounded"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-
-    <xs:complexType name="iat-report-impl">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class ref="net.iatsoftware.iat.messaging.IATReport"/>
-            </xs:appinfo>
-        </xs:annotation>
-    </xs:complexType>
-    <xs:complexType name="GIATReport" abstract="true">
-        <xs:annotation>
-            <xs:appinfo>
-                <jaxb:class implClass="net.iatsoftware.iat.messaging.IATReport"/>
-            </xs:appinfo>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="AuthorName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="URL" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="NumResultSets" type="xs:int" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="TestSizeKB" type="xs:int" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="UploadTimestamp" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="LastDataRetrieval" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="TestVersion" type="xs:string" minOccurs="1" maxOccurs="1" />
-        </xs:sequence>
-        <xs:attribute name="Deploying" type="xs:boolean" use="required" form="unqualified"/>
-    </xs:complexType>
-
     <xs:complexType name="admin-listener-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2028,8 +1847,6 @@
         </xs:complexContent>
     </xs:complexType>
 
-
-
     <xs:complexType name="server-report-impl">
         <xs:annotation>
             <xs:appinfo>
@@ -2054,10 +1871,37 @@
                     <xs:element name="NumAdministrationsRemaining" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="DiskAlottmentMB" type="xs:int" minOccurs="1" maxOccurs="1"/>
                     <xs:element name="DiskAlottmentRemainingKB" type="xs:long" minOccurs="1" maxOccurs="1"/>
-                    <xs:element name="IATReport" type="iat:iat-report-impl" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="IATReport" type="iat:iat-report-impl" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="iat-report-impl">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class ref="net.iatsoftware.iat.messaging.IATReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+    </xs:complexType>
+    <xs:complexType name="GIATReport">
+        <xs:annotation>
+            <xs:appinfo>
+                <jaxb:class implClass="net.iatsoftware.iat.messaging.IATReport"/>
+            </xs:appinfo>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="ProductKey" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="URL" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumAdministrations" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="NumResultSets" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestSizeKB" type="xs:int" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="UploadTimestamp" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="LastDataRetrieval" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="AuthorName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="TestVersion" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>
     </xs:complexType>
 
     <xs:complexType name="int-element-impl">

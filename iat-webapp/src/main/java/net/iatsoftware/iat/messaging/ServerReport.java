@@ -52,7 +52,7 @@ public class ServerReport extends net.iatsoftware.iat.generated.GServerReport {
         for (IAT test : tests) {
             IATReport report = new IATReport();
             var deploymentSession = iatRepositoryManager.getDeploymentSession(test);
-            report.load(test, deploymentSession != null, iatRepositoryManager.getNumResultSets(test));
+            report.load(test, client, iatRepositoryManager.getNumResultSets(test));
             this.getIATReport().add(report);
         }
     }

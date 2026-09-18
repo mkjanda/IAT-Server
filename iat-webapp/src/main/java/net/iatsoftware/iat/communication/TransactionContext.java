@@ -5,7 +5,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.messaging.MessageBase;
 import net.iatsoftware.iat.repositories.ClientRepositoryManager;
 import net.iatsoftware.iat.services.MailService;
@@ -31,7 +30,6 @@ public final class TransactionContext {
 
     // convenience
     public Client client() { return sessionState.client(); }
-    public User user() { return sessionState.client().getUsers().get(0); }
     public IAT test() { return sessionState.test(); }
     public ClientRepositoryManager clientRepositoryManager() { return sessionState.clientRepositoryManager(); }
     public MailService mailService() { return sessionState.mailService(); }

@@ -18,7 +18,7 @@ import net.iatsoftware.iat.entities.IAT;
 import net.iatsoftware.iat.entities.ProductRequestEntity;
 import net.iatsoftware.iat.entities.Purchase;
 import net.iatsoftware.iat.entities.ResourcePrice;
-import net.iatsoftware.iat.entities.User;
+
 
 import java.util.Calendar;
 import java.util.List;
@@ -61,11 +61,4 @@ public interface ClientRepositoryManager {
     void registerPurchase(Purchase p, Client c);
     Client getClientByEmail(String email);
     boolean containsClientWithEmail(String email);
-    User getFirstUserWithEmail(String email);
-    User getUserByClientAndActivationKey(Client c, String activationKey) throws jakarta.persistence.NoResultException;
-    void addUser(User u);
-    void updateUser(User u);
-    User getUserByVerificationKey(String key);
-    User getUserByClientAndEmail(Client c, String email) throws jakarta.persistence.NoResultException;
-    void deleteUser(User u);
 }

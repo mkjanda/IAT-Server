@@ -129,7 +129,7 @@
                                 <th:block th:if="${status.index % 3 == 0}">
                                     <tr height="85">
                                 </th:block>
-                                <th:block th:replace="email/fragments/save-file-history-entry.html ::save-file-history-entry(entry=${entry})"></th:block>
+                                <th:block th:replace="~{email/fragments/save-file-history-entry.html ::save-file-history-entry(entry=${entry})}"></th:block>
                                 <th:block th:if="${status.index % 3 == 2}">
                                     </tr>
                                 </th:block>      

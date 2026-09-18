@@ -36,7 +36,7 @@ public class DeploymentSession implements java.io.Serializable {
     private String deploymentUploadKey = null, itemSlideUploadKey = null, reconnectionKey = null;
     public DeploymentSession() { }
     
-    public DeploymentSession(Client c, User u, IAT test) {
+    public DeploymentSession(IAT test) {
         this.test = test;
     }
 

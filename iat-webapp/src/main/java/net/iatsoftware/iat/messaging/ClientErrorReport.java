@@ -11,7 +11,6 @@ package net.iatsoftware.iat.messaging;
  */
 
 import net.iatsoftware.iat.entities.Client;
-import net.iatsoftware.iat.entities.User;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -28,15 +27,15 @@ public class ClientErrorReport extends net.iatsoftware.iat.generated.GClientErro
     
     public ClientErrorReport() {}
     
-    public ClientErrorReport(Client c, User u, String version, ClientException ex, Calendar timestamp) {
+    public ClientErrorReport(Client c, String version, ClientException ex, Calendar timestamp) {
         this.clientMessage = ex.getClientMessage();
         this.exception = ex.getException();
         this.productKey = ex.getProductKey();
         this.version = version;
         this.clientID = c.getClientId();
         this.timestamp = dateFormat.format(new Date(timestamp.getTimeInMillis()));
-        this.userEmail = u.getEMail();
-        this.userName = u.getFullName();
+        this.userEmail = c.getEmail();
+        this.userName = c.getName();
         this.historyEntry = ex.getHistoryEntry();
         this.version = ex.getVersion();
         this.saveFileVersion = ex.getSaveFileVersion();

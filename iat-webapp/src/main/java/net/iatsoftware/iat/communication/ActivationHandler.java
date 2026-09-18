@@ -1,5 +1,6 @@
 package net.iatsoftware.iat.communication;
 
+import net.iatsoftware.iat.controllers.EMailVerification;
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.messaging.ActivationRequest;
 import net.iatsoftware.iat.messaging.TransactionRequest;
@@ -38,7 +39,9 @@ public class ActivationHandler implements TransactionHandler {
         Client client = ctx.clientRepositoryManager().getClientByEmail(request.getEmail().toLowerCase());
         if (client != null)
         {
-            ctx.reply().sendFinal(new TransactionRequest(TransactionType.EMAIL_ALREADY_VERIFIED));
+            var outTrans = new TransactionRequest(TransactionType.EMAIL_ALREADY_VERIFIED);
+            outTrans.setProductKey(client.getProductKey());
+            ctx.reply().send(outTrans);
             return;
         }
         client = new Client();
@@ -52,8 +55,10 @@ public class ActivationHandler implements TransactionHandler {
         while (ctx.sessionState().repositoryManager().getClient(productKey) != null)
             productKey = generateProductKey();
         client.setProductKey(productKey);
-        ctx.clientRepositoryManager().addClient(client);
-
+        ctx.sessionState().setClient(client);
+        var outTrans = new TransactionRequest(TransactionType.PRODUCT_KEY);
+        outTrans.setProductKey(productKey);
+        EMailVerification.contextCache.put(productKey, ctx);
         EmailParameters emailParams = new EmailParameters(request.getEmail(), "IAT Software eMail Verification",
                 "email/email-verification.html");
         emailParams.addParameter("client", client);
@@ -62,10 +67,10 @@ public class ActivationHandler implements TransactionHandler {
             ctx.mailService().sendEmail(emailParams);
         } catch (Exception e) {
             critical.error("Could not send activation email.", e);
-            ctx.reply().sendFinal(new TransactionRequest(TransactionType.FAIL));
+            ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
             return;
         }
-        ctx.reply().send(new TransactionRequest(TransactionType.PRODUCT_KEY));
+        ctx.reply().send(outTrans);
     }
 
     @Override
@@ -80,5 +85,4 @@ public class ActivationHandler implements TransactionHandler {
             return;
         }
     }
-
 }

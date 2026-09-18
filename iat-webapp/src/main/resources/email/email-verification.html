@@ -3,7 +3,7 @@
     <head>
         <title th:remove="all">eMail Verification Message</title>
         <meta charset="UTF-8">
-        <style th:insert="email/fragments/shared-email-styles.css"></style>
+        <style th:insert="~{email/fragments/shared-email-styles.css}"></style>
     </head>
     <body>
         <table style="width: 800px; border-collapse: collapse;">
@@ -13,13 +13,13 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <div th:insert="email/fragments/logo.html :: logo" style="text-align: right;"></div>
+                    <div th:insert="~{email/fragments/logo.html :: logo}" style="text-align: right;"></div>
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
                     <div id="content">
-                        <p style="font-family: oxtail, serif; font-size: 16px;" th:text="${client.fullName + ','}"></p>
+                        <p style="font-family: oxtail, serif; font-size: 16px;" th:text="${client.name + ','}"></p>
                         <p style="font-family: oxtail, serif; font-size: 16px;">
                             You are receiving this email because a copy of <span
                                 style="font-weight: bold; color: rgb(163, 87, 118);">IAT Design</span> was recently registered

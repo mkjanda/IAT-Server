@@ -11,7 +11,6 @@ package net.iatsoftware.iat.controllers;
  */
 import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.ClientExceptionReport;
-import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.generated.ErrorReportResponseCode;
 import net.iatsoftware.iat.messaging.ActivationException;
 import net.iatsoftware.iat.messaging.ClientErrorReport;
@@ -193,9 +192,8 @@ public class ReportClientError {
                 resp.setResponse(ErrorReportResponseCode.KILL_FILED);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             }
-            User u = c.getUsers().stream().filter(user -> user.getActivationKey().equals(exception.getActivationKey())).findFirst().orElse(null);
-            iatRepositoryManager.recordClientException(new ClientExceptionReport(c, u, sWriter.toString()));
-            ClientErrorReport cer = new ClientErrorReport(c, u, exception.getVersion(), exception,
+            iatRepositoryManager.recordClientException(new ClientExceptionReport(c, sWriter.toString()));
+            ClientErrorReport cer = new ClientErrorReport(c, exception.getVersion(), exception,
                     Calendar.getInstance());
             EmailParameters emailParams = new EmailParameters(errorReportRecipient,
                     "IAT Error for Client #" + Long.toString(c.getClientId()), "email/client-error-report.html");

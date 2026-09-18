@@ -20,7 +20,6 @@ import net.iatsoftware.iat.entities.CorsOrigin;
 import net.iatsoftware.iat.entities.DeploymentPacket;
 import net.iatsoftware.iat.entities.EncCodeLine;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.entities.User;
 import net.iatsoftware.iat.entities.TestSegment;
 import net.iatsoftware.iat.entities.TestBackupFile;
 import net.iatsoftware.iat.entities.UniqueResponse;
@@ -40,8 +39,6 @@ import net.iatsoftware.iat.generated.ResourceType;
 import net.iatsoftware.iat.messaging.ServerReport;
 import net.iatsoftware.iat.messaging.IATReport;
 import net.iatsoftware.iat.messaging.Manifest;
-import net.iatsoftware.iat.messaging.IATList;
-import net.iatsoftware.iat.messaging.IATListEntry;
 
 import org.springframework.oxm.Marshaller;
 import org.springframework.stereotype.Service;
@@ -76,8 +73,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
     ResultSetRepository resultSetRepository;
     @Inject
     TestSegmentRepository testSegmentRepository;
-    @Inject
-    UserRepository userRepository;
     @Inject
     UniqueResponseRepository uniqueResponseRepository;
     @Inject
@@ -206,10 +201,10 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public Long registerIAT(final User user, final String iatName, final int testSizeKB) {
+    public Long registerIAT(final Client client, final String iatName, final int testSizeKB) {
         try {
             final IAT iat = new IAT();
-            iat.setUser(user);
+            iat.setClient(client);
             iat.setTestSizeKB(testSizeKB);
             iat.setTestName(iatName);
             iatRepository.add(iat);
@@ -405,20 +400,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
 
     @Transactional
     @Override
-    public IATList buildIATList(final Long clientID) {
-        final Client c = clientRepository.get(clientID);
-        final List<IAT> iats = iatRepository.getIATsByClient(c);
-        final IATList list = new IATList();
-        for (final IAT i : iats) {
-            final User u = i.getUser();
-            final IATListEntry entry = new IATListEntry(i.getTestName(), u);
-            list.getIAT().add(entry);
-        }
-        return list;
-    }
-
-    @Transactional
-    @Override
     public Crypt getDataKey(final Long clientID, final String testName) {
         final IAT test = iatRepository.get(testName, clientID);
         if (test == null) {
@@ -476,7 +457,6 @@ public class DefaultIATRepositoryManager implements IATRepositoryManager {
         final List<IAT> iats = iatRepository.getIATsByClient(c);
         for (final IAT iat : iats) {
             final IATReport report = new IATReport();
-            report.setAuthorName(iat.getUser().getFName() + " " + iat.getUser().getLName());
             report.setTestName(iat.getTestName());
             report.setNumAdministrations(iat.getNumAdministrations());
             report.setLastDataRetrieval(iat.getLastDataRetrieval().toString());

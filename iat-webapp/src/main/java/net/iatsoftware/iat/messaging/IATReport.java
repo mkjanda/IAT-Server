@@ -6,18 +6,13 @@
 
 package net.iatsoftware.iat.messaging;
 
-import net.iatsoftware.iat.entities.DeploymentSession;
+import net.iatsoftware.iat.entities.Client;
 import net.iatsoftware.iat.entities.IAT;
-import net.iatsoftware.iat.repositories.IATRepositoryManager;
-
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.text.DateFormat;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.XmlAccessorType;
 import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.inject.Inject;
 
 /**
  *
@@ -31,20 +26,20 @@ public class IATReport extends net.iatsoftware.iat.generated.GIATReport {
     public IATReport() {
     }
 
-    public void load(IAT test, boolean deploying, int numResultSets) {
+    public void load(IAT test, Client client, int numResultSets) {
         DateFormat df = DateFormat.getDateInstance(DateFormat.LONG);
+        this.setProductKey(client.getProductKey());
         this.testName = test.getTestName();
         this.url = test.getURL();
-        numAdministrations = test.getNumAdministrations();
-        testSizeKB = test.getTestSizeKB();
+        this.numAdministrations = test.getNumAdministrations();
+        this.testSizeKB = test.getTestSizeKB();
+        this.uploadTimestamp = df.format(test.getUploadTimestamp().getTime());
         if (test.getLastDataRetrieval() == null)
             lastDataRetrieval = "never";
         else
             lastDataRetrieval = df.format(test.getLastDataRetrieval().getTime());
-        this.uploadTimestamp = df.format(test.getUploadTimestamp().getTime());
-        this.authorName = test.getUser().getFName() + " " + test.getUser().getLName();
+        this.authorName = test.getClient().getName();
         this.setNumResultSets(numResultSets);   
-        this.setDeploying(deploying);
         this.testVersion = test.getVersion();
     }
 }

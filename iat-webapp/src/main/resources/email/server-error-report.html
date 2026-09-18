@@ -2,7 +2,7 @@
     <head>
         <title th:remove="all">Server Error Report</title>
         <meta charset="UTF-8" />
-        <style th:insert="email/fragments/shared-email-styles.css"></style>
+        <style th:insert="~{email/fragments/shared-email-styles.css}"></style>
     </head>
     <body>
         <th:block th:fragment="exception(ex)">

@@ -48,8 +48,10 @@ public class DeletionHandler implements TransactionHandler {
             if (transaction.getType() == TransactionType.DELETE_IAT_DATA) {
                 ctx.sessionState().repositoryManager()
                         .deleteIATResults(ctx.client().getClientId(), test.getTestName());
+                ctx.reply().send(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS));        
             } else if (transaction.getType() == TransactionType.DELETE_IAT) {
                 ctx.sessionState().repositoryManager().deleteIAT(test.getId());
+                ctx.reply().send(new TransactionRequest(TransactionType.TRANSACTION_SUCCESS));        
             } else {
                 ctx.reply().send(new TransactionRequest(TransactionType.FAIL));
                 return;

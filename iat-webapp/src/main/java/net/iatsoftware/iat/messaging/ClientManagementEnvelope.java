@@ -27,7 +27,5 @@ public class ClientManagementEnvelope extends net.iatsoftware.iat.generated.GCli
             this.setProductRequests((ProductRequests)msg);
         else if (msg instanceof Transaction)
             this.setTransaction((Transaction)msg);
-        else if (msg instanceof UsageReport)
-            this.setUsageReport((UsageReport)msg);
     }
 }

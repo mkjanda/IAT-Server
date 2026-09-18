@@ -31,15 +31,13 @@ public class ClientExceptionReport implements java.io.Serializable {
     private static final long serialVersionUID = 1;
     private long id;
     private Client client = null;
-    private User user = null;
     private String exceptionXml = "";
     private Calendar timestamp = Calendar.getInstance();
     
     public ClientExceptionReport() {}
     
-    public ClientExceptionReport(Client c, User u, String exceptionXml) {
+    public ClientExceptionReport(Client c, String exceptionXml) {
         this.client = c;
-        this.user = u;
         this.exceptionXml = exceptionXml;
     }
     
@@ -62,15 +60,6 @@ public class ClientExceptionReport implements java.io.Serializable {
         this.client = val;
     }
     
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="UserID", referencedColumnName="UserID")
-    public User getUser() {
-        return this.user;
-    }
-    public void setUser(User val) {
-        this.user = val;
-    }
-
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="exception_timestamp")
     public Calendar getExceptionTimestamp() {

@@ -198,7 +198,7 @@ public class AdminController {
 			mv.addObject(SessionProperties.TEST_LINK, request.getRequestURI());
 			return mv;
 		}
-		Client c = test.getUser().getClient();
+		Client c = test.getClient();
 		if (c.isFrozen()) {
 			sessions.invalidate(sess.getId());
 			ModelAndView mv = new ModelAndView(SessionProperties.GENERAL_ERROR);
